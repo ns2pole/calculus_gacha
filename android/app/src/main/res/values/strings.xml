@@ -1,0 +1,6 @@
+<!-- android/app/src/main/res/values/strings.xml -->
+<resources>
+    <!-- 既存の app_name を置き換えるか追加 -->
+    <string name="app_name">【極】微積ガチャ！</string>
+</resources>
+

@@ -1,0 +1,697 @@
+{
+  "@@locale": "en",
+  "updateDialogTitle": "New update available",
+  "updateDialogMessage": "Would you like to update?",
+  "updateDialogLater": "Later",
+  "updateDialogUpdate": "Update",
+  "updateDialogReleaseNotes": "Release notes",
+  "categoryMechanics": "Mechanics",
+  "categoryElectromagnetism": "Electromagnetism",
+  "categoryThermodynamics": "Thermodynamics",
+  "categoryWaves": "Waves",
+  "problemListTitle": "{gachaTypeName} Problem List",
+  "@problemListTitle": {
+    "placeholders": {
+      "gachaTypeName": {
+        "type": "String"
+      }
+    }
+  },
+  "unitGachaProblemListTitle": "Unit Gacha Problem List",
+  "allProblemsSolved": "All problems have been solved!",
+  "appTitle": "[Extreme] Calculus Gacha!",
+  "showProgressRate": "Show Achievement Rate",
+  "integralGacha": "Integral Gacha!",
+  "integralGachaTitle": "Integral Gacha",
+  "limitGachaTitle": "Limit Gacha",
+  "physicsMathGachaTitle": "Physics Math Gacha",
+  "physicsMathGachaProblemListTitle": "Physics Math Problem List",
+  "factorizationGachaTitle": "Factorization Gacha",
+  "indeterminateEqGachaTitle": "Indeterminate Eq. Gacha",
+  "sequenceGachaTitle": "Sequence Gacha",
+  "genericGachaTitle": "Math Gacha",
+  "gachaContentsTitle": "Gacha Contents",
+  "content_integral_abs": "Definite Integrals with Absolute Values",
+  "content_integral_basic": "Basic Formulas",
+  "content_integral_parts": "Integration by Parts",
+  "content_integral_substitution": "Integration by Substitution",
+  "content_integral_partial_fraction": "Partial Fraction Decomposition",
+  "content_integral_trig_power": "Powers of Trigonometric Functions",
+  "content_integral_exp_log": "Exponential and Logarithmic Functions",
+  "content_integral_irrational_1": "Irrational Functions (Linear)",
+  "content_integral_irrational_2": "Irrational Functions (Quadratic)",
+  "content_integral_beta": "Beta Function Formulas",
+  "content_limit_basic": "Basic Limits",
+  "content_limit_rationalization": "Rationalization",
+  "content_limit_trig": "Limits of Trigonometric Functions",
+  "content_limit_exp_log": "Limits of Exponential and Logarithmic Functions",
+  "content_limit_partial_fraction": "Partial Fractions and Sums",
+  "content_limit_squeeze": "Squeeze Theorem",
+  "content_limit_riemann": "Riemann Sums",
+  "content_limit_famous": "Famous Limits / Definition of e",
+  "content_pm_uniform_accel": "Uniformly Accelerated Motion",
+  "content_pm_shm_lc": "Simple Harmonic Motion / LC Circuits",
+  "content_pm_air_rl": "Air Resistance / RL Circuits",
+  "content_pm_rc": "RC Circuits",
+  "content_pm_ac": "AC Circuits",
+  "content_fact_cross": "Cross Multiplication",
+  "content_fact_factor_theorem": "Factor Theorem",
+  "content_fact_replacement": "Substitution Method",
+  "content_fact_4th_degree": "Bi-quadratic Expressions",
+  "content_fact_low_degree": "Sorting by Lowest Degree",
+  "content_fact_sort_by_var": "Sorting by Specific Variable",
+  "content_fact_5th_degree": "5th Degree or Higher",
+  "content_indet_basic": "Linear Indeterminate Equations",
+  "content_indet_3vars": "Indeterminate Equations with 3 Variables",
+  "content_indet_quadratic_hyperbola": "Quadratic Indeterminate Eq (Hyperbolic)",
+  "content_indet_quadratic_ellipse": "Quadratic Indeterminate Eq (Elliptic)",
+  "content_indet_high_degree": "Higher Degree Indeterminate Eq",
+  "content_seq_2terms": "2-term Recurrence Relations",
+  "content_seq_3terms": "3-term Recurrence Relations",
+  "content_seq_simultaneous": "Simultaneous Recurrence Relations",
+  "content_seq_fractional": "Fractional Recurrence Relations",
+  "content_seq_variable_coeff": "Variable Coefficient Equations",
+  "content_seq_root_power": "Power / Root Type",
+  "integralCount": "{count} problems",
+  "@integralCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "randomIntegralPractice": "Random Integral Practice 🎲",
+  "limitGacha": "Limit Gacha!",
+  "limitCount": "{count} problems",
+  "@limitCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "someDontConverge": "Some problems don't converge ⤴️",
+  "differentialEquationGacha": "Differential Eq. Gacha",
+  "deCount": "{count} problems",
+  "@deCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "physicsDECollection": "Physics Differential\nEquations Collection 🧲",
+  "bonusGachaHome": "Bonus Gacha Home",
+  "bonusGachaDescription": "Factorization, Indeterminate Eq.\nCongruence (mod), Sequences 🎁",
+  "scratchPaper": "Scratch Paper",
+  "learningHistoryFeature": "Learning History Feature",
+  "learningHistoryDescription": "You can manage your learning history in this app.",
+  "greenCheckDescription": "Green Check = Solved by self",
+  "yellowCheckDescription": "Yellow Check = Understood",
+  "redCheckDescription": "Red Check = Don't understand",
+  "registrationGuidePart1": "Register as shown above to use.\nFrom settings,",
+  "registrationGuidePart2": "you can exclude problems with these checks.",
+  "proVersion": "Pro Version",
+  "proVersionPrice": "Pro Version ({price})",
+  "@proVersionPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "proVersionDescription": "allows you to manage history for all gachas.",
+  "login": "Login",
+  "logout": "Logout",
+  "loggedOut": "Logged out",
+  "usingCloudWith": "Using cloud with {method}",
+  "@usingCloudWith": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "syncWithCloud": "Sync with Cloud",
+  "syncCompleted": "Cloud data sync completed",
+  "noExclusion": "No Exclusion",
+  "latestNTimes": "Latest {n} times are ",
+  "@latestNTimes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ifSo": "if so",
+  "removeFromGacha": "then remove from Gacha",
+  "aggregateLatestN": "Aggregate latest {n} times",
+  "@aggregateLatestN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "aggregateLatestNLong": "Aggregate latest {n} learning records",
+  "@aggregateLatestNLong": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "privacyPolicy": "Privacy Policy",
+  "privacyPolicyDescription": "This app uses Google Firebase for account and data sync, and RevenueCat for purchase management. See {link} for details.",
+  "@privacyPolicyDescription": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseTitle": "Pro Version - Learning History",
+  "priceLabel": "Price: {price}",
+  "@priceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "purchase": "Purchase",
+  "purchaseComplete": "Purchase complete",
+  "purchaseFailed": "Purchase failed: {error}",
+  "@purchaseFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOccurred": "An error occurred: {error}",
+  "@errorOccurred": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pastPurchasesRestored": "Past purchases restored👍",
+  "ok": "OK",
+  "details": "Details",
+  "aggregatedBy": " Aggregated by",
+  "achievedCount": "{achieved}/{total} solved",
+  "rolling": "Rolling...",
+  "rollGacha": "Roll Gacha",
+  "noProblems": "No problems available",
+  "problemIndex": "Problem {index}",
+  "@problemIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "hideAnswer": "Hide Answer",
+  "showAnswer": "Show Answer",
+  "recordSaved": "Learning record saved: {status}",
+  "@recordSaved": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "preparingProblemList": "Preparing problem list...",
+  "allDisplayed": "Show All",
+  "recordSavedAt": "Saved: {date}",
+  "@recordSavedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "latestNTimesShort": "Latest {n} times",
+  "@latestNTimesShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "excludeSuffix": "excluding",
+  "restoredPurchases": "Purchases restored",
+  "noRestorablePurchases": "No restorable purchases found",
+  "restoreFailed": "Restore failed: {error}",
+  "@restoreFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "clearAllSlots": "Clear all slots",
+  "hideSolution": "Hide Solution",
+  "showSolution": "Show Solution",
+  "answerLabel": "【Answer】",
+  "pointLabel": "【Point】",
+  "explanationLabel": "【Explanation】",
+  "hintLabelTitle": "【Hint】",
+  "bonusGachaTitle": "Bonus Gacha!",
+  "unitGachaComingSoon": "*Unit Gacha coming soon!",
+  "factorizationGachaSubtitle": "Factorize within integer coefficients 0️⃣",
+  "indetEqGachaTitleOnly": "Indeterminate Eq. Gacha",
+  "indetEqGachaSubtitle": "Find integer solutions 🔢",
+  "modGachaTitle": "mod Gacha!",
+  "modGachaSubtitle": "Algebraic calculations with remainders ≡",
+  "sequenceGachaSubtitle": "Deepen understanding by comparing with differential equations Σ",
+  "keywordSelectorTitle": "Keyword Selection",
+  "selectedKeywordsLabel": "Selected ({count}): {keywords}",
+  "@selectedKeywordsLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "keywords": {
+        "type": "String"
+      }
+    }
+  },
+  "noKeywordsSelected": "No keywords selected (Show all problems)",
+  "filteredCountLabel": " {filtered} problems / Total {total}",
+  "@filteredCountLabel": {
+    "placeholders": {
+      "filtered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchingProblems": "No matching problems found",
+  "loading": "Loading...",
+  "updatedAt": "Updated: {time}",
+  "@updatedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "detail": "Details",
+  "keyword_numerical": "Numerical",
+  "keyword_general": "General",
+  "keyword_uam": "Uniformly Accelerated Motion",
+  "keyword_air_resistance": "Air Resistance",
+  "keyword_shm": "Simple Harmonic Motion",
+  "keyword_dc": "DC",
+  "keyword_ac": "AC",
+  "keyword_voltage0": "Voltage 0",
+  "keyword_capacitor": "Capacitor",
+  "keyword_inductor": "Inductor",
+  "keyword_resistor": "Resistor",
+  "modGachaTitleOnly": "mod Gacha!",
+  "problemList": "Problem List",
+  "howManyCards": "How many cards to choose?",
+  "nCards": "{count} cards",
+  "@nCards": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "startingAutomatically": "Starting automatically...",
+  "timerFinished": "Timer finished",
+  "selectCards": "Please select cards",
+  "backToCardSelection": "Back to card selection",
+  "hideDetails": "Hide details",
+  "showDetails": "Show details",
+  "next": "Next",
+  "complete": "Complete",
+  "allProblemsSolvedSimple": "All problems solved!",
+  "remainingCards": "{count} cards remaining",
+  "@remainingCards": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "back": "Back",
+  "hideHint": "Hide hint",
+  "showHint": "Show hint",
+  "closeScratchPaper": "Close scratch paper",
+  "openScratchPaper": "Open scratch paper",
+  "excludingLabel": "excluding",
+  "gachaSettings": "Gacha Settings",
+  "filteringSettings": "Filtering Settings",
+  "filterModeRandom": "Full Random (No exclusion)",
+  "filterModeExcludeSolved": "Exclude solved problems",
+  "filterModeOnlyUnsolved": "Only unsolved problems",
+  "settingsSaved": "Settings saved",
+  "difficultyForProblem": "Difficulty for problem #{index}",
+  "@difficultyForProblem": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "selectDifficultyForEachSlot": "Select difficulty for each slot",
+  "exclusionRuleDescription": "*Exclusion rules are based on the latest 3 learning records.",
+  "pmGachaKeywordDescription": "*In Physics Math Gacha, problems are categorized by keywords.",
+  "keywordSelectionInGachaScreen": "*Keyword selection can be done in the gacha screen.",
+  "easy": "Easy",
+  "mid": "Mid",
+  "advanced": "Advanced",
+  "expert": "Expert",
+  "latestN": "Latest {n} times",
+  "@latestN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "drawWithFinger": "Draw with finger",
+  "clearAll": "Clear All",
+  "undo": "Undo",
+  "redo": "Redo",
+  "showExplanation": "Show Explanation",
+  "close": "Close",
+  "selectColor": "Select Color",
+  "storagePermissionRequired": "Storage permission required",
+  "imageSaved": "Image saved: {path}",
+  "@imageSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "saveFailed": "Save failed: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "learningRecordSaved": "Learning record saved",
+  "learningRecordSaveFailed": "Failed to save learning record",
+  "defaultPrice": "$4.99",
+  "unknownError": "Unknown Error",
+  "noFirestorePermission": "No permission to access Firestore. Please check your settings.",
+  "syncError": "An error occurred during sync. Some data may not have been synchronized.",
+  "auth_passwordResetEmailSent": "Password reset email sent.\nPlease check your inbox.",
+  "auth_passwordResetFailed": "Failed to send password reset email",
+  "auth_userNotFound": "No account found for this email address.",
+  "auth_invalidEmail": "Invalid email address.",
+  "auth_tooManyRequests": "Too many requests.\nPlease wait a while and try again.",
+  "auth_emailSignInSuccess": "Saved to cloud using {method}",
+  "@auth_emailSignInSuccess": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_signUpSuccess": "Signed up successfully using {method}",
+  "@auth_signUpSuccess": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_signInFailed": "Failed to save to cloud",
+  "auth_signUpFailed": "Sign up failed",
+  "auth_lockTitle": "Login Locked",
+  "auth_lockMessageResetRequired": "Login attempts exceeded the limit.\nPassword reset is required.\n\nPlease send a password reset email\nfrom 'Forgot password'.",
+  "auth_lockMessageWait": "Login attempts exceeded the limit.\nIt will be unlocked automatically in about {minutes} minutes.\n\nPlease wait a while and try again.",
+  "@auth_lockMessageWait": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "auth_emailAlreadyInUse": "This email address is already in use.\nPlease sign in.",
+  "auth_weakPassword": "Password is too weak.\nPlease set a stronger password.",
+  "auth_wrongPassword": "Incorrect email address or password.\nPlease check again.",
+  "auth_credentialAlreadyInUse": "This account is already registered with a different method.\nPlease use your existing sign-in method.",
+  "auth_operationNotAllowed": "This sign-in method is not enabled.",
+  "auth_smsCodeSent": "SMS code sent",
+  "auth_smsVerificationFailed": "SMS code verification failed",
+  "auth_invalidVerificationCode": "Incorrect SMS code.\nPlease check again.",
+  "auth_invalidVerificationId": "Invalid verification ID.\nPlease enter your phone number again.",
+  "auth_sessionExpired": "Session expired.\nPlease enter your phone number again.",
+  "auth_phoneAlreadyInUse": "This phone number is already in use.\nPlease use your existing sign-in method.",
+  "auth_providerAlreadyLinked": "This phone number is already linked to this account.",
+  "auth_phoneAuthDisabled": "Phone number authentication is not enabled.\nPlease check your settings in Firebase Console.",
+  "auth_phoneVerificationInternalError": "An internal error occurred.\nPlease ensure phone number authentication is enabled in Firebase Console.\nError code: {code}\nDetails: {details}",
+  "@auth_phoneVerificationInternalError": {
+    "placeholders": {
+      "code": { "type": "String" },
+      "details": { "type": "String" }
+    }
+  },
+  "auth_phoneVerificationTooManyRequests": "Too many requests from this device.\nPlease wait and try again later.",
+  "auth_phoneVerificationQuotaExceeded": "SMS quota exceeded.\nPlease try again later or review your Firebase billing/limits.",
+  "auth_phoneVerificationCaptchaFailed": "reCAPTCHA verification failed.\nPlease try again.",
+  "auth_phoneVerificationInvalidAppCredential": "App credential is invalid.\nPlease check your Firebase configuration file.",
+  "auth_phoneVerificationStartFailed": "Failed to start phone verification: {error}",
+  "@auth_phoneVerificationStartFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "auth_unexpectedError": "An error occurred: {error}",
+  "@auth_unexpectedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_firebaseNotConfigured": "Firebase is not configured",
+  "auth_firebaseConfigGuide": "Firebase configuration file is required to save to the cloud.\nPlease download and place the configuration file from Firebase Console.",
+  "auth_phoneSignInButton": "Save to cloud with Phone Number",
+  "auth_emailSignInButton": "Save to cloud with Email Address",
+  "auth_googleSignInButton": "Save to cloud with Google",
+  "auth_appleSignInButton": "Save to cloud with Apple",
+  "auth_emailLabel": "Email Address",
+  "auth_passwordLabel": "Password",
+  "auth_emailRequired": "Please enter your email address",
+  "auth_passwordRequired": "Please enter your password",
+  "auth_passwordTooShort": "Password must be at least 6 characters",
+  "auth_forgotPassword": "Forgot password",
+  "auth_alreadyHaveAccount": "Already have an account? Sign in here",
+  "auth_createNewAccount": "New user? Create an account here",
+  "auth_sendResetEmailButton": "Send Password Reset Email",
+  "auth_phoneNumberLabel": "Phone Number",
+  "auth_phoneNumberHint": "09012345678 or +819012345678",
+  "auth_phoneNumberRequired": "Please enter your phone number",
+  "auth_invalidPhoneNumber": "Please enter a valid phone number",
+  "auth_sendSmsCodeButton": "Send SMS Code",
+  "auth_enterSmsCode": "Please enter SMS code",
+  "auth_smsCodeSentTo": "Sent to {phoneNumber}",
+  "@auth_smsCodeSentTo": {
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_smsCodeLabel": "SMS Code",
+  "auth_smsCodeHint": "6-digit code",
+  "auth_smsCodeRequired": "Please enter SMS code",
+  "auth_smsCodeLength": "Please enter a 6-digit code",
+  "auth_resendCodeButton": "Resend Code",
+  "auth_changePhoneNumberButton": "Change Phone Number",
+  "auth_cloudSyncDescription": "Saving to the cloud stores your learning records online\n and synchronizes them across multiple devices.",
+  "auth_methodEmail": "Email Address",
+  "auth_methodPhone": "Phone Number",
+  "auth_methodGoogle": "Google Account",
+  "auth_methodApple": "Apple Account",
+  "auth_signUpButton": "Sign Up",
+  "auth_signInButton": "Save to Cloud",
+  "auth_backButton": "Back",
+  "auth_verifyButton": "Verify",
+  "rerollSlot": "Reroll this slot",
+  "saveLearningRecord": "Save learning record",
+  "usingCloudWith": "Using cloud with {method}",
+  "@usingCloudWith": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "problemCountRemaining": "({filteredCount}/{totalCount} rem.)",
+  "@problemCountRemaining": {
+    "placeholders": {
+      "filteredCount": {
+        "type": "int"
+      },
+      "totalCount": {
+        "type": "int"
+      }
+    }
+  },
+  "noExclusionAllCount": "All {count} problems",
+  "@noExclusionAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "problemCountOutOf": "({filteredCount}/{totalCount} problems)",
+  "@problemCountOutOf": {
+    "placeholders": {
+      "filteredCount": {
+        "type": "int"
+      },
+      "totalCount": {
+        "type": "int"
+      }
+    }
+  },
+
+  "problemCount": "{count} problems",
+  "@problemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "latestNPrefix": "Latest {n}",
+  "@latestNPrefix": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+
+  "category_congruence": "Congruence (mod) Equations",
+  "category_indeterminate": "Indeterminate Equations",
+  "category_factorization": "Factorization",
+  "category_factorization_desc": "From basic to advanced factorization",
+  "category_recurrence": "Recurrence Relations",
+  "category_recurrence_desc": "Solving recurrence relations and applications",
+  "category_limits": "Limits",
+  "category_limits_desc": "Limit calculations and applications",
+  "category_integrals": "Integrals",
+  "category_integrals_desc": "From basic techniques to advanced applications",
+  "category_physics_math": "Physics Math",
+  "category_differential": "Differentiation",
+  "category_differential_desc": "Differentiation calculations and applications",
+  "category_series": "Series",
+  "category_series_desc": "Convergence and divergence of series",
+  "category_probability": "Probability",
+  "category_probability_desc": "Probability basics and applications",
+
+  "keyword_other": "Other",
+  "keyword_resonance": "Resonance",
+  "keyword_firstOrderHomogeneous": "1st-order homogeneous",
+  "keyword_homogeneous": "Homogeneous",
+  "keyword_nonHomogeneous": "Non-homogeneous",
+  "keyword_university": "University",
+
+  "cloudBackupConfirmTitle": "Back up your data to the cloud?",
+
+  "gachaSuffix": "Gacha",
+
+  "storekitTestTitle": "StoreKit Configuration Test",
+  "storekitTestHeader": "StoreKit Configuration File Test",
+  "storekitTestDescription": "Tests whether product info can be fetched using native SKProductsRequest.",
+  "storekitTestButtonIndeterminateOption": "Test Indeterminate Eq. option (160 JPY)",
+  "storekitTestButtonFactorizationOption": "Test Factorization option (80 JPY)",
+  "errorTitle": "Error",
+  "storekitTestSucceeded": "Test succeeded",
+  "storekitHowToReadResults": "How to read results",
+  "storekitResultSuccess": "✅ Success: StoreKit Configuration file is correctly set.",
+  "storekitResultFailure": "❌ Failure: StoreKit Configuration file is missing or product ID is incorrect.",
+  "storekitSimulatorNote": "Note: On simulator, StoreKit Configuration must be set in the Xcode scheme.",
+  "storekitLabelProductId": "Product ID",
+  "storekitLabelTitle": "Title",
+  "storekitLabelDescription": "Description",
+  "storekitLabelPrice": "Price",
+  "storekitLabelPriceLocale": "Price Locale",
+  "storekitLabelLocalizedPrice": "Localized Price",
+
+  "equationLabel": "Equation",
+
+  "timerTooltipMinus1Min": "Minus 1 min",
+  "timerTooltipMinus30Sec": "Minus 30 sec",
+  "timerTooltipPlus30Sec": "Plus 30 sec",
+  "timerTooltipPlus1Min": "Plus 1 min",
+  "timerTooltipReset": "Reset",
+
+  "drawingToolPen": "Pen",
+  "drawingToolColor": "Color",
+  "drawingToolWidth": "Width",
+
+  "calculatorTooltipShow": "Show calculator",
+  "calculatorTooltipClose": "Close calculator",
+
+  "congruenceHintExample": "Example: x≡ 2,3 (mod 5)",
+
+  "freeGachaSelectionInstruction": "Select 2 gachas to enable learning history",
+  "freeGachaConfirmDialog": "Manage learning history for {gacha1} and {gacha2}. Proceed?",
+  "@freeGachaConfirmDialog": {
+    "placeholders": {
+      "gacha1": { "type": "String" },
+      "gacha2": { "type": "String" }
+    }
+  },
+  "freeGachaEnabledMessage": "Learning history is now enabled for {gacha1} and {gacha2}.",
+  "@freeGachaEnabledMessage": {
+    "placeholders": {
+      "gacha1": { "type": "String" },
+      "gacha2": { "type": "String" }
+    }
+  },
+  "freeGachaEnjoyMessage": "Enjoy the app.",
+  "freeGachaProNote": "The 2 selected gachas can store learning history for free.\nPurchase Pro ({price}) to enable learning history for all gachas.",
+  "@freeGachaProNote": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "comingSoon": "Coming Soon",
+
+  "storeVersionLabel": "Store version: {storeVersion}",
+  "@storeVersionLabel": {
+    "placeholders": {
+      "storeVersion": { "type": "String" }
+    }
+  },
+
+  "auth_googleSignInFailed": "Google Sign-In failed",
+  "auth_networkErrorCheckConnection": "Network error. Please check your internet connection.",
+  "auth_appleSignInFailed": "Apple Sign-In failed",
+  "auth_appleSignInFailedEnsureEnabled": "Apple Sign-In failed. Please ensure Apple Sign-In is enabled in Firebase Console.",
+  "auth_invalidCredentialTryAgain": "Invalid credential. Please try again.",
+  "auth_invalidIdTokenTryAgain": "Invalid ID token. Please try again.",
+  "auth_appleSignInNotConfigured": "Apple Sign-In is not configured. Please enable Apple Sign-In in Firebase Console.",
+
+  "learningStatus_none": "Not studied",
+  "learningStatus_solved": "Solved",
+  "learningStatus_understood": "Understood",
+  "learningStatus_failed": "Failed",
+
+  "learningStatusTooltip_none": "Select learning status",
+  "learningStatusTooltip_solved": "Solved by myself",
+  "learningStatusTooltip_understood": "Understood",
+  "learningStatusTooltip_failed": "Could not solve"
+}

@@ -1,0 +1,11 @@
+---
+description: Public repo calculus_gacha — no secrets in commits; use .gitignore
+alwaysApply: true
+---
+
+# リポジトリ方針（`calculus_gacha` / 公開想定）
+
+- **デフォルトの `origin` は `calculus_gacha`。** 機密は **`.gitignore` で除外**し、プレースホルダ・example のみコミットする。
+- **`lib/firebase_web_options.dart`** はリポジトリでは **プレースホルダのみ**。実値はローカルまたは CI のシークレットで注入（コミットしない）。
+- **`ios/GoogleService-Info.plist`**、**`android/app/google-services.json`**（`*.json` ルール）、**`key.properties` / `*.jks`** などは **追跡しない**。
+- 履歴を掃除したい場合は `git init` し直す・単一コミットにするなど、リポジトリ再構築はユーザーの判断でよい。**pre-push で push を拒否する運用はしない**（ユーザー指定）。

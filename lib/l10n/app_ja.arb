@@ -1,0 +1,689 @@
+{
+  "@@locale": "ja",
+  "updateDialogTitle": "新しいアップデートがあります",
+  "updateDialogMessage": "更新してみませんか？",
+  "updateDialogLater": "あとで",
+  "updateDialogUpdate": "更新する",
+  "updateDialogReleaseNotes": "更新内容",
+  "categoryMechanics": "力学",
+  "categoryElectromagnetism": "電磁気学",
+  "categoryThermodynamics": "熱力学",
+  "categoryWaves": "波動",
+  "problemListTitle": "{gachaTypeName}問題一覧",
+  "@problemListTitle": {
+    "placeholders": {
+      "gachaTypeName": {
+        "type": "String"
+      }
+    }
+  },
+  "unitGachaProblemListTitle": "Unit Gacha 問題一覧",
+  "allProblemsSolved": "全ての問題を解き切りました！",
+  "appTitle": "【極】微積ガチャ！",
+  "showProgressRate": "達成率を表示",
+  "integralGacha": "積分ガチャ！",
+  "integralGachaTitle": "積分ガチャ",
+  "limitGachaTitle": "極限ガチャ",
+  "physicsMathGachaTitle": "物理数学ガチャ",
+  "physicsMathGachaProblemListTitle": "物理数学ガチャ 問題一覧",
+  "factorizationGachaTitle": "因数分解ガチャ",
+  "indeterminateEqGachaTitle": "不定方程式ガチャ",
+  "sequenceGachaTitle": "漸化式ガチャ",
+  "genericGachaTitle": "数学ガチャ",
+  "gachaContentsTitle": "ガチャの内容",
+  "content_integral_abs": "絶対値を含む定積分",
+  "content_integral_basic": "基本公式の利用",
+  "content_integral_parts": "部分積分",
+  "content_integral_substitution": "置換積分",
+  "content_integral_partial_fraction": "部分分数分解",
+  "content_integral_trig_power": "三角関数の累乗",
+  "content_integral_exp_log": "指数・対数関数",
+  "content_integral_irrational_1": "無理関数（1次式）",
+  "content_integral_irrational_2": "無理関数（2次式）",
+  "content_integral_beta": "ベータ関数の公式",
+  "content_limit_basic": "基本公式・有理化",
+  "content_limit_rationalization": "有理化・無理式",
+  "content_limit_trig": "三角関数の極限",
+  "content_limit_exp_log": "指数・対数関数の極限",
+  "content_limit_partial_fraction": "部分分数分解と和",
+  "content_limit_squeeze": "はさみうちの原理",
+  "content_limit_riemann": "区分求積法",
+  "content_limit_famous": "有名な極限・eの定義",
+  "content_pm_uniform_accel": "等加速度直線運動",
+  "content_pm_shm_lc": "単振動・LC回路",
+  "content_pm_air_rl": "空気抵抗・RL回路",
+  "content_pm_rc": "RC回路",
+  "content_pm_ac": "交流回路",
+  "content_fact_cross": "たすき掛け",
+  "content_fact_factor_theorem": "因数定理",
+  "content_fact_replacement": "置き換え",
+  "content_fact_4th_degree": "複二次式",
+  "content_fact_low_degree": "最低次数の文字で整理",
+  "content_fact_sort_by_var": "特定の文字で整理",
+  "content_fact_5th_degree": "5次以上の因数分解",
+  "content_indet_basic": "1次不定方程式",
+  "content_indet_3vars": "3変数不定方程式",
+  "content_indet_quadratic_hyperbola": "2次不定方程式（双曲線型）",
+  "content_indet_quadratic_ellipse": "2次不定方程式（楕円型）",
+  "content_indet_high_degree": "高次不定方程式",
+  "content_seq_2terms": "2項間漸化式",
+  "content_seq_3terms": "3項間漸化式",
+  "content_seq_simultaneous": "連立漸化式",
+  "content_seq_fractional": "分数型漸化式",
+  "content_seq_variable_coeff": "係数が変数の方程式",
+  "content_seq_root_power": "べき乗・ルート型",
+  "integralCount": "{count}問",
+  "@integralCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "randomIntegralPractice": "ランダム積分練習 🎲",
+  "limitGacha": "極限ガチャ！",
+  "limitCount": "{count}問",
+  "@limitCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "someDontConverge": "収束しない問題もあります ⤴️",
+  "differentialEquationGacha": "微分方程式ガチャ",
+  "deCount": "{count}問",
+  "@deCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "physicsDECollection": "物理に登場する\n微分方程式を集めました 🧲",
+  "bonusGachaHome": "おまけガチャ Home",
+  "bonusGachaDescription": "因数分解・不定方程式\n 合同方程式(mod)・漸化式 🎁",
+  "scratchPaper": "計算用紙",
+  "learningHistoryFeature": "学習履歴登録機能",
+  "learningHistoryDescription": "本アプリでは学習履歴を管理できます。",
+  "greenCheckDescription": "緑チェック = 自力で解けた",
+  "yellowCheckDescription": "黄色チェック = 理解できた",
+  "redCheckDescription": "赤チェック = 分からない",
+  "registrationGuidePart1": "のように登録してご活用下さい。\n設定により",
+  "registrationGuidePart2": "をつけた問題をガチャから除外できます。",
+  "proVersion": "Pro版",
+  "proVersionPrice": "Pro版({price})",
+  "@proVersionPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "proVersionDescription": "では全ガチャの学習履歴を管理できます。",
+  "login": "ログイン",
+  "logout": "ログアウト",
+  "loggedOut": "ログアウトしました",
+  "syncWithCloud": "クラウドデータと同期",
+  "syncCompleted": "クラウドデータとの同期が完了しました",
+  "noExclusion": "除外なし",
+  "latestNTimes": "最新{n}回が ",
+  "@latestNTimes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ifSo": "なら",
+  "removeFromGacha": "ならガチャから外す",
+  "aggregateLatestN": "最新{n}回分集計",
+  "@aggregateLatestN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "aggregateLatestNLong": "最新{n}回分の記録を集計",
+  "@aggregateLatestNLong": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "privacyPolicy": "プライバシーポリシー",
+  "privacyPolicyDescription": "当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は{link}をご確認ください。",
+  "@privacyPolicyDescription": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseTitle": "Pro版 - 学習履歴機能",
+  "priceLabel": "価格: {price}",
+  "@priceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "キャンセル",
+  "purchase": "購入する",
+  "purchaseComplete": "購入が完了しました",
+  "purchaseFailed": "購入に失敗しました: {error}",
+  "@purchaseFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOccurred": "エラーが発生しました: {error}",
+  "@errorOccurred": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pastPurchasesRestored": "過去の購入を復元しました👍",
+  "ok": "OK",
+  "details": "詳細",
+  "aggregatedBy": "で集計",
+  "achievedCount": "{achieved}問/{total}問 達成",
+  "rolling": "ガチャ中...",
+  "rollGacha": "ガチャを回す",
+  "noProblems": "問題がありません",
+  "problemIndex": "第{index}問",
+  "@problemIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "hideAnswer": "答えを隠す",
+  "showAnswer": "答えを見る",
+  "recordSaved": "学習記録を保存しました: {status}",
+  "@recordSaved": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "preparingProblemList": "問題一覧を準備中…",
+  "allDisplayed": "全て表示",
+  "recordSavedAt": "保存: {date}",
+  "@recordSavedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "latestNTimesShort": "最新{n}回が",
+  "@latestNTimesShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "excludeSuffix": "の問題を除く",
+  "restoredPurchases": "購入を復元しました",
+  "noRestorablePurchases": "復元できる購入が見つかりませんでした",
+  "restoreFailed": "復元に失敗しました: {error}",
+  "@restoreFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "clearAllSlots": "全スロット消去",
+  "hideSolution": "解答を隠す",
+  "showSolution": "解答を表示",
+  "answerLabel": "【答え】",
+  "pointLabel": "【ポイント】",
+  "explanationLabel": "【解説】",
+  "hintLabelTitle": "【ヒント】",
+  "bonusGachaTitle": "おまけガチャ！",
+  "unitGachaComingSoon": "※単位ガチャは別アプリでリリース予定！",
+  "factorizationGachaSubtitle": "整数係数の範囲で\n因数分解してください 0️⃣",
+  "indetEqGachaTitleOnly": "不定方程式ガチャ",
+  "indetEqGachaSubtitle": "整数解を探してみよう 🔢",
+  "modGachaTitle": "modガチャ！",
+  "modGachaSubtitle": "余りを扱う代数学の計算 ≡",
+  "sequenceGachaSubtitle": "微分方程式との対応を考えると\n理解が深まります Σ",
+  "keywordSelectorTitle": "キーワード選択",
+  "selectedKeywordsLabel": "選択中({count}個): {keywords}",
+  "@selectedKeywordsLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "keywords": {
+        "type": "String"
+      }
+    }
+  },
+  "noKeywordsSelected": "キーワード未選択（全問題を表示します）",
+  "filteredCountLabel": " {filtered}問 / 全{total}問",
+  "@filteredCountLabel": {
+    "placeholders": {
+      "filtered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchingProblems": "該当する問題がありません",
+  "loading": "読み込み中...",
+  "updatedAt": "更新: {time}",
+  "@updatedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "detail": "詳細",
+  "keyword_numerical": "数値",
+  "keyword_general": "一般",
+  "keyword_uam": "等加速度直線運動",
+  "keyword_air_resistance": "空気抵抗",
+  "keyword_shm": "単振動",
+  "keyword_dc": "直流",
+  "keyword_ac": "交流",
+  "keyword_voltage0": "電圧0",
+  "keyword_capacitor": "コンデンサ",
+  "keyword_inductor": "コイル",
+  "keyword_resistor": "抵抗",
+  "modGachaTitleOnly": "modガチャ！",
+  "problemList": "問題一覧",
+  "howManyCards": "カードを何枚選びますか？",
+  "nCards": "{count}枚",
+  "@nCards": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "startingAutomatically": "自動的に開始します...",
+  "timerFinished": "タイマーが終了しました",
+  "selectCards": "カードを選択してください",
+  "backToCardSelection": "カード選択に戻る",
+  "hideDetails": "詳細を閉じる",
+  "showDetails": "詳細を読む",
+  "next": "次へ",
+  "complete": "完了",
+  "allProblemsSolvedSimple": "すべての問題を解きました！",
+  "remainingCards": "残り{count}枚",
+  "@remainingCards": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "back": "戻る",
+  "hideHint": "ヒントを隠す",
+  "showHint": "ヒントを表示",
+  "closeScratchPaper": "計算用紙を閉じる",
+  "openScratchPaper": "計算用紙を開く",
+  "excludingLabel": "を除く",
+  "gachaSettings": "ガチャ設定",
+  "filteringSettings": "フィルタリング設定",
+  "filterModeRandom": "完全ランダム（除外なし）",
+  "filterModeExcludeSolved": "解決済みの問題を除く",
+  "filterModeOnlyUnsolved": "未解決の問題のみ",
+  "settingsSaved": "設定を保存しました",
+  "difficultyForProblem": "第{index}問の難易度",
+  "@difficultyForProblem": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "selectDifficultyForEachSlot": "各枠の難易度を選択してください",
+  "exclusionRuleDescription": "※除外ルールは問題一覧で見られる最新3回分の学習記録を用いて判定します。",
+  "pmGachaKeywordDescription": "※微分方程式ガチャでは、キーワードで問題を分類しています。",
+  "keywordSelectionInGachaScreen": "※キーワード選択はガチャ画面で行えます。",
+  "easy": "初級",
+  "mid": "中級",
+  "advanced": "上級",
+  "expert": "発展",
+  "latestN": "最新{n}回が",
+  "@latestN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "drawWithFinger": "指で描画",
+  "clearAll": "全消し",
+  "undo": "元に戻す",
+  "redo": "やり直し",
+  "showExplanation": "解説を表示",
+  "close": "閉じる",
+  "selectColor": "色を選択",
+  "storagePermissionRequired": "ストレージ権限が必要です",
+  "imageSaved": "画像を保存しました: {path}",
+  "@imageSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "saveFailed": "保存に失敗しました: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "learningRecordSaved": "学習記録を保存しました",
+  "learningRecordSaveFailed": "学習記録の保存に失敗しました",
+  "defaultPrice": "500円",
+  "unknownError": "不明なエラー",
+  "noFirestorePermission": "Firestoreへのアクセス権限がありません。設定を確認してください。",
+  "syncError": "同期中にエラーが発生しました。一部のデータは同期されていない可能性があります。",
+  "auth_passwordResetEmailSent": "パスワードリセットメールを送信しました。\nメールボックスを確認してください。",
+  "auth_passwordResetFailed": "パスワードリセットメールの送信に失敗しました",
+  "auth_userNotFound": "このメールアドレスのアカウントが見つかりません。",
+  "auth_invalidEmail": "無効なメールアドレスです。",
+  "auth_tooManyRequests": "リクエストが多すぎます。\nしばらく待ってから再度お試しください。",
+  "auth_emailSignInSuccess": "{method}でクラウドに保存しました",
+  "@auth_emailSignInSuccess": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_signUpSuccess": "{method}で新規登録しました",
+  "@auth_signUpSuccess": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_signInFailed": "クラウドに保存に失敗しました",
+  "auth_signUpFailed": "サインアップに失敗しました",
+  "auth_lockTitle": "ログインがロックされています",
+  "auth_lockMessageResetRequired": "ログイン試行回数が上限に達しました。\nパスワードリセットが必要です。\n\n「パスワードを忘れた場合」から\nパスワードリセットメールを送信してください。",
+  "auth_lockMessageWait": "ログイン試行回数が上限に達しました。\n約{minutes}分後に自動的に解除されます。\n\nしばらく待ってから再度お試しください。",
+  "@auth_lockMessageWait": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "auth_emailAlreadyInUse": "このメールアドレスは既に使用されています。\nクラウドに保存してください。",
+  "auth_weakPassword": "パスワードが弱すぎます。\nより強力なパスワードを設定してください。",
+  "auth_wrongPassword": "メールアドレスまたはパスワードが正しくありません。\nもう一度確認してください。",
+  "auth_credentialAlreadyInUse": "このアカウントは既に別の方法で登録されています。\n既存の認証方法を使用してください。",
+  "auth_operationNotAllowed": "この認証方法は有効になっていません。",
+  "auth_smsCodeSent": "SMSコードを送信しました",
+  "auth_smsVerificationFailed": "SMSコードの認証に失敗しました",
+  "auth_invalidVerificationCode": "SMSコードが正しくありません。\nもう一度確認してください。",
+  "auth_invalidVerificationId": "検証IDが無効です。\nもう一度電話番号を入力してください。",
+  "auth_sessionExpired": "セッションが期限切れです。\nもう一度電話番号を入力してください。",
+  "auth_phoneAlreadyInUse": "この電話番号は既に使用されています。\n既存の認証方法を使用してください。",
+  "auth_providerAlreadyLinked": "この電話番号は既にこのアカウントにリンクされています。",
+  "auth_phoneAuthDisabled": "電話番号認証が有効になっていません。\nFirebase Consoleで設定を確認してください。",
+  "auth_phoneVerificationInternalError": "内部エラーが発生しました。\nFirebase Consoleで電話番号認証が有効になっているか確認してください。\nエラーコード: {code}\n詳細: {details}",
+  "@auth_phoneVerificationInternalError": {
+    "placeholders": {
+      "code": { "type": "String" },
+      "details": { "type": "String" }
+    }
+  },
+  "auth_phoneVerificationTooManyRequests": "このデバイスからのリクエストが多すぎます。\nしばらく待ってから再度お試しください。",
+  "auth_phoneVerificationQuotaExceeded": "SMS送信の上限に達しました。\nしばらく待ってから再度お試しください。必要ならFirebaseの請求/上限をご確認ください。",
+  "auth_phoneVerificationCaptchaFailed": "reCAPTCHA認証に失敗しました。\nもう一度お試しください。",
+  "auth_phoneVerificationInvalidAppCredential": "アプリの認証情報が無効です。\nFirebase設定ファイルを確認してください。",
+  "auth_phoneVerificationStartFailed": "電話番号認証の開始に失敗しました: {error}",
+  "@auth_phoneVerificationStartFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "auth_unexpectedError": "エラーが発生しました: {error}",
+  "@auth_unexpectedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_firebaseNotConfigured": "Firebaseが設定されていません",
+  "auth_firebaseConfigGuide": "クラウドに保存するには、Firebase設定ファイルが必要です。\nFirebase Consoleから設定ファイルをダウンロードして配置してください。",
+  "auth_phoneSignInButton": "電話番号でクラウドに保存",
+  "auth_emailSignInButton": "メールアドレスでクラウドに保存",
+  "auth_googleSignInButton": "Googleでクラウドに保存",
+  "auth_appleSignInButton": "Appleアカウントでクラウドに保存",
+  "auth_emailLabel": "メールアドレス",
+  "auth_passwordLabel": "パスワード",
+  "auth_emailRequired": "メールアドレスを入力してください",
+  "auth_passwordRequired": "パスワードを入力してください",
+  "auth_passwordTooShort": "パスワードは6文字以上で入力してください",
+  "auth_forgotPassword": "パスワードを忘れた場合",
+  "auth_alreadyHaveAccount": "既にアカウントをお持ちの方はこちら",
+  "auth_createNewAccount": "新規登録はこちら",
+  "auth_sendResetEmailButton": "パスワードリセットメールを送信",
+  "auth_phoneNumberLabel": "電話番号",
+  "auth_phoneNumberHint": "09012345678 または +819012345678",
+  "auth_phoneNumberRequired": "電話番号を入力してください",
+  "auth_invalidPhoneNumber": "有効な電話番号を入力してください",
+  "auth_sendSmsCodeButton": "SMSコードを送信",
+  "auth_enterSmsCode": "SMSコードを入力してください",
+  "auth_smsCodeSentTo": "{phoneNumber} に送信しました",
+  "@auth_smsCodeSentTo": {
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "auth_smsCodeLabel": "SMSコード",
+  "auth_smsCodeHint": "6桁のコード",
+  "auth_smsCodeRequired": "SMSコードを入力してください",
+  "auth_smsCodeLength": "6桁のコードを入力してください",
+  "auth_resendCodeButton": "コードを再送信",
+  "auth_changePhoneNumberButton": "電話番号を変更",
+  "auth_cloudSyncDescription": "クラウドに保存すると、学習記録がクラウドに保存され、\n複数のデバイス間で同期されます。",
+  "auth_methodEmail": "メールアドレス",
+  "auth_methodPhone": "電話番号",
+  "auth_methodGoogle": "Googleアカウント",
+  "auth_methodApple": "Appleアカウント",
+  "auth_signUpButton": "新規登録",
+  "auth_signInButton": "クラウドに保存",
+  "auth_backButton": "戻る",
+  "auth_verifyButton": "認証する",
+  "rerollSlot": "この枠だけリロール",
+  "saveLearningRecord": "学習記録を保存",
+  "usingCloudWith": "{method}でクラウドを利用中",
+  "@usingCloudWith": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "problemCountRemaining": "(残 {filteredCount}問/{totalCount}問)",
+  "@problemCountRemaining": {
+    "placeholders": {
+      "filteredCount": {
+        "type": "int"
+      },
+      "totalCount": {
+        "type": "int"
+      }
+    }
+  },
+  "noExclusionAllCount": "除外なし 全{count}問",
+  "@noExclusionAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "problemCountOutOf": "({filteredCount}/{totalCount}問中)",
+  "@problemCountOutOf": {
+    "placeholders": {
+      "filteredCount": {
+        "type": "int"
+      },
+      "totalCount": {
+        "type": "int"
+      }
+    }
+  },
+
+  "problemCount": "{count}問",
+  "@problemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "latestNPrefix": "最新{n}回の",
+  "@latestNPrefix": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+
+  "category_congruence": "合同方程式",
+  "category_indeterminate": "不定方程式",
+  "category_factorization": "因数分解",
+  "category_factorization_desc": "因数分解の基礎から応用まで",
+  "category_recurrence": "漸化式",
+  "category_recurrence_desc": "漸化式の解法と応用",
+  "category_limits": "極限",
+  "category_limits_desc": "極限の計算と応用",
+  "category_integrals": "積分",
+  "category_integrals_desc": "積分計算の基礎から応用まで",
+  "category_physics_math": "物理数学",
+  "category_differential": "微分",
+  "category_differential_desc": "微分の計算と応用",
+  "category_series": "級数",
+  "category_series_desc": "級数の収束と発散",
+  "category_probability": "確率",
+  "category_probability_desc": "確率の基礎と応用",
+
+  "keyword_other": "その他",
+  "keyword_resonance": "共振",
+  "keyword_firstOrderHomogeneous": "一階斉次",
+  "keyword_homogeneous": "斉次",
+  "keyword_nonHomogeneous": "非斉次",
+  "keyword_university": "大学",
+
+  "cloudBackupConfirmTitle": "クラウドにデータをバックアップしますか？",
+
+  "gachaSuffix": "ガチャ",
+
+  "storekitTestTitle": "StoreKit Configuration テスト",
+  "storekitTestHeader": "StoreKit Configurationファイルのテスト",
+  "storekitTestDescription": "ネイティブのSKProductsRequestを使用して、商品情報が取得できるかテストします。",
+  "storekitTestButtonIndeterminateOption": "不定方程式オプション (160円) をテスト",
+  "storekitTestButtonFactorizationOption": "因数分解オプション (80円) をテスト",
+  "errorTitle": "エラー",
+  "storekitTestSucceeded": "テスト成功",
+  "storekitHowToReadResults": "テスト結果の見方",
+  "storekitResultSuccess": "✅ 成功: StoreKit Configurationファイルが正しく設定されています",
+  "storekitResultFailure": "❌ 失敗: StoreKit Configurationファイルが設定されていないか、商品IDが間違っています",
+  "storekitSimulatorNote": "注意: シミュレーターの場合、XcodeスキームでStoreKit Configurationファイルが設定されている必要があります。",
+  "storekitLabelProductId": "Product ID",
+  "storekitLabelTitle": "Title",
+  "storekitLabelDescription": "Description",
+  "storekitLabelPrice": "Price",
+  "storekitLabelPriceLocale": "Price Locale",
+  "storekitLabelLocalizedPrice": "Localized Price",
+
+  "equationLabel": "式",
+
+  "timerTooltipMinus1Min": "1分削減",
+  "timerTooltipMinus30Sec": "30秒削減",
+  "timerTooltipPlus30Sec": "30秒追加",
+  "timerTooltipPlus1Min": "1分追加",
+  "timerTooltipReset": "リセット",
+
+  "drawingToolPen": "ペン",
+  "drawingToolColor": "色",
+  "drawingToolWidth": "太さ",
+
+  "calculatorTooltipShow": "電卓を表示",
+  "calculatorTooltipClose": "電卓を閉じる",
+
+  "congruenceHintExample": "例: x≡ 2,3 (mod 5)",
+
+  "freeGachaSelectionInstruction": "履歴管理を行うガチャを2つ選んでください",
+  "freeGachaConfirmDialog": "{gacha1}と{gacha2}の学習履歴を管理します。よろしいですか？",
+  "@freeGachaConfirmDialog": {
+    "placeholders": {
+      "gacha1": { "type": "String" },
+      "gacha2": { "type": "String" }
+    }
+  },
+  "freeGachaEnabledMessage": "{gacha1}と{gacha2}の学習履歴が管理できるようになりました。",
+  "@freeGachaEnabledMessage": {
+    "placeholders": {
+      "gacha1": { "type": "String" },
+      "gacha2": { "type": "String" }
+    }
+  },
+  "freeGachaEnjoyMessage": "どうぞ本アプリをお楽しみ下さい 🔢",
+  "freeGachaProNote": "※ 選択した2つのガチャは無料で\n学習履歴の登録ができます\n※ Pro版({price})を購入すると全ガチャで\n履歴管理が可能になります",
+  "@freeGachaProNote": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "comingSoon": "Coming Soon",
+
+  "storeVersionLabel": "ストアバージョン: {storeVersion}",
+  "@storeVersionLabel": {
+    "placeholders": {
+      "storeVersion": { "type": "String" }
+    }
+  },
+
+  "auth_googleSignInFailed": "Google Sign-Inに失敗しました",
+  "auth_networkErrorCheckConnection": "ネットワークエラーが発生しました。\nインターネット接続を確認してください。",
+  "auth_appleSignInFailed": "Apple Sign-Inに失敗しました",
+  "auth_appleSignInFailedEnsureEnabled": "Apple Sign-Inに失敗しました。\nFirebase ConsoleでApple Sign-Inが有効になっているか確認してください。",
+  "auth_invalidCredentialTryAgain": "認証情報が無効です。\nもう一度お試しください。",
+  "auth_invalidIdTokenTryAgain": "認証トークンが無効です。\nもう一度お試しください。",
+  "auth_appleSignInNotConfigured": "Apple Sign-InがFirebase Consoleで設定されていません。\nFirebase Console > Authentication > Sign-in method で\nAppleを有効にしてください。",
+
+  "learningStatus_none": "未学習",
+  "learningStatus_solved": "解決済み",
+  "learningStatus_understood": "理解済み",
+  "learningStatus_failed": "失敗",
+
+  "learningStatusTooltip_none": "学習状態を選択",
+  "learningStatusTooltip_solved": "解けた",
+  "learningStatusTooltip_understood": "理解できた",
+  "learningStatusTooltip_failed": "できなかった"
+}

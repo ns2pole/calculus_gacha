@@ -1,0 +1,183 @@
+## Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+flutter_*.png
+
+# iOS
+.ios/Flutter/Flutter.framework
+.ios/Flutter/Flutter.podspec
+.ios/Flutter/Generated.xcconfig
+.ios/Flutter/ephemeral/
+.ios/Pods/
+.ios/Runner.xcworkspace/
+.ios/Runner/GeneratedPluginRegistrant.*
+
+# Android
+.android/
+app/build/
+*/build/
+local.properties
+
+# VS Code
+.vscode/
+
+# IntelliJ / Android Studio
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# Misc
+.DS_Store
+*.log
+*.lock
+*.swp
+*.tmp Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+vendor/bundle/
+
+# Ruby/Bundler
+.bundle/
+
+# CocoaPods
+ios/Pods/
+ios/Podfile.lock
+
+# Python virtual environments
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Service account keys (重要!)
+*.json
+!pubspec.json
+!analysis_options.json
+!devtools_options.yaml
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ruby
+.ruby-version
+
+# App Store Connect API Keys
+.appstoreconnect/
+*.p8
+
+# Firebase iOS (実ファイルはコピーで配置。リポジトリには example のみ)
+ios/GoogleService-Info.plist
+**/GoogleService-Info.plist
+!**/GoogleService-Info.plist.example
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# git-filter-repo 用（実際の置換ペアはここにだけ書く。コミットしない）
+scripts/filter-repo-replacements.local.txt
+
+# API Keys and secrets
+*_key.json
+*_keys.json
+*_private_key*
+*_secret*
+
+# Firebase (ローカル・CI のみ。実キーはコミットしない)
+lib/firebase_options.dart
+**/firebase_options.g.dart
+
+# 署名・ストア
+**/upload-keystore.jks
+**/*-keystore.jks
+android/key.properties
+
+# Build artifacts and distribution files
+Runner.app.dSYM.zip
+Runner.ipa
+*.dSYM.zip
+*.ipa
+*.app
+
+# Fastlane metadata (generated files)
+fastlane/metadata/
+
+# Ruby Gemfile (if generated)
+Gemfile
+Gemfile.lock
+
+# Release scripts (contains sensitive credentials)
+release.sh

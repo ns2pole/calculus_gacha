@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ユーザー認証チェック関数
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ユーザーが自分のデータにアクセスしているかチェック
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // ============================================================
+    // ユーザー設定へのアクセス
+    // ============================================================
+    match /users/{userId} {
+      // ユーザーは自分のドキュメントを読み書きできる
+      allow read, write: if isOwner(userId);
+      
+      // ============================================================
+      // 設定コレクション
+      // ============================================================
+      match /settings/{settingDoc} {
+        // ユーザーは自分の設定ドキュメントを読み書きできる
+        // settingDocには以下が含まれる:
+        // - user_settings
+        // - premium_purchased
+        // - gacha_settings (サブコレクションの親)
+        // - other_settings (サブコレクションの親)
+        allow read, write: if isOwner(userId);
+      }
+      
+      // ============================================================
+      // ガチャ設定サブコレクション
+      // ============================================================
+      // パス: users/{userId}/settings/gacha_settings/gacha_types/{gachaType}
+      // gacha_settingsはsettingsコレクションのドキュメント
+      match /settings/gacha_settings {
+        // ガチャ設定ドキュメント自体へのアクセス
+        allow read, write: if isOwner(userId);
+        
+        // ガチャタイプのサブコレクション
+        match /gacha_types/{gachaType} {
+          allow read, write: if isOwner(userId);
+        }
+        // コレクション全体をリストするクエリを許可（get()クエリ用）
+        match /gacha_types {
+          allow list: if isOwner(userId);
+        }
+      }
+      
+      // ============================================================
+      // その他の設定サブコレクション
+      // ============================================================
+      // パス: users/{userId}/settings/other_settings/keys/{key}
+      // other_settingsはsettingsコレクションのドキュメント
+      match /settings/other_settings {
+        // その他の設定ドキュメント自体へのアクセス
+        allow read, write: if isOwner(userId);
+        
+        // キーのサブコレクション
+        match /keys/{key} {
+          allow read, write: if isOwner(userId);
+        }
+        // コレクション全体をリストするクエリを許可（get()クエリ用）
+        match /keys {
+          allow list: if isOwner(userId);
+        }
+      }
+      
+      // ============================================================
+      // 学習記録コレクション
+      // ============================================================
+      // パス: users/{userId}/learning_records/{problemId}
+      match /learning_records/{problemId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+  }
+}

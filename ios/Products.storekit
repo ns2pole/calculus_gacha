@@ -1,0 +1,131 @@
+{
+  "identifier" : "Products",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "160",
+      "familyShareable" : false,
+      "identifier" : "indefinite_equation_option_160yen",
+      "localizations" : [
+        {
+          "description" : "不定方程式ガチャを利用可能にします",
+          "displayName" : "不定方程式オプション",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "Enables the indefinite equation gacha",
+          "displayName" : "Indefinite Equation Option",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "indefinite_equation_option_160yen",
+      "referenceName" : "Indefinite Equation Option",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "80",
+      "familyShareable" : false,
+      "identifier" : "factorization_double_option_80yen",
+      "localizations" : [
+        {
+          "description" : "因数分解ガチャを利用可能にします",
+          "displayName" : "因数分解オプション",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "Enables the factorization gacha",
+          "displayName" : "Factorization Option",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "factorization_double_option_80yen",
+      "referenceName" : "Factorization Option",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "500",
+      "familyShareable" : false,
+      "identifier" : "Learning_history_option_500yen",
+      "localizations" : [
+        {
+          "description" : "全ガチャの学習履歴の登録が行えます",
+          "displayName" : "Pro版 - 学習履歴機能",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "Enables learning history registration for all gachas",
+          "displayName" : "Pro Version - Learning History",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "Learning_history_option_500yen",
+      "referenceName" : "Pro Version - Learning History",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
+
+
+
+
+
+
