@@ -1,12 +1,13 @@
-# Builds Flutter web and publishes to the gh-pages branch for GitHub Pages.
+# Flutter Web → GitHub Pages（公式: upload-pages-artifact + deploy-pages）
 #
-# After the first successful run:
-#   Repository → Settings → Pages → Build and deployment → Source: Deploy from a branch
-#   Branch: gh-pages / root
+# リポジトリで一度だけ設定:
+#   Settings → Pages → Build and deployment → Source: GitHub Actions
+# （「Deploy from a branch: main」だと README だけが表示され、アプリは出ません）
 #
-# Site URL:
-#   - Project site: https://<owner>.github.io/<repo>/
-#   - User/org site (repo named <owner>.github.io): https://<owner>.github.io/
+# URL: https://<owner>.github.io/<repo>/
+# 例: https://ns2pole.github.io/calculus_gacha/
+#
+# https://docs.github.com/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 name: Deploy Web to GitHub Pages
 
 on:
@@ -17,14 +18,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: github-pages
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -55,13 +58,21 @@ jobs:
       - name: SPA fallback for GitHub Pages
         run: cp build/web/index.html build/web/404.html
 
-      # Jekyll を無効化（Flutter のアセットで _ 始まりのパスが欠落するのを防ぐ）
       - name: Disable Jekyll
         run: touch build/web/.nojekyll
 
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
-          force_orphan: true
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

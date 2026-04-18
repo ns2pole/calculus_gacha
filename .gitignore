@@ -106,6 +106,7 @@ __pycache__/
 !pubspec.json
 !analysis_options.json
 !devtools_options.yaml
+!web/manifest.json
 
 # macOS
 .DS_Store

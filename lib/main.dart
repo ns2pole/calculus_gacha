@@ -214,11 +214,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: appNavigatorKey, // ← 同じキーを MaterialApp に渡す
       debugShowCheckedModeBanner: false,
-      title: 'JoyMath',
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: ThemeData(primarySwatch: Colors.blue),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      // Locale policy: show Japanese only for `ja`, otherwise force English.
+      // Web 含む: ブラウザ／OS が `ja` のとき日本語、それ以外は英語。
       localeResolutionCallback: (locale, supportedLocales) {
         return normalizeAppLocale(locale);
       },
