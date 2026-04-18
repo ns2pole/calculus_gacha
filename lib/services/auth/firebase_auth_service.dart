@@ -35,9 +35,8 @@ class LoginLockedException implements Exception {
 /// メール/パスワード、電話番号認証、Google認証、Apple Sign-Inをサポート
 class FirebaseAuthService {
   static AppLocalizations _l10n() {
-    // Service layer has no BuildContext; use platform locale.
-    final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
-    final locale = normalizeAppLocale(systemLocale);
+    final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
+    final locale = resolveAppLocale(deviceLocale, AppLocalizations.supportedLocales);
     return lookupAppLocalizations(locale);
   }
 

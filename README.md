@@ -17,8 +17,8 @@ See: [Configuring a publishing source for GitHub Pages](https://docs.github.com/
 
 ## Localization
 
-- Browser / OS language **Japanese (`ja`)** → Japanese UI (e.g. **【極】微積ガチャ！**).
-- Any other language → English UI (e.g. **[Extreme] Calculus Gacha!**).
+- **Web:** Uses the browser language list (same order as the language settings / `Accept-Language`). If any preferred language is **Japanese (`ja`)**, the UI is Japanese; otherwise **English**.
+- **iOS / Android:** Uses the OS locale the same way (`ja` → Japanese, else English).
 
 ---
 

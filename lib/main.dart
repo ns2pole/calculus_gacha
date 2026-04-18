@@ -121,7 +121,7 @@ void main() async {
         iosId: '6753078774',
         androidId: 'com.joymath',
         skipDays: 3,
-        navigatorKey: appNavigatorKey, // ← ここを必ず渡す
+        navigatorKey: appNavigatorKey,
         // forceShowForDebug: true, // デバッグ時に強制表示したいなら有効化
       ).checkOnAppStart();
     }
@@ -212,16 +212,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: appNavigatorKey, // ← 同じキーを MaterialApp に渡す
+      navigatorKey: appNavigatorKey,
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: ThemeData(primarySwatch: Colors.blue),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      // Web 含む: ブラウザ／OS が `ja` のとき日本語、それ以外は英語。
-      localeResolutionCallback: (locale, supportedLocales) {
-        return normalizeAppLocale(locale);
-      },
+      localeResolutionCallback: resolveAppLocale,
       home: const HomePage(),
     );
   }
