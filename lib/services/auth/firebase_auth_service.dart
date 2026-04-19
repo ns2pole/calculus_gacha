@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import '../../l10n/app_localizations.dart';
 import '../../utils/locale_utils.dart';
@@ -34,6 +34,19 @@ class LoginLockedException implements Exception {
 /// Firebase認証サービス
 /// メール/パスワード、電話番号認証、Google認証、Apple Sign-Inをサポート
 class FirebaseAuthService {
+  static bool get _isIosPlatform =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+
+  static bool get _isAndroidPlatform =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  static String get _platformLabel {
+    if (kIsWeb) return 'Web';
+    if (_isIosPlatform) return 'iOS';
+    if (_isAndroidPlatform) return 'Android';
+    return defaultTargetPlatform.name;
+  }
+
   static AppLocalizations _l10n() {
     final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
     final locale = resolveAppLocale(deviceLocale, AppLocalizations.supportedLocales);
@@ -357,7 +370,7 @@ class FirebaseAuthService {
 
       print('Starting phone number verification...');
       print('Phone number: $phoneNumber');
-      print('Platform: ${Platform.isIOS ? "iOS" : Platform.isAndroid ? "Android" : "Unknown"}');
+      print('Platform: $_platformLabel');
       await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
@@ -485,7 +498,7 @@ class FirebaseAuthService {
 
       // AndroidでのApple Sign-Inは複雑で、Web認証の設定が必要
       // 通常はiOSでのみ使用することを推奨
-      if (Platform.isAndroid) {
+      if (_isAndroidPlatform) {
         print('⚠️ Apple Sign-In on Android requires complex web authentication setup.');
         print('⚠️ It is recommended to use Apple Sign-In on iOS only.');
       }
@@ -505,7 +518,7 @@ class FirebaseAuthService {
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
-        webAuthenticationOptions: Platform.isAndroid
+        webAuthenticationOptions: _isAndroidPlatform
             ? WebAuthenticationOptions(
                 // WebクライアントID（Google Cloud Consoleで作成）
                 clientId: '845759015866-mdr1mcgspe3jg0poirh7q47pln8sb934.apps.googleusercontent.com',
@@ -626,7 +639,7 @@ class FirebaseAuthService {
       print('Stack trace: $stackTrace');
       
       // Androidでのエラーの場合、特別なメッセージを表示
-      if (Platform.isAndroid) {
+      if (_isAndroidPlatform) {
         print('');
         print('⚠️ Apple Sign-In failed on Android.');
         print('⚠️ Apple Sign-In on Android requires:');

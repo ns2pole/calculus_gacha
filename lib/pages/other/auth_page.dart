@@ -1,8 +1,8 @@
 // lib/pages/auth_page.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'dart:io' show Platform;
 import '../../l10n/app_localizations.dart';
 import '../../services/auth/firebase_auth_service.dart';
 import '../../services/problems/simple_data_manager.dart';
@@ -792,7 +792,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 
                 // 4. iOSのみAppleアカウントでクラウドに保存
-                if (Platform.isIOS) ...[
+                if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) ...[
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,

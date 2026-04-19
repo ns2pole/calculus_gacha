@@ -29,7 +29,7 @@ enum AnswerDisplayMode { none, answer, explanation }
 
 // iPad検出用のヘルパー関数（エクスポート）
 bool isIPad(BuildContext context) {
-  if (!Platform.isIOS) return false;
+  if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) return false;
   final screenSize = MediaQuery.of(context).size;
   final shortestSide = screenSize.shortestSide;
   // iPadの最小サイズは768pt（物理ピクセル）
