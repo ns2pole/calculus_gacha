@@ -31,6 +31,19 @@ class LoginLockedException implements Exception {
   }
 }
 
+class GoogleSignInFailedException implements Exception {
+  final String code;
+  final String? message;
+
+  GoogleSignInFailedException({
+    required this.code,
+    this.message,
+  });
+
+  @override
+  String toString() => message == null ? code : '$code: $message';
+}
+
 /// Firebase認証サービス
 /// メール/パスワード、電話番号認証、Google認証、Apple Sign-Inをサポート
 class FirebaseAuthService {
@@ -310,13 +323,44 @@ class FirebaseAuthService {
 
   /// Google認証でログイン
   static Future<UserCredential?> signInWithGoogle() async {
+    if (!_isFirebaseInitialized) {
+      print('Error: Firebase not initialized');
+      return null;
+    }
+
+    return kIsWeb ? _signInWithGoogleOnWeb() : _signInWithGoogleOnNative();
+  }
+
+  static Future<UserCredential?> _signInWithGoogleOnWeb() async {
     try {
-      if (!_isFirebaseInitialized) {
-        print('Error: Firebase not initialized');
+      final provider = GoogleAuthProvider()
+        ..setCustomParameters({'prompt': 'select_account'});
+
+      return await _auth.signInWithPopup(provider);
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException signing in with Google on Web:');
+      print('  Code: ${e.code}');
+      print('  Message: ${e.message}');
+
+      if (e.code == 'popup-closed-by-user' ||
+          e.code == 'user-cancelled' ||
+          e.code == 'cancelled-popup-request') {
         return null;
       }
 
-      // Google Sign-Inのインスタンスを作成
+      rethrow;
+    } catch (e, stackTrace) {
+      print('Error signing in with Google on Web: $e');
+      print('Stack trace: $stackTrace');
+      throw GoogleSignInFailedException(
+        code: 'web-google-sign-in-failed',
+        message: e.toString(),
+      );
+    }
+  }
+
+  static Future<UserCredential?> _signInWithGoogleOnNative() async {
+    try {
       // Android/iOS共通の実装
       final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'profile'],
@@ -346,9 +390,18 @@ class FirebaseAuthService {
       // 通常のサインイン
       final userCredential = await _auth.signInWithCredential(credential);
       return userCredential;
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException signing in with Google:');
+      print('  Code: ${e.code}');
+      print('  Message: ${e.message}');
+      rethrow;
+    } catch (e, stackTrace) {
       print('Error signing in with Google: $e');
-      return null;
+      print('Stack trace: $stackTrace');
+      throw GoogleSignInFailedException(
+        code: 'native-google-sign-in-failed',
+        message: e.toString(),
+      );
     }
   }
 

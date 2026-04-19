@@ -1,6 +1,7 @@
 // lib/pages/home_page.dart
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -311,8 +312,14 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                   title: l10n.scratchPaper,
                   subtitle: '',
                   color: Colors.teal,
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ScratchPaperPage()));
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ScratchPaperPage()),
+                    );
+                    if (result == true) {
+                      updateProgress();
+                    }
                   },
                 ),
                 
@@ -367,7 +374,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // 同期ボタン
-                      const _SyncButton(),
+                      _SyncButton(onSynced: updateProgress),
                       const SizedBox(width: 8),
                       // アカウントアイコン
                       PopupMenuButton<String>(
@@ -1191,7 +1198,9 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
 
 /// Firebaseクラウドデータとの同期ボタン
 class _SyncButton extends StatefulWidget {
-  const _SyncButton();
+  final VoidCallback? onSynced;
+
+  const _SyncButton({this.onSynced});
 
   @override
   State<_SyncButton> createState() => _SyncButtonState();
@@ -1209,21 +1218,26 @@ class _SyncButtonState extends State<_SyncButton> {
     });
 
     try {
-      // ローカルデータをFirestoreに同期（並列実行で高速化）
-      await Future.wait([
-        SimpleDataManager.syncLocalDataToFirestore(),
-        SimpleDataManager.syncLocalSettingsToFirestore(),
-      ], eagerError: false);
-      
-      // Firestoreからデータを取得してマージ（エラーが発生しても続行）
-      try {
-        await SimpleDataManager.initialize();
-      } catch (e) {
-        print('Warning: Error initializing from Firestore: $e');
-        // 初期化エラーは無視（ローカルデータは既に同期済み）
+      if (kIsWeb) {
+        await SimpleDataManager.ensureWebCloudSyncReady(force: true);
+      } else {
+        // ローカルデータをFirestoreに同期（並列実行で高速化）
+        await Future.wait([
+          SimpleDataManager.syncLocalDataToFirestore(),
+          SimpleDataManager.syncLocalSettingsToFirestore(),
+        ], eagerError: false);
+        
+        // Firestoreからデータを取得してマージ（エラーが発生しても続行）
+        try {
+          await SimpleDataManager.initialize();
+        } catch (e) {
+          print('Warning: Error initializing from Firestore: $e');
+          // 初期化エラーは無視（ローカルデータは既に同期済み）
+        }
       }
       
       if (mounted) {
+        widget.onSynced?.call();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.syncCompleted),

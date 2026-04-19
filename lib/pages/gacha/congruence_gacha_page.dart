@@ -581,7 +581,16 @@ class _CongruenceGachaPageState extends State<CongruenceGachaPage> {
       current[j] = {'status': ProblemStatus.none, 'time': null};
     }
 
-    await SimpleDataManager.saveLearningHistory(mathProblem, current);
+    final success = await SimpleDataManager.saveLearningHistory(mathProblem, current);
+    if (!success) {
+      await SimpleDataManager.ensureWebCloudSyncReady(force: true);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.learningRecordSaveFailed),
+        ),
+      );
+    }
   }
 
   void _nextProblem() {

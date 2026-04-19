@@ -2646,10 +2646,12 @@ class _ScratchPaperPageState extends State<ScratchPaperPage> with WidgetsBinding
         _showSnackBar(l10n.learningRecordSaved);
         Navigator.pop(context, true);
       } else {
+        await SimpleDataManager.ensureWebCloudSyncReady(force: true);
         _showSnackBar(l10n.learningRecordSaveFailed);
       }
     } catch (e) {
       print('Error saving learning record: $e');
+      await SimpleDataManager.ensureWebCloudSyncReady(force: true);
       final l10n = AppLocalizations.of(context)!;
       _showSnackBar(l10n.learningRecordSaveFailed);
     }

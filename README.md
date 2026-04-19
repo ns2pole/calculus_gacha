@@ -43,6 +43,12 @@ See: [Configuring a publishing source for GitHub Pages](https://docs.github.com/
 4. Push to `main` (or re-run **Deploy Web to GitHub Pages**). The workflow runs  
    `dart run tool/inject_firebase_web_options.dart` before `flutter build web`.
 
+For **Google sign-in on Web**, also confirm:
+- **Authentication → Sign-in method → Google** is enabled.
+- The deployed site opens from **`https://ns2pole.github.io/calculus_gacha/`**.
+- If Google sign-in fails only on Web, check the browser error message for
+  `unauthorized-domain` or popup-blocking and then re-check Firebase Auth settings.
+
 **Local web:** paste the same values into `lib/firebase_web_options.dart` (do not commit).
 
 ## Other secrets (do not commit)

@@ -1,5 +1,6 @@
 // lib/services/simple_data_manager.dart
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
@@ -28,6 +29,114 @@ class SimpleDataManager {
   // ============================================================================
   static final Map<String, List<Map<String, dynamic>>> _learningHistoryCache = {};
   static final Map<String, Map<String, dynamic>> _learningDataCache = {};
+  static Future<void>? _webCloudSyncFuture;
+  static String? _webCloudReadyUserId;
+
+  static bool get _isWebCloudAuthoritative =>
+      kIsWeb &&
+      FirebaseAuthService.isAuthenticated &&
+      FirebaseAuthService.userId != null;
+
+  static Future<void> ensureWebCloudSyncReady({bool force = false}) async {
+    if (!_isWebCloudAuthoritative) {
+      _webCloudReadyUserId = null;
+      return;
+    }
+
+    final userId = FirebaseAuthService.userId!;
+    if (!force && _webCloudReadyUserId == userId && _webCloudSyncFuture == null) {
+      return;
+    }
+
+    if (_webCloudSyncFuture != null) {
+      await _webCloudSyncFuture;
+      if (!force && _webCloudReadyUserId == userId) {
+        return;
+      }
+    }
+
+    _webCloudSyncFuture = () async {
+      try {
+        await initialize();
+      } finally {
+        if (FirebaseAuthService.userId == userId) {
+          _webCloudReadyUserId = userId;
+        }
+        _webCloudSyncFuture = null;
+      }
+    }();
+
+    await _webCloudSyncFuture;
+  }
+
+  static void _cacheLearningDataForProblem(
+    String problemId,
+    Map<String, dynamic> data,
+  ) {
+    final normalizedData = Map<String, dynamic>.from(data);
+    _learningDataCache[problemId] = normalizedData;
+    _learningHistoryCache[problemId] = _normalizeLearningHistoryList(
+      normalizedData['history'] as List? ?? const [],
+    );
+  }
+
+  static List<Map<String, dynamic>> _normalizeLearningHistoryList(List? history) {
+    return (history ?? const [])
+        .whereType<Map>()
+        .map((item) {
+          final status = item['status'];
+          final time = item['time'];
+          String normalizedStatus;
+          switch (status) {
+            case 'solved':
+              normalizedStatus = 'solved';
+              break;
+            case 'understood':
+              normalizedStatus = 'understood';
+              break;
+            case 'failed':
+              normalizedStatus = 'failed';
+              break;
+            default:
+              normalizedStatus = 'none';
+          }
+          return {
+            'status': normalizedStatus,
+            'time': time is String ? time : null,
+          };
+        })
+        .toList();
+  }
+
+  static Future<void> _clearLocalLearningMirror(
+    SharedPreferences prefs,
+  ) async {
+    final learningKeys = prefs
+        .getKeys()
+        .where((key) => key.startsWith('$_namespace/learning/'))
+        .toList();
+    for (final key in learningKeys) {
+      await prefs.remove(key);
+    }
+    _learningHistoryCache.clear();
+    _learningDataCache.clear();
+  }
+
+  static Future<void> _clearWebManagedSettingMirror(
+    SharedPreferences prefs,
+  ) async {
+    final managedKeys = prefs
+        .getKeys()
+        .where(
+          (key) =>
+              key.startsWith('$_namespace/gacha/') ||
+              key == '$_namespace/user_settings',
+        )
+        .toList();
+    for (final key in managedKeys) {
+      await prefs.remove(key);
+    }
+  }
   
   // ============================================================================
   // 初期化とバージョン管理
@@ -92,6 +201,22 @@ class SimpleDataManager {
         }
         print('Error getting learning records from Firestore for user: $userId - $e');
         firestoreRecords = {};
+      }
+
+      if (_isWebCloudAuthoritative) {
+        await _clearLocalLearningMirror(prefs);
+        for (final entry in firestoreRecords.entries) {
+          final problemId = entry.key;
+          final firestoreData = Map<String, dynamic>.from(entry.value);
+          final localKey = '$_namespace/learning/$problemId';
+          await prefs.setString(localKey, json.encode(firestoreData));
+          _cacheLearningDataForProblem(problemId, firestoreData);
+        }
+
+        await _syncSettingsFromFirestore(userId);
+        await prefs.setString(syncKey, DateTime.now().toIso8601String());
+        AppLogger.success('Firestoreからのデータ同期が完了しました');
+        return;
       }
       
       // ローカルデータとマージ（最新のタイムスタンプを優先）
@@ -318,6 +443,7 @@ class SimpleDataManager {
         
         // マージしたデータをローカルに保存
         await prefs.setString(localKey, json.encode(mergedData));
+        _cacheLearningDataForProblem(problemId, mergedData);
         print('🔍 [History Merge] Saved merged data for problem: $problemId');
       }
       
@@ -383,6 +509,10 @@ class SimpleDataManager {
         AppLogger.warning('設定の同期をスキップしました', details: '空の設定が返されました（権限エラーの可能性）');
         return;
       }
+
+      if (_isWebCloudAuthoritative) {
+        await _clearWebManagedSettingMirror(prefs);
+      }
       
       // ガチャ設定を同期
       final gachaSettings = allSettings['gacha_settings'] as Map<String, Map<String, dynamic>>?;
@@ -395,6 +525,12 @@ class SimpleDataManager {
           final localDataString = prefs.getString(localKey);
           
           Map<String, dynamic> mergedSettings;
+
+          if (_isWebCloudAuthoritative) {
+            mergedSettings = Map<String, dynamic>.from(firestoreSettings);
+            await prefs.setString(localKey, json.encode(mergedSettings));
+            continue;
+          }
           
           if (localDataString != null) {
             final localSettings = json.decode(localDataString) as Map<String, dynamic>;
@@ -465,66 +601,72 @@ class SimpleDataManager {
         final localDataString = prefs.getString(localKey);
         
         Map<String, dynamic> mergedSettings;
-        
-        if (localDataString != null) {
-          final localSettings = json.decode(localDataString) as Map<String, dynamic>;
-          
-          // タイムスタンプを比較して新しい方を優先
-          final firestoreTime = userSettings['lastUpdated'] as String?;
-          final localTime = localSettings['lastUpdated'] as String?;
-          
-          if (firestoreTime != null && localTime != null) {
-            try {
-              final firestoreDateTime = DateTime.parse(firestoreTime);
-              final localDateTime = DateTime.parse(localTime);
-              
-              if (firestoreDateTime.isAfter(localDateTime)) {
-                mergedSettings = userSettings;
-              } else {
-                mergedSettings = localSettings;
-              }
-            } catch (e) {
-              // パースエラー時はパースに成功した方を採用
-              DateTime? firestoreDateTime;
-              DateTime? localDateTime;
-              
-              try {
-                firestoreDateTime = DateTime.parse(firestoreTime);
-              } catch (e) {
-                // Firestoreのパース失敗
-              }
-              
-              try {
-                localDateTime = DateTime.parse(localTime);
-              } catch (e) {
-                // ローカルのパース失敗
-              }
-              
-              if (firestoreDateTime != null && localDateTime != null) {
-                // 両方成功した場合は比較（通常はここには来ない）
-                mergedSettings = firestoreDateTime.isAfter(localDateTime) ? userSettings : localSettings;
-              } else if (firestoreDateTime != null) {
-                // Firestoreのみ成功
-                mergedSettings = userSettings;
-              } else if (localDateTime != null) {
-                // ローカルのみ成功
-                mergedSettings = localSettings;
-              } else {
-                // 両方失敗した場合はFirestoreを優先（新しい物を採用の方針）
-                mergedSettings = userSettings;
-              }
-            }
-          } else if (firestoreTime != null) {
-            mergedSettings = userSettings;
-          } else {
-            mergedSettings = localSettings;
-          }
+
+        if (_isWebCloudAuthoritative) {
+          mergedSettings = Map<String, dynamic>.from(userSettings);
+          await prefs.setString(localKey, json.encode(mergedSettings));
         } else {
-          mergedSettings = userSettings;
-        }
         
-        // マージした設定をローカルに保存
-        await prefs.setString(localKey, json.encode(mergedSettings));
+          if (localDataString != null) {
+            final localSettings = json.decode(localDataString) as Map<String, dynamic>;
+            
+            // タイムスタンプを比較して新しい方を優先
+            final firestoreTime = userSettings['lastUpdated'] as String?;
+            final localTime = localSettings['lastUpdated'] as String?;
+            
+            if (firestoreTime != null && localTime != null) {
+              try {
+                final firestoreDateTime = DateTime.parse(firestoreTime);
+                final localDateTime = DateTime.parse(localTime);
+                
+                if (firestoreDateTime.isAfter(localDateTime)) {
+                  mergedSettings = userSettings;
+                } else {
+                  mergedSettings = localSettings;
+                }
+              } catch (e) {
+                // パースエラー時はパースに成功した方を採用
+                DateTime? firestoreDateTime;
+                DateTime? localDateTime;
+                
+                try {
+                  firestoreDateTime = DateTime.parse(firestoreTime);
+                } catch (e) {
+                  // Firestoreのパース失敗
+                }
+                
+                try {
+                  localDateTime = DateTime.parse(localTime);
+                } catch (e) {
+                  // ローカルのパース失敗
+                }
+                
+                if (firestoreDateTime != null && localDateTime != null) {
+                  // 両方成功した場合は比較（通常はここには来ない）
+                  mergedSettings = firestoreDateTime.isAfter(localDateTime) ? userSettings : localSettings;
+                } else if (firestoreDateTime != null) {
+                  // Firestoreのみ成功
+                  mergedSettings = userSettings;
+                } else if (localDateTime != null) {
+                  // ローカルのみ成功
+                  mergedSettings = localSettings;
+                } else {
+                  // 両方失敗した場合はFirestoreを優先（新しい物を採用の方針）
+                  mergedSettings = userSettings;
+                }
+              }
+            } else if (firestoreTime != null) {
+              mergedSettings = userSettings;
+            } else {
+              mergedSettings = localSettings;
+            }
+          } else {
+            mergedSettings = userSettings;
+          }
+          
+          // マージした設定をローカルに保存
+          await prefs.setString(localKey, json.encode(mergedSettings));
+        }
       }
       
       // 注意: Pro購入情報はFirebaseから取得しない（RevenueCatで管理）
@@ -562,6 +704,11 @@ class SimpleDataManager {
   /// ローカル設定をFirestoreに同期（認証時に呼び出す）
   static Future<void> syncLocalSettingsToFirestore() async {
     try {
+      if (_isWebCloudAuthoritative) {
+        print('Web cloud-first mode: skipping bulk local settings upload');
+        return;
+      }
+
       if (!FirebaseAuthService.isAuthenticated) {
         print('User not authenticated, skipping Firestore settings sync');
         return;
@@ -761,6 +908,11 @@ class SimpleDataManager {
   /// ローカルデータをFirestoreに同期（認証時に呼び出す）
   static Future<void> syncLocalDataToFirestore() async {
     try {
+      if (_isWebCloudAuthoritative) {
+        print('Web cloud-first mode: skipping bulk local data upload');
+        return;
+      }
+
       if (!FirebaseAuthService.isAuthenticated) {
         print('User not authenticated, skipping Firestore sync');
         return;
@@ -934,6 +1086,7 @@ class SimpleDataManager {
       
       // 常にSharedPreferencesに保存
       await prefs.setString(key, json.encode(existingData));
+      _cacheLearningDataForProblem(problem.id, existingData);
       
       // 認証済みユーザーの場合、Firestoreにも同時に保存
       if (FirebaseAuthService.isAuthenticated) {
@@ -949,11 +1102,17 @@ class SimpleDataManager {
               print('Successfully saved learning record to Firestore for problem ${problem.id}');
             } else {
               print('Warning: Failed to save learning record to Firestore for problem ${problem.id}');
+              if (_isWebCloudAuthoritative) {
+                return false;
+              }
             }
           } catch (e, stackTrace) {
             print('Error saving to Firestore (continuing with local save): $e');
             print('Stack trace: $stackTrace');
             // Firestoreエラー時はローカルのみで動作継続
+            if (_isWebCloudAuthoritative) {
+              return false;
+            }
           }
         } else {
           print('Warning: User ID is null, skipping Firestore sync');
@@ -973,8 +1132,18 @@ class SimpleDataManager {
   /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<LearningStatus> getLearningRecord(MathProblem problem) async {
     try {
+      if (_isWebCloudAuthoritative) {
+        await ensureWebCloudSyncReady();
+      }
+
       // まずローカルデータを即座に取得（遅延なし）
       final localData = await _getLearningData(problem);
+      if (_isWebCloudAuthoritative) {
+        final statusKey = localData['latestStatus'] as String?;
+        return statusKey != null
+            ? LearningStatusExtension.fromKey(statusKey)
+            : LearningStatus.none;
+      }
       
       // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）
       if (FirebaseAuthService.isAuthenticated) {
@@ -994,6 +1163,7 @@ class SimpleDataManager {
                 final prefs = await SharedPreferences.getInstance();
                 final key = '$_namespace/learning/${problem.id}';
                 await prefs.setString(key, json.encode(firestoreData));
+                _cacheLearningDataForProblem(problem.id, firestoreData);
                 print('Background sync: Updated local data from Firestore for problem ${problem.id}');
               } catch (e) {
                 print('Error saving Firestore data to local: $e');
@@ -1024,12 +1194,21 @@ class SimpleDataManager {
   /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<List<Map<String, dynamic>>> getLearningHistory(MathProblem problem) async {
     try {
+      if (_isWebCloudAuthoritative) {
+        await ensureWebCloudSyncReady();
+      }
+
       // まずローカルデータを即座に取得（遅延なし）
       final cached = _learningHistoryCache[problem.id];
       if (cached != null) return cached;
 
       final localData = await _getLearningData(problem);
       final history = List<Map<String, dynamic>>.from(localData['history'] ?? []);
+      if (_isWebCloudAuthoritative) {
+        final normalizedHistory = _normalizeLearningHistoryList(history);
+        _learningHistoryCache[problem.id] = normalizedHistory;
+        return normalizedHistory;
+      }
       
       // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）
       if (FirebaseAuthService.isAuthenticated) {
@@ -1051,6 +1230,7 @@ class SimpleDataManager {
                 final updatedLocalData = await _getLearningData(problem);
                 updatedLocalData['history'] = firestoreHistory;
                 await prefs.setString(key, json.encode(updatedLocalData));
+                _cacheLearningDataForProblem(problem.id, updatedLocalData);
                 print('Background sync: Updated local history from Firestore for problem ${problem.id}');
               } catch (e) {
                 print('Error saving Firestore history to local: $e');
@@ -1064,31 +1244,7 @@ class SimpleDataManager {
       }
       
       // 移行処理：古い形式のデータを新しい形式に変換
-      final migratedHistory = history.map((h) {
-        final status = h['status'] as String?;
-        final time = h['time'] as String?;
-        
-        // 古い形式（LearningStatus.key）を新しい形式（ProblemStatus.name）に変換
-        String newStatus;
-        switch (status) {
-          case 'solved':
-            newStatus = 'solved';
-            break;
-          case 'understood':
-            newStatus = 'understood';
-            break;
-          case 'failed':
-            newStatus = 'failed';
-            break;
-          default:
-            newStatus = 'none';
-        }
-        
-        return {
-          'status': newStatus,
-          'time': time,
-        };
-      }).toList();
+      final migratedHistory = _normalizeLearningHistoryList(history);
       
       // ローカルデータを即座に返す
       _learningHistoryCache[problem.id] = migratedHistory;
@@ -1108,6 +1264,10 @@ class SimpleDataManager {
   static Future<Map<String, List<Map<String, dynamic>>>> getLearningHistoryMap(
     Iterable<String> problemIds,
   ) async {
+    if (_isWebCloudAuthoritative) {
+      await ensureWebCloudSyncReady();
+    }
+
     final ids = problemIds.toSet();
     if (ids.isEmpty) return {};
 
@@ -1134,40 +1294,8 @@ class SimpleDataManager {
         final decoded = json.decode(dataString);
         if (decoded is Map<String, dynamic>) {
           final historyAny = decoded['history'];
-          final history = <Map<String, dynamic>>[];
-          if (historyAny is List) {
-            for (final h in historyAny) {
-              if (h is Map) {
-                final status = h['status'];
-                final time = h['time'];
-                history.add({
-                  'status': status is String ? status : 'none',
-                  'time': time is String ? time : null,
-                });
-              }
-            }
-          }
-
-          // 既存の移行ルールと同じく正規化（未知はnoneへ）
-          final migratedHistory = history.map((h) {
-            final status = h['status'] as String?;
-            final time = h['time'] as String?;
-            String newStatus;
-            switch (status) {
-              case 'solved':
-                newStatus = 'solved';
-                break;
-              case 'understood':
-                newStatus = 'understood';
-                break;
-              case 'failed':
-                newStatus = 'failed';
-                break;
-              default:
-                newStatus = 'none';
-            }
-            return {'status': newStatus, 'time': time};
-          }).toList();
+          final migratedHistory =
+              _normalizeLearningHistoryList(historyAny is List ? historyAny : const []);
 
           _learningHistoryCache[id] = migratedHistory;
           out[id] = migratedHistory;
@@ -1266,11 +1394,17 @@ class SimpleDataManager {
               print('Successfully saved learning history to Firestore for problem ${problem.id}');
             } else {
               print('Warning: Failed to save learning history to Firestore for problem ${problem.id}');
+              if (_isWebCloudAuthoritative) {
+                return false;
+              }
             }
           } catch (e, stackTrace) {
             print('Error saving history to Firestore (continuing with local save): $e');
             print('Stack trace: $stackTrace');
             // Firestoreエラー時はローカルのみで動作継続
+            if (_isWebCloudAuthoritative) {
+              return false;
+            }
           }
         } else {
           print('Warning: User ID is null, skipping Firestore sync');
@@ -1411,6 +1545,10 @@ class SimpleDataManager {
   /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<Map<String, dynamic>> getGachaSettings(String gachaType) async {
     try {
+      if (_isWebCloudAuthoritative) {
+        await ensureWebCloudSyncReady();
+      }
+
       // まずローカルデータを即座に取得（遅延なし）
       final prefs = await SharedPreferences.getInstance();
       final key = '$_namespace/gacha/$gachaType';
@@ -1426,6 +1564,9 @@ class SimpleDataManager {
         }
       } else {
         localSettings = _getDefaultGachaSettings();
+      }
+      if (_isWebCloudAuthoritative) {
+        return localSettings;
       }
       
       // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）

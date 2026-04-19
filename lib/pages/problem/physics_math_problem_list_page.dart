@@ -329,7 +329,16 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
     }
 
     // SimpleDataManagerに保存
-    await SimpleDataManager.saveLearningHistory(p, current);
+    final success = await SimpleDataManager.saveLearningHistory(p, current);
+    if (!success) {
+      await SimpleDataManager.ensureWebCloudSyncReady(force: true);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_l10n.learningRecordSaveFailed)),
+      );
+      setState(() {});
+      return;
+    }
     if (!mounted) return;
     setState(() {});
   }

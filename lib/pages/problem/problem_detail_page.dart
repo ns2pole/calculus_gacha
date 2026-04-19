@@ -151,7 +151,21 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     }
     
     // 保存
-    await SimpleDataManager.saveLearningHistory(widget.problem, sortedHistory);
+    final success = await SimpleDataManager.saveLearningHistory(
+      widget.problem,
+      sortedHistory,
+    );
+    if (!success) {
+      await SimpleDataManager.ensureWebCloudSyncReady(force: true);
+      if (!mounted) return;
+      await _loadHistory();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.learningRecordSaveFailed),
+        ),
+      );
+      return;
+    }
     
     // 再読み込み
     await _loadHistory();
@@ -170,7 +184,21 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
       'time': null,
     }).toList();
     
-    await SimpleDataManager.saveLearningHistory(widget.problem, clearedHistory);
+    final success = await SimpleDataManager.saveLearningHistory(
+      widget.problem,
+      clearedHistory,
+    );
+    if (!success) {
+      await SimpleDataManager.ensureWebCloudSyncReady(force: true);
+      if (!mounted) return;
+      await _loadHistory();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.learningRecordSaveFailed),
+        ),
+      );
+      return;
+    }
     
     // 再読み込み
     await _loadHistory();

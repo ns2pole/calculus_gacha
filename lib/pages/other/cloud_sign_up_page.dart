@@ -134,6 +134,40 @@ class _CloudSignUpPageState extends State<CloudSignUpPage> {
     }
   }
 
+  String _googleSignInErrorMessage(AppLocalizations l10n, Object error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'credential-already-in-use':
+        case 'account-exists-with-different-credential':
+          return l10n.auth_credentialAlreadyInUse;
+        case 'network-request-failed':
+          return l10n.auth_networkErrorCheckConnection;
+        case 'too-many-requests':
+          return l10n.auth_tooManyRequests;
+        case 'operation-not-allowed':
+          return l10n.auth_operationNotAllowed;
+        case 'popup-blocked':
+          return l10n.auth_unexpectedError(
+            'Browser blocked the Google sign-in popup. Allow popups and try again.',
+          );
+        case 'unauthorized-domain':
+          return l10n.auth_unexpectedError(
+            'Add this site to Firebase Authentication > Settings > Authorized domains.',
+          );
+        default:
+          final details = error.message ?? error.code;
+          return '${l10n.auth_googleSignInFailed}\n${error.code}\n$details';
+      }
+    }
+
+    if (error is GoogleSignInFailedException) {
+      final details = error.message ?? error.code;
+      return '${l10n.auth_googleSignInFailed}\n$details';
+    }
+
+    return l10n.auth_unexpectedError(error.toString());
+  }
+
   Future<void> _signInWithGoogle() async {
     setState(() {
       _isLoading = true;
@@ -146,22 +180,12 @@ class _CloudSignUpPageState extends State<CloudSignUpPage> {
         await _onAuthSuccess(AppLocalizations.of(context)!.auth_methodGoogle);
       } else {
         setState(() {
-          final l10n = AppLocalizations.of(context)!;
-          _errorMessage = l10n.auth_googleSignInFailed;
+          _errorMessage = null;
         });
       }
     } catch (e) {
       final l10n = AppLocalizations.of(context)!;
-      String errorMsg = l10n.auth_googleSignInFailed;
-      if (e.toString().contains('credential-already-in-use')) {
-        errorMsg = l10n.auth_credentialAlreadyInUse;
-      } else if (e.toString().contains('account-exists-with-different-credential')) {
-        errorMsg = l10n.auth_credentialAlreadyInUse;
-      } else if (e.toString().contains('network')) {
-        errorMsg = l10n.auth_networkErrorCheckConnection;
-      } else {
-        errorMsg = l10n.auth_unexpectedError(e.toString());
-      }
+      final errorMsg = _googleSignInErrorMessage(l10n, e);
       setState(() {
         _errorMessage = errorMsg;
       });

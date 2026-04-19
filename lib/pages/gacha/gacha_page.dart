@@ -1238,6 +1238,11 @@ class _GachaPageState extends State<GachaPage> {
           // UIを更新
         });
       } else {
+        await SimpleDataManager.ensureWebCloudSyncReady(force: true);
+        _learningStatusCache.clear();
+        if (mounted) {
+          setState(() {});
+        }
         print('DEBUG: _saveSingleLearningRecord - save failed, showing error message');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1247,6 +1252,11 @@ class _GachaPageState extends State<GachaPage> {
         );
       }
     } catch (e) {
+      await SimpleDataManager.ensureWebCloudSyncReady(force: true);
+      _learningStatusCache.clear();
+      if (mounted) {
+        setState(() {});
+      }
       print('DEBUG: _saveSingleLearningRecord - exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
