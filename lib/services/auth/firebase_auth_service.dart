@@ -49,7 +49,9 @@ class FirebaseAuthService {
 
   static AppLocalizations _l10n() {
     final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
-    final locale = resolveAppLocale(deviceLocale, AppLocalizations.supportedLocales);
+    final locale =
+        resolveAppLocale(deviceLocale, AppLocalizations.supportedLocales) ??
+        const Locale('en');
     return lookupAppLocalizations(locale);
   }
 

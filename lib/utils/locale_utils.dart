@@ -8,9 +8,10 @@ Locale normalizeAppLocale(Locale? locale) {
 
 /// [MaterialApp.localeResolutionCallback] 用。
 ///
+/// Flutter 3.32 以降は `supportedLocales` が `Iterable<Locale>` で渡される。
 /// Web では [PlatformDispatcher.locales] がブラウザの言語優先（`Accept-Language` 順）に相当する。
 /// [deviceLocale] が来ない場合も、そのリストで `ja` を先に拾えるようにする。
-Locale resolveAppLocale(Locale? deviceLocale, List<Locale> supportedLocales) {
+Locale? resolveAppLocale(Locale? deviceLocale, Iterable<Locale> supportedLocales) {
   final candidates = <Locale>[
     if (deviceLocale != null) deviceLocale,
     ...WidgetsBinding.instance.platformDispatcher.locales,
