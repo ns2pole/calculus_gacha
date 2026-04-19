@@ -22,6 +22,7 @@ import '../../managers/timer_manager.dart';
 import '../common/common.dart';
 import '../common/problem_status.dart';
 import '../../utils/l10n_utils.dart';
+import '../../utils/responsive_layout.dart';
 
 const int _slotCount = 3;
 
@@ -294,10 +295,10 @@ class _ScratchPaperPageState extends State<ScratchPaperPage> with WidgetsBinding
   // ボタンの初期位置を設定（画面中央に横並びで配置）
   void _initializeButtonPositions(BuildContext? context) {
     if (!mounted || context == null) return;
+    final responsive = context.appResponsive;
     final screenSize = MediaQuery.of(context).size;
-    final isMobile = screenSize.width < 600;
-    final buttonSize = isMobile ? 56.0 : 72.0;
-    final spacing = isMobile ? 40.0 : 60.0; // ボタン間の間隔
+    final buttonSize = responsive.toolbarButtonSize;
+    final spacing = responsive.toolbarSpacing; // ボタン間の間隔
 
     // 画面の中央に配置（ペン、消しゴム、スクロールを横並び）
     final centerX = screenSize.width / 2;
@@ -431,10 +432,10 @@ class _ScratchPaperPageState extends State<ScratchPaperPage> with WidgetsBinding
 
       // 位置を初期化（強制的に初期位置に設定）
       if (mounted && context != null) {
+        final responsive = context.appResponsive;
         final screenSize = MediaQuery.of(context).size;
-        final isMobile = screenSize.width < 600;
-        final buttonSize = isMobile ? 56.0 : 72.0;
-        final spacing = isMobile ? 40.0 : 60.0;
+        final buttonSize = responsive.toolbarButtonSize;
+        final spacing = responsive.toolbarSpacing;
 
         // 画面の中央に配置（ペン、消しゴム、スクロールを横並び）
         final centerX = screenSize.width / 2;
@@ -496,15 +497,14 @@ class _ScratchPaperPageState extends State<ScratchPaperPage> with WidgetsBinding
             actions: [
               // --- 統一された spacing / padding を使う AppBar actions ---
               Builder(builder: (context) {
-                final screenSize = MediaQuery.of(context).size;
-                final isMobile = screenSize.width < 600;
-                final iconSize = isMobile ? 20.0 : 28.0;
-                final iconSpacing = isMobile ? 0.0 : 10.0;
-                final endRightPadding = isMobile ? 16.0 : 18.0;
-                final commonIconPadding = EdgeInsets.all(isMobile ? 0 : 6.0);
+                final responsive = context.appResponsive;
+                final iconSize = responsive.isCompact ? 20.0 : 28.0;
+                final iconSpacing = responsive.isCompact ? 0.0 : 10.0;
+                final endRightPadding = responsive.isCompact ? 16.0 : 18.0;
+                final commonIconPadding = EdgeInsets.all(responsive.isCompact ? 0 : 6.0);
                 final commonIconConstraints = BoxConstraints(
-                  minWidth: iconSize + (isMobile ? 8.0 : 12.0),
-                  minHeight: iconSize + (isMobile ? 8.0 : 12.0),
+                  minWidth: iconSize + (responsive.isCompact ? 8.0 : 12.0),
+                  minHeight: iconSize + (responsive.isCompact ? 8.0 : 12.0),
                 );
 
                 final l10n = AppLocalizations.of(context)!;
@@ -601,7 +601,7 @@ class _ScratchPaperPageState extends State<ScratchPaperPage> with WidgetsBinding
                         onTap: _cycleLearningStatus,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 100),
-                          padding: EdgeInsets.all(isMobile ? 10.0 : 14.0),
+                          padding: EdgeInsets.all(responsive.isCompact ? 10.0 : 14.0),
                           decoration: BoxDecoration(
                             color: _isLearningStatusPressed ? Colors.white.withOpacity(0.3) : Colors.transparent,
                             borderRadius: BorderRadius.circular(4),
@@ -622,7 +622,7 @@ class _ScratchPaperPageState extends State<ScratchPaperPage> with WidgetsBinding
                         onTap: _learningStatus != LearningStatus.none ? _saveLearningRecord : null,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 100),
-                          padding: EdgeInsets.all(isMobile ? 10.0 : 14.0),
+                          padding: EdgeInsets.all(responsive.isCompact ? 10.0 : 14.0),
                           decoration: BoxDecoration(
                             color: _isSavePressed ? Colors.white.withOpacity(0.3) : Colors.transparent,
                             borderRadius: BorderRadius.circular(4),

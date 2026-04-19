@@ -10,6 +10,7 @@ import '../../problems/all_problems.dart' show allFactorizationProblems, allInde
 import '../../problems/congruence_equations/congruence_equations.dart' show congruenceGachaProblems;
 import 'cloud_backup_confirmation_page.dart';
 import '../../l10n/app_localizations.dart';
+import '../../utils/responsive_layout.dart';
 
 /// 無料で履歴管理可能なガチャ選択画面
 /// 初回インストール時に2つのガチャを選択
@@ -352,8 +353,8 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final buttonWidth = min(400.0, screenSize.width * 0.9);
+    final responsive = context.appResponsive;
+    final buttonWidth = min(400.0, responsive.contentMaxWidth * 0.95);
     final l10n = AppLocalizations.of(context)!;
 
     return WillPopScope(
@@ -367,8 +368,11 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
             ),
             // コンテンツ
             SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Center(
+              child: ResponsiveContentFrame(
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsive.pageHorizontalPadding,
+                  vertical: 0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -379,27 +383,28 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
                       top: MediaQuery.of(context).padding.top + 60.0,
                       bottom: 20.0,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         Image.asset(
                           'assets/icon/home_icon_removebg.png',
-                          width: 43,
-                          height: 43,
+                          width: responsive.isCompact ? 36 : 43,
+                          height: responsive.isCompact ? 36 : 43,
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(
                               Icons.apps,
-                              size: 43,
+                              size: responsive.isCompact ? 36 : 43,
                               color: Color(0xFF8B7355),
                             );
                           },
                         ),
-                        const SizedBox(width: 0),
                         Text(
                           l10n.appTitle,
-                          style: const TextStyle(
-                            fontSize: 26,
+                          style: TextStyle(
+                            fontSize: responsive.titleFontSize,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8B7355),
                           ),
@@ -426,8 +431,8 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
                           ),
                           child: Text(
                             l10n.freeGachaSelectionInstruction,
-                            style: const TextStyle(
-                              fontSize: 28,
+                            style: TextStyle(
+                              fontSize: responsive.isCompact ? 22 : 28,
                               color: Colors.black87,
                               fontWeight: FontWeight.bold,
                               height: 1.4,
@@ -539,28 +544,28 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
                   // おまけガチャタイトル
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        const SizedBox(width: 4),
                         Image.asset(
                           'assets/icon/home_icon_removebg.png',
-                          width: 43,
-                          height: 43,
+                          width: responsive.isCompact ? 36 : 43,
+                          height: responsive.isCompact ? 36 : 43,
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(
                               Icons.apps,
-                              size: 43,
+                              size: responsive.isCompact ? 36 : 43,
                               color: Color(0xFF8B7355),
                             );
                           },
                         ),
-                        const SizedBox(width: 14),
                         Text(
                           l10n.bonusGachaTitle,
-                          style: const TextStyle(
-                            fontSize: 26,
+                          style: TextStyle(
+                            fontSize: responsive.titleFontSize,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8B7355),
                           ),
@@ -679,6 +684,7 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
                   const SizedBox(height: 32),
                   ],
                 ),
+              ),
               ),
             ),
           ],

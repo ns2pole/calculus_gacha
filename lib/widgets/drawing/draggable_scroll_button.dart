@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
+import '../../utils/responsive_layout.dart';
+
 /// ドラッグ可能なスクロールボタンウィジェット
 class DraggableScrollButton extends StatefulWidget {
   final bool isSelected;
@@ -51,9 +53,9 @@ class _DraggableScrollButtonState extends State<DraggableScrollButton> {
       } else {
         // 保存された位置がない場合は画面中央に配置
         final screenSize = MediaQuery.of(context).size;
-        final isMobile = screenSize.width < 600;
-        final buttonSize = isMobile ? 56.0 : 72.0;
-        final spacing = isMobile ? 40.0 : 60.0;
+        final responsive = context.appResponsive;
+        final buttonSize = responsive.toolbarButtonSize;
+        final spacing = responsive.toolbarSpacing;
         
         // 画面中央を基準に、スクロールボタンを右側に配置
         final centerX = screenSize.width / 2;
@@ -77,8 +79,8 @@ class _DraggableScrollButtonState extends State<DraggableScrollButton> {
   void _onPanUpdate(DragUpdateDetails details) {
     setState(() {
       final screenSize = MediaQuery.of(context).size;
-      final isMobile = screenSize.width < 600;
-      final buttonSize = isMobile ? 56.0 : 72.0;
+      final responsive = context.appResponsive;
+      final buttonSize = responsive.toolbarButtonSize;
       
       final newX = _position.dx + details.delta.dx;
       final newY = _position.dy + details.delta.dy;
@@ -110,10 +112,9 @@ class _DraggableScrollButtonState extends State<DraggableScrollButton> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isMobile = screenSize.width < 600;
-    final buttonSize = isMobile ? 56.0 : 72.0;
-    final iconSize = isMobile ? 28.0 : 36.0;
+    final responsive = context.appResponsive;
+    final buttonSize = responsive.toolbarButtonSize;
+    final iconSize = responsive.toolbarIconSize;
     
     return Positioned(
       left: _position.dx,

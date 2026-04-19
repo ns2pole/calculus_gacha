@@ -8,6 +8,7 @@ import '../../models/step_item.dart';
 import '../../models/learning_status.dart';
 import '../constants/app_constants.dart';
 import '../../pages/common/common.dart';
+import '../../utils/responsive_layout.dart';
 
 /// 問題カードのウィジェット
 class ProblemCard extends StatelessWidget {
@@ -234,8 +235,12 @@ class ProblemCard extends StatelessWidget {
 
   Widget _buildActionButtons(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    final responsive = context.appResponsive;
+    return Wrap(
+      alignment: WrapAlignment.center,
+      runAlignment: WrapAlignment.center,
+      spacing: responsive.isCompact ? 4 : 8,
+      runSpacing: 4,
       children: [
         // 解答表示ボタン
         IconButton(

@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/auth/firebase_auth_service.dart';
 import '../../services/problems/simple_data_manager.dart';
 import '../../utils/l10n_utils.dart';
+import '../../utils/responsive_layout.dart';
 
 class AuthPage extends StatefulWidget {
   final bool isInitialSignUp;
@@ -655,6 +656,7 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     final isFirebaseAvailable = _isFirebaseAvailable;
     final l10n = AppLocalizations.of(context)!;
+    final responsive = context.appResponsive;
     
     return Scaffold(
       appBar: AppBar(
@@ -665,7 +667,8 @@ class _AuthPageState extends State<AuthPage> {
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        child: ResponsiveContentFrame(
+        maxWidth: responsive.isPhone ? 520 : 640,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -688,11 +691,13 @@ class _AuthPageState extends State<AuthPage> {
                         children: [
                           Icon(Icons.warning_amber, color: Colors.orange.shade700, size: 20),
                           const SizedBox(width: 8),
-                          Text(
-                            l10n.auth_firebaseNotConfigured,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange.shade900,
+                          Expanded(
+                            child: Text(
+                              l10n.auth_firebaseNotConfigured,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange.shade900,
+                              ),
                             ),
                           ),
                         ],
@@ -785,7 +790,7 @@ class _AuthPageState extends State<AuthPage> {
                       children: [
                         const Icon(Icons.g_mobiledata, size: 24),
                         const SizedBox(width: 8),
-                        Text(l10n.auth_googleSignInButton),
+                        Flexible(child: Text(l10n.auth_googleSignInButton)),
                       ],
                     ),
                   ),
@@ -808,7 +813,7 @@ class _AuthPageState extends State<AuthPage> {
                         children: [
                           const Icon(Icons.apple, size: 24),
                           const SizedBox(width: 8),
-                          Text(l10n.auth_appleSignInButton),
+                          Flexible(child: Text(l10n.auth_appleSignInButton)),
                         ],
                       ),
                     ),
@@ -1044,6 +1049,7 @@ class _AuthPageState extends State<AuthPage> {
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
           ],
+        ),
         ),
       ),
     );

@@ -22,6 +22,7 @@ import '../../services/auth/firebase_auth_service.dart';
 import '../../models/learning_status.dart';
 import '../other/auth_page.dart';
 import '../../utils/l10n_utils.dart';
+import '../../utils/responsive_layout.dart';
 
 class BonusGachaPage extends StatefulWidget {
   const BonusGachaPage({super.key});
@@ -73,8 +74,8 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final buttonWidth = min(400.0, screenSize.width * 0.9);
+    final responsive = context.appResponsive;
+    final buttonWidth = min(400.0, responsive.contentMaxWidth * 0.95);
     final l10n = AppLocalizations.of(context)!;
 
     final List<MathProblem> factorizationPool = allFactorizationProblems;
@@ -91,8 +92,11 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
           ),
           // コンテンツ
           SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Center(
+            child: ResponsiveContentFrame(
+              padding: EdgeInsets.symmetric(
+                horizontal: responsive.pageHorizontalPadding,
+                vertical: 0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -103,25 +107,25 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
                   top: MediaQuery.of(context).padding.top + 60.0, // 右上端のアイコンの高さを考慮
                   bottom: 16.0,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
-                    const SizedBox(width: 4),
                     Image.asset(
                       'assets/icon/home_icon_removebg.png',
-                      width: 43,
-                      height: 43,
+                      width: responsive.isCompact ? 36 : 43,
+                      height: responsive.isCompact ? 36 : 43,
                       errorBuilder: (context, error, stackTrace) {
                         // アイコンが見つからない場合のフォールバック
                         return Icon(
                           Icons.apps,
-                          size: 43,
+                          size: responsive.isCompact ? 36 : 43,
                           color: Color(0xFF8B7355),
                         );
                       },
                     ),
-                    const SizedBox(width: 14),
                     // タイトルとProバッジを一つのRowとしてセンタリング
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -129,8 +133,8 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
                       children: [
                         Text(
                           l10n.bonusGachaTitle,
-                          style: const TextStyle(
-                            fontSize: 26,
+                          style: TextStyle(
+                            fontSize: responsive.titleFontSize,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8B7355), // クリーム色っぽい色
                           ),
@@ -617,6 +621,7 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
           return const SizedBox.shrink();
         }
 
+        final responsive = context.appResponsive;
         final progress = snapshot.data!;
         final colors = gradient.colors as List<Color>;
         final mainColor = colors.isNotEmpty ? colors[0] : Colors.blue;
@@ -700,10 +705,11 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
                     // 星と文字は中央寄せ
                     Center(
                       child: IntrinsicHeight(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          runSpacing: 6,
+                          spacing: 8,
                           children: [
                             if (progress.totalCount > 0) ...[
                               Padding(
@@ -715,64 +721,73 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
                               ),
                             ],
                             // 右側に2行のテキストを配置
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (progress.filterCount > 0) ...[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: max(180, constraints.maxWidth - 110),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (progress.filterCount > 0) ...[
+                                    Wrap(
+                                      alignment: WrapAlignment.center,
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: 2,
+                                      runSpacing: 2,
+                                      children: [
+                                        Text(
+                                          progress.filterDescription,
+                                          style: TextStyle(
+                                            fontSize: responsive.isCompact ? 14 : 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: mainColor,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        ...List.generate(progress.filterCount, (index) => _buildStatusBadge()),
+                                        Text(
+                                          l10n.aggregatedBy,
+                                          style: TextStyle(
+                                            fontSize: responsive.isCompact ? 14 : 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: mainColor,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                  ],
+                                  Wrap(
+                                    alignment: WrapAlignment.center,
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    spacing: 4,
+                                    runSpacing: 2,
                                     children: [
                                       Text(
-                                        progress.filterDescription,
+                                        l10n.achievedCount(progress.achievedCount, progress.totalCount),
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: responsive.isCompact ? 14 : 16,
                                           fontWeight: FontWeight.bold,
                                           color: mainColor,
                                         ),
                                       ),
-                                      ...List.generate(progress.filterCount, (index) => _buildStatusBadge()),
-                                      Text(
-                                        l10n.aggregatedBy,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: mainColor,
+                                      if (progress.totalCount > 0)
+                                        Text(
+                                          '(${((progress.achievedCount / progress.totalCount) * 100).toStringAsFixed(1)}%)',
+                                          style: TextStyle(
+                                            fontSize: responsive.isCompact ? 14 : 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: mainColor.withOpacity(0.7),
+                                          ),
                                         ),
-                                      ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
                                 ],
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      l10n.achievedCount(progress.achievedCount, progress.totalCount),
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: mainColor,
-                                      ),
-                                    ),
-                                    if (progress.totalCount > 0) ...[
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '(${((progress.achievedCount / progress.totalCount) * 100).toStringAsFixed(1)}%)',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: mainColor.withOpacity(0.7),
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ],
+                              ),
                             ),
                           ],
                         ),

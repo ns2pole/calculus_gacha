@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import '../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
+import '../../utils/responsive_layout.dart';
 
 /// ドラッグ可能なペンボタン（パレット付き）
 class DraggablePenButton extends StatefulWidget {
@@ -87,9 +88,9 @@ class _DraggablePenButtonState extends State<DraggablePenButton> {
       } else if (widget.position == Offset.zero) {
         // 保存された位置がなく、親から渡された位置も(0,0)の場合は画面中央に配置
         final screenSize = MediaQuery.of(context).size;
-        final isMobile = screenSize.width < 600;
-        final buttonSize = isMobile ? 56.0 : 72.0;
-        final spacing = isMobile ? 40.0 : 60.0;
+        final responsive = context.appResponsive;
+        final buttonSize = responsive.toolbarButtonSize;
+        final spacing = responsive.toolbarSpacing;
         
         // 画面中央を基準に、ペンボタンを左側に配置
         final centerX = screenSize.width / 2;
@@ -164,9 +165,9 @@ class _DraggablePenButtonState extends State<DraggablePenButton> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final isMobile = screenSize.width < 600;
-    final buttonSize = isMobile ? 56.0 : 72.0;
-    final iconSize = isMobile ? 28.0 : 36.0;
+    final responsive = context.appResponsive;
+    final buttonSize = responsive.toolbarButtonSize;
+    final iconSize = responsive.toolbarIconSize;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -463,8 +464,8 @@ class _DraggableToolButtonState extends State<DraggableToolButton> {
   void _ensureWithinBounds() {
     if (!mounted) return;
     final screenSize = MediaQuery.of(context).size;
-    final isMobile = screenSize.width < 600;
-    final buttonSize = isMobile ? 56.0 : 72.0;
+    final responsive = context.appResponsive;
+    final buttonSize = responsive.toolbarButtonSize;
     const edgeMargin = 35.0;
     final minX = edgeMargin;
     final maxX = screenSize.width - buttonSize - edgeMargin;
@@ -485,9 +486,9 @@ class _DraggableToolButtonState extends State<DraggableToolButton> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final isMobile = screenSize.width < 600;
-    final buttonSize = isMobile ? 56.0 : 72.0;
-    final iconSize = isMobile ? 28.0 : 36.0;
+    final responsive = context.appResponsive;
+    final buttonSize = responsive.toolbarButtonSize;
+    final iconSize = responsive.toolbarIconSize;
 
     return Positioned(
       left: _currentPosition.dx,

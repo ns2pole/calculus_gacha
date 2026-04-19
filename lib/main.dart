@@ -11,6 +11,7 @@ import 'services/payment/iap_secondary_products_config.dart';
 import 'l10n/app_localizations.dart';
 import 'utils/app_logger.dart';
 import 'utils/locale_utils.dart';
+import 'utils/responsive_layout.dart';
 
 // 共有の navigatorKey を1つだけ作る
 final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
@@ -216,6 +217,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: ThemeData(primarySwatch: Colors.blue),
+      builder: (context, child) => AppResponsiveRoot(
+        child: child ?? const SizedBox.shrink(),
+      ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       localeResolutionCallback: resolveAppLocale,

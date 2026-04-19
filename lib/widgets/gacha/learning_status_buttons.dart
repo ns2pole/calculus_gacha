@@ -5,6 +5,7 @@ import '../../models/learning_status.dart';
 import '../../l10n/app_localizations.dart';
 import '../../pages/other/scratch_paper_page.dart';
 import '../../services/gacha/gacha_page_state_manager.dart';
+import '../../utils/responsive_layout.dart';
 
 /// 学習記録ボタン群のウィジェット
 /// 計算用紙で記録された問題の状態を管理
@@ -53,23 +54,25 @@ class _LearningStatusButtonsState extends State<LearningStatusButtons> {
   
   @override
   Widget build(BuildContext context) {
+    final responsive = context.appResponsive;
     if (_isLoading) {
-      return const SizedBox(
-        width: 120,
+      return SizedBox(
+        width: responsive.isCompact ? 96 : 120,
         height: 48,
-        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       );
     }
     
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: responsive.isCompact ? 8 : 16,
+      runSpacing: 4,
       children: [
         // 計算用紙ボタン
         _buildScratchPaperButton(),
-        const SizedBox(width: 16),
         // 学習記録切り替えボタン
         _buildLearningStatusButton(),
-        const SizedBox(width: 8),
         // 保存ボタン
         _buildSaveButton(),
       ],

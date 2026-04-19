@@ -29,6 +29,7 @@ import '../../widgets/gacha/filter_chips.dart' show GachaExclusionFilterWidget;
 import '../../utils/progress_display_utils.dart' show getTotalProblemCount;
 import '../../l10n/app_localizations.dart';
 import '../../utils/problem_level_utils.dart';
+import '../../utils/responsive_layout.dart';
 
 /// ============================================================================
 /// Gacha page — キャッシュ系処理を完全に排除し、スクロール操作性を最優先にした版
@@ -1840,6 +1841,7 @@ class _GachaPageState extends State<GachaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.appResponsive;
     return Scaffold(
       body: Stack(
         children: [
@@ -1849,8 +1851,14 @@ class _GachaPageState extends State<GachaPage> {
           ),
           // コンテンツ
           Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
+            padding: responsive.pagePadding,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: responsive.isPhone ? 560 : responsive.contentMaxWidth,
+                ),
+                child: Column(
               children: [
                 Expanded(
                   child: ListView(
@@ -1861,24 +1869,23 @@ class _GachaPageState extends State<GachaPage> {
                   // タイトル、タイマー、問題一覧ボタンをスクロール可能なコンテンツ内に配置
                   Padding(
                     padding: const EdgeInsets.only(top: 0.0, bottom: 20.0), // ヘッダの矢印部分と被ってもOK
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      runSpacing: 8,
+                      spacing: 8,
                       children: [
-                        Flexible(
-                          child: Text(
-                            widget.title.isEmpty ? l10n.rollGacha : widget.title,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF8B7355),
-                            ),
-                            textAlign: TextAlign.center,
+                        Text(
+                          widget.title.isEmpty ? l10n.rollGacha : widget.title,
+                          style: TextStyle(
+                            fontSize: responsive.titleFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF8B7355),
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                        const SizedBox(width: 8),
                         // タイマートグルスイッチ
                         TimerToggle(timerManager: _timerManager),
-                        const SizedBox(width: 12),
                         // 問題一覧ボタン
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -1905,8 +1912,8 @@ class _GachaPageState extends State<GachaPage> {
                           },
                           child: Text(
                             l10n.problemList,
-                            style: const TextStyle(
-                              fontSize: 20,
+                            style: TextStyle(
+                              fontSize: responsive.isCompact ? 16 : 20,
                               color: Color(0xFF8B7355),
                               fontWeight: FontWeight.bold,
                             ),
@@ -1945,6 +1952,7 @@ class _GachaPageState extends State<GachaPage> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(12),
@@ -1954,15 +1962,15 @@ class _GachaPageState extends State<GachaPage> {
                                 ),
                                 child: Icon(
                                   Icons.casino,
-                                  size: 28,
+                                  size: responsive.cardIconSize,
                                   color: Colors.white,
                                 ),
                               ),
                               const SizedBox(width: 16),
                               Text(
                                 _isRolling ? l10n.rolling : l10n.rollGacha,
-                                style: const TextStyle(
-                                  fontSize: 24,
+                                style: TextStyle(
+                                  fontSize: responsive.isCompact ? 20 : 24,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
@@ -2039,7 +2047,9 @@ class _GachaPageState extends State<GachaPage> {
             ),
           ],
         ),
-      ),
+                ),
+              ),
+            ),
           // 戻るボタン（最前面に配置）
           const custom.BackButton(),
         ],
@@ -2094,8 +2104,11 @@ class _GachaPageState extends State<GachaPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 0,
+              runSpacing: 6,
               children: [
                 Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                 SizedBox(width: gapAfterLabel),

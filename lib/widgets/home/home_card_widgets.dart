@@ -3,6 +3,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../utils/responsive_layout.dart';
+
 /// モダンなスタイルのカード（グラデーション背景）
 class ModernCard extends StatelessWidget {
   final double buttonWidth;
@@ -28,11 +30,13 @@ class ModernCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final contentPadding = isMobile
+    final responsive = context.appResponsive;
+    final contentPadding = responsive.isCompact
         ? const EdgeInsets.symmetric(horizontal: 10, vertical: 12)
         : const EdgeInsets.symmetric(horizontal: 12, vertical: 16);
-    final iconPadding = isMobile ? const EdgeInsets.all(10) : const EdgeInsets.all(12);
+    final iconPadding = responsive.isCompact
+        ? const EdgeInsets.all(10)
+        : const EdgeInsets.all(12);
 
     final cardContent = Container(
       width: buttonWidth,
@@ -71,7 +75,7 @@ class ModernCard extends StatelessWidget {
                     ),
                     child: Icon(
                       icon,
-                      size: 28,
+                      size: responsive.cardIconSize,
                       color: Colors.white,
                     ),
                   ),
@@ -84,8 +88,8 @@ class ModernCard extends StatelessWidget {
                         Text(
                           title,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 22,
+                          style: TextStyle(
+                            fontSize: responsive.cardTitleFontSize,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -98,7 +102,7 @@ class ModernCard extends StatelessWidget {
                             subtitle,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: responsive.cardSubtitleFontSize,
                               color: Colors.white.withOpacity(0.9),
                             ),
                             overflow: TextOverflow.visible,
@@ -112,7 +116,7 @@ class ModernCard extends StatelessWidget {
                   Icon(
                     Icons.arrow_forward_ios,
                     color: Colors.white.withOpacity(0.8),
-                    size: 16,
+                    size: responsive.cardChevronSize,
                   ),
                 ],
               ),
@@ -159,11 +163,13 @@ class SimpleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final contentPadding = isMobile
+    final responsive = context.appResponsive;
+    final contentPadding = responsive.isCompact
         ? const EdgeInsets.symmetric(horizontal: 10, vertical: 12)
         : const EdgeInsets.symmetric(horizontal: 12, vertical: 16);
-    final iconPadding = isMobile ? const EdgeInsets.all(10) : const EdgeInsets.all(12);
+    final iconPadding = responsive.isCompact
+        ? const EdgeInsets.all(10)
+        : const EdgeInsets.all(12);
 
     // ガチャと同じようにグラデーションを使用
     final gradient = color != null
@@ -209,43 +215,47 @@ class SimpleCard extends StatelessWidget {
                   ),
                   child: Icon(
                     icon,
-                    size: 28,
+                    size: responsive.cardIconSize,
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    if (subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 4),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       Text(
-                        subtitle,
+                        title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white.withOpacity(0.9),
+                          fontSize: responsive.cardTitleFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
+                        softWrap: true,
                       ),
+                      if (subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: responsive.cardSubtitleFontSize,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                          softWrap: true,
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.white.withOpacity(0.8),
-                  size: 16,
+                  size: responsive.cardChevronSize,
                 ),
               ],
             ),
@@ -281,11 +291,13 @@ class SelectableModernCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final contentPadding = isMobile
+    final responsive = context.appResponsive;
+    final contentPadding = responsive.isCompact
         ? const EdgeInsets.symmetric(horizontal: 10, vertical: 12)
         : const EdgeInsets.symmetric(horizontal: 12, vertical: 16);
-    final iconPadding = isMobile ? const EdgeInsets.all(10) : const EdgeInsets.all(12);
+    final iconPadding = responsive.isCompact
+        ? const EdgeInsets.all(10)
+        : const EdgeInsets.all(12);
 
     final cardContent = Container(
       width: buttonWidth,
@@ -325,7 +337,7 @@ class SelectableModernCard extends StatelessWidget {
                       ),
                       child: Icon(
                         icon,
-                        size: 28,
+                        size: responsive.cardIconSize,
                         color: Colors.white,
                       ),
                     ),
@@ -338,8 +350,8 @@ class SelectableModernCard extends StatelessWidget {
                           Text(
                             title,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 22,
+                            style: TextStyle(
+                              fontSize: responsive.cardTitleFontSize,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -352,7 +364,7 @@ class SelectableModernCard extends StatelessWidget {
                               subtitle,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: responsive.cardSubtitleFontSize,
                                 color: Colors.white.withOpacity(0.9),
                               ),
                               softWrap: true,
@@ -366,7 +378,7 @@ class SelectableModernCard extends StatelessWidget {
                     Icon(
                       Icons.arrow_forward_ios,
                       color: Colors.white.withOpacity(0.8),
-                      size: 16,
+                      size: responsive.cardChevronSize,
                     ),
                   ],
                 ),
