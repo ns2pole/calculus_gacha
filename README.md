@@ -10,6 +10,7 @@ If you only see this **README**, GitHub Pages is pointing at the wrong source:
 1. Open **Settings → Pages**
 2. **Build and deployment → Source:** choose **GitHub Actions** (not “Deploy from a branch: main”).
 3. Push to `main` or run workflow **Deploy Web to GitHub Pages** manually.
+4. Latest web deploys are published by that GitHub Actions workflow.
 
 See: [Configuring a publishing source for GitHub Pages](https://docs.github.com/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
