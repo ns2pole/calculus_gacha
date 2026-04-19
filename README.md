@@ -22,9 +22,30 @@ See: [Configuring a publishing source for GitHub Pages](https://docs.github.com/
 
 ---
 
-## Secrets (do not commit)
+## Firebase on Web (GitHub Pages)
 
-- Firebase Web: fill `lib/firebase_web_options.dart` locally only (placeholders in repo).
+1. Firebase Console → Project settings → Your apps → Web → copy `firebaseConfig` values.
+2. GitHub repo → **Settings → Secrets and variables → Actions** → add:
+
+   | Secret | Maps to `firebaseConfig` |
+   |--------|---------------------------|
+   | `FIREBASE_WEB_API_KEY` | `apiKey` |
+   | `FIREBASE_WEB_APP_ID` | `appId` |
+   | `FIREBASE_WEB_MESSAGING_SENDER_ID` | `messagingSenderId` |
+   | `FIREBASE_WEB_PROJECT_ID` | `projectId` |
+   | `FIREBASE_WEB_STORAGE_BUCKET` | `storageBucket` |
+   | `FIREBASE_WEB_AUTH_DOMAIN` | `authDomain` (optional; defaults to `{projectId}.firebaseapp.com`) |
+   | `FIREBASE_WEB_MEASUREMENT_ID` | `measurementId` (optional) |
+
+3. Firebase Console → **Authentication → Settings → Authorized domains** → add  
+   **`localhost`** and **`ns2pole.github.io`** (your GitHub Pages host).
+4. Push to `main` (or re-run **Deploy Web to GitHub Pages**). The workflow runs  
+   `dart run tool/inject_firebase_web_options.dart` before `flutter build web`.
+
+**Local web:** paste the same values into `lib/firebase_web_options.dart` (do not commit).
+
+## Other secrets (do not commit)
+
 - iOS: `GoogleService-Info.plist` from `.example` locally.
 - Android: `google-services.json`, `key.properties`, keystores — local only (`.gitignore`).
 

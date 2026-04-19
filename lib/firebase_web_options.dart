@@ -1,12 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 
-/// Firebase Web 用（クライアント設定は公開リポジトリにコミットしないこと）。
-/// 実値は Firebase Console の Web アプリ `firebaseConfig` からローカルで埋める。
+/// Firebase Web（リポジトリにはプレースホルダのみコミット）。
 ///
-/// 1. FlutterFire: `flutterfire configure` → 生成 `firebase_options.dart` の web ブロックを反映
-/// 2. 手入力: プロジェクト設定 → マイアプリ → Web の `firebaseConfig`
+/// - **ローカル:** Firebase Console の Web `firebaseConfig` の値をここに貼る（コミットしない）。
+/// - **GitHub Pages:** Actions の Secrets を設定し、ビルド時に
+///   `dart run tool/inject_firebase_web_options.dart` で上書き（workflow 済み）。
 ///
-/// Authentication を Web で使う場合は **承認済みドメイン** に `localhost` と本番ホストを追加。
+/// Authentication 利用時は Firebase Console → 承認済みドメインに
+/// `localhost` と `*.github.io`（例: `ns2pole.github.io`）を追加。
 abstract final class FirebaseWebOptions {
   static const FirebaseOptions current = FirebaseOptions(
     apiKey: 'REPLACE_WITH_WEB_API_KEY',
