@@ -7,7 +7,9 @@ import '../../models/math_problem.dart';
 import '../../utils/progress_display_utils.dart' show getTotalProblemCount;
 import '../../services/problems/simple_data_manager.dart';
 import '../../services/problems/exclusion_logic.dart'
-    show shouldExcludeByModeUsingHistory, sortHistoryByTimeNewestFirst;
+    show
+        shouldExcludeByModeUsingHistory,
+        recentHistoryRecordsNewestFirstLeft;
 import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/common/back_button.dart' as custom;
 import '../common/problem_status.dart';
@@ -180,33 +182,33 @@ class _ProblemListPageState extends State<ProblemListPage> {
 
   // SimpleDataManagerに統一されたため、古いロード・セーブメソッドは不要
 
-  /// 表示用スロット。左から直近 i 回（[0]=最新）。長さは常に i（集計の直近 i 回と一致）
+  /// 表示用スロット。左から直近 i 回（[0]=最新）。保存スロットの並びを `_setSlot` と一致させる（時刻ソートしない）。
   Future<List<Map<String, dynamic>>> _getSlots(MathProblem p) async {
     final history = await SimpleDataManager.getLearningHistory(p);
     final n = _displaySlotCount;
-    final latestHistory = sortHistoryByTimeNewestFirst(history).take(n).toList();
+    final row = recentHistoryRecordsNewestFirstLeft(
+      history,
+      displayCount: n,
+      storageSlotCount: _storageSlotCount,
+    );
 
     final slots = <Map<String, dynamic>>[];
     for (var i = 0; i < n; i++) {
-      if (i < latestHistory.length) {
-        final h = latestHistory[i];
-        final status = ProblemStatus.values.firstWhere(
-          (s) => s.name == h['status'],
-          orElse: () => ProblemStatus.none,
-        );
-        final timeStr = h['time'] as String?;
-        DateTime? dt;
-        if (timeStr != null) {
-          try {
-            dt = DateTime.parse(timeStr);
-          } catch (_) {
-            dt = null;
-          }
+      final h = row[i];
+      final status = ProblemStatus.values.firstWhere(
+        (s) => s.name == h['status'],
+        orElse: () => ProblemStatus.none,
+      );
+      final timeStr = h['time'] as String?;
+      DateTime? dt;
+      if (timeStr != null) {
+        try {
+          dt = DateTime.parse(timeStr);
+        } catch (_) {
+          dt = null;
         }
-        slots.add({'status': status, 'time': dt});
-      } else {
-        slots.add({'status': ProblemStatus.none, 'time': null});
       }
+      slots.add({'status': status, 'time': dt});
     }
     return slots;
   }
@@ -357,7 +359,11 @@ class _ProblemListPageState extends State<ProblemListPage> {
       for (var i = 0; i < list.length; i++) {
         final p = list[i];
         final h = historyMap[p.id] ?? const <Map<String, dynamic>>[];
-        final latest = sortHistoryByTimeNewestFirst(h).take(_displaySlotCount).toList();
+        final latest = recentHistoryRecordsNewestFirstLeft(
+          h,
+          displayCount: _displaySlotCount,
+          storageSlotCount: _storageSlotCount,
+        );
         for (final rec in latest) {
           final st = rec['status'] as String?;
           if (st == 'solved') {

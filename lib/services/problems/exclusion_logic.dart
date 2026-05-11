@@ -44,7 +44,8 @@ const List<ExclusionMode> kExclusionDisplayOrder = [
 ];
 
 /// 学習履歴を時刻でソート（最新が先頭になるように）
-/// フィルタリングで使用。スロット表示では使用しない（順序は問わないため）
+/// 除外フィルタの「最新から緑が連続」の判定に使用する。
+/// 問題一覧タイルの丸アイコン順は [recentHistoryRecordsNewestFirstLeft]（保存スロット順）を使う。
 List<Map<String, dynamic>> sortHistoryByTimeNewestFirst(List<Map<String, dynamic>> history) {
   final sorted = List<Map<String, dynamic>>.from(history);
   sorted.sort((a, b) {
@@ -67,6 +68,51 @@ List<Map<String, dynamic>> sortHistoryByTimeNewestFirst(List<Map<String, dynamic
 
   // ソート後、逆順にして最新が先頭になるようにする
   return sorted.reversed.toList();
+}
+
+/// `getLearningHistory` の配列は左から埋まる3スロット（インデックス昇順＝古い試行→新しい試行の並び）。
+/// 一覧では左から「最新の試行」を並べるため、左端埋めの連続区間 `[0..lastNonNone]` を逆順にしたうえで
+/// 先頭 [displayCount] 件を返す（時刻ソートはしない＝タップ編集 `_setSlot` と同じ物理スロットを見る）。
+List<Map<String, dynamic>> recentHistoryRecordsNewestFirstLeft(
+  List<Map<String, dynamic>> history, {
+  required int displayCount,
+  int storageSlotCount = 3,
+}) {
+  if (displayCount <= 0) return [];
+
+  var buf = List<Map<String, dynamic>>.from(history);
+  if (buf.length > storageSlotCount) {
+    buf = buf.sublist(buf.length - storageSlotCount);
+  }
+  while (buf.length < storageSlotCount) {
+    buf.add({'status': 'none', 'time': null});
+  }
+
+  var lastNonNone = -1;
+  for (var i = 0; i < storageSlotCount; i++) {
+    final st = (buf[i]['status'] as String?) ?? 'none';
+    if (st != 'none') lastNonNone = i;
+  }
+
+  if (lastNonNone < 0) {
+    return List.generate(
+      displayCount,
+      (_) => {'status': 'none', 'time': null},
+    );
+  }
+
+  final prefix = buf.sublist(0, lastNonNone + 1);
+  final newestFirst = prefix.reversed.toList();
+
+  final out = <Map<String, dynamic>>[];
+  for (var i = 0; i < displayCount; i++) {
+    if (i < newestFirst.length) {
+      out.add(Map<String, dynamic>.from(newestFirst[i]));
+    } else {
+      out.add({'status': 'none', 'time': null});
+    }
+  }
+  return out;
 }
 
 /// 除外判定：最新の学習記録から見て緑が連続して何個並んでいるかを数え、needed以上なら除外

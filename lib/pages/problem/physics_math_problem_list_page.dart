@@ -18,7 +18,8 @@ import 'problem_detail_page.dart';
 import '../common/problem_list_menu_utils.dart' show showFilterMenu;
 import '../common/aggregation_mode.dart';
 import '../../services/problems/simple_data_manager.dart';
-import '../../services/problems/exclusion_logic.dart' show sortHistoryByTimeNewestFirst, shouldExcludeByMode, ExclusionMode;
+import '../../services/problems/exclusion_logic.dart'
+    show recentHistoryRecordsNewestFirstLeft, shouldExcludeByMode, ExclusionMode;
 import '../../widgets/gacha/physics_math_case_display.dart';
 import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/common/back_button.dart';
@@ -247,28 +248,28 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
   Future<List<Map<String, dynamic>>> _getSlots(MathProblem p) async {
     final history = await SimpleDataManager.getLearningHistory(p);
     final n = _displaySlotCount;
-    final latestHistory = sortHistoryByTimeNewestFirst(history).take(n).toList();
+    final row = recentHistoryRecordsNewestFirstLeft(
+      history,
+      displayCount: n,
+      storageSlotCount: _storageSlotCount,
+    );
     final slots = <Map<String, dynamic>>[];
     for (var i = 0; i < n; i++) {
-      if (i < latestHistory.length) {
-        final h = latestHistory[i];
-        final status = ProblemStatus.values.firstWhere(
-          (s) => s.name == h['status'],
-          orElse: () => ProblemStatus.none,
-        );
-        final timeStr = h['time'] as String?;
-        DateTime? dt;
-        if (timeStr != null) {
-          try {
-            dt = DateTime.parse(timeStr);
-          } catch (_) {
-            dt = null;
-          }
+      final h = row[i];
+      final status = ProblemStatus.values.firstWhere(
+        (s) => s.name == h['status'],
+        orElse: () => ProblemStatus.none,
+      );
+      final timeStr = h['time'] as String?;
+      DateTime? dt;
+      if (timeStr != null) {
+        try {
+          dt = DateTime.parse(timeStr);
+        } catch (_) {
+          dt = null;
         }
-        slots.add({'status': status, 'time': dt});
-      } else {
-        slots.add({'status': ProblemStatus.none, 'time': null});
       }
+      slots.add({'status': status, 'time': dt});
     }
     return slots;
   }
