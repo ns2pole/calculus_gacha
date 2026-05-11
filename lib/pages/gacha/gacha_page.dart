@@ -6,12 +6,11 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
 import '../../utils/l10n_utils.dart';
 import '../../services/problems/simple_data_manager.dart';
+import '../../services/problems/learning_history_slots.dart';
 import '../../widgets/gacha/problem_card.dart';
 import '../../widgets/gacha/physics_math_case_display.dart';
 import '../../widgets/home/background_image_widget.dart';
@@ -30,6 +29,7 @@ import '../../utils/progress_display_utils.dart' show getTotalProblemCount;
 import '../../l10n/app_localizations.dart';
 import '../../utils/problem_level_utils.dart';
 import '../../utils/responsive_layout.dart';
+import '../common/problem_status.dart';
 
 /// ============================================================================
 /// Gacha page — キャッシュ系処理を完全に排除し、スクロール操作性を最優先にした版
@@ -59,29 +59,13 @@ Widget _statusBadgeSmall(LearningStatus status, {double diameter = 18.0}) {
 }
 
 const int _slotCount = 3;
+// ProblemStatus / slotCount: ../common/problem_status.dart と同一型（SimpleDataManager 保存互換必須）
 
 const List<ProblemLevel> _gachaLevelOrder = [
   ProblemLevel.easy,
   ProblemLevel.mid,
   ProblemLevel.advanced,
 ];
-
-/// スロットが取りうる状態
-enum ProblemStatus { none, solved, understood, failed }
-
-
-ProblemStatus _keyToStatus(String k) {
-  switch (k) {
-    case 'solved':
-      return ProblemStatus.solved;
-    case 'understood':
-      return ProblemStatus.understood;
-    case 'failed':
-      return ProblemStatus.failed;
-    default:
-      return ProblemStatus.none;
-  }
-}
 
 ProblemLevel _slotLevelFromIndex(int index) {
   if (index < 0 || index >= _gachaLevelOrder.length) {
@@ -614,13 +598,6 @@ class _GachaPageState extends State<GachaPage> {
     }
     return slots;
   }
-  
-  Future<void> _saveProblemStatuses() async {
-    final prefs = await SharedPreferences.getInstance();
-    // SimpleDataManagerに統一されたため、古い保存方法は不要
-  }
-
-
 
   // 問題一覧の学習記録データを使用して除外判定を行う（積分ガチャと同じロジック）
   Future<bool> _shouldExcludeProblem(MathProblem p) async {
@@ -1149,101 +1126,41 @@ class _GachaPageState extends State<GachaPage> {
     return status.getLocalizedTooltip(context);
   }
 
-  /// 学習記録を保存するメソッド
-  /// すべてのガチャ（積分、極限、微分方程式、因数分解、不定方程式）で共通のロジックを使用
-  /// 因数分解ガチャ・不定方程式ガチャと同じ実装を踏襲
+  /// 学習記録を保存（計算用紙ページと [appendLearningHistorySlot] で同一ロジック）
   Future<void> _saveSingleLearningRecord(int idx) async {
     final problem = _current[idx];
     if (problem == null) {
-      print('DEBUG: _saveSingleLearningRecord - problem is null for idx $idx');
       return;
     }
-    
+
     final problemStatus = _pendingNotifiers[idx].value;
-    print('DEBUG: _saveSingleLearningRecord - problemStatus: $problemStatus for problem ${problem.id}');
     if (problemStatus == ProblemStatus.none) {
-      print('DEBUG: _saveSingleLearningRecord - problemStatus is none, returning');
       return;
     }
-    
-    print('DEBUG: _saveSingleLearningRecord - problemStatus: $problemStatus');
-    
+
     try {
-      // 既存の履歴を取得
-      final history = await SimpleDataManager.getLearningHistory(problem);
-      final current = <Map<String, dynamic>>[];
-      
-      // 既存の履歴をスロットに配置
-      for (var i = 0; i < _slotCount; i++) {
-        if (i < history.length) {
-          final h = history[i];
-          final status = ProblemStatus.values.firstWhere(
-            (s) => s.name == h['status'],
-            orElse: () => ProblemStatus.none,
-          );
-          final timeStr = h['time'] as String?;
-          // timeはString形式で保存する必要がある
-          current.add({'status': status, 'time': timeStr});
-        } else {
-          current.add({'status': ProblemStatus.none, 'time': null});
-        }
-      }
-      
-      while (current.length < _slotCount) {
-        current.add({'status': ProblemStatus.none, 'time': null});
-      }
-      
-      // 最初の空いているスロットを見つける
-      int targetSlot = -1;
-      for (var i = 0; i < _slotCount; i++) {
-        final slotStatus = current[i]['status'] as ProblemStatus? ?? ProblemStatus.none;
-        if (slotStatus == ProblemStatus.none) {
-          targetSlot = i;
-          break;
-        }
-      }
-      
-      // すべてのスロットが埋まっている場合は、slot0に上書き
-      if (targetSlot == -1) {
-        targetSlot = 0;
-      }
-      
-      // 新しい記録をスロットに保存
-      final t = DateTime.now().toIso8601String();
-      current[targetSlot] = {'status': problemStatus, 'time': t};
-      
-      // 保存したスロットより後ろをクリア（前詰め制約）
-      for (var j = targetSlot + 1; j < current.length; j++) {
-        current[j] = {'status': ProblemStatus.none, 'time': null};
-      }
-      
-      // SimpleDataManagerに保存
-      final success = await SimpleDataManager.saveLearningHistory(problem, current);
-      
+      final success = await appendLearningHistorySlot(problem, problemStatus);
+
       if (success) {
         _scratchPaperRecordedProblems.add(_problemKey(problem));
-        
-        // キャッシュを更新
         _learningStatusCache[problem.id] = problemStatus;
-        
-        print('DEBUG: _saveSingleLearningRecord - save successful, showing success message');
+        _pendingNotifiers[idx].value = ProblemStatus.none;
+
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.learningRecordSaved),
             duration: const Duration(seconds: 2),
           ),
         );
-        
-        setState(() {
-          // UIを更新
-        });
+
+        setState(() {});
       } else {
         await SimpleDataManager.ensureWebCloudSyncReady(force: true);
         _learningStatusCache.clear();
         if (mounted) {
           setState(() {});
         }
-        print('DEBUG: _saveSingleLearningRecord - save failed, showing error message');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.learningRecordSaveFailed),
@@ -1257,7 +1174,6 @@ class _GachaPageState extends State<GachaPage> {
       if (mounted) {
         setState(() {});
       }
-      print('DEBUG: _saveSingleLearningRecord - exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.learningRecordSaveFailed),
@@ -1378,9 +1294,9 @@ class _GachaPageState extends State<GachaPage> {
     
     // 分類定義
     const typeList = ['数値', '一般'];
-    const mechanicsList = ['等加速度直線運動', '空気抵抗', '単振動'];
+    const mechanicsList = ['等加速度直線運動', '空気抵抗', '単振動', '加速度'];
     const dcacList = ['直流', '交流', '電圧0']; // グループ3の定義順序に合わせる
-    const electricalList = ['コンデンサ', 'コイル', '抵抗'];
+    const electricalList = ['コンデンサ', 'コイル', '抵抗', '磁場'];
     
     for (final keyword in allKeywords) {
       if (typeList.contains(keyword)) {

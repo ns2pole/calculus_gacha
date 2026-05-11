@@ -7,7 +7,7 @@ import '../../models/math_problem.dart';
 import '../../utils/progress_display_utils.dart' show getTotalProblemCount;
 import '../../services/problems/simple_data_manager.dart';
 import '../../services/problems/exclusion_logic.dart'
-    show ExclusionMode, shouldExcludeByModeUsingHistory, sortHistoryByTimeNewestFirst;
+    show shouldExcludeByModeUsingHistory, sortHistoryByTimeNewestFirst;
 import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/common/back_button.dart' as custom;
 import '../common/problem_status.dart';
@@ -19,6 +19,7 @@ import '../../widgets/gacha/filter_chips.dart' show ExclusionFilterChip;
 import '../gacha/gacha_settings_page.dart' show GachaFilterMode, GachaFilterModeConversion, ExclusionModeConversion;
 import '../../l10n/app_localizations.dart';
 import '../../utils/l10n_utils.dart';
+import '../../utils/gacha_settings_utils.dart';
 import '../../utils/problem_level_utils.dart';
 
 /// ProblemListPage を外から問題リストと prefsPrefix を受け取るようにする
@@ -57,11 +58,12 @@ class _ProblemListPageState extends State<ProblemListPage> {
 
   GachaFilterMode _gachaFilterMode = GachaFilterMode.random;
 
-  // 集計モードは常に最新3回分に固定
-  static const AggregationMode _aggregationMode = AggregationMode.latest3;
-  
-  // スロット数（最新3回分）
-  static const int slotCount = 3;
+  /// ガチャと同じ集計設定。直近1回なら一覧も1スロット、3回なら3スロット。
+  AggregationMode _aggregationMode = AggregationMode.latest1;
+
+  /// SimpleDataManager 側の学習履歴スロット数（保存は常に3）
+  static const int _storageSlotCount = 3;
+  int get _displaySlotCount => _aggregationMode.recentTries;
 
   bool _contentExpanded = false;
 
@@ -87,8 +89,7 @@ class _ProblemListPageState extends State<ProblemListPage> {
   void initState() {
     super.initState();
     _allIntegralProblems = widget.problemPool; // 外から渡された pool を使う
-    // 集計モードは常に最新3回分に固定のため、読み込み不要
-    _loadGachaFilterMode();
+    _loadGachaListSettings();
 
     // 画面遷移直後の体感を良くするため、まず1フレーム描画してから重い計算を開始
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -126,9 +127,8 @@ class _ProblemListPageState extends State<ProblemListPage> {
     });
   }
 
-  // 集計モードは常に最新3回分に固定のため、読み込み・保存処理は不要
-
-  Future<void> _loadGachaFilterMode() async {
+  Future<void> _loadGachaListSettings() async {
+    _aggregationMode = await GachaSettingsLoader.loadAggregationMode(widget.prefsPrefix);
     final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
     final filterModeStr = settings['filterMode'] as String?;
     
@@ -180,16 +180,14 @@ class _ProblemListPageState extends State<ProblemListPage> {
 
   // SimpleDataManagerに統一されたため、古いロード・セーブメソッドは不要
 
-  /// _getSlots を堅牢化：入力形式の揺らぎを吸収し、常に slotCount 長で ProblemStatus/DateTime に変換して返す
+  /// 表示用スロット。左から直近 i 回（[0]=最新）。長さは常に i（集計の直近 i 回と一致）
   Future<List<Map<String, dynamic>>> _getSlots(MathProblem p) async {
     final history = await SimpleDataManager.getLearningHistory(p);
-    // 履歴が3つを超える場合は、時刻でソートしてから最新3つを取得
-    final latestHistory = history.length > slotCount
-        ? sortHistoryByTimeNewestFirst(history).take(slotCount).toList()
-        : history;
-    
+    final n = _displaySlotCount;
+    final latestHistory = sortHistoryByTimeNewestFirst(history).take(n).toList();
+
     final slots = <Map<String, dynamic>>[];
-    for (var i = 0; i < slotCount; i++) {
+    for (var i = 0; i < n; i++) {
       if (i < latestHistory.length) {
         final h = latestHistory[i];
         final status = ProblemStatus.values.firstWhere(
@@ -214,11 +212,14 @@ class _ProblemListPageState extends State<ProblemListPage> {
   }
 
   /// p.id を使って更新する（連鎖クリア・前詰め制約あり）
+  /// [idx] は表示上の直近 i 回の列で左から 0=最新。保存は [0..2] が古→新の3スロットに変換
   Future<void> _setSlot(MathProblem p, int idx, ProblemStatus newStatus) async {
-    // SimpleDataManagerから履歴を取得
+    if (idx < 0 || idx >= _displaySlotCount) return;
+
+    // SimpleDataManagerから履歴を取得（常に古い順の3スロット）
     final history = await SimpleDataManager.getLearningHistory(p);
     final current = <Map<String, dynamic>>[];
-    for (var i = 0; i < slotCount; i++) {
+    for (var i = 0; i < _storageSlotCount; i++) {
       if (i < history.length) {
         final h = history[i];
         final status = ProblemStatus.values.firstWhere(
@@ -240,27 +241,28 @@ class _ProblemListPageState extends State<ProblemListPage> {
       }
     }
 
-    while (current.length < slotCount) {
+    while (current.length < _storageSlotCount) {
       current.add({'status': ProblemStatus.none, 'time': null});
     }
 
-    // 次のスロットに入れるには前が埋まっている必要がある
-    if (newStatus != ProblemStatus.none && idx > 0) {
-      for (var j = 0; j < idx; j++) {
+    final storageIdx = _storageSlotCount - 1 - idx;
+
+    // 古い方から順に埋める必要（ストレージ上で storageIdx より前がすべて埋まっている）
+    if (newStatus != ProblemStatus.none && storageIdx > 0) {
+      for (var j = 0; j < storageIdx; j++) {
         final prevStatus = current[j]['status'] as ProblemStatus? ?? ProblemStatus.none;
         if (prevStatus == ProblemStatus.none) {
-          // 前スロットが空なら操作を拒否
           return;
         }
       }
     }
 
     final t = newStatus == ProblemStatus.none ? null : DateTime.now().toIso8601String();
-    current[idx] = {'status': newStatus, 'time': t};
+    current[storageIdx] = {'status': newStatus, 'time': t};
 
-    // none に戻したら右側を連鎖クリア
+    // none に戻したらそれより新しい方を連鎖クリア
     if (newStatus == ProblemStatus.none) {
-      for (var j = idx + 1; j < current.length; j++) {
+      for (var j = storageIdx + 1; j < current.length; j++) {
         current[j] = {'status': ProblemStatus.none, 'time': null};
       }
     }
@@ -355,7 +357,7 @@ class _ProblemListPageState extends State<ProblemListPage> {
       for (var i = 0; i < list.length; i++) {
         final p = list[i];
         final h = historyMap[p.id] ?? const <Map<String, dynamic>>[];
-        final latest = h.length > slotCount ? sortHistoryByTimeNewestFirst(h).take(slotCount).toList() : h;
+        final latest = sortHistoryByTimeNewestFirst(h).take(_displaySlotCount).toList();
         for (final rec in latest) {
           final st = rec['status'] as String?;
           if (st == 'solved') {
@@ -533,8 +535,7 @@ class _ProblemListPageState extends State<ProblemListPage> {
     );
   }
 
-  /// 集計設定メニューを表示
-  // 集計モードは常に最新3回分に固定のため、メニューは不要
+  /// 集計はガチャの設定（同一 prefsPrefix）に従い、本ページでは専用メニューは出さない
 
   /// フィルタ選択メニューを表示
   Future<void> _showFilterMenu(BuildContext context, {Offset? position, Size? size}) async {
@@ -555,110 +556,6 @@ class _ProblemListPageState extends State<ProblemListPage> {
       await _saveGachaFilterMode();
       _requestRefreshData(delay: Duration.zero);
     }
-  }
-
-  /// 集計説明（既存アイコン説明＋現在の表示条件を下に動的表示）
-  @Deprecated('Not used')
-  Widget _aggregationDescription() {
-    const double fontSize = 13.0;
-    final double chipDiameter = fontSize + 6.0;
-    final double innerIconSize = fontSize * 0.95;
-
-    Widget statusChip(ProblemStatus s) {
-      return Container(
-        width: chipDiameter,
-        height: chipDiameter,
-        decoration: BoxDecoration(
-          color: _colorOfSmall(s),
-          shape: BoxShape.circle,
-        ),
-        alignment: Alignment.center,
-        child: Icon(_iconOfSmall(s), size: innerIconSize, color: Colors.white),
-      );
-    }
-
-    // 動的に現在の表示条件を作る（説明用）
-    Widget buildExclusionWidget() {
-      final l10n = AppLocalizations.of(context)!;
-      Widget content;
-      if (_gachaFilterMode == GachaFilterMode.random) {
-        content = Text(l10n.allDisplayed, style: TextStyle(fontSize: 16, color: Colors.grey[900]));
-      } else {
-        int n;
-        switch (_gachaFilterMode) {
-          case GachaFilterMode.excludeSolvedGE1:
-            n = 1;
-            break;
-          case GachaFilterMode.excludeSolvedGE2:
-            n = 2;
-            break;
-          case GachaFilterMode.excludeSolvedGE3:
-          default:
-            n = 3;
-            break;
-        }
-
-        content = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.latestNTimes(n), style: TextStyle(fontSize: 16, color: Colors.grey[900])),
-            _statusBadgeSmall(ProblemStatus.solved, diameter: 18.0),
-            const SizedBox(width: 2),
-            Text(' ${l10n.excludeSuffix}', style: TextStyle(fontSize: 16, color: Colors.grey[900])),
-          ],
-        );
-      }
-
-      return Builder(
-        builder: (context) => InkWell(
-          onTap: () => _showFilterMenu(context),
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                content,
-                const SizedBox(width: 4),
-                Icon(Icons.arrow_drop_down, size: 20, color: Colors.grey[700]),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    final exclusionWidget = buildExclusionWidget();
-    final l10n = AppLocalizations.of(context)!;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('※', style: TextStyle(fontSize: 14, height: 1.0)),
-              const SizedBox(width: 4),
-              statusChip(ProblemStatus.solved),
-              const SizedBox(width: 4),
-              statusChip(ProblemStatus.understood),
-              const SizedBox(width: 4),
-              statusChip(ProblemStatus.failed),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text(
-                  l10n.aggregateLatestNLong(_aggregationMode == AggregationMode.latest1 ? 1 : 3),
-                  style: TextStyle(fontSize: 16, height: 1.1, color: Colors.grey[900]),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   /// ガチャタイプ名を取得
@@ -839,7 +736,7 @@ class _ProblemListPageState extends State<ProblemListPage> {
     );
   }
 
-  /// フィルター設定部分を構築（除外設定のみ、集計設定は常に最新3回分に固定）
+  /// フィルター設定部分を構築（除外設定のみ。集計はガチャと同期）
   Widget _buildFilterSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
@@ -847,7 +744,6 @@ class _ProblemListPageState extends State<ProblemListPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 除外設定のみ表示（集計設定は常に最新3回分に固定のため削除）
           ExclusionFilterChip(
             exclusionMode: _gachaFilterMode.toExclusionMode(),
             filterChipKey: _filterChipKey,
@@ -872,7 +768,7 @@ class _ProblemListPageState extends State<ProblemListPage> {
   /// 問題リスト部分を構築
   Widget _buildProblemListSection(List<String> levels) {
     return FutureBuilder<_ProblemListData>(
-      key: ValueKey(_gachaFilterMode.name),
+      key: ValueKey('${_gachaFilterMode.name}_${_aggregationMode.name}'),
       future: _dataFuture,
       builder: (context, snapshot) {
         final data = snapshot.data ?? _data;

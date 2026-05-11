@@ -59,7 +59,7 @@ final Map<String, ProblemTranslation> factorizationTranslationsEn = {
       r"\begin{aligned} x^3 + 2x^2 - 5x - 6 &= (x + 1)(x^2 + x - 6) \\ &= (x + 1)(x + 3)(x - 2) \end{aligned}",
     ],
   ),
-  "A1B2C3D4-E5F6-A7B8-C9D0-E1F2A3B4C5D6": ProblemTranslation(
+  "F14C7A82-9E10-4B3D-9C2A-1D8E7F6A5B4C": ProblemTranslation(
     category: 'Factorization',
     level: 'Easy',
     hint: r"\text{Group terms and factor by } x \text{ and } z.",

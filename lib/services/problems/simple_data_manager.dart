@@ -1,6 +1,5 @@
 // lib/services/simple_data_manager.dart
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
@@ -15,6 +14,7 @@ import '../../utils/app_logger.dart';
 /// シンプルで拡張可能なデータ管理システム
 /// 現在の必要最小限のデータ + 将来の拡張に対応
 class SimpleDataManager {
+  /// SharedPreferences key prefix for this app.
   static const String _namespace = 'joymath_simple';
 
   // メモリ保持用の計算用紙データ（アプリ終了まで保持、画面遷移しても消えない）
@@ -29,35 +29,49 @@ class SimpleDataManager {
   // ============================================================================
   static final Map<String, List<Map<String, dynamic>>> _learningHistoryCache = {};
   static final Map<String, Map<String, dynamic>> _learningDataCache = {};
+  static final Map<String, Map<String, dynamic>> _cloudLearningDataCache = {};
+  static final Map<String, Map<String, dynamic>> _cloudGachaSettingsCache = {};
+  static Map<String, dynamic>? _cloudUserSettingsCache;
+  static final Map<String, Map<String, dynamic>> _cloudOtherSettingsCache = {};
   static Future<void>? _webCloudSyncFuture;
   static String? _webCloudReadyUserId;
+  static String? _cloudLearningReadyUserId;
+  static DateTime? _cloudLearningLastFetchedAt;
+  static String? _cloudSettingsReadyUserId;
+  static DateTime? _cloudSettingsLastFetchedAt;
+  static bool _hasPendingLearningSync = false;
+  static bool _hasPendingSettingsSync = false;
+  static const int _learningSlotCount = 3;
+  static const Duration _cloudLearningCacheTtl = Duration(seconds: 5);
+  static const Duration _cloudSettingsCacheTtl = Duration(seconds: 5);
 
-  static bool get _isWebCloudAuthoritative =>
-      kIsWeb &&
-      FirebaseAuthService.isAuthenticated &&
-      FirebaseAuthService.userId != null;
-
-  static Future<void> ensureWebCloudSyncReady({bool force = false}) async {
-    if (!_isWebCloudAuthoritative) {
+  static Future<bool> ensureWebCloudSyncReady({bool force = false}) async {
+    if (!FirebaseAuthService.isAuthenticated || FirebaseAuthService.userId == null) {
       _webCloudReadyUserId = null;
-      return;
+      _clearCloudLearningCache();
+      _clearCloudSettingsCache();
+      return false;
     }
 
     final userId = FirebaseAuthService.userId!;
     if (!force && _webCloudReadyUserId == userId && _webCloudSyncFuture == null) {
-      return;
+      return true;
     }
 
     if (_webCloudSyncFuture != null) {
       await _webCloudSyncFuture;
       if (!force && _webCloudReadyUserId == userId) {
-        return;
+        return true;
       }
     }
 
     _webCloudSyncFuture = () async {
       try {
-        await initialize();
+        final learningReady = await _ensureCloudLearningStateCurrent(force: force);
+        final settingsReady = await _ensureCloudSettingsStateCurrent(force: force);
+        if (!learningReady || !settingsReady) {
+          throw StateError('Cloud sync warm-up did not complete');
+        }
       } finally {
         if (FirebaseAuthService.userId == userId) {
           _webCloudReadyUserId = userId;
@@ -66,7 +80,15 @@ class SimpleDataManager {
       }
     }();
 
-    await _webCloudSyncFuture;
+    try {
+      await _webCloudSyncFuture;
+      return true;
+    } catch (_) {
+      if (FirebaseAuthService.userId == userId) {
+        _webCloudReadyUserId = null;
+      }
+      return false;
+    }
   }
 
   static void _cacheLearningDataForProblem(
@@ -78,6 +100,596 @@ class SimpleDataManager {
     _learningHistoryCache[problemId] = _normalizeLearningHistoryList(
       normalizedData['history'] as List? ?? const [],
     );
+  }
+
+  static void _cacheCloudLearningDataForProblem(
+    String problemId,
+    Map<String, dynamic> data,
+  ) {
+    _cloudLearningDataCache[problemId] = _normalizeLearningData(
+      problemId: problemId,
+      raw: data,
+    );
+  }
+
+  static void _clearCloudLearningCache() {
+    _cloudLearningDataCache.clear();
+    _cloudLearningReadyUserId = null;
+    _cloudLearningLastFetchedAt = null;
+  }
+
+  static void _clearCloudSettingsCache() {
+    _cloudGachaSettingsCache.clear();
+    _cloudUserSettingsCache = null;
+    _cloudOtherSettingsCache.clear();
+    _cloudSettingsReadyUserId = null;
+    _cloudSettingsLastFetchedAt = null;
+  }
+
+  static void _clearLearningCaches() {
+    _learningHistoryCache.clear();
+    _learningDataCache.clear();
+    _clearCloudLearningCache();
+  }
+
+  static String _otherSettingMetaKey(String key) =>
+      '$_namespace/other_setting_meta/${Uri.encodeComponent(key)}';
+
+  static Map<String, dynamic> _normalizeTimestampedSettingsMap(
+    Map<String, dynamic>? raw, {
+    Map<String, dynamic> defaults = const {},
+  }) {
+    final normalized = Map<String, dynamic>.from(defaults);
+    if (raw != null) {
+      normalized.addAll(raw);
+    }
+    normalized['lastUpdated'] =
+        _normalizeTimeString(normalized['lastUpdated']) ??
+        DateTime.now().toIso8601String();
+    return normalized;
+  }
+
+  static Map<String, dynamic> _mergeLatestTimestampedData({
+    Map<String, dynamic>? localData,
+    Map<String, dynamic>? cloudData,
+    Map<String, dynamic> defaults = const {},
+  }) {
+    final normalizedLocal =
+        localData == null
+            ? null
+            : _normalizeTimestampedSettingsMap(localData, defaults: defaults);
+    final normalizedCloud =
+        cloudData == null
+            ? null
+            : _normalizeTimestampedSettingsMap(cloudData, defaults: defaults);
+
+    if (normalizedLocal == null) {
+      return normalizedCloud ?? _normalizeTimestampedSettingsMap(defaults);
+    }
+    if (normalizedCloud == null) {
+      return normalizedLocal;
+    }
+
+    final localUpdated =
+        _parseTimestamp(normalizedLocal['lastUpdated'] as String?);
+    final cloudUpdated =
+        _parseTimestamp(normalizedCloud['lastUpdated'] as String?);
+
+    if (localUpdated != null && cloudUpdated != null) {
+      return localUpdated.isAfter(cloudUpdated) ? normalizedLocal : normalizedCloud;
+    }
+    if (localUpdated != null) {
+      return normalizedLocal;
+    }
+    return normalizedCloud;
+  }
+
+  static bool _areTimestampedSettingsEquivalent(
+    Map<String, dynamic>? left,
+    Map<String, dynamic>? right, {
+    Map<String, dynamic> defaults = const {},
+  }) {
+    final normalizedLeft = _normalizeTimestampedSettingsMap(left, defaults: defaults);
+    final normalizedRight =
+        _normalizeTimestampedSettingsMap(right, defaults: defaults);
+    return json.encode(normalizedLeft) == json.encode(normalizedRight);
+  }
+
+  static Future<void> _saveLocalTimestampedSettingsMap(
+    String key,
+    Map<String, dynamic> data, {
+    Map<String, dynamic> defaults = const {},
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final normalized = _normalizeTimestampedSettingsMap(data, defaults: defaults);
+    await prefs.setString(key, json.encode(normalized));
+  }
+
+  static Future<Map<String, dynamic>> _loadLocalTimestampedSettingsMap(
+    String key, {
+    Map<String, dynamic> defaults = const {},
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(key);
+    if (raw != null) {
+      try {
+        final decoded = json.decode(raw);
+        if (decoded is Map<String, dynamic>) {
+          return _normalizeTimestampedSettingsMap(decoded, defaults: defaults);
+        }
+      } catch (_) {}
+    }
+    return _normalizeTimestampedSettingsMap(defaults, defaults: defaults);
+  }
+
+  static Future<void> _saveLocalOtherSettingEntry(
+    String key,
+    dynamic value, {
+    String? lastUpdated,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (value == null) {
+      await prefs.remove(key);
+      await prefs.remove(_otherSettingMetaKey(key));
+      return;
+    }
+
+    if (value is int) {
+      await prefs.setInt(key, value);
+    } else if (value is String) {
+      await prefs.setString(key, value);
+    } else if (value is bool) {
+      await prefs.setBool(key, value);
+    } else if (value is double) {
+      await prefs.setDouble(key, value);
+    } else if (value is List<String>) {
+      await prefs.setString(key, json.encode(value));
+    } else if (value is List) {
+      await prefs.setString(key, json.encode(value));
+    } else if (value is Map<String, dynamic>) {
+      await prefs.setString(key, json.encode(value));
+    } else {
+      await prefs.setString(key, json.encode(value));
+    }
+
+    await prefs.setString(
+      _otherSettingMetaKey(key),
+      lastUpdated ?? DateTime.now().toIso8601String(),
+    );
+  }
+
+  static Future<Map<String, dynamic>?> _loadLocalOtherSettingEntry(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = prefs.get(key);
+    if (value == null) {
+      return null;
+    }
+
+    dynamic normalizedValue = value;
+    if (value is String) {
+      try {
+        normalizedValue = json.decode(value);
+      } catch (_) {
+        normalizedValue = value;
+      }
+    }
+
+    final lastUpdated = prefs.getString(_otherSettingMetaKey(key));
+    return {
+      'key': key,
+      'value': normalizedValue,
+      'lastUpdated': lastUpdated,
+    };
+  }
+
+  static Map<String, dynamic>? _mergeLatestOtherSettingEntry({
+    Map<String, dynamic>? localEntry,
+    Map<String, dynamic>? cloudEntry,
+  }) {
+    if (localEntry == null) return cloudEntry == null ? null : Map<String, dynamic>.from(cloudEntry);
+    if (cloudEntry == null) {
+      final normalized = Map<String, dynamic>.from(localEntry);
+      normalized['lastUpdated'] =
+          _normalizeTimeString(normalized['lastUpdated']) ??
+          DateTime.now().toIso8601String();
+      return normalized;
+    }
+
+    final normalizedLocal = Map<String, dynamic>.from(localEntry);
+    normalizedLocal['lastUpdated'] =
+        _normalizeTimeString(normalizedLocal['lastUpdated']) ??
+        DateTime.now().toIso8601String();
+    final normalizedCloud = Map<String, dynamic>.from(cloudEntry);
+    normalizedCloud['lastUpdated'] =
+        _normalizeTimeString(normalizedCloud['lastUpdated']) ??
+        DateTime.now().toIso8601String();
+
+    final localUpdated =
+        _parseTimestamp(normalizedLocal['lastUpdated'] as String?);
+    final cloudUpdated =
+        _parseTimestamp(normalizedCloud['lastUpdated'] as String?);
+    if (localUpdated != null && cloudUpdated != null) {
+      return localUpdated.isAfter(cloudUpdated)
+          ? normalizedLocal
+          : normalizedCloud;
+    }
+    if (localUpdated != null) {
+      return normalizedLocal;
+    }
+    return normalizedCloud;
+  }
+
+  static Map<String, dynamic> _defaultLearningData(String problemId) {
+    final now = DateTime.now().toIso8601String();
+    return {
+      'problemId': problemId,
+      'latestStatus': 'none',
+      'history': List.generate(_learningSlotCount, (_) => <String, dynamic>{
+        'status': 'none',
+        'time': null,
+      }),
+      'lastUpdated': now,
+    };
+  }
+
+  static String? _normalizeTimeString(dynamic value) {
+    if (value is String && value.isNotEmpty) {
+      return value;
+    }
+    if (value is DateTime) {
+      return value.toIso8601String();
+    }
+    return null;
+  }
+
+  static DateTime? _parseTimestamp(String? value) {
+    if (value == null || value.isEmpty) return null;
+    try {
+      return DateTime.parse(value);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static List<Map<String, dynamic>> _extractMeaningfulLearningHistory(
+    List? history,
+  ) {
+    final normalized = _normalizeLearningHistoryList(history);
+    final meaningful = normalized.where((item) {
+      final status = item['status'] as String? ?? 'none';
+      final time = item['time'] as String?;
+      return status != 'none' && time != null && time.isNotEmpty;
+    }).map((item) => Map<String, dynamic>.from(item)).toList();
+
+    meaningful.sort((a, b) {
+      final timeA = a['time'] as String? ?? '';
+      final timeB = b['time'] as String? ?? '';
+      return timeA.compareTo(timeB);
+    });
+    return meaningful;
+  }
+
+  static List<Map<String, dynamic>> _buildLearningHistorySlots(
+    List<Map<String, dynamic>> entries,
+  ) {
+    final slots = List.generate(_learningSlotCount, (_) => <String, dynamic>{
+      'status': 'none',
+      'time': null,
+    });
+    final recentEntries =
+        entries.length <= _learningSlotCount
+            ? entries
+            : entries.sublist(entries.length - _learningSlotCount);
+
+    for (var i = 0; i < recentEntries.length; i++) {
+      slots[i] = Map<String, dynamic>.from(recentEntries[i]);
+    }
+    return slots;
+  }
+
+  static String _deriveLatestStatus(List<Map<String, dynamic>> slots) {
+    for (var i = slots.length - 1; i >= 0; i--) {
+      final status = slots[i]['status'] as String? ?? 'none';
+      if (status != 'none') {
+        return status;
+      }
+    }
+    return 'none';
+  }
+
+  static bool _isClearedLearningData(Map<String, dynamic> data) {
+    final meaningfulHistory = _extractMeaningfulLearningHistory(
+      data['history'] as List?,
+    );
+    final latestStatus = data['latestStatus'] as String? ?? 'none';
+    return meaningfulHistory.isEmpty && latestStatus == 'none';
+  }
+
+  static String _resolveLastUpdated({
+    required List<Map<String, dynamic>> meaningfulHistory,
+    String? explicitLastUpdated,
+  }) {
+    if (meaningfulHistory.isNotEmpty) {
+      return meaningfulHistory.last['time'] as String;
+    }
+    final normalizedExplicit = _normalizeTimeString(explicitLastUpdated);
+    if (normalizedExplicit != null) {
+      return normalizedExplicit;
+    }
+    return DateTime.now().toIso8601String();
+  }
+
+  static Map<String, dynamic> _normalizeLearningData({
+    required String problemId,
+    Map<String, dynamic>? raw,
+  }) {
+    if (raw == null) {
+      return _defaultLearningData(problemId);
+    }
+
+    final meaningfulHistory = _extractMeaningfulLearningHistory(
+      raw['history'] as List?,
+    );
+    final slots = _buildLearningHistorySlots(meaningfulHistory);
+    return {
+      'problemId': raw['problemId'] as String? ?? problemId,
+      'latestStatus': _deriveLatestStatus(slots),
+      'history': slots,
+      'lastUpdated': _resolveLastUpdated(
+        meaningfulHistory: meaningfulHistory,
+        explicitLastUpdated: raw['lastUpdated'] as String?,
+      ),
+    };
+  }
+
+  static Map<String, dynamic> _mergeLearningData({
+    required String problemId,
+    Map<String, dynamic>? localData,
+    Map<String, dynamic>? cloudData,
+  }) {
+    final normalizedLocal =
+        localData == null
+            ? null
+            : _normalizeLearningData(problemId: problemId, raw: localData);
+    final normalizedCloud =
+        cloudData == null
+            ? null
+            : _normalizeLearningData(problemId: problemId, raw: cloudData);
+
+    if (normalizedLocal == null) {
+      return normalizedCloud ?? _defaultLearningData(problemId);
+    }
+    if (normalizedCloud == null) {
+      return normalizedLocal;
+    }
+
+    final localUpdated =
+        _parseTimestamp(normalizedLocal['lastUpdated'] as String?);
+    final cloudUpdated =
+        _parseTimestamp(normalizedCloud['lastUpdated'] as String?);
+
+    if (_isClearedLearningData(normalizedLocal) &&
+        (cloudUpdated == null ||
+            (localUpdated != null && !localUpdated.isBefore(cloudUpdated)))) {
+      return normalizedLocal;
+    }
+    if (_isClearedLearningData(normalizedCloud) &&
+        (localUpdated == null ||
+            (cloudUpdated != null && !cloudUpdated.isBefore(localUpdated)))) {
+      return normalizedCloud;
+    }
+
+    final mergedByTime = <String, Map<String, dynamic>>{};
+    for (final entry in _extractMeaningfulLearningHistory(
+      normalizedCloud['history'] as List?,
+    )) {
+      final time = entry['time'] as String?;
+      if (time != null && time.isNotEmpty) {
+        mergedByTime[time] = Map<String, dynamic>.from(entry);
+      }
+    }
+    for (final entry in _extractMeaningfulLearningHistory(
+      normalizedLocal['history'] as List?,
+    )) {
+      final time = entry['time'] as String?;
+      if (time != null && time.isNotEmpty) {
+        mergedByTime.putIfAbsent(time, () => Map<String, dynamic>.from(entry));
+      }
+    }
+
+    final mergedEntries = mergedByTime.values.toList()
+      ..sort((a, b) {
+        final timeA = a['time'] as String? ?? '';
+        final timeB = b['time'] as String? ?? '';
+        return timeA.compareTo(timeB);
+      });
+
+    final slots = _buildLearningHistorySlots(mergedEntries);
+    final mergedUpdatedCandidates = <DateTime>[
+      if (localUpdated != null) localUpdated,
+      if (cloudUpdated != null) cloudUpdated,
+      if (mergedEntries.isNotEmpty)
+        _parseTimestamp(mergedEntries.last['time'] as String?) ??
+            DateTime.fromMillisecondsSinceEpoch(0),
+    ];
+    mergedUpdatedCandidates.sort();
+    final mergedLastUpdated =
+        mergedUpdatedCandidates.isNotEmpty
+            ? mergedUpdatedCandidates.last.toIso8601String()
+            : DateTime.now().toIso8601String();
+
+    return {
+      'problemId': problemId,
+      'latestStatus': _deriveLatestStatus(slots),
+      'history': slots,
+      'lastUpdated': mergedLastUpdated,
+    };
+  }
+
+  static bool _areLearningDataEquivalent(
+    Map<String, dynamic>? left,
+    Map<String, dynamic>? right,
+    String problemId,
+  ) {
+    final normalizedLeft =
+        left == null
+            ? _defaultLearningData(problemId)
+            : _normalizeLearningData(problemId: problemId, raw: left);
+    final normalizedRight =
+        right == null
+            ? _defaultLearningData(problemId)
+            : _normalizeLearningData(problemId: problemId, raw: right);
+    return json.encode(normalizedLeft) == json.encode(normalizedRight);
+  }
+
+  static Future<void> _saveLocalLearningData(
+    String problemId,
+    Map<String, dynamic> data,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final normalized = _normalizeLearningData(problemId: problemId, raw: data);
+    final key = '$_namespace/learning/$problemId';
+    await prefs.setString(key, json.encode(normalized));
+    _cacheLearningDataForProblem(problemId, normalized);
+  }
+
+  static Future<bool> _ensureCloudLearningStateCurrent({bool force = false}) async {
+    if (!FirebaseAuthService.isAuthenticated || FirebaseAuthService.userId == null) {
+      _clearCloudLearningCache();
+      return false;
+    }
+
+    if (await isAccountSwitched()) {
+      await syncOnAccountSwitch();
+      return await _syncFromFirestore(force: false);
+    }
+
+    final shouldPushLocal = force || _hasPendingLearningSync;
+    if (shouldPushLocal) {
+      await syncLocalDataToFirestore(force: true);
+    }
+    return await _syncFromFirestore(force: force || shouldPushLocal);
+  }
+
+  static bool _isSettingsCacheFresh() {
+    return _cloudSettingsLastFetchedAt != null &&
+        DateTime.now().difference(_cloudSettingsLastFetchedAt!) <
+            _cloudSettingsCacheTtl;
+  }
+
+  static Map<String, dynamic>? _normalizeOtherSettingEntry(
+    Map<String, dynamic>? entry,
+  ) {
+    if (entry == null) return null;
+    final normalized = Map<String, dynamic>.from(entry);
+    normalized['lastUpdated'] =
+        _normalizeTimeString(normalized['lastUpdated']) ??
+        DateTime.now().toIso8601String();
+    return normalized;
+  }
+
+  static bool _areOtherSettingEntriesEquivalent(
+    Map<String, dynamic>? left,
+    Map<String, dynamic>? right,
+  ) {
+    final normalizedLeft = _normalizeOtherSettingEntry(left);
+    final normalizedRight = _normalizeOtherSettingEntry(right);
+    return json.encode(normalizedLeft) == json.encode(normalizedRight);
+  }
+
+  static Future<Set<String>> _collectTrackedOtherSettingKeys(
+    SharedPreferences prefs,
+  ) async {
+    final keys = <String>{
+      'integral_gacha_exclusion_mode',
+      'limit_gacha_exclusion_mode',
+      'sequence_gacha_exclusion_mode',
+      'integral_gacha_max_selections',
+      'limit_gacha_max_selections',
+      'sequence_gacha_max_selections',
+      _selectedFreeGachasKey,
+      ..._cloudOtherSettingsCache.keys,
+    };
+
+    for (final key in prefs.getKeys()) {
+      if (key.endsWith('_aggregation_mode_v1') ||
+          key.endsWith('_gacha_exclusion_mode') ||
+          key.endsWith('_gacha_max_selections')) {
+        keys.add(key);
+      }
+      if (key.startsWith('$_namespace/other_setting_meta/')) {
+        keys.add(Uri.decodeComponent(key.split('/').last));
+      }
+    }
+
+    return keys;
+  }
+
+  static Future<bool> _syncSettingsFromFirestore({bool force = false}) async {
+    try {
+      final userId = FirebaseAuthService.userId;
+      if (userId == null) {
+        _clearCloudSettingsCache();
+        return false;
+      }
+      if (!force &&
+          _cloudSettingsReadyUserId == userId &&
+          _isSettingsCacheFresh()) {
+        return true;
+      }
+
+      final results = await Future.wait([
+        FirestoreSettingsService.getAllGachaSettings(userId: userId),
+        FirestoreSettingsService.getUserSettings(userId: userId),
+        FirestoreSettingsService.getAllOtherSettingEntries(userId: userId),
+      ]).timeout(const Duration(seconds: 10));
+
+      final gachaSettings = results[0] as Map<String, Map<String, dynamic>>;
+      final userSettings = results[1];
+      final otherSettings = results[2] as Map<String, Map<String, dynamic>>;
+
+      _clearCloudSettingsCache();
+      for (final entry in gachaSettings.entries) {
+        _cloudGachaSettingsCache[entry.key] = _normalizeTimestampedSettingsMap(
+          entry.value,
+          defaults: _getDefaultGachaSettings(),
+        );
+      }
+      if (userSettings != null) {
+        _cloudUserSettingsCache = _normalizeTimestampedSettingsMap(userSettings);
+      }
+      for (final entry in otherSettings.entries) {
+        final normalized = _normalizeOtherSettingEntry(entry.value);
+        if (normalized != null) {
+          _cloudOtherSettingsCache[entry.key] = normalized;
+        }
+      }
+
+      _cloudSettingsReadyUserId = userId;
+      _cloudSettingsLastFetchedAt = DateTime.now();
+      return true;
+    } catch (e) {
+      AppLogger.error('Firestoreからの設定取得に失敗しました', error: e);
+      return false;
+    }
+  }
+
+  static Future<bool> _ensureCloudSettingsStateCurrent({bool force = false}) async {
+    if (!FirebaseAuthService.isAuthenticated || FirebaseAuthService.userId == null) {
+      _clearCloudSettingsCache();
+      return false;
+    }
+
+    if (await isAccountSwitched()) {
+      await syncOnAccountSwitch();
+      return await _syncSettingsFromFirestore(force: false);
+    }
+
+    final shouldPushLocal = force || _hasPendingSettingsSync;
+    if (shouldPushLocal) {
+      await syncLocalSettingsToFirestore(force: true);
+    }
+    return await _syncSettingsFromFirestore(force: force || shouldPushLocal);
   }
 
   static List<Map<String, dynamic>> _normalizeLearningHistoryList(List? history) {
@@ -108,36 +720,6 @@ class SimpleDataManager {
         .toList();
   }
 
-  static Future<void> _clearLocalLearningMirror(
-    SharedPreferences prefs,
-  ) async {
-    final learningKeys = prefs
-        .getKeys()
-        .where((key) => key.startsWith('$_namespace/learning/'))
-        .toList();
-    for (final key in learningKeys) {
-      await prefs.remove(key);
-    }
-    _learningHistoryCache.clear();
-    _learningDataCache.clear();
-  }
-
-  static Future<void> _clearWebManagedSettingMirror(
-    SharedPreferences prefs,
-  ) async {
-    final managedKeys = prefs
-        .getKeys()
-        .where(
-          (key) =>
-              key.startsWith('$_namespace/gacha/') ||
-              key == '$_namespace/user_settings',
-        )
-        .toList();
-    for (final key in managedKeys) {
-      await prefs.remove(key);
-    }
-  }
-  
   // ============================================================================
   // 初期化とバージョン管理
   // ============================================================================
@@ -157,10 +739,29 @@ class SimpleDataManager {
         AppLogger.success('SimpleDataManagerの初期化が完了しました');
       }
       
-      // 認証済みユーザーの場合、Firestoreからデータを同期
-      if (FirebaseAuthService.isAuthenticated) {
-        await _syncFromFirestore();
+      if (!FirebaseAuthService.isAuthenticated) {
+        _clearCloudLearningCache();
+        _clearCloudSettingsCache();
+        _webCloudReadyUserId = null;
+        return true;
       }
+
+      final userId = FirebaseAuthService.userId;
+      if (userId == null) {
+        _clearCloudLearningCache();
+        _clearCloudSettingsCache();
+        _webCloudReadyUserId = null;
+        return true;
+      }
+
+      if (await isAccountSwitched()) {
+        await syncOnAccountSwitch();
+        return true;
+      }
+
+      await _ensureCloudLearningStateCurrent(force: true);
+      await _ensureCloudSettingsStateCurrent(force: true);
+      await setLastUserId(userId);
       
       return true;
     } catch (e) {
@@ -169,958 +770,366 @@ class SimpleDataManager {
     }
   }
   
-  /// Firestoreからデータを同期（認証済みユーザー用）
-  static Future<void> _syncFromFirestore() async {
+  /// Firestoreから学習データを取得してメモリキャッシュを更新
+  static Future<bool> _syncFromFirestore({bool force = false}) async {
     try {
-      final userId = FirebaseAuthService.userId;
-      if (userId == null) return;
-      
-      final prefs = await SharedPreferences.getInstance();
-      final syncKey = '$_namespace/firestore_sync_completed_$userId';
-      
-      // 全学習記録を取得（タイムアウト付き）
-      Map<String, Map<String, dynamic>> firestoreRecords;
-      try {
-        firestoreRecords = await FirestoreLearningService.getAllLearningRecords(
-          userId: userId,
-        ).timeout(
-          const Duration(seconds: 10),
-          onTimeout: () {
-            print('⚠️ Timeout getting learning records from Firestore for user: $userId');
-            return <String, Map<String, dynamic>>{};
-          },
-        );
-      } catch (e) {
-        final errorStr = e.toString().toLowerCase();
-        if (errorStr.contains('permission') || errorStr.contains('permission-denied')) {
-          print('⚠️ Permission denied getting learning records from Firestore for user: $userId');
-          print('⚠️ Firestoreセキュリティルールを確認してください。FIRESTORE_SECURITY_RULES.mdを参照してください。');
-          // 権限エラーの場合は設定のみ同期を試みる
-          await _syncSettingsFromFirestore(userId);
-          return;
-        }
-        print('Error getting learning records from Firestore for user: $userId - $e');
-        firestoreRecords = {};
-      }
-
-      if (_isWebCloudAuthoritative) {
-        await _clearLocalLearningMirror(prefs);
-        for (final entry in firestoreRecords.entries) {
-          final problemId = entry.key;
-          final firestoreData = Map<String, dynamic>.from(entry.value);
-          final localKey = '$_namespace/learning/$problemId';
-          await prefs.setString(localKey, json.encode(firestoreData));
-          _cacheLearningDataForProblem(problemId, firestoreData);
-        }
-
-        await _syncSettingsFromFirestore(userId);
-        await prefs.setString(syncKey, DateTime.now().toIso8601String());
-        AppLogger.success('Firestoreからのデータ同期が完了しました');
-        return;
-      }
-      
-      // ローカルデータとマージ（最新のタイムスタンプを優先）
-      // history配列はtimeフィールドで重複チェックしながら統合
-      for (final entry in firestoreRecords.entries) {
-        final problemId = entry.key;
-        final firestoreData = entry.value;
-        
-        final localKey = '$_namespace/learning/$problemId';
-        final localDataString = prefs.getString(localKey);
-        
-        Map<String, dynamic> mergedData;
-        
-        if (localDataString != null) {
-          final localData = json.decode(localDataString) as Map<String, dynamic>;
-          
-          // history配列をtimeフィールドで重複チェックしながら統合
-          final localHistory = localData['history'] as List? ?? [];
-          final firestoreHistory = firestoreData['history'] as List? ?? [];
-          
-          // デバッグログ
-          print('🔍 [History Merge] Problem: $problemId');
-          print('🔍 [History Merge] Local history count: ${localHistory.length}');
-          print('🔍 [History Merge] Firestore history count: ${firestoreHistory.length}');
-          
-          // timeフィールドで重複チェックしながら統合
-          // timeがnullのレコード（none状態のスロット）は重複チェックの対象外
-          final mergedHistory = <Map<String, dynamic>>[];
-          final seenTimes = <String>{};
-          
-          // まずローカルの履歴を追加（timeがnullでないレコードのみ）
-          for (final record in localHistory) {
-            if (record is Map<String, dynamic>) {
-              // timeフィールドを文字列に変換（Timestampの可能性があるため）
-              dynamic timeValue = record['time'];
-              String? time;
-              if (timeValue is String) {
-                time = timeValue;
-              } else if (timeValue != null) {
-                // TimestampやDateTimeの場合は文字列に変換
-                try {
-                  if (timeValue is DateTime) {
-                    time = timeValue.toIso8601String();
-                  } else {
-                    time = timeValue.toString();
-                  }
-                } catch (e) {
-                  time = null;
-                }
-              }
-              
-              // timeがnullまたは空文字列の場合はスキップ（none状態のスロット）
-              if (time != null && time.isNotEmpty) {
-                // 重複チェック：同じtimeを持つレコードが既に存在する場合はスキップ
-                if (!seenTimes.contains(time)) {
-                  final recordCopy = Map<String, dynamic>.from(record);
-                  recordCopy['time'] = time; // 文字列形式に統一
-                  mergedHistory.add(recordCopy);
-                  seenTimes.add(time);
-                  print('🔍 [History Merge] Added local record: status=${record['status']}, time=$time');
-                } else {
-                  print('🔍 [History Merge] Skipped duplicate local record: time=$time');
-                }
-              }
-            }
-          }
-          
-          // 次にFirestoreの履歴を追加（重複していないもののみ）
-          for (final record in firestoreHistory) {
-            if (record is Map<String, dynamic>) {
-              // timeフィールドを文字列に変換（Timestampの可能性があるため）
-              dynamic timeValue = record['time'];
-              String? time;
-              if (timeValue is String) {
-                time = timeValue;
-              } else if (timeValue != null) {
-                // TimestampやDateTimeの場合は文字列に変換
-                try {
-                  if (timeValue is DateTime) {
-                    time = timeValue.toIso8601String();
-                  } else {
-                    time = timeValue.toString();
-                  }
-                } catch (e) {
-                  time = null;
-                }
-              }
-              
-              // timeがnullまたは空文字列の場合はスキップ（none状態のスロット）
-              if (time != null && time.isNotEmpty) {
-                // 重複チェック：同じtimeを持つレコードが既に存在する場合はスキップ
-                if (!seenTimes.contains(time)) {
-                  final recordCopy = Map<String, dynamic>.from(record);
-                  recordCopy['time'] = time; // 文字列形式に統一
-                  mergedHistory.add(recordCopy);
-                  seenTimes.add(time);
-                  print('🔍 [History Merge] Added Firestore record: status=${record['status']}, time=$time');
-                } else {
-                  print('🔍 [History Merge] Skipped duplicate Firestore record: time=$time');
-                }
-              }
-            }
-          }
-          
-          print('🔍 [History Merge] Merged history count: ${mergedHistory.length}');
-          
-          // 時系列でソート（timeでソート、古い順）
-          // timeがnullのレコードは既に除外されているので、全てtimeが存在する
-          mergedHistory.sort((a, b) {
-            final timeA = a['time'] as String? ?? '';
-            final timeB = b['time'] as String? ?? '';
-            return timeA.compareTo(timeB);
-          });
-          
-          // スロット0, 1, 2に配置（スロット2が最新）
-          const slotCount = 3;
-          final slots = List.generate(slotCount, (i) => <String, dynamic>{
-            'status': 'none',
-            'time': null,
-          });
-          
-          if (mergedHistory.isNotEmpty) {
-            // 最新のデータをスロット2に、次に新しいものをスロット1に、その次に新しいものをスロット0に
-            final sortedHistory = mergedHistory.reversed.toList(); // 新しい順
-            final count = mergedHistory.length;
-            
-            if (count == 1) {
-              // データが1つだけ → スロット0に
-              slots[0] = Map<String, dynamic>.from(sortedHistory[0]);
-            } else if (count == 2) {
-              // データが2つ → スロット1に最新、スロット0に古いもの
-              slots[1] = Map<String, dynamic>.from(sortedHistory[0]); // 最新
-              slots[0] = Map<String, dynamic>.from(sortedHistory[1]); // 古い
-            } else {
-              // データが3つ以上 → スロット2に最新、スロット1に次に新しいもの、スロット0にその次に新しいもの
-              slots[2] = Map<String, dynamic>.from(sortedHistory[0]); // 最新
-              slots[1] = Map<String, dynamic>.from(sortedHistory[1]); // 次に新しい
-              slots[0] = Map<String, dynamic>.from(sortedHistory[2]); // その次に新しい
-            }
-          }
-          
-          // タイムスタンプを比較して新しい方を優先（history以外のフィールド）
-          final firestoreTime = firestoreData['lastUpdated'] as String?;
-          final localTime = localData['lastUpdated'] as String?;
-          
-          if (firestoreTime != null && localTime != null) {
-            try {
-              final firestoreDateTime = DateTime.parse(firestoreTime);
-              final localDateTime = DateTime.parse(localTime);
-              
-              if (firestoreDateTime.isAfter(localDateTime)) {
-                // Firestoreが新しい → Firestoreのデータをベースに、historyだけマージしたものに置き換え
-                mergedData = Map<String, dynamic>.from(firestoreData);
-                mergedData['history'] = slots;
-              } else {
-                // ローカルが新しい → ローカルのデータをベースに、historyだけマージしたものに置き換え
-                mergedData = Map<String, dynamic>.from(localData);
-                mergedData['history'] = slots;
-              }
-            } catch (e) {
-              // パースエラー時はパースに成功した方を採用
-              DateTime? firestoreDateTime;
-              DateTime? localDateTime;
-              
-              try {
-                firestoreDateTime = DateTime.parse(firestoreTime);
-              } catch (e) {
-                // Firestoreのパース失敗
-              }
-              
-              try {
-                localDateTime = DateTime.parse(localTime);
-              } catch (e) {
-                // ローカルのパース失敗
-              }
-              
-              if (firestoreDateTime != null && localDateTime != null) {
-                // 両方成功した場合は比較
-                if (firestoreDateTime.isAfter(localDateTime)) {
-                  mergedData = Map<String, dynamic>.from(firestoreData);
-                  mergedData['history'] = slots;
-                } else {
-                  mergedData = Map<String, dynamic>.from(localData);
-                  mergedData['history'] = slots;
-                }
-              } else if (firestoreDateTime != null) {
-                // Firestoreのみ成功
-                mergedData = Map<String, dynamic>.from(firestoreData);
-                mergedData['history'] = slots;
-              } else if (localDateTime != null) {
-                // ローカルのみ成功
-                mergedData = Map<String, dynamic>.from(localData);
-                mergedData['history'] = slots;
-              } else {
-                // 両方失敗した場合はFirestoreを優先
-                mergedData = Map<String, dynamic>.from(firestoreData);
-                mergedData['history'] = slots;
-              }
-            }
-          } else if (firestoreTime != null) {
-            mergedData = Map<String, dynamic>.from(firestoreData);
-            mergedData['history'] = slots;
-          } else {
-            mergedData = Map<String, dynamic>.from(localData);
-            mergedData['history'] = slots;
-          }
-          
-          // lastUpdatedは統合後の最新のtimeを使用、または現在時刻
-          final latestTime = mergedHistory.isNotEmpty 
-              ? mergedHistory.last['time'] as String?
-              : null;
-          if (latestTime != null && latestTime.isNotEmpty) {
-            mergedData['lastUpdated'] = latestTime;
-          } else {
-            mergedData['lastUpdated'] = DateTime.now().toIso8601String();
-          }
-          
-          // デバッグログ
-          print('🔍 [History Merge] Final slots: slot0=${slots[0]['status']}(${slots[0]['time']}), slot1=${slots[1]['status']}(${slots[1]['time']}), slot2=${slots[2]['status']}(${slots[2]['time']})');
-        } else {
-          // ローカルデータがない場合はFirestoreのデータをそのまま使用
-          mergedData = firestoreData;
-        }
-        
-        // マージしたデータをローカルに保存
-        await prefs.setString(localKey, json.encode(mergedData));
-        _cacheLearningDataForProblem(problemId, mergedData);
-        print('🔍 [History Merge] Saved merged data for problem: $problemId');
-      }
-      
-      // 設定を同期
-      await _syncSettingsFromFirestore(userId);
-      
-      // 同期完了時刻を記録
-      await prefs.setString(syncKey, DateTime.now().toIso8601String());
-      
-      AppLogger.success('Firestoreからのデータ同期が完了しました');
-    } catch (e) {
-      AppLogger.error('Firestoreからのデータ同期に失敗しました', error: e);
-      // エラー時も処理を継続
-    }
-  }
-
-  /// Firestoreから設定を同期（内部メソッド）
-  static Future<void> _syncSettingsFromFirestore(String userId) async {
-    try {
-      // 認証状態を確認
-      final isAuthenticated = FirebaseAuthService.isAuthenticated;
-      final currentUserId = FirebaseAuthService.userId;
-      
-      if (!isAuthenticated) {
-        print('⚠️ Firestore設定同期をスキップ: ユーザーが認証されていません');
-        return;
-      }
-      
-      if (currentUserId != userId) {
-        print('⚠️ Firestore設定同期をスキップ: ユーザーIDが一致しません (リクエスト: $userId, 現在: $currentUserId)');
-        return;
-      }
-      
-      final prefs = await SharedPreferences.getInstance();
-      
-      AppLogger.subsection('設定の同期開始', showNumber: false);
-      AppLogger.info('Firestoreから設定を同期中', details: 'ユーザーID: $userId');
-      
-      // 全設定を取得（タイムアウト付き）
-      Map<String, dynamic> allSettings;
-      try {
-        allSettings = await FirestoreSettingsService.getAllSettings(userId: userId)
-            .timeout(
-              const Duration(seconds: 10),
-              onTimeout: () {
-                AppLogger.warning('設定の同期がタイムアウトしました', details: '10秒以内に完了しませんでした');
-                return <String, dynamic>{};
-              },
-            );
-      } catch (e) {
-        final errorStr = e.toString().toLowerCase();
-        if (errorStr.contains('permission') || errorStr.contains('permission-denied')) {
-          AppLogger.warning('設定の同期が権限エラーで失敗しました',
-            details: 'Firestoreセキュリティルールを確認してください。FIRESTORE_SECURITY_RULES.mdを参照してください。');
-          return; // 権限エラーの場合は早期に処理を停止
-        }
-        AppLogger.error('設定の取得に失敗しました', error: e);
-        allSettings = {};
-      }
-      
-      // 権限エラーが発生した場合は早期に処理を停止
-      if (allSettings.isEmpty) {
-        AppLogger.warning('設定の同期をスキップしました', details: '空の設定が返されました（権限エラーの可能性）');
-        return;
-      }
-
-      if (_isWebCloudAuthoritative) {
-        await _clearWebManagedSettingMirror(prefs);
-      }
-      
-      // ガチャ設定を同期
-      final gachaSettings = allSettings['gacha_settings'] as Map<String, Map<String, dynamic>>?;
-      if (gachaSettings != null) {
-        for (final entry in gachaSettings.entries) {
-          final gachaType = entry.key;
-          final firestoreSettings = entry.value;
-          
-          final localKey = '$_namespace/gacha/$gachaType';
-          final localDataString = prefs.getString(localKey);
-          
-          Map<String, dynamic> mergedSettings;
-
-          if (_isWebCloudAuthoritative) {
-            mergedSettings = Map<String, dynamic>.from(firestoreSettings);
-            await prefs.setString(localKey, json.encode(mergedSettings));
-            continue;
-          }
-          
-          if (localDataString != null) {
-            final localSettings = json.decode(localDataString) as Map<String, dynamic>;
-            
-            // タイムスタンプを比較して新しい方を優先
-            final firestoreTime = firestoreSettings['lastUpdated'] as String?;
-            final localTime = localSettings['lastUpdated'] as String?;
-            
-            if (firestoreTime != null && localTime != null) {
-              try {
-                final firestoreDateTime = DateTime.parse(firestoreTime);
-                final localDateTime = DateTime.parse(localTime);
-                
-                if (firestoreDateTime.isAfter(localDateTime)) {
-                  mergedSettings = firestoreSettings;
-                } else {
-                  mergedSettings = localSettings;
-                }
-              } catch (e) {
-                // パースエラー時はパースに成功した方を採用
-                DateTime? firestoreDateTime;
-                DateTime? localDateTime;
-                
-                try {
-                  firestoreDateTime = DateTime.parse(firestoreTime);
-                } catch (e) {
-                  // Firestoreのパース失敗
-                }
-                
-                try {
-                  localDateTime = DateTime.parse(localTime);
-                } catch (e) {
-                  // ローカルのパース失敗
-                }
-                
-                if (firestoreDateTime != null && localDateTime != null) {
-                  // 両方成功した場合は比較（通常はここには来ない）
-                  mergedSettings = firestoreDateTime.isAfter(localDateTime) ? firestoreSettings : localSettings;
-                } else if (firestoreDateTime != null) {
-                  // Firestoreのみ成功
-                  mergedSettings = firestoreSettings;
-                } else if (localDateTime != null) {
-                  // ローカルのみ成功
-                  mergedSettings = localSettings;
-                } else {
-                  // 両方失敗した場合はFirestoreを優先（新しい物を採用の方針）
-                  mergedSettings = firestoreSettings;
-                }
-              }
-            } else if (firestoreTime != null) {
-              mergedSettings = firestoreSettings;
-            } else {
-              mergedSettings = localSettings;
-            }
-          } else {
-            mergedSettings = firestoreSettings;
-          }
-          
-          // マージした設定をローカルに保存
-          await prefs.setString(localKey, json.encode(mergedSettings));
-        }
-      }
-      
-      // ユーザー設定を同期
-      final userSettings = allSettings['user_settings'] as Map<String, dynamic>?;
-      if (userSettings != null) {
-        final localKey = '$_namespace/user_settings';
-        final localDataString = prefs.getString(localKey);
-        
-        Map<String, dynamic> mergedSettings;
-
-        if (_isWebCloudAuthoritative) {
-          mergedSettings = Map<String, dynamic>.from(userSettings);
-          await prefs.setString(localKey, json.encode(mergedSettings));
-        } else {
-        
-          if (localDataString != null) {
-            final localSettings = json.decode(localDataString) as Map<String, dynamic>;
-            
-            // タイムスタンプを比較して新しい方を優先
-            final firestoreTime = userSettings['lastUpdated'] as String?;
-            final localTime = localSettings['lastUpdated'] as String?;
-            
-            if (firestoreTime != null && localTime != null) {
-              try {
-                final firestoreDateTime = DateTime.parse(firestoreTime);
-                final localDateTime = DateTime.parse(localTime);
-                
-                if (firestoreDateTime.isAfter(localDateTime)) {
-                  mergedSettings = userSettings;
-                } else {
-                  mergedSettings = localSettings;
-                }
-              } catch (e) {
-                // パースエラー時はパースに成功した方を採用
-                DateTime? firestoreDateTime;
-                DateTime? localDateTime;
-                
-                try {
-                  firestoreDateTime = DateTime.parse(firestoreTime);
-                } catch (e) {
-                  // Firestoreのパース失敗
-                }
-                
-                try {
-                  localDateTime = DateTime.parse(localTime);
-                } catch (e) {
-                  // ローカルのパース失敗
-                }
-                
-                if (firestoreDateTime != null && localDateTime != null) {
-                  // 両方成功した場合は比較（通常はここには来ない）
-                  mergedSettings = firestoreDateTime.isAfter(localDateTime) ? userSettings : localSettings;
-                } else if (firestoreDateTime != null) {
-                  // Firestoreのみ成功
-                  mergedSettings = userSettings;
-                } else if (localDateTime != null) {
-                  // ローカルのみ成功
-                  mergedSettings = localSettings;
-                } else {
-                  // 両方失敗した場合はFirestoreを優先（新しい物を採用の方針）
-                  mergedSettings = userSettings;
-                }
-              }
-            } else if (firestoreTime != null) {
-              mergedSettings = userSettings;
-            } else {
-              mergedSettings = localSettings;
-            }
-          } else {
-            mergedSettings = userSettings;
-          }
-          
-          // マージした設定をローカルに保存
-          await prefs.setString(localKey, json.encode(mergedSettings));
-        }
-      }
-      
-      // 注意: Pro購入情報はFirebaseから取得しない（RevenueCatで管理）
-      // 有料オプション購入状態の同期は削除
-      
-      // その他の設定を同期
-      final otherSettings = allSettings['other_settings'] as Map<String, dynamic>?;
-      if (otherSettings != null) {
-        for (final entry in otherSettings.entries) {
-          final key = entry.key;
-          final value = entry.value;
-          
-          // 既存のローカル値を確認（タイムスタンプ比較は簡略化）
-          if (value != null) {
-            if (value is int) {
-              await prefs.setInt(key, value);
-            } else if (value is String) {
-              await prefs.setString(key, value);
-            } else if (value is bool) {
-              await prefs.setBool(key, value);
-            } else if (value is double) {
-              await prefs.setDouble(key, value);
-            }
-          }
-        }
-      }
-      
-      AppLogger.success('Firestoreからの設定同期が完了しました');
-    } catch (e) {
-      print('Error syncing settings from Firestore for user: $userId - $e');
-      // エラー時も処理を継続
-    }
-  }
-  
-  /// ローカル設定をFirestoreに同期（認証時に呼び出す）
-  static Future<void> syncLocalSettingsToFirestore() async {
-    try {
-      if (_isWebCloudAuthoritative) {
-        print('Web cloud-first mode: skipping bulk local settings upload');
-        return;
-      }
-
-      if (!FirebaseAuthService.isAuthenticated) {
-        print('User not authenticated, skipping Firestore settings sync');
-        return;
-      }
-      
       final userId = FirebaseAuthService.userId;
       if (userId == null) {
-        print('User ID is null, skipping Firestore settings sync');
+        _clearCloudLearningCache();
+        return false;
+      }
+      final cacheIsFresh =
+          _cloudLearningLastFetchedAt != null &&
+          DateTime.now().difference(_cloudLearningLastFetchedAt!) <
+              _cloudLearningCacheTtl;
+      if (!force && _cloudLearningReadyUserId == userId && cacheIsFresh) {
+        return true;
+      }
+
+      final firestoreRecords = await FirestoreLearningService.getAllLearningRecords(
+        userId: userId,
+      ).timeout(const Duration(seconds: 10));
+
+      _clearCloudLearningCache();
+      for (final entry in firestoreRecords.entries) {
+        _cacheCloudLearningDataForProblem(entry.key, entry.value);
+      }
+      _cloudLearningReadyUserId = userId;
+      _cloudLearningLastFetchedAt = DateTime.now();
+      return true;
+    } catch (e) {
+      AppLogger.error('Firestoreからの学習データ取得に失敗しました', error: e);
+      return false;
+    }
+  }
+
+  /// ローカル設定をFirestoreに同期（認証時に呼び出す）
+  static Future<void> syncLocalSettingsToFirestore({bool force = false}) async {
+    try {
+      if (!FirebaseAuthService.isAuthenticated) {
         return;
       }
-      
-      print('Starting local settings sync to Firestore for user: $userId');
-      
+
+      final userId = FirebaseAuthService.userId;
+      if (userId == null) {
+        return;
+      }
+      if (!force && !_hasPendingSettingsSync) {
+        return;
+      }
+
       final prefs = await SharedPreferences.getInstance();
-      final allKeys = prefs.getKeys();
-      
-      // ガチャ設定を同期
-      final gachaKeys = allKeys.where((key) => 
-        key.startsWith('$_namespace/gacha/') && 
-        key != '$_namespace/gacha'
-      ).toList();
-      
-      // パーミッションエラーを検出するためのフラグ
-      bool hasPermissionError = false;
-      
+      final gachaKeys = prefs
+          .getKeys()
+          .where(
+            (key) =>
+                key.startsWith('$_namespace/gacha/') &&
+                key != '$_namespace/gacha',
+          )
+          .toList();
+
+      final cloudReady = await _syncSettingsFromFirestore(force: true);
+      if (!cloudReady) {
+        return;
+      }
+
+      var allSynced = true;
+      var wroteAny = false;
+
       for (final key in gachaKeys) {
         final dataString = prefs.getString(key);
         if (dataString == null) continue;
-        
+
         try {
-          final data = json.decode(dataString) as Map<String, dynamic>;
-          final gachaType = key.replaceFirst('$_namespace/gacha/', '');
-          
-          // パーミッションエラーが既に発生している場合はスキップ
-          if (hasPermissionError) {
+          final decoded = json.decode(dataString);
+          if (decoded is! Map<String, dynamic>) {
+            allSynced = false;
             continue;
           }
-          
-          // ローカルデータを直接Firestoreに書き込む（読み取りをスキップして高速化）
+
+          final gachaType = key.replaceFirst('$_namespace/gacha/', '');
+          final localSettings = _normalizeTimestampedSettingsMap(
+            decoded,
+            defaults: _getDefaultGachaSettings(),
+          );
+          final cloudSettings = _cloudGachaSettingsCache[gachaType];
+          final mergedSettings = _mergeLatestTimestampedData(
+            localData: localSettings,
+            cloudData: cloudSettings,
+            defaults: _getDefaultGachaSettings(),
+          );
+
+          if (_areTimestampedSettingsEquivalent(
+            cloudSettings,
+            mergedSettings,
+            defaults: _getDefaultGachaSettings(),
+          )) {
+            continue;
+          }
+
           final success = await FirestoreSettingsService.saveGachaSettings(
             userId: userId,
             gachaType: gachaType,
-            settings: data,
+            settings: mergedSettings,
           );
-          
-          if (success) {
-            print('Synced gacha settings for $gachaType to Firestore');
+          if (!success) {
+            allSynced = false;
+            continue;
+          }
+
+          _cloudGachaSettingsCache[gachaType] = mergedSettings;
+          wroteAny = true;
+        } catch (e) {
+          print('Error syncing gacha settings $key to Firestore: $e');
+          allSynced = false;
+        }
+      }
+
+      final userSettingsKey = '$_namespace/user_settings';
+      final userSettingsString = prefs.getString(userSettingsKey);
+      if (userSettingsString != null) {
+        try {
+          final decoded = json.decode(userSettingsString);
+          if (decoded is! Map<String, dynamic>) {
+            allSynced = false;
           } else {
-            // 失敗した場合はパーミッションエラーの可能性があるが、次の項目も試す
-            print('Warning: Failed to sync gacha settings for $gachaType');
+            final localSettings = _normalizeTimestampedSettingsMap(decoded);
+            final cloudSettings = _cloudUserSettingsCache;
+            final mergedSettings = _mergeLatestTimestampedData(
+              localData: localSettings,
+              cloudData: cloudSettings,
+            );
+
+            if (!_areTimestampedSettingsEquivalent(cloudSettings, mergedSettings)) {
+              final success = await FirestoreSettingsService.saveUserSettings(
+                userId: userId,
+                settings: mergedSettings,
+              );
+              if (!success) {
+                allSynced = false;
+              } else {
+                _cloudUserSettingsCache = mergedSettings;
+                wroteAny = true;
+              }
+            }
           }
         } catch (e) {
-          final errorStr = e.toString().toLowerCase();
-          if (errorStr.contains('permission')) {
-            hasPermissionError = true;
-            print('Permission error detected, skipping remaining Firestore operations');
-            break;
-          }
-          print('Error syncing gacha settings $key to Firestore: $e');
-          // 個別のエラーは無視して続行
+          print('Error syncing user settings to Firestore: $e');
+          allSynced = false;
         }
       }
-      
-      // ユーザー設定を同期（パーミッションエラーが発生していない場合のみ）
-      if (!hasPermissionError) {
-        final userSettingsKey = '$_namespace/user_settings';
-        final userSettingsString = prefs.getString(userSettingsKey);
-        if (userSettingsString != null) {
-          try {
-            final userSettings = json.decode(userSettingsString) as Map<String, dynamic>;
-            
-            final success = await FirestoreSettingsService.saveUserSettings(
-              userId: userId,
-              settings: userSettings,
-            );
-            
-            if (success) {
-              print('Synced user settings to Firestore');
-            } else {
-              print('Warning: Failed to sync user settings to Firestore');
-            }
-          } catch (e) {
-            final errorStr = e.toString().toLowerCase();
-            if (errorStr.contains('permission')) {
-              hasPermissionError = true;
-              print('Permission error detected, skipping remaining Firestore operations');
-            } else {
-              print('Error syncing user settings to Firestore: $e');
-            }
+
+      final otherSettingKeys = await _collectTrackedOtherSettingKeys(prefs);
+      for (final settingKey in otherSettingKeys) {
+        try {
+          final localEntry = await _loadLocalOtherSettingEntry(settingKey);
+          final cloudEntry = _cloudOtherSettingsCache[settingKey];
+          final mergedEntry = _mergeLatestOtherSettingEntry(
+            localEntry: localEntry,
+            cloudEntry: cloudEntry,
+          );
+
+          if (mergedEntry == null ||
+              _areOtherSettingEntriesEquivalent(cloudEntry, mergedEntry)) {
+            continue;
           }
+
+          final success = await FirestoreSettingsService.saveOtherSetting(
+            userId: userId,
+            key: settingKey,
+            value: mergedEntry['value'],
+            lastUpdated: mergedEntry['lastUpdated'] as String?,
+          );
+          if (!success) {
+            allSynced = false;
+            continue;
+          }
+
+          _cloudOtherSettingsCache[settingKey] = mergedEntry;
+          wroteAny = true;
+        } catch (e) {
+          print('Error syncing other setting $settingKey to Firestore: $e');
+          allSynced = false;
         }
       }
-      
-      // 注意: Pro購入情報はFirebaseにバックアップしない（RevenueCatで管理）
-      // 有料オプション購入状態の同期は削除
-      
-      // その他の設定を同期（パーミッションエラーが発生していない場合のみ）
-      // 注意: 集計設定（aggregation_mode）はガチャ設定の中に含まれるため、個別の同期は不要
-      if (!hasPermissionError) {
-        final otherSettingKeys = [
-          'integral_gacha_exclusion_mode',
-          'limit_gacha_exclusion_mode',
-          'sequence_gacha_exclusion_mode',
-          // 集計設定はガチャ設定の中に含まれるため削除:
-          // 'integral_gacha_aggregation_mode',
-          // 'limit_gacha_aggregation_mode',
-          // 'sequence_gacha_aggregation_mode',
-          'integral_gacha_max_selections',
-          'limit_gacha_max_selections',
-          'sequence_gacha_max_selections',
-          _selectedFreeGachasKey, // 選択された無料ガチャのリスト
-        ];
-        
-        // デバッグ用: 選択された無料ガチャのキーが含まれていることを確認
-        print('Syncing other settings, including selected free gachas key: $_selectedFreeGachasKey');
-        
-        // ガチャタイプでない問題一覧ページの集計設定キー（*_aggregation_mode_v1）を動的に検出
-        // ガチャタイプの集計設定はガチャ設定として既に同期されている
-        final aggregationModeKeys = allKeys.where((key) => 
-          key.endsWith('_aggregation_mode_v1') &&
-          !['integral', 'limit', 'sequence', 'congruence'].any((type) => 
-            key.startsWith('${type}_aggregation_mode_v1')
-          )
-        ).toList();
-        
-        // すべての設定キーを結合
-        final allOtherSettingKeys = [
-          ...otherSettingKeys,
-          ...aggregationModeKeys,
-        ];
-        
-        for (final settingKey in allOtherSettingKeys) {
-          final value = prefs.get(settingKey);
-          if (value != null) {
-            try {
-              // _selectedFreeGachasKeyの場合はJSON文字列をリストに変換
-              dynamic settingValue = value;
-              if (settingKey == _selectedFreeGachasKey && value is String) {
-                try {
-                  final decoded = json.decode(value) as List;
-                  settingValue = decoded;
-                  print('Syncing selected free gachas to Firestore: $decoded');
-                } catch (e) {
-                  print('Error decoding selected free gachas: $e');
-                  continue; // デコードに失敗した場合はスキップ
-                }
-              }
-              
-              final success = await FirestoreSettingsService.saveOtherSetting(
-                userId: userId,
-                key: settingKey,
-                value: settingValue,
-              );
-              
-              if (success) {
-                if (settingKey == _selectedFreeGachasKey) {
-                  print('Successfully synced selected free gachas to Firestore: $settingValue');
-                } else {
-                  print('Synced other setting $settingKey to Firestore');
-                }
-              } else {
-                if (settingKey == _selectedFreeGachasKey) {
-                  print('Warning: Failed to sync selected free gachas to Firestore');
-                } else {
-                  print('Warning: Failed to sync other setting $settingKey to Firestore');
-                }
-                // パーミッションエラーの可能性があるが、次の項目も試す
-              }
-            } catch (e) {
-              final errorStr = e.toString().toLowerCase();
-              if (errorStr.contains('permission')) {
-                hasPermissionError = true;
-                print('Permission error detected, skipping remaining Firestore operations');
-                break;
-              }
-              if (settingKey == _selectedFreeGachasKey) {
-                print('Error syncing selected free gachas to Firestore: $e');
-              } else {
-                print('Error syncing other setting $settingKey to Firestore: $e');
-              }
-            }
-          } else {
-            // 値がnullの場合のログ（デバッグ用）
-            if (settingKey == _selectedFreeGachasKey) {
-              print('Warning: Selected free gachas key exists but value is null');
-            }
-          }
-        }
+
+      if (allSynced) {
+        _hasPendingSettingsSync = false;
       }
-      
-      print('Local settings sync to Firestore completed');
+      if (wroteAny) {
+        _cloudSettingsReadyUserId = null;
+      }
     } catch (e) {
       print('Error syncing local settings to Firestore: $e');
     }
   }
 
-  /// ローカルデータをFirestoreに同期（認証時に呼び出す）
-  static Future<void> syncLocalDataToFirestore() async {
+  /// ローカルデータをクラウドへマージして同期する
+  static Future<void> syncLocalDataToFirestore({bool force = false}) async {
     try {
-      if (_isWebCloudAuthoritative) {
-        print('Web cloud-first mode: skipping bulk local data upload');
+      if (!FirebaseAuthService.isAuthenticated) {
         return;
       }
 
-      if (!FirebaseAuthService.isAuthenticated) {
-        print('User not authenticated, skipping Firestore sync');
-        return;
-      }
-      
       final userId = FirebaseAuthService.userId;
       if (userId == null) {
-        print('User ID is null, skipping Firestore sync');
         return;
       }
-      
-      print('Starting local data sync to Firestore for user: $userId');
-      
+      if (!force && !_hasPendingLearningSync) {
+        return;
+      }
+
       final prefs = await SharedPreferences.getInstance();
-      final allKeys = prefs.getKeys();
-      final learningKeys = allKeys.where((key) => 
-        key.startsWith('$_namespace/learning/') && 
-        key != '$_namespace/learning'
-      ).toList();
-      
+      final learningKeys = prefs
+          .getKeys()
+          .where(
+            (key) =>
+                key.startsWith('$_namespace/learning/') &&
+                key != '$_namespace/learning',
+          )
+          .toList();
+
       if (learningKeys.isEmpty) {
-        print('No local learning records to sync');
+        _hasPendingLearningSync = false;
         return;
       }
-      
-      print('Syncing ${learningKeys.length} learning records to Firestore...');
-      
-      int successCount = 0;
-      int errorCount = 0;
-      bool hasPermissionError = false;
-      
-      // 各学習記録をFirestoreに同期
+
+      final cloudReady = await _syncFromFirestore(force: true);
+      if (!cloudReady) {
+        return;
+      }
+
+      var allSynced = true;
+      var wroteAny = false;
+
       for (final key in learningKeys) {
         final dataString = prefs.getString(key);
-        if (dataString == null) continue;
-        
-        // パーミッションエラーが既に発生している場合はスキップ
-        if (hasPermissionError) {
+        if (dataString == null) {
           continue;
         }
-        
+
         try {
-          final data = json.decode(dataString) as Map<String, dynamic>;
+          final decoded = json.decode(dataString);
+          if (decoded is! Map<String, dynamic>) {
+            allSynced = false;
+            continue;
+          }
+
           final problemId = key.replaceFirst('$_namespace/learning/', '');
-          
-          // まずローカルデータを直接Firestoreに書き込む（高速化のため読み取りをスキップ）
-          try {
-            await FirestoreLearningService.saveLearningRecord(
-              userId: userId,
-              problemId: problemId,
-              data: data,
-            );
-            successCount++;
-          } catch (e) {
-            final errorStr = e.toString().toLowerCase();
-            if (errorStr.contains('permission')) {
-              hasPermissionError = true;
-              print('Permission error detected, skipping remaining learning record sync');
-              break;
-            }
-            // 書き込みに失敗した場合は、読み取りを試してタイムスタンプ比較を行う
-            try {
-              final existingData = await FirestoreLearningService.getLearningRecord(
-                userId: userId,
-                problemId: problemId,
-              );
-              
-              if (existingData != null) {
-                final localTime = data['lastUpdated'] as String?;
-                final firestoreTime = existingData['lastUpdated'] as String?;
-                
-                if (localTime != null && firestoreTime != null) {
-                  try {
-                    final localDateTime = DateTime.parse(localTime);
-                    final firestoreDateTime = DateTime.parse(firestoreTime);
-                    
-                    // Firestoreのデータが新しい場合は、ローカルデータを更新
-                    if (firestoreDateTime.isAfter(localDateTime)) {
-                      await prefs.setString(key, json.encode(existingData));
-                      print('Updated local data for $problemId from Firestore (newer)');
-                    }
-                  } catch (e) {
-                    // パースエラー時はパースに成功した方を採用
-                    DateTime? localDateTime;
-                    DateTime? firestoreDateTime;
-                    
-                    try {
-                      localDateTime = DateTime.parse(localTime);
-                    } catch (e) {
-                      // ローカルのパース失敗
-                    }
-                    
-                    try {
-                      firestoreDateTime = DateTime.parse(firestoreTime);
-                    } catch (e) {
-                      // Firestoreのパース失敗
-                    }
-                    
-                    if (firestoreDateTime != null && localDateTime != null) {
-                      // 両方成功した場合は比較（通常はここには来ない）
-                      if (firestoreDateTime.isAfter(localDateTime)) {
-                        await prefs.setString(key, json.encode(existingData));
-                        print('Updated local data for $problemId from Firestore (newer)');
-                      }
-                    } else if (firestoreDateTime != null) {
-                      // Firestoreのみ成功
-                      await prefs.setString(key, json.encode(existingData));
-                      print('Updated local data for $problemId from Firestore (parse success)');
-                    } else if (localDateTime == null) {
-                      // 両方失敗した場合はFirestoreを優先（新しい物を採用の方針）
-                      await prefs.setString(key, json.encode(existingData));
-                      print('Updated local data for $problemId from Firestore (both parse failed)');
-                    }
-                  }
-                }
-              }
-            } catch (readError) {
-              final readErrorStr = readError.toString().toLowerCase();
-              if (readErrorStr.contains('permission')) {
-                hasPermissionError = true;
-                print('Permission error detected, skipping remaining learning record sync');
-                break;
-              }
-            }
-            errorCount++;
+          final localData = _normalizeLearningData(
+            problemId: problemId,
+            raw: decoded,
+          );
+          final cloudData = _cloudLearningDataCache[problemId];
+          final mergedData = _mergeLearningData(
+            problemId: problemId,
+            localData: localData,
+            cloudData: cloudData,
+          );
+
+          if (_areLearningDataEquivalent(cloudData, mergedData, problemId)) {
+            continue;
           }
+
+          final success = await FirestoreLearningService.saveLearningRecord(
+            userId: userId,
+            problemId: problemId,
+            data: mergedData,
+          );
+          if (!success) {
+            allSynced = false;
+            continue;
+          }
+
+          _cacheCloudLearningDataForProblem(problemId, mergedData);
+          wroteAny = true;
         } catch (e) {
-          final errorStr = e.toString().toLowerCase();
-          if (errorStr.contains('permission')) {
-            hasPermissionError = true;
-            print('Permission error detected, skipping remaining learning record sync');
-            break;
-          }
-          print('Error syncing record $key to Firestore: $e');
-          errorCount++;
+          print('Error syncing local learning data for $key: $e');
+          allSynced = false;
         }
       }
-      
-      print('Local data sync to Firestore completed: $successCount succeeded, $errorCount failed');
+
+      if (allSynced) {
+        _hasPendingLearningSync = false;
+      }
+      if (wroteAny) {
+        _cloudLearningReadyUserId = null;
+      }
     } catch (e) {
       print('Error syncing local data to Firestore: $e');
     }
+  }
+
+  /// ログイン後や手動同期時に、ローカルをクラウドへマージしてから表示用クラウドデータを更新する
+  static Future<bool> performCloudSync({bool force = true}) async {
+    final userId = FirebaseAuthService.userId;
+    if (!FirebaseAuthService.isAuthenticated || userId == null) {
+      return false;
+    }
+
+    if (await isAccountSwitched()) {
+      await syncOnAccountSwitch();
+      return true;
+    }
+
+    final learningReady = await _ensureCloudLearningStateCurrent(force: force);
+    final settingsReady = await _ensureCloudSettingsStateCurrent(force: force);
+    await setLastUserId(userId);
+    return learningReady && settingsReady;
   }
   
   // ============================================================================
   // 学習記録管理（シンプル版）
   // ============================================================================
   
+  static String _statusKeyFromValue(dynamic status) {
+    if (status is LearningStatus) {
+      return status.key;
+    }
+    if (status is ProblemStatus) {
+      return status.name;
+    }
+    if (status is String) {
+      return status;
+    }
+    return 'none';
+  }
+
   /// 学習記録を保存
   static Future<bool> saveLearningRecord(MathProblem problem, dynamic status) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final key = '$_namespace/learning/${problem.id}';
-      
-      // 既存データを取得
       final existingData = await _getLearningData(problem);
-      
-      // 新しい記録を履歴に追加
-      final statusKey = status is LearningStatus ? status.key : 
-                       status is ProblemStatus ? status.name : 'none';
-      final newRecord = {
-        'status': statusKey,
-        'time': DateTime.now().toIso8601String(),
-      };
-      
-      existingData['history'].add(newRecord);
-      
-      // 最新ステータスを更新
-      existingData['latestStatus'] = statusKey;
-      existingData['lastUpdated'] = DateTime.now().toIso8601String();
-      
-      // 常にSharedPreferencesに保存
-      await prefs.setString(key, json.encode(existingData));
-      _cacheLearningDataForProblem(problem.id, existingData);
-      
-      // 認証済みユーザーの場合、Firestoreにも同時に保存
-      if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          try {
-            final success = await FirestoreLearningService.saveLearningRecord(
-              userId: userId,
-              problemId: problem.id,
-              data: existingData,
-            );
-            if (success) {
-              print('Successfully saved learning record to Firestore for problem ${problem.id}');
-            } else {
-              print('Warning: Failed to save learning record to Firestore for problem ${problem.id}');
-              if (_isWebCloudAuthoritative) {
-                return false;
-              }
-            }
-          } catch (e, stackTrace) {
-            print('Error saving to Firestore (continuing with local save): $e');
-            print('Stack trace: $stackTrace');
-            // Firestoreエラー時はローカルのみで動作継続
-            if (_isWebCloudAuthoritative) {
-              return false;
-            }
-          }
-        } else {
-          print('Warning: User ID is null, skipping Firestore sync');
-        }
-      } else {
-        print('User not authenticated, skipping Firestore sync');
+      final entries = _extractMeaningfulLearningHistory(
+        existingData['history'] as List?,
+      );
+      final statusKey = _statusKeyFromValue(status);
+      if (statusKey != 'none') {
+        entries.add({
+          'status': statusKey,
+          'time': DateTime.now().toIso8601String(),
+        });
       }
-      
+
+      final data = _normalizeLearningData(
+        problemId: problem.id,
+        raw: {
+          'problemId': problem.id,
+          'history': entries,
+          'lastUpdated': DateTime.now().toIso8601String(),
+        },
+      );
+
+      await _saveLocalLearningData(problem.id, data);
+      final hadPendingBefore = _hasPendingLearningSync;
+      _hasPendingLearningSync = true;
+
+      if (FirebaseAuthService.isAuthenticated) {
+        final cloudReady = await _ensureCloudLearningStateCurrent(force: true);
+        if (cloudReady && !hadPendingBefore) {
+          _hasPendingLearningSync = false;
+        }
+      }
+
       return true;
     } catch (e) {
       print('Error saving learning record: $e');
@@ -1129,147 +1138,76 @@ class SimpleDataManager {
   }
   
   /// 学習記録を取得
-  /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<LearningStatus> getLearningRecord(MathProblem problem) async {
     try {
-      if (_isWebCloudAuthoritative) {
-        await ensureWebCloudSyncReady();
-      }
-
-      // まずローカルデータを即座に取得（遅延なし）
-      final localData = await _getLearningData(problem);
-      if (_isWebCloudAuthoritative) {
-        final statusKey = localData['latestStatus'] as String?;
-        return statusKey != null
-            ? LearningStatusExtension.fromKey(statusKey)
-            : LearningStatus.none;
-      }
-      
-      // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）
       if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          // 非同期でFirestoreから取得（エラーは無視、UIをブロックしない）
-          FirestoreLearningService.getLearningRecord(
-            userId: userId,
-            problemId: problem.id,
-          ).timeout(
-            const Duration(seconds: 2),
-            onTimeout: () => null,
-          ).then((firestoreData) async {
-            if (firestoreData != null) {
-              // Firestoreから取得したデータをローカルにも保存（同期）
-              try {
-                final prefs = await SharedPreferences.getInstance();
-                final key = '$_namespace/learning/${problem.id}';
-                await prefs.setString(key, json.encode(firestoreData));
-                _cacheLearningDataForProblem(problem.id, firestoreData);
-                print('Background sync: Updated local data from Firestore for problem ${problem.id}');
-              } catch (e) {
-                print('Error saving Firestore data to local: $e');
-              }
-            }
-          }).catchError((e) {
-            // エラーは無視（バックグラウンド処理のため）
-            print('Background sync error (ignored): $e');
-          });
+        final cloudReady = await _ensureCloudLearningStateCurrent();
+        if (cloudReady) {
+          final cloudData =
+              _cloudLearningDataCache[problem.id] ?? _defaultLearningData(problem.id);
+          final statusKey = cloudData['latestStatus'] as String?;
+          return statusKey != null
+              ? LearningStatusExtension.fromKey(statusKey)
+              : LearningStatus.none;
         }
       }
-      
-      // ローカルデータを即座に返す
+
+      final localData = await _getLearningData(problem);
       final statusKey = localData['latestStatus'] as String?;
-      
-      if (statusKey != null) {
-        return LearningStatusExtension.fromKey(statusKey);
-      }
-      return LearningStatus.none;
+      return statusKey != null
+          ? LearningStatusExtension.fromKey(statusKey)
+          : LearningStatus.none;
     } catch (e) {
       print('Error getting learning record: $e');
-      // エラー時はnoneを返す（問題は除外されない）
       return LearningStatus.none;
     }
   }
   
   /// 学習記録の履歴を取得
-  /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<List<Map<String, dynamic>>> getLearningHistory(MathProblem problem) async {
     try {
-      if (_isWebCloudAuthoritative) {
-        await ensureWebCloudSyncReady();
-      }
-
-      // まずローカルデータを即座に取得（遅延なし）
-      final cached = _learningHistoryCache[problem.id];
-      if (cached != null) return cached;
-
-      final localData = await _getLearningData(problem);
-      final history = List<Map<String, dynamic>>.from(localData['history'] ?? []);
-      if (_isWebCloudAuthoritative) {
-        final normalizedHistory = _normalizeLearningHistoryList(history);
-        _learningHistoryCache[problem.id] = normalizedHistory;
-        return normalizedHistory;
-      }
-      
-      // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）
       if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          // 非同期でFirestoreから取得（エラーは無視、UIをブロックしない）
-          FirestoreLearningService.getLearningHistory(
-            userId: userId,
-            problemId: problem.id,
-          ).timeout(
-            const Duration(seconds: 2),
-            onTimeout: () => <Map<String, dynamic>>[],
-          ).then((firestoreHistory) async {
-            if (firestoreHistory.isNotEmpty) {
-              // Firestoreから取得したデータをローカルにも保存（同期）
-              try {
-                final prefs = await SharedPreferences.getInstance();
-                final key = '$_namespace/learning/${problem.id}';
-                final updatedLocalData = await _getLearningData(problem);
-                updatedLocalData['history'] = firestoreHistory;
-                await prefs.setString(key, json.encode(updatedLocalData));
-                _cacheLearningDataForProblem(problem.id, updatedLocalData);
-                print('Background sync: Updated local history from Firestore for problem ${problem.id}');
-              } catch (e) {
-                print('Error saving Firestore history to local: $e');
-              }
-            }
-          }).catchError((e) {
-            // エラーは無視（バックグラウンド処理のため）
-            print('Background sync error (ignored): $e');
-          });
+        final cloudReady = await _ensureCloudLearningStateCurrent();
+        if (cloudReady) {
+          final cloudData =
+              _cloudLearningDataCache[problem.id] ?? _defaultLearningData(problem.id);
+          return _normalizeLearningHistoryList(cloudData['history'] as List?);
         }
       }
-      
-      // 移行処理：古い形式のデータを新しい形式に変換
-      final migratedHistory = _normalizeLearningHistoryList(history);
-      
-      // ローカルデータを即座に返す
-      _learningHistoryCache[problem.id] = migratedHistory;
-      return migratedHistory;
+
+      final cached = _learningHistoryCache[problem.id];
+      if (cached != null) {
+        return cached;
+      }
+
+      final localData = await _getLearningData(problem);
+      final history = _normalizeLearningHistoryList(localData['history'] as List?);
+      _learningHistoryCache[problem.id] = history;
+      return history;
     } catch (e) {
       print('Error getting learning history: $e');
-      // エラー時は空のリストを返す（問題は除外されない）
       return [];
     }
   }
 
-  /// 複数問題の履歴を一括取得（SharedPreferencesアクセス回数を最小化）
-  ///
-  /// - 問題一覧ページなどで大量に `getLearningHistory()` を呼ぶと重くなるため、
-  ///   先にまとめて読み込み、以降はメモリキャッシュから参照できるようにする。
-  /// - Firestore同期は行わない（UIをブロックしないため）。必要なら通常の `getLearningHistory()` を利用。
+  /// 複数問題の履歴を一括取得
   static Future<Map<String, List<Map<String, dynamic>>>> getLearningHistoryMap(
     Iterable<String> problemIds,
   ) async {
-    if (_isWebCloudAuthoritative) {
-      await ensureWebCloudSyncReady();
-    }
-
     final ids = problemIds.toSet();
     if (ids.isEmpty) return {};
+
+    if (FirebaseAuthService.isAuthenticated) {
+      final cloudReady = await _ensureCloudLearningStateCurrent();
+      if (cloudReady) {
+        final out = <String, List<Map<String, dynamic>>>{};
+        for (final id in ids) {
+          final cloudData = _cloudLearningDataCache[id] ?? _defaultLearningData(id);
+          out[id] = _normalizeLearningHistoryList(cloudData['history'] as List?);
+        }
+        return out;
+      }
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final out = <String, List<Map<String, dynamic>>>{};
@@ -1293,12 +1231,10 @@ class SimpleDataManager {
       try {
         final decoded = json.decode(dataString);
         if (decoded is Map<String, dynamic>) {
-          final historyAny = decoded['history'];
-          final migratedHistory =
-              _normalizeLearningHistoryList(historyAny is List ? historyAny : const []);
-
-          _learningHistoryCache[id] = migratedHistory;
-          out[id] = migratedHistory;
+          final normalized = _normalizeLearningData(problemId: id, raw: decoded);
+          final history = _normalizeLearningHistoryList(normalized['history'] as List?);
+          _learningHistoryCache[id] = history;
+          out[id] = history;
         } else {
           _learningHistoryCache[id] = const [];
           out[id] = const [];
@@ -1313,106 +1249,38 @@ class SimpleDataManager {
   }
   
   /// 学習記録の履歴を保存
-  static Future<bool> saveLearningHistory(MathProblem problem, List<Map<String, dynamic>> history) async {
+  static Future<bool> saveLearningHistory(
+    MathProblem problem,
+    List<Map<String, dynamic>> history,
+  ) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final key = '$_namespace/learning/${problem.id}';
-      
-      // 履歴を正規化（ProblemStatusまたはStringを統一）
-      final normalizedHistory = history.map((h) {
-        // statusを文字列に変換
-        String statusStr;
-        final statusValue = h['status'];
-        if (statusValue is String) {
-          statusStr = statusValue;
-        } else if (statusValue is ProblemStatus) {
-          statusStr = statusValue.name;
-        } else if (statusValue != null) {
-          // 念のため、toString()で試す
-          final str = statusValue.toString();
-          // ProblemStatusのenum値かどうかチェック
-          if (str.startsWith('ProblemStatus.')) {
-            statusStr = str.replaceFirst('ProblemStatus.', '');
-          } else {
-            statusStr = 'none';
-          }
-        } else {
-          statusStr = 'none';
-        }
-        
-        // timeはString形式で保存（DateTimeオブジェクトの場合はISO8601形式に変換）
-        String? timeStr;
-        final timeValue = h['time'];
-        if (timeValue is String) {
-          timeStr = timeValue;
-        } else if (timeValue is DateTime) {
-          timeStr = timeValue.toIso8601String();
-        } else {
-          timeStr = null;
-        }
-        
+      final normalizedHistory = history.map((entry) {
         return {
-          'status': statusStr,
-          'time': timeStr,
+          'status': _statusKeyFromValue(entry['status']),
+          'time': _normalizeTimeString(entry['time']),
         };
       }).toList();
-      
-      // 最新ステータスを取得（noneでない最後のスロットを見つける）
-      String latestStatus = 'none';
-      for (var i = normalizedHistory.length - 1; i >= 0; i--) {
-        final status = normalizedHistory[i]['status'] as String;
-        if (status != 'none') {
-          latestStatus = status;
-          break;
-        }
-      }
-      
-      final data = {
-        'problemId': problem.id,
-        'latestStatus': latestStatus,
-        'history': normalizedHistory,
-        'lastUpdated': DateTime.now().toIso8601String(),
-      };
-      
-      // 常にSharedPreferencesに保存
-      await prefs.setString(key, json.encode(data));
-      // メモリキャッシュを更新（一覧の即時反映）
-      _learningDataCache[problem.id] = data;
-      _learningHistoryCache[problem.id] = List<Map<String, dynamic>>.from(normalizedHistory);
-      
-      // 認証済みユーザーの場合、Firestoreにも同時に保存
+
+      final data = _normalizeLearningData(
+        problemId: problem.id,
+        raw: {
+          'problemId': problem.id,
+          'history': normalizedHistory,
+          'lastUpdated': DateTime.now().toIso8601String(),
+        },
+      );
+
+      await _saveLocalLearningData(problem.id, data);
+      final hadPendingBefore = _hasPendingLearningSync;
+      _hasPendingLearningSync = true;
+
       if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          try {
-            final success = await FirestoreLearningService.saveLearningHistory(
-              userId: userId,
-              problemId: problem.id,
-              history: normalizedHistory,
-            );
-            if (success) {
-              print('Successfully saved learning history to Firestore for problem ${problem.id}');
-            } else {
-              print('Warning: Failed to save learning history to Firestore for problem ${problem.id}');
-              if (_isWebCloudAuthoritative) {
-                return false;
-              }
-            }
-          } catch (e, stackTrace) {
-            print('Error saving history to Firestore (continuing with local save): $e');
-            print('Stack trace: $stackTrace');
-            // Firestoreエラー時はローカルのみで動作継続
-            if (_isWebCloudAuthoritative) {
-              return false;
-            }
-          }
-        } else {
-          print('Warning: User ID is null, skipping Firestore sync');
+        final cloudReady = await _ensureCloudLearningStateCurrent(force: true);
+        if (cloudReady && !hadPendingBefore) {
+          _hasPendingLearningSync = false;
         }
-      } else {
-        print('User not authenticated, skipping Firestore sync');
       }
-      
+
       return true;
     } catch (e) {
       print('Error saving learning history: $e');
@@ -1453,7 +1321,9 @@ class SimpleDataManager {
   static Future<Map<String, dynamic>> _getLearningData(MathProblem problem) async {
     try {
       final cached = _learningDataCache[problem.id];
-      if (cached != null) return Map<String, dynamic>.from(cached);
+      if (cached != null) {
+        return _normalizeLearningData(problemId: problem.id, raw: cached);
+      }
 
       final prefs = await SharedPreferences.getInstance();
       final key = '$_namespace/learning/${problem.id}';
@@ -1462,29 +1332,21 @@ class SimpleDataManager {
       if (dataString != null) {
         final decoded = json.decode(dataString);
         if (decoded is Map<String, dynamic>) {
-          final m = Map<String, dynamic>.from(decoded);
+          final m = _normalizeLearningData(
+            problemId: problem.id,
+            raw: Map<String, dynamic>.from(decoded),
+          );
           _learningDataCache[problem.id] = m;
           return Map<String, dynamic>.from(m);
         }
       }
       
-      // デフォルトデータ
-      final d = {
-        'problemId': problem.id,
-        'latestStatus': 'none',
-        'history': <Map<String, dynamic>>[],
-        'lastUpdated': DateTime.now().toIso8601String(),
-      };
+      final d = _defaultLearningData(problem.id);
       _learningDataCache[problem.id] = d;
       return Map<String, dynamic>.from(d);
     } catch (e) {
       print('Error getting learning data: $e');
-      final d = {
-        'problemId': problem.id,
-        'latestStatus': 'none',
-        'history': <Map<String, dynamic>>[],
-        'lastUpdated': DateTime.now().toIso8601String(),
-      };
+      final d = _defaultLearningData(problem.id);
       _learningDataCache[problem.id] = d;
       return Map<String, dynamic>.from(d);
     }
@@ -1499,41 +1361,30 @@ class SimpleDataManager {
   /// ログイン後は syncLocalSettingsToFirestore() で同期される
   static Future<bool> saveGachaSettings(String gachaType, Map<String, dynamic> settings) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
       final key = '$_namespace/gacha/$gachaType';
-      
-      // デフォルト設定とマージ
       final defaultSettings = _getDefaultGachaSettings();
-      defaultSettings.addAll(settings);
-      defaultSettings['updatedAt'] = DateTime.now().toIso8601String();
-      defaultSettings['lastUpdated'] = DateTime.now().toIso8601String();
-      
-      // ローカルに即座に保存（UXを下げない）
-      await prefs.setString(key, json.encode(defaultSettings));
-      
-      // 認証済みユーザーの場合、Firestoreにも同時に保存（非同期、エラーは無視）
-      // 注意: ログイン前の場合はこの処理は実行されない
-      // ログイン後は syncLocalSettingsToFirestore() で同期される
+      final now = DateTime.now().toIso8601String();
+      final mergedLocal = _normalizeTimestampedSettingsMap(
+        settings,
+        defaults: defaultSettings,
+      );
+      mergedLocal['updatedAt'] = now;
+      mergedLocal['lastUpdated'] = now;
+      await _saveLocalTimestampedSettingsMap(
+        key,
+        mergedLocal,
+        defaults: defaultSettings,
+      );
+
+      final hadPendingBefore = _hasPendingSettingsSync;
+      _hasPendingSettingsSync = true;
       if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          FirestoreSettingsService.saveGachaSettings(
-            userId: userId,
-            gachaType: gachaType,
-            settings: defaultSettings,
-          ).then((success) {
-            if (success) {
-              print('Successfully saved gacha settings to Firestore for $gachaType');
-            } else {
-              print('Warning: Failed to save gacha settings to Firestore for $gachaType');
-            }
-          }).catchError((e) {
-            print('Error saving gacha settings to Firestore (continuing with local save): $e');
-            // Firestoreエラー時はローカルのみで動作継続
-          });
+        final cloudReady = await _ensureCloudSettingsStateCurrent(force: true);
+        if (cloudReady && !hadPendingBefore) {
+          _hasPendingSettingsSync = false;
         }
       }
-      
+
       return true;
     } catch (e) {
       print('Error saving gacha settings: $e');
@@ -1545,125 +1396,22 @@ class SimpleDataManager {
   /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<Map<String, dynamic>> getGachaSettings(String gachaType) async {
     try {
-      if (_isWebCloudAuthoritative) {
-        await ensureWebCloudSyncReady();
+      final key = '$_namespace/gacha/$gachaType';
+      if (FirebaseAuthService.isAuthenticated) {
+        final cloudReady = await _ensureCloudSettingsStateCurrent();
+        if (cloudReady) {
+          return _cloudGachaSettingsCache[gachaType] ??
+              _normalizeTimestampedSettingsMap(
+                null,
+                defaults: _getDefaultGachaSettings(),
+              );
+        }
       }
 
-      // まずローカルデータを即座に取得（遅延なし）
-      final prefs = await SharedPreferences.getInstance();
-      final key = '$_namespace/gacha/$gachaType';
-      final settingsString = prefs.getString(key);
-      
-      Map<String, dynamic> localSettings;
-      if (settingsString != null) {
-        final decoded = json.decode(settingsString);
-        if (decoded is Map<String, dynamic>) {
-          localSettings = decoded;
-        } else {
-          localSettings = _getDefaultGachaSettings();
-        }
-      } else {
-        localSettings = _getDefaultGachaSettings();
-      }
-      if (_isWebCloudAuthoritative) {
-        return localSettings;
-      }
-      
-      // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）
-      if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          // 非同期でFirestoreから取得（エラーは無視、UIをブロックしない）
-          FirestoreSettingsService.getGachaSettings(
-            userId: userId,
-            gachaType: gachaType,
-          ).timeout(
-            const Duration(seconds: 2),
-            onTimeout: () => null,
-          ).then((firestoreSettings) async {
-            if (firestoreSettings != null) {
-              // タイムスタンプを比較して新しい方を優先
-              final localTime = localSettings['lastUpdated'] as String?;
-              final firestoreTime = firestoreSettings['lastUpdated'] as String?;
-              
-              if (localTime != null && firestoreTime != null) {
-                try {
-                  final localDateTime = DateTime.parse(localTime);
-                  final firestoreDateTime = DateTime.parse(firestoreTime);
-                  
-                  if (firestoreDateTime.isAfter(localDateTime)) {
-                    // Firestoreのデータが新しい場合は、ローカルデータを更新
-                    await prefs.setString(key, json.encode(firestoreSettings));
-                    print('Background sync: Updated local gacha settings from Firestore for $gachaType');
-                  } else {
-                    // ローカルデータが新しい場合は、Firestoreを更新
-                    await FirestoreSettingsService.saveGachaSettings(
-                      userId: userId,
-                      gachaType: gachaType,
-                      settings: localSettings,
-                    );
-                  }
-                } catch (e) {
-                  // パースエラー時はパースに成功した方を採用
-                  DateTime? localDateTime;
-                  DateTime? firestoreDateTime;
-                  
-                  try {
-                    localDateTime = DateTime.parse(localTime);
-                  } catch (e) {
-                    // ローカルのパース失敗
-                  }
-                  
-                  try {
-                    firestoreDateTime = DateTime.parse(firestoreTime);
-                  } catch (e) {
-                    // Firestoreのパース失敗
-                  }
-                  
-                  if (firestoreDateTime != null && localDateTime != null) {
-                    // 両方成功した場合は比較（通常はここには来ない）
-                    if (firestoreDateTime.isAfter(localDateTime)) {
-                      await prefs.setString(key, json.encode(firestoreSettings));
-                      print('Background sync: Updated local gacha settings from Firestore for $gachaType');
-                    } else {
-                      await FirestoreSettingsService.saveGachaSettings(
-                        userId: userId,
-                        gachaType: gachaType,
-                        settings: localSettings,
-                      );
-                    }
-                  } else if (firestoreDateTime != null) {
-                    // Firestoreのみ成功
-                    await prefs.setString(key, json.encode(firestoreSettings));
-                    print('Background sync: Updated local gacha settings from Firestore for $gachaType');
-                  } else if (localDateTime != null) {
-                    // ローカルのみ成功
-                    await FirestoreSettingsService.saveGachaSettings(
-                      userId: userId,
-                      gachaType: gachaType,
-                      settings: localSettings,
-                    );
-                  } else {
-                    // 両方失敗した場合はFirestoreを優先（新しい物を採用の方針）
-                    await prefs.setString(key, json.encode(firestoreSettings));
-                    print('Background sync: Updated local gacha settings from Firestore for $gachaType');
-                  }
-                }
-              } else if (firestoreTime != null) {
-                // ローカルにタイムスタンプがない場合は、Firestoreのデータを使用
-                await prefs.setString(key, json.encode(firestoreSettings));
-                print('Background sync: Updated local gacha settings from Firestore for $gachaType');
-              }
-            }
-          }).catchError((e) {
-            // エラーは無視（バックグラウンド処理のため）
-            print('Background sync error (ignored): $e');
-          });
-        }
-      }
-      
-      // ローカルデータを即座に返す
-      return localSettings;
+      return await _loadLocalTimestampedSettingsMap(
+        key,
+        defaults: _getDefaultGachaSettings(),
+      );
     } catch (e) {
       print('Error getting gacha settings: $e');
       return _getDefaultGachaSettings();
@@ -1701,36 +1449,20 @@ class SimpleDataManager {
   /// ユーザー設定を保存（将来の拡張用）
   static Future<bool> saveUserSettings(Map<String, dynamic> settings) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
       final key = '$_namespace/user_settings';
-      
-      // タイムスタンプを追加
       final settingsWithTimestamp = Map<String, dynamic>.from(settings);
       settingsWithTimestamp['lastUpdated'] = DateTime.now().toIso8601String();
-      
-      // ローカルに即座に保存（UXを下げない）
-      await prefs.setString(key, json.encode(settingsWithTimestamp));
-      
-      // 認証済みユーザーの場合、Firestoreにも同時に保存（非同期、エラーは無視）
+      await _saveLocalTimestampedSettingsMap(key, settingsWithTimestamp);
+
+      final hadPendingBefore = _hasPendingSettingsSync;
+      _hasPendingSettingsSync = true;
       if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          FirestoreSettingsService.saveUserSettings(
-            userId: userId,
-            settings: settingsWithTimestamp,
-          ).then((success) {
-            if (success) {
-              print('Successfully saved user settings to Firestore');
-            } else {
-              print('Warning: Failed to save user settings to Firestore');
-            }
-          }).catchError((e) {
-            print('Error saving user settings to Firestore (continuing with local save): $e');
-            // Firestoreエラー時はローカルのみで動作継続
-          });
+        final cloudReady = await _ensureCloudSettingsStateCurrent(force: true);
+        if (cloudReady && !hadPendingBefore) {
+          _hasPendingSettingsSync = false;
         }
       }
-      
+
       return true;
     } catch (e) {
       print('Error saving user settings: $e');
@@ -1742,114 +1474,16 @@ class SimpleDataManager {
   /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<Map<String, dynamic>> getUserSettings() async {
     try {
-      // まずローカルデータを即座に取得（遅延なし）
-      final prefs = await SharedPreferences.getInstance();
       final key = '$_namespace/user_settings';
-      final settingsString = prefs.getString(key);
-      
-      Map<String, dynamic> localSettings;
-      if (settingsString != null) {
-        final decoded = json.decode(settingsString);
-        if (decoded is Map<String, dynamic>) {
-          localSettings = decoded;
-        } else {
-          localSettings = {};
-        }
-      } else {
-        localSettings = {};
-      }
-      
-      // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）
       if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          // 非同期でFirestoreから取得（エラーは無視、UIをブロックしない）
-          FirestoreSettingsService.getUserSettings(
-            userId: userId,
-          ).timeout(
-            const Duration(seconds: 2),
-            onTimeout: () => null,
-          ).then((firestoreSettings) async {
-            if (firestoreSettings != null) {
-              // タイムスタンプを比較して新しい方を優先
-              final localTime = localSettings['lastUpdated'] as String?;
-              final firestoreTime = firestoreSettings['lastUpdated'] as String?;
-              
-              if (localTime != null && firestoreTime != null) {
-                try {
-                  final localDateTime = DateTime.parse(localTime);
-                  final firestoreDateTime = DateTime.parse(firestoreTime);
-                  
-                  if (firestoreDateTime.isAfter(localDateTime)) {
-                    // Firestoreのデータが新しい場合は、ローカルデータを更新
-                    await prefs.setString(key, json.encode(firestoreSettings));
-                    print('Background sync: Updated local user settings from Firestore');
-                  } else {
-                    // ローカルデータが新しい場合は、Firestoreを更新
-                    await FirestoreSettingsService.saveUserSettings(
-                      userId: userId,
-                      settings: localSettings,
-                    );
-                  }
-                } catch (e) {
-                  // パースエラー時はパースに成功した方を採用
-                  DateTime? localDateTime;
-                  DateTime? firestoreDateTime;
-                  
-                  try {
-                    localDateTime = DateTime.parse(localTime);
-                  } catch (e) {
-                    // ローカルのパース失敗
-                  }
-                  
-                  try {
-                    firestoreDateTime = DateTime.parse(firestoreTime);
-                  } catch (e) {
-                    // Firestoreのパース失敗
-                  }
-                  
-                  if (firestoreDateTime != null && localDateTime != null) {
-                    // 両方成功した場合は比較（通常はここには来ない）
-                    if (firestoreDateTime.isAfter(localDateTime)) {
-                      await prefs.setString(key, json.encode(firestoreSettings));
-                      print('Background sync: Updated local user settings from Firestore');
-                    } else {
-                      await FirestoreSettingsService.saveUserSettings(
-                        userId: userId,
-                        settings: localSettings,
-                      );
-                    }
-                  } else if (firestoreDateTime != null) {
-                    // Firestoreのみ成功
-                    await prefs.setString(key, json.encode(firestoreSettings));
-                    print('Background sync: Updated local user settings from Firestore');
-                  } else if (localDateTime != null) {
-                    // ローカルのみ成功
-                    await FirestoreSettingsService.saveUserSettings(
-                      userId: userId,
-                      settings: localSettings,
-                    );
-                  } else {
-                    // 両方失敗した場合はFirestoreを優先（新しい物を採用の方針）
-                    await prefs.setString(key, json.encode(firestoreSettings));
-                    print('Background sync: Updated local user settings from Firestore');
-                  }
-                }
-              } else if (firestoreTime != null) {
-                // ローカルにタイムスタンプがない場合は、Firestoreのデータを使用
-                await prefs.setString(key, json.encode(firestoreSettings));
-                print('Background sync: Updated local user settings from Firestore');
-              }
-            }
-          }).catchError((e) {
-            // エラーは無視（バックグラウンド処理のため）
-            print('Background sync error (ignored): $e');
-          });
+        final cloudReady = await _ensureCloudSettingsStateCurrent();
+        if (cloudReady) {
+          return _cloudUserSettingsCache ??
+              _normalizeTimestampedSettingsMap(const {});
         }
       }
-      
-      // ローカルデータを即座に返す
-      return localSettings;
+
+      return await _loadLocalTimestampedSettingsMap(key);
     } catch (e) {
       print('Error getting user settings: $e');
       return {};
@@ -1947,7 +1581,13 @@ class SimpleDataManager {
       for (final key in appKeys) {
         await prefs.remove(key);
       }
-      
+      _clearLearningCaches();
+      _clearCloudSettingsCache();
+      _hasPendingLearningSync = false;
+      _hasPendingSettingsSync = false;
+      _webCloudReadyUserId = null;
+      _webCloudSyncFuture = null;
+      _scratchPaperMemory.clear();
       return true;
     } catch (e) {
       print('Error clearing data: $e');
@@ -2069,6 +1709,11 @@ class SimpleDataManager {
       }
       
       print('Cleared $clearedCount account-specific data keys');
+      _clearLearningCaches();
+      _clearCloudSettingsCache();
+      _webCloudReadyUserId = null;
+      _hasPendingLearningSync = false;
+      _hasPendingSettingsSync = false;
       return true;
     } catch (e) {
       print('Error clearing account-specific data: $e');
@@ -2086,16 +1731,55 @@ class SimpleDataManager {
         return;
       }
       
-      // 現在のユーザーIDを保存
+      await clearAccountSpecificData();
+      await _syncFromFirestore(force: true);
+      await _syncSettingsFromFirestore(force: true);
       await setLastUserId(currentUserId);
-      
-      // Firestoreからデータを取得してタイムスタンプベースでマージ
-      // history配列はtimeフィールドで重複チェックしながら統合される
-      await _syncFromFirestore();
       
       print('Account switch sync completed');
     } catch (e) {
       print('Error in account switch sync: $e');
+    }
+  }
+
+  static Future<dynamic> getOtherSettingValue(String key) async {
+    try {
+      if (FirebaseAuthService.isAuthenticated) {
+        final cloudReady = await _ensureCloudSettingsStateCurrent();
+        if (cloudReady) {
+          return _cloudOtherSettingsCache[key]?['value'];
+        }
+      }
+
+      final localEntry = await _loadLocalOtherSettingEntry(key);
+      return localEntry?['value'];
+    } catch (e) {
+      print('Error getting other setting value for $key: $e');
+      return null;
+    }
+  }
+
+  static Future<bool> saveOtherSettingValue(String key, dynamic value) async {
+    try {
+      await _saveLocalOtherSettingEntry(
+        key,
+        value,
+        lastUpdated: DateTime.now().toIso8601String(),
+      );
+
+      final hadPendingBefore = _hasPendingSettingsSync;
+      _hasPendingSettingsSync = true;
+      if (FirebaseAuthService.isAuthenticated) {
+        final cloudReady = await _ensureCloudSettingsStateCurrent(force: true);
+        if (cloudReady && !hadPendingBefore) {
+          _hasPendingSettingsSync = false;
+        }
+      }
+
+      return true;
+    } catch (e) {
+      print('Error saving other setting value for $key: $e');
+      return false;
     }
   }
   
@@ -2108,46 +1792,11 @@ class SimpleDataManager {
   /// 選択された無料ガチャのリストを取得
   static Future<List<String>> getSelectedFreeGachas() async {
     try {
-      // まずローカルデータを即座に取得（遅延なし）
-      final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(_selectedFreeGachasKey);
-      
-      List<String> localSelected = [];
-      if (jsonString != null) {
-        try {
-          final List<dynamic> decoded = json.decode(jsonString);
-          localSelected = decoded.cast<String>();
-        } catch (e) {
-          print('Error decoding selected free gachas: $e');
-        }
+      final value = await getOtherSettingValue(_selectedFreeGachasKey);
+      if (value is List) {
+        return value.cast<String>();
       }
-      
-      // バックグラウンドでFirestoreから取得を試みる（非同期、エラーは無視）
-      if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          FirestoreSettingsService.getOtherSetting(
-            userId: userId,
-            key: _selectedFreeGachasKey,
-          ).timeout(
-            const Duration(seconds: 2),
-            onTimeout: () => null,
-          ).then((firestoreValue) async {
-            if (firestoreValue != null && firestoreValue is List) {
-              final firestoreSelected = firestoreValue.cast<String>();
-              if (firestoreSelected.isNotEmpty) {
-                final jsonString = json.encode(firestoreSelected);
-                await prefs.setString(_selectedFreeGachasKey, jsonString);
-                print('Background sync: Updated selected free gachas from Firestore');
-              }
-            }
-          }).catchError((e) {
-            print('Background sync error (ignored): $e');
-          });
-        }
-      }
-      
-      return localSelected;
+      return [];
     } catch (e) {
       print('Error getting selected free gachas: $e');
       return [];
@@ -2159,31 +1808,7 @@ class SimpleDataManager {
   /// ログイン後は syncLocalSettingsToFirestore() で同期される
   static Future<bool> saveSelectedFreeGachas(List<String> prefsPrefixes) async {
     try {
-      // 制限なしで全てのガチャを保存可能
-      final prefs = await SharedPreferences.getInstance();
-      final jsonString = json.encode(prefsPrefixes);
-      await prefs.setString(_selectedFreeGachasKey, jsonString);
-      
-      // 認証済みユーザーの場合、Firestoreにもバックアップ（非同期、エラーは無視）
-      if (FirebaseAuthService.isAuthenticated) {
-        final userId = FirebaseAuthService.userId;
-        if (userId != null) {
-          FirestoreSettingsService.saveOtherSetting(
-            userId: userId,
-            key: _selectedFreeGachasKey,
-            value: prefsPrefixes,
-          ).then((success) {
-            if (success) {
-              print('Successfully saved selected free gachas to Firestore');
-            } else {
-              print('Warning: Failed to save selected free gachas to Firestore');
-            }
-          }).catchError((e) {
-            print('Error saving selected free gachas to Firestore (continuing with local save): $e');
-          });
-        }
-      }
-      
+      await saveOtherSettingValue(_selectedFreeGachasKey, prefsPrefixes);
       print('Saved selected free gachas: $prefsPrefixes');
       return true;
     } catch (e) {

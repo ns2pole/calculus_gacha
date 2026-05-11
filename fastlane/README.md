@@ -19,7 +19,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane release_all_platforms
 ```
 
-iOS と Android の両方を一撃でリリース
+iOS・Android: ビルド→アップロード→審査提出。iOS は審査通過後に自動でストア公開
 
 オプション: skip_build:true (既存ビルドを使用), skip_ios:true (iOSをスキップ), skip_android:true (Androidをスキップ)
 
@@ -34,7 +34,7 @@ iOS と Android の両方を一撃でリリース
 [bundle exec] fastlane ios release_all
 ```
 
-Flutter Android と iOS のリリースを自動化
+iOS + Android をビルドし、審査提出・iOS 自動公開（承認後）まで実行
 
 ----
 
@@ -47,7 +47,7 @@ Flutter Android と iOS のリリースを自動化
 [bundle exec] fastlane android release_all
 ```
 
-Android リリースを自動化
+Android をビルドし Google Play へ審査提出
 
 オプション: skip_build:true (既存ビルドを使用)
 

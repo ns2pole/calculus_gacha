@@ -14,6 +14,16 @@ extension AggregationModeExt on AggregationMode {
     }
   }
 
+  /// 直近何回分を集計・一覧表示するか（一覧のスロット数と一致させる）
+  int get recentTries {
+    switch (this) {
+      case AggregationMode.latest1:
+        return 1;
+      case AggregationMode.latest3:
+        return 3;
+    }
+  }
+
   int toInt() => index;
 }
 

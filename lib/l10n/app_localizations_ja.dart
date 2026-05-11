@@ -1035,6 +1035,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get keyword_university => '大学';
 
   @override
+  String get keyword_acceleration => '加速度';
+
+  @override
+  String get keyword_magnetic_field => '磁場';
+
+  @override
   String get cloudBackupConfirmTitle => 'クラウドにデータをバックアップしますか？';
 
   @override

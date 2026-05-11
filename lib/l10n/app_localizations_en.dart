@@ -1067,6 +1067,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keyword_university => 'University';
 
   @override
+  String get keyword_acceleration => 'Acceleration';
+
+  @override
+  String get keyword_magnetic_field => 'Magnetic field';
+
+  @override
   String get cloudBackupConfirmTitle => 'Back up your data to the cloud?';
 
   @override

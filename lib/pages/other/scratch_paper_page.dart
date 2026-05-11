@@ -14,6 +14,7 @@ import 'dart:io';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
 import '../../services/problems/simple_data_manager.dart';
+import '../../services/problems/learning_history_slots.dart';
 import '../../widgets/drawing/draggable_tool_buttons.dart';
 import '../../widgets/timer/draggable_timer.dart';
 import '../../widgets/drawing/draggable_eraser_button.dart';
@@ -23,8 +24,6 @@ import '../common/common.dart';
 import '../common/problem_status.dart';
 import '../../utils/l10n_utils.dart';
 import '../../utils/responsive_layout.dart';
-
-const int _slotCount = 3;
 
 enum AnswerDisplayMode { none, answer, explanation }
 
@@ -2591,52 +2590,9 @@ class _ScratchPaperPageState extends State<ScratchPaperPage> with WidgetsBinding
           break;
       }
 
-      final history = await SimpleDataManager.getLearningHistory(
+      final success = await appendLearningHistorySlot(
         widget.problem!,
-      );
-      final current = <Map<String, dynamic>>[];
-
-      for (var i = 0; i < _slotCount; i++) {
-        if (i < history.length) {
-          final h = history[i];
-          final status = ProblemStatus.values.firstWhere(
-            (s) => s.name == h['status'],
-            orElse: () => ProblemStatus.none,
-          );
-          final timeStr = h['time'] as String?;
-          current.add({'status': status, 'time': timeStr});
-        } else {
-          current.add({'status': ProblemStatus.none, 'time': null});
-        }
-      }
-
-      while (current.length < _slotCount) {
-        current.add({'status': ProblemStatus.none, 'time': null});
-      }
-
-      int targetSlot = -1;
-      for (var i = 0; i < _slotCount; i++) {
-        final slotStatus = current[i]['status'] as ProblemStatus? ?? ProblemStatus.none;
-        if (slotStatus == ProblemStatus.none) {
-          targetSlot = i;
-          break;
-        }
-      }
-
-      if (targetSlot == -1) {
-        targetSlot = 0;
-      }
-
-      final t = DateTime.now().toIso8601String();
-      current[targetSlot] = {'status': problemStatus, 'time': t};
-
-      for (var j = targetSlot + 1; j < current.length; j++) {
-        current[j] = {'status': ProblemStatus.none, 'time': null};
-      }
-
-      final success = await SimpleDataManager.saveLearningHistory(
-        widget.problem!,
-        current,
+        problemStatus,
       );
 
       final l10n = AppLocalizations.of(context)!;
@@ -3072,18 +3028,9 @@ class _SyncButtonState extends State<_SyncButton> {
     });
 
     try {
-      // ローカルデータをFirestoreに同期（並列実行で高速化）
-      final results = await Future.wait([
-        SimpleDataManager.syncLocalDataToFirestore(),
-        SimpleDataManager.syncLocalSettingsToFirestore(),
-      ], eagerError: false);
-      
-      // Firestoreからデータを取得してマージ（エラーが発生しても続行）
-      try {
-        await SimpleDataManager.initialize();
-      } catch (e) {
-        print('Warning: Error initializing from Firestore: $e');
-        // 初期化エラーは無視（ローカルデータは既に同期済み）
+      final success = await SimpleDataManager.performCloudSync(force: true);
+      if (!success) {
+        throw Exception('Cloud sync did not complete');
       }
       
       if (mounted) {

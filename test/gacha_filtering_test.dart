@@ -12,8 +12,8 @@ void main() {
     late MathProblem problem2;
     late MathProblem problem3;
 
-    setUp(() {
-      problem1 = MathProblem(
+    setUp(() async {
+      problem1 = const MathProblem(
         id: 'problem_1',
         no: 1,
         category: 'テスト',
@@ -23,7 +23,7 @@ void main() {
         imageAsset: null,
         steps: [],
       );
-      problem2 = MathProblem(
+      problem2 = const MathProblem(
         id: 'problem_2',
         no: 2,
         category: 'テスト',
@@ -33,7 +33,7 @@ void main() {
         imageAsset: null,
         steps: [],
       );
-      problem3 = MathProblem(
+      problem3 = const MathProblem(
         id: 'problem_3',
         no: 3,
         category: 'テスト',
@@ -43,13 +43,13 @@ void main() {
         imageAsset: null,
         steps: [],
       );
+      SharedPreferences.setMockInitialValues({});
+      await SimpleDataManager.initialize();
+      await SimpleDataManager.clearAllData();
     });
 
     group('Learning History Tests', () {
       test('saveLearningHistory saves history correctly', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final history = [
           {'status': 'solved', 'time': '2024-01-01T00:00:00.000Z'},
           {'status': 'understood', 'time': '2024-01-02T00:00:00.000Z'},
@@ -59,15 +59,13 @@ void main() {
         expect(success, true);
 
         final retrieved = await SimpleDataManager.getLearningHistory(problem1);
-        expect(retrieved.length, 2);
+        expect(retrieved.length, 3);
         expect(retrieved[0]['status'], 'solved');
         expect(retrieved[1]['status'], 'understood');
+        expect(retrieved[2]['status'], 'none');
       });
 
       test('saveLearningHistory limits history to 3 slots', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final history = [
           {'status': 'solved', 'time': '2024-01-01T00:00:00.000Z'},
           {'status': 'solved', 'time': '2024-01-02T00:00:00.000Z'},
@@ -77,15 +75,11 @@ void main() {
 
         await SimpleDataManager.saveLearningHistory(problem1, history);
         final retrieved = await SimpleDataManager.getLearningHistory(problem1);
-        
-        // 3スロットまで保持される
-        expect(retrieved.length, 4); // 実際には4つ保存されるが、表示は3つまで
+        expect(retrieved.length, 3);
+        expect(retrieved.every((e) => e['status'] == 'solved'), isTrue);
       });
 
       test('saveLearningHistory updates latestStatus correctly', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final history = [
           {'status': 'none', 'time': '2024-01-01T00:00:00.000Z'},
           {'status': 'solved', 'time': '2024-01-02T00:00:00.000Z'},
@@ -98,9 +92,6 @@ void main() {
       });
 
       test('saveLearningHistory handles none status correctly', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final history = [
           {'status': 'none', 'time': '2024-01-01T00:00:00.000Z'},
           {'status': 'none', 'time': '2024-01-02T00:00:00.000Z'},
@@ -112,12 +103,10 @@ void main() {
         expect(status, LearningStatus.none);
       });
 
-      test('getLearningHistory returns empty list for new problem', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
+      test('getLearningHistory returns three none slots for new problem', () async {
         final history = await SimpleDataManager.getLearningHistory(problem1);
-        expect(history, isEmpty);
+        expect(history.length, 3);
+        expect(history.every((e) => e['status'] == 'none'), isTrue);
       });
 
       test('getLearningHistory handles invalid time format', () async {
@@ -134,8 +123,12 @@ void main() {
         await SimpleDataManager.initialize();
 
         final history = await SimpleDataManager.getLearningHistory(problem1);
-        expect(history, isNotEmpty);
+        expect(history.length, 3);
+        // 非空のtime文字列は保持される（ISO8601でなくてもスロットに載る）
         expect(history[0]['status'], 'solved');
+        expect(history[0]['time'], 'invalid-time');
+        expect(history[1]['status'], 'none');
+        expect(history[2]['status'], 'none');
       });
 
       test('getLearningHistory handles missing time field', () async {
@@ -152,16 +145,13 @@ void main() {
         await SimpleDataManager.initialize();
 
         final history = await SimpleDataManager.getLearningHistory(problem1);
-        expect(history, isNotEmpty);
-        expect(history[0]['status'], 'solved');
+        expect(history.length, 3);
+        expect(history.every((e) => e['status'] == 'none'), isTrue);
       });
     });
 
     group('Learning Record Tests', () {
       test('saveLearningRecord saves status correctly', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final success = await SimpleDataManager.saveLearningRecord(
           problem1,
           LearningStatus.solved,
@@ -173,9 +163,6 @@ void main() {
       });
 
       test('saveLearningRecord updates existing record', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.solved);
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.understood);
 
@@ -184,9 +171,6 @@ void main() {
       });
 
       test('saveLearningRecord maintains history limit', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         // 4回記録を保存
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.solved);
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.understood);
@@ -199,22 +183,15 @@ void main() {
       });
 
       test('getLearningRecord returns none for new problem', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final status = await SimpleDataManager.getLearningRecord(problem1);
         expect(status, LearningStatus.none);
       });
 
       test('getLearningRecord handles all status types', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final statuses = [
           LearningStatus.solved,
           LearningStatus.understood,
           LearningStatus.failed,
-          LearningStatus.none,
         ];
 
         for (final status in statuses) {
@@ -222,14 +199,22 @@ void main() {
           final retrieved = await SimpleDataManager.getLearningRecord(problem1);
           expect(retrieved, status);
         }
+        // none は saveLearningRecord で追記されないため、最新は failed のまま
+        await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.none);
+        expect(
+          await SimpleDataManager.getLearningRecord(problem1),
+          LearningStatus.failed,
+        );
+        await SimpleDataManager.clearLearningHistory(problem1);
+        expect(
+          await SimpleDataManager.getLearningRecord(problem1),
+          LearningStatus.none,
+        );
       });
     });
 
     group('Multiple Problems Tests', () {
       test('saveLearningRecord handles multiple problems independently', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.solved);
         await SimpleDataManager.saveLearningRecord(problem2, LearningStatus.understood);
         await SimpleDataManager.saveLearningRecord(problem3, LearningStatus.failed);
@@ -240,9 +225,6 @@ void main() {
       });
 
       test('getLearningHistory handles multiple problems independently', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         final history1 = [
           {'status': 'solved', 'time': '2024-01-01T00:00:00.000Z'},
         ];
@@ -263,9 +245,6 @@ void main() {
 
     group('Data Persistence Tests', () {
       test('data persists across SimpleDataManager reinitialization', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.solved);
 
         // 再初期化
@@ -276,9 +255,6 @@ void main() {
       });
 
       test('clearLearningHistory removes problem data', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.solved);
         await SimpleDataManager.clearLearningHistory(problem1);
 
@@ -287,9 +263,6 @@ void main() {
       });
 
       test('clearLearningHistory does not affect other problems', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         await SimpleDataManager.saveLearningRecord(problem1, LearningStatus.solved);
         await SimpleDataManager.saveLearningRecord(problem2, LearningStatus.understood);
         
@@ -302,12 +275,10 @@ void main() {
 
     group('Edge Cases', () {
       test('handles empty history list', () async {
-        SharedPreferences.setMockInitialValues({});
-        await SimpleDataManager.initialize();
-
         await SimpleDataManager.saveLearningHistory(problem1, []);
         final history = await SimpleDataManager.getLearningHistory(problem1);
-        expect(history, isEmpty);
+        expect(history.length, 3);
+        expect(history.every((e) => e['status'] == 'none'), isTrue);
       });
 
       test('handles null time values', () async {
@@ -324,8 +295,8 @@ void main() {
         await SimpleDataManager.initialize();
 
         final history = await SimpleDataManager.getLearningHistory(problem1);
-        expect(history, isNotEmpty);
-        expect(history[0]['status'], 'solved');
+        expect(history.length, 3);
+        expect(history.every((e) => e['status'] == 'none'), isTrue);
       });
 
       test('handles invalid status values', () async {

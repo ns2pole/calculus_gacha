@@ -11,8 +11,8 @@ void main() {
   group('Gacha Problem Display Tests', () {
     late MathProblem testProblem;
 
-    setUp(() {
-      testProblem = MathProblem(
+    setUp(() async {
+      testProblem = const MathProblem(
         id: 'test_problem_1',
         no: 1,
         category: 'テスト',
@@ -22,52 +22,30 @@ void main() {
         imageAsset: null,
         steps: [],
       );
-    });
-
-    test('getLearningHistory returns empty list when not authenticated', () async {
-      // SharedPreferencesをクリア
       SharedPreferences.setMockInitialValues({});
       await SimpleDataManager.initialize();
-      
-      // 未認証状態でのテスト
+      await SimpleDataManager.clearAllData();
+    });
+
+    test('getLearningHistory returns three none slots when not authenticated (no history)', () async {
       final history = await SimpleDataManager.getLearningHistory(testProblem);
-      
-      expect(history, isEmpty);
+      expect(history.length, 3);
+      expect(history.every((e) => e['status'] == 'none'), isTrue);
     });
 
     test('getLearningHistory handles timeout gracefully', () async {
-      // SharedPreferencesをクリア
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-      
-      // タイムアウトをシミュレート（実際のFirestore接続は行わない）
-      // このテストは、タイムアウト処理が正しく実装されていることを確認する
       final history = await SimpleDataManager.getLearningHistory(testProblem);
-      
-      // タイムアウト時は空のリストが返される（問題は除外されない）
       expect(history, isA<List<Map<String, dynamic>>>());
+      expect(history.length, 3);
     });
 
     test('getLearningRecord returns none when not authenticated', () async {
-      // SharedPreferencesをクリア
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-      
-      // 未認証状態でのテスト
       final status = await SimpleDataManager.getLearningRecord(testProblem);
-      
       expect(status, LearningStatus.none);
     });
 
     test('getLearningRecord handles timeout gracefully', () async {
-      // SharedPreferencesをクリア
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-      
-      // タイムアウトをシミュレート
       final status = await SimpleDataManager.getLearningRecord(testProblem);
-      
-      // タイムアウト時はnoneが返される（問題は除外されない）
       expect(status, LearningStatus.none);
     });
 
@@ -99,9 +77,6 @@ void main() {
     });
 
     test('getLearningHistory preserves order correctly', () async {
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-
       final history = [
         {'status': 'solved', 'time': '2024-01-01T00:00:00.000Z'},
         {'status': 'understood', 'time': '2024-01-02T00:00:00.000Z'},
@@ -118,9 +93,6 @@ void main() {
     });
 
     test('getLearningHistory handles multiple problems correctly', () async {
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-
       final problem2 = MathProblem(
         id: 'test_problem_2',
         no: 2,
@@ -146,9 +118,6 @@ void main() {
     });
 
     test('getLearningRecord handles status transitions correctly', () async {
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-
       // none -> solved -> understood -> failed
       await SimpleDataManager.saveLearningRecord(testProblem, LearningStatus.solved);
       expect(await SimpleDataManager.getLearningRecord(testProblem), LearningStatus.solved);
@@ -175,15 +144,13 @@ void main() {
       await SimpleDataManager.initialize();
 
       final history = await SimpleDataManager.getLearningHistory(testProblem);
-      expect(history.length, 2);
+      expect(history.length, 3);
       expect(history[0]['status'], 'solved');
       expect(history[1]['status'], 'understood');
+      expect(history[2]['status'], 'none');
     });
 
-    test('getLearningHistory returns empty list for new problem', () async {
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-
+    test('getLearningHistory returns three none slots for new problem', () async {
       final newProblem = MathProblem(
         id: 'new_problem',
         no: 999,
@@ -196,13 +163,11 @@ void main() {
       );
 
       final history = await SimpleDataManager.getLearningHistory(newProblem);
-      expect(history, isEmpty);
+      expect(history.length, 3);
+      expect(history.every((e) => e['status'] == 'none'), isTrue);
     });
 
     test('getLearningRecord returns none for new problem', () async {
-      SharedPreferences.setMockInitialValues({});
-      await SimpleDataManager.initialize();
-
       final newProblem = MathProblem(
         id: 'new_problem',
         no: 999,

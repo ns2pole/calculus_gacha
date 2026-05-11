@@ -1,7 +1,7 @@
 // lib/pages/home_page.dart
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -335,10 +335,11 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
             
             const SizedBox(height: 32),
             
-            // ヘルプページへのリンク
-            _buildHelpLink(),
-            
-            const SizedBox(height: 32),
+            // プライバシーポリシー等の外部リンク（ネイティブ向け。Web 版では非表示）
+            if (!kIsWeb) ...[
+              _buildHelpLink(),
+              const SizedBox(height: 32),
+            ],
           ],
         ),
       ),
@@ -462,6 +463,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                           MaterialPageRoute(builder: (context) => const AuthPage()),
                         );
                         if (result == true && mounted) {
+                          updateProgress();
                           setState(() {});
                         }
                       },
@@ -1218,22 +1220,9 @@ class _SyncButtonState extends State<_SyncButton> {
     });
 
     try {
-      if (kIsWeb) {
-        await SimpleDataManager.ensureWebCloudSyncReady(force: true);
-      } else {
-        // ローカルデータをFirestoreに同期（並列実行で高速化）
-        await Future.wait([
-          SimpleDataManager.syncLocalDataToFirestore(),
-          SimpleDataManager.syncLocalSettingsToFirestore(),
-        ], eagerError: false);
-        
-        // Firestoreからデータを取得してマージ（エラーが発生しても続行）
-        try {
-          await SimpleDataManager.initialize();
-        } catch (e) {
-          print('Warning: Error initializing from Firestore: $e');
-          // 初期化エラーは無視（ローカルデータは既に同期済み）
-        }
+      final success = await SimpleDataManager.performCloudSync(force: true);
+      if (!success) {
+        throw Exception('Cloud sync did not complete');
       }
       
       if (mounted) {

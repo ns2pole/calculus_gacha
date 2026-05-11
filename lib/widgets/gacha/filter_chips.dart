@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/app_localizations.dart';
 import '../../pages/common/aggregation_mode.dart';
 import '../../services/problems/exclusion_logic.dart';
 import '../../models/learning_status.dart';
-import '../../pages/gacha/gacha_settings_page.dart' show GachaFilterMode, GachaFilterModeExt, kGachaDisplayOrder, GachaFilterModeConversion, ExclusionModeConversion;
-import '../../services/problems/simple_data_manager.dart';
+import '../../pages/gacha/gacha_settings_page.dart' show GachaFilterMode, GachaFilterModeExt, GachaFilterModeConversion, ExclusionModeConversion;
+import '../../utils/gacha_settings_utils.dart';
 import '../../pages/common/problem_list_menu_utils.dart' show showFilterMenu;
 
 /// 除外設定フィルターチップ（共通化）
@@ -84,8 +83,6 @@ class AggregationFilterChip extends StatelessWidget {
             onTap: () {
               final RenderBox? renderBox = aggregationChipKey.currentContext?.findRenderObject() as RenderBox?;
               if (renderBox != null) {
-                final position = renderBox.localToGlobal(Offset.zero);
-                final size = renderBox.size;
                 onTap();
               } else {
                 onTap();
@@ -317,8 +314,10 @@ class _GachaExclusionFilterWidgetState extends State<GachaExclusionFilterWidget>
         widget.onExclusionModeChanged!(selected);
       }
       // 設定を保存
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('${widget.prefsPrefix}_gacha_exclusion_mode', selected.index);
+      await GachaSettingsSaver.saveExclusionMode(
+        widget.prefsPrefix,
+        selected,
+      );
     }
   }
 

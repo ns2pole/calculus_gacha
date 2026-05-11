@@ -273,6 +273,10 @@ String getLocalizedKeyword(BuildContext context, String keyword) {
       return l10n.keyword_nonHomogeneous;
     case '大学':
       return l10n.keyword_university;
+    case '加速度':
+      return l10n.keyword_acceleration;
+    case '磁場':
+      return l10n.keyword_magnetic_field;
     default:
       return keyword;
   }

@@ -92,7 +92,7 @@ class FirestoreSettingsService {
       await settingsRef.set({
         'gachaType': gachaType,
         'settings': settings,
-        'lastUpdated': FieldValue.serverTimestamp(),
+        'lastUpdated': settings['lastUpdated'] ?? FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
       AppLogger.success('ガチャ設定を保存しました', details: 'gachaType: $gachaType');
@@ -198,7 +198,7 @@ class FirestoreSettingsService {
       
       await settingsRef.set({
         'settings': settings,
-        'lastUpdated': FieldValue.serverTimestamp(),
+        'lastUpdated': settings['lastUpdated'] ?? FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
       AppLogger.success('ユーザー設定を保存しました');
@@ -270,6 +270,7 @@ class FirestoreSettingsService {
     required String userId,
     required String key,
     required dynamic value,
+    String? lastUpdated,
   }) async {
     try {
       // キーをエンコードしてFirestoreのドキュメントIDとして使用
@@ -279,7 +280,7 @@ class FirestoreSettingsService {
       await settingRef.set({
         'key': key, // 元のキーも保存（後方互換性のため）
         'value': value,
-        'lastUpdated': FieldValue.serverTimestamp(),
+        'lastUpdated': lastUpdated ?? FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
       AppLogger.success('その他の設定を保存しました', details: 'key: $key');
@@ -302,6 +303,15 @@ class FirestoreSettingsService {
     required String userId,
     required String key,
   }) async {
+    final entry = await getOtherSettingEntry(userId: userId, key: key);
+    return entry?['value'];
+  }
+
+  /// その他の設定を更新日時つきで取得
+  static Future<Map<String, dynamic>?> getOtherSettingEntry({
+    required String userId,
+    required String key,
+  }) async {
     try {
       // キーをエンコードしてFirestoreのドキュメントIDとして使用
       final encodedKey = _encodeKey(key);
@@ -316,7 +326,19 @@ class FirestoreSettingsService {
         return null;
       }
 
-      return data['value'];
+      final lastUpdated = data['lastUpdated'];
+      String? lastUpdatedString;
+      if (lastUpdated is Timestamp) {
+        lastUpdatedString = lastUpdated.toDate().toIso8601String();
+      } else if (lastUpdated is String) {
+        lastUpdatedString = lastUpdated;
+      }
+
+      return {
+        'key': data['key'] as String? ?? key,
+        'value': data['value'],
+        'lastUpdated': lastUpdatedString,
+      };
     } catch (e) {
       final errorStr = e.toString().toLowerCase();
       if (errorStr.contains('permission') || errorStr.contains('permission-denied')) {
@@ -330,38 +352,60 @@ class FirestoreSettingsService {
     }
   }
 
-  /// 全その他の設定を取得
-  static Future<Map<String, dynamic>> getAllOtherSettings({
+  /// 全その他の設定を更新日時つきで取得
+  static Future<Map<String, Map<String, dynamic>>> getAllOtherSettingEntries({
     required String userId,
   }) async {
     try {
       final snapshot = await _getOtherSettingsRef(userId).get();
-      
-      final Map<String, dynamic> settings = {};
-      
+
+      final Map<String, Map<String, dynamic>> settings = {};
+
       for (var doc in snapshot.docs) {
         final data = doc.data() as Map<String, dynamic>?;
         if (data == null) continue;
-        
-        // ドキュメントIDをデコードして元のキーに戻す
-        // 後方互換性のため、data['key']が存在する場合はそれを使用
+
+        final lastUpdated = data['lastUpdated'];
+        String? lastUpdatedString;
+        if (lastUpdated is Timestamp) {
+          lastUpdatedString = lastUpdated.toDate().toIso8601String();
+        } else if (lastUpdated is String) {
+          lastUpdatedString = lastUpdated;
+        }
+
         final originalKey = data['key'] as String? ?? _decodeKey(doc.id);
-        settings[originalKey] = data['value'];
+        settings[originalKey] = {
+          'key': originalKey,
+          'value': data['value'],
+          'lastUpdated': lastUpdatedString,
+        };
       }
-      
-      AppLogger.success('全その他の設定を取得しました', details: '${settings.length}件の設定を取得');
+
       return settings;
     } catch (e) {
       final errorStr = e.toString().toLowerCase();
       if (errorStr.contains('permission') || errorStr.contains('permission-denied')) {
         AppLogger.warning('全その他の設定の取得が権限エラーで失敗しました',
           details: 'Firestoreセキュリティルールを確認してください。FIRESTORE_SECURITY_RULES.mdを参照してください。');
-        _logAuthStatus(userId, 'getAllOtherSettings', isError: true);
+        _logAuthStatus(userId, 'getAllOtherSettingEntries', isError: true);
       } else {
         AppLogger.error('全その他の設定の取得に失敗しました', error: e);
       }
       return {};
     }
+  }
+
+  /// 全その他の設定を取得
+  static Future<Map<String, dynamic>> getAllOtherSettings({
+    required String userId,
+  }) async {
+    final entries = await getAllOtherSettingEntries(userId: userId);
+    final settings = <String, dynamic>{};
+    for (final entry in entries.entries) {
+      settings[entry.key] = entry.value['value'];
+    }
+    AppLogger.success('全その他の設定を取得しました', details: '${settings.length}件の設定を取得');
+    return settings;
   }
 
   // ============================================================================
@@ -479,11 +523,17 @@ class FirestoreSettingsService {
         },
       );
 
+      final gachaSettings = results[0] as Map<String, Map<String, dynamic>>;
+      final userSettings = results[1];
+      final otherSettings = results[2] as Map<String, dynamic>;
+      final premiumPurchased = results[3];
+
       // 権限エラーをチェック（空の結果が返された場合は権限エラーの可能性）
-      final hasPermissionError = results.every((result) => 
-        result == null || 
-        (result is Map && result.isEmpty)
-      );
+      final hasPermissionError =
+          gachaSettings.isEmpty &&
+          (userSettings == null || userSettings.isEmpty) &&
+          otherSettings.isEmpty &&
+          (premiumPurchased == null || premiumPurchased.isEmpty);
 
       if (hasPermissionError) {
         AppLogger.warning('全設定の取得で権限エラーが検出されました', 
@@ -493,10 +543,10 @@ class FirestoreSettingsService {
 
       AppLogger.success('全設定を取得しました');
       return {
-        'gacha_settings': results[0] as Map<String, Map<String, dynamic>>,
-        'user_settings': results[1] as Map<String, dynamic>?,
-        'other_settings': results[2] as Map<String, dynamic>,
-        'premium_purchased': results[3] as Map<String, dynamic>?,
+        'gacha_settings': gachaSettings,
+        'user_settings': userSettings,
+        'other_settings': otherSettings,
+        'premium_purchased': premiumPurchased,
       };
     } catch (e) {
       final errorStr = e.toString().toLowerCase();

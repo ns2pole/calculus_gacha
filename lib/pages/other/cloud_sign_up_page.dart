@@ -94,37 +94,12 @@ class _CloudSignUpPageState extends State<CloudSignUpPage> {
       await Future.delayed(const Duration(milliseconds: 50));
       
       if (isAccountSwitched) {
-        // アカウント切り替え時：ローカルデータとFirestoreデータをタイムスタンプベースでマージ
-        // history配列はtimeフィールドで重複チェックしながら統合される
-        print('Account switch detected, merging local and Firestore data...');
-        await SimpleDataManager.syncOnAccountSwitch();
-        
-        // UIスレッドに制御を戻す
-        await Future.delayed(const Duration(milliseconds: 50));
-      } else {
-        // 通常のクラウドに保存時：ローカルデータと設定をFirestoreに同期
-        // （既存のアカウントでクラウドに保存した場合）
-        await SimpleDataManager.syncLocalDataToFirestore();
-        
-        // UIスレッドに制御を戻す
-        await Future.delayed(const Duration(milliseconds: 50));
-        
-        await SimpleDataManager.syncLocalSettingsToFirestore();
-        
-        // UIスレッドに制御を戻す
-        await Future.delayed(const Duration(milliseconds: 50));
-        
-        // Firestoreから既存データを取得してマージ
-        await SimpleDataManager.initialize();
-        
-        // UIスレッドに制御を戻す
-        await Future.delayed(const Duration(milliseconds: 50));
-        
-        // 現在のユーザーIDを保存（次回のアカウント切り替え検知用）
-        final currentUserId = FirebaseAuthService.userId;
-        if (currentUserId != null) {
-          await SimpleDataManager.setLastUserId(currentUserId);
-        }
+        print('Account switch detected, refreshing cloud-backed data...');
+      }
+      final success = await SimpleDataManager.performCloudSync(force: true);
+      if (!success) {
+        print('Background sync did not fully complete; local fallback remains active');
+        return;
       }
       
       print('Background sync completed');

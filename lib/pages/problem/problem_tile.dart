@@ -140,15 +140,15 @@ class ProblemTile extends StatelessWidget {
                             // 最新の更新日時を表示
                             Builder(
                               builder: (context) {
-                                // noneでない最後のスロットの日時を取得
+                                // 有効な記録のうち最も新しい日時
                                 DateTime? latestTime;
-                                for (int i = slots.length - 1; i >= 0; i--) {
-                                  final status = slots[i]['status'] as ProblemStatus?;
-                                  if (status != null && status != ProblemStatus.none) {
-                                    final time = slots[i]['time'] as DateTime?;
-                                    if (time != null) {
+                                for (int i = 0; i < slots.length; i++) {
+                                  final status = slots[i]['status'] as ProblemStatus? ?? ProblemStatus.none;
+                                  if (status == ProblemStatus.none) continue;
+                                  final time = slots[i]['time'] as DateTime?;
+                                  if (time != null) {
+                                    if (latestTime == null || time.isAfter(latestTime)) {
                                       latestTime = time;
-                                      break;
                                     }
                                   }
                                 }

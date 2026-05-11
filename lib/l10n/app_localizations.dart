@@ -1970,6 +1970,18 @@ abstract class AppLocalizations {
   /// **'大学'**
   String get keyword_university;
 
+  /// No description provided for @keyword_acceleration.
+  ///
+  /// In ja, this message translates to:
+  /// **'加速度'**
+  String get keyword_acceleration;
+
+  /// No description provided for @keyword_magnetic_field.
+  ///
+  /// In ja, this message translates to:
+  /// **'磁場'**
+  String get keyword_magnetic_field;
+
   /// No description provided for @cloudBackupConfirmTitle.
   ///
   /// In ja, this message translates to:

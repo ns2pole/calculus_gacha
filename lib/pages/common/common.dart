@@ -425,14 +425,14 @@ class MixedTextMath extends StatelessWidget {
 /// 
 /// グループ定義:
 /// - group1: {'数値', '一般'}
-/// - group2: {'等加速度直線運動', '空気抵抗', '単振動'}
+/// - group2: {'等加速度直線運動', '空気抵抗', '単振動', '加速度'}
 /// - group3: {'直流', '交流', '電圧0'}
-/// - group4: {'コンデンサ', 'コイル', '抵抗'}
+/// - group4: {'コンデンサ', 'コイル', '抵抗', '磁場'}
 Map<String, Set<String>> categorizeKeywords4Groups(Set<String> selected) {
   final group1 = {'数値', '一般'};
-  final group2 = {'等加速度直線運動', '空気抵抗', '単振動'};
+  final group2 = {'等加速度直線運動', '空気抵抗', '単振動', '加速度'};
   final group3 = {'直流', '交流', '電圧0'};
-  final group4 = {'コンデンサ', 'コイル', '抵抗'};
+  final group4 = {'コンデンサ', 'コイル', '抵抗', '磁場'};
   
   return {
     'group1': selected.intersection(group1),
@@ -477,8 +477,8 @@ List<MathProblem> filterProblemsByKeywords(List<MathProblem> problems, Set<Strin
   final group3 = groups['group3']!;
   final group4 = groups['group4']!;
   
-  final group2All = {'等加速度直線運動', '空気抵抗', '単振動'};
-  final group4All = {'コンデンサ', 'コイル', '抵抗'};
+  final group2All = {'等加速度直線運動', '空気抵抗', '単振動', '加速度'};
+  final group4All = {'コンデンサ', 'コイル', '抵抗', '磁場'};
   
   final filtered = problems.where((p) {
     if (p.keywords.isEmpty) return false;

@@ -10,8 +10,8 @@ void main() {
   group('SimpleDataManager Tests', () {
     late MathProblem testProblem;
 
-    setUp(() {
-      testProblem = MathProblem(
+    setUp(() async {
+      testProblem = const MathProblem(
         id: 'test_problem_1',
         no: 1,
         category: 'テスト',
@@ -21,6 +21,9 @@ void main() {
         imageAsset: null,
         steps: [],
       );
+      SharedPreferences.setMockInitialValues({});
+      await SimpleDataManager.initialize();
+      await SimpleDataManager.clearAllData();
     });
 
     group('Initialization Tests', () {
@@ -198,12 +201,16 @@ void main() {
         expect(retrieved['language'], 'ja');
       });
 
-      test('returns empty map when no user settings', () async {
+      test('returns only lastUpdated when no user settings saved', () async {
         SharedPreferences.setMockInitialValues({});
         await SimpleDataManager.initialize();
 
         final settings = await SimpleDataManager.getUserSettings();
-        expect(settings, isEmpty);
+        expect(settings.containsKey('lastUpdated'), isTrue);
+        expect(
+          settings.keys.where((k) => k != 'lastUpdated'),
+          isEmpty,
+        );
       });
 
       test('updates user settings', () async {
@@ -305,7 +312,11 @@ void main() {
 
         // ローカルから削除されていることを確認
         final clearedHistory = await SimpleDataManager.getLearningHistory(testProblem);
-        expect(clearedHistory.length, 0);
+        expect(clearedHistory.length, 3);
+        expect(
+          clearedHistory.every((e) => e['status'] == 'none'),
+          isTrue,
+        );
       });
 
       test('saveLearningHistory syncs to Firestore when authenticated', () async {

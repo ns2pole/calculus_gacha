@@ -300,10 +300,7 @@ final Map<String, ProblemTranslation> trigExpLogEquationsTranslationsEn = {
   "A1B2C3D4-E5F6-A7B8-C9D0-E1F2A3B4C5D6": ProblemTranslation(
     category: 'Trigonometric, Exponential, and Logarithmic Equations',
     level: 'Advanced',
-    // NOTE: This ID is also used by a factorization problem.
-    // Adding a hint here ensures `getLocalizedHint()` can return English for that problem as well,
-    // because TranslationManager merges maps by ID and later entries override earlier ones.
-    hint: r"\text{Group terms and factor by } x \text{ and } z.",
+    hint: r"\text{Let } t = 3^x + 3^{-x} \ (t>0) \text{ and reduce to a quadratic in } t.",
     steps: [
       r"\textbf{[Strategy]}",
       r"\text{Let } 3^x + 3^{-x} = t. \text{ Express } 9^x + 9^{-x} \text{ in terms of } t.",

@@ -34,7 +34,8 @@ class FirestoreLearningService {
         'problemId': problemId,
         'latestStatus': data['latestStatus'],
         'history': data['history'],
-        'lastUpdated': FieldValue.serverTimestamp(),
+        'lastUpdated':
+            data['lastUpdated'] ?? DateTime.now().toIso8601String(),
       }, SetOptions(merge: true));
 
       return true;
@@ -130,7 +131,7 @@ class FirestoreLearningService {
         'problemId': problemId,
         'latestStatus': latestStatus,
         'history': history,
-        'lastUpdated': FieldValue.serverTimestamp(),
+        'lastUpdated': DateTime.now().toIso8601String(),
       }, SetOptions(merge: true));
 
       return true;
@@ -184,7 +185,7 @@ class FirestoreLearningService {
       return records;
     } catch (e) {
       print('Error getting all learning records from Firestore: $e');
-      return {};
+      rethrow;
     }
   }
 

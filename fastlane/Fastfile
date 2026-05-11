@@ -19,15 +19,9 @@ def asc_api_key_or_nil
   key_id = ENV['ASC_KEY_ID'].to_s
   issuer = ENV['ASC_ISSUER_ID'].to_s
 
-  UI.message("🔍 Debug: ASC_KEY_ID = '#{key_id}'")
-  UI.message("🔍 Debug: ASC_ISSUER_ID = '#{issuer}'")
-
   return nil if key_id.empty? || issuer.empty?
 
   key_path = (ENV['ASC_P8_PATH'] || File.expand_path("~/.appstoreconnect/private_keys/AuthKey_#{key_id}.p8")).to_s
-  UI.message("🔍 Debug: key_path = '#{key_path}'")
-  UI.message("🔍 Debug: File.exist?(key_path) = #{File.exist?(key_path)}")
-
   return nil unless File.exist?(key_path)
 
   app_store_connect_api_key(
@@ -98,8 +92,8 @@ FIXED_WHATSNEW_JA = "バグ修正と改善を行いました。"
 FIXED_PROMOTIONAL_EN = "Learn calculus and physics efficiently with random questions!"
 FIXED_PROMOTIONAL_JA = "ランダム出題で微分積分と物理を効率的に学ぼう！"
 
-# 統合リリースレーン（iOS + Android）
-desc "iOS と Android の両方を一撃でリリース"
+# 統合リリースレーン（iOS + Android。審査提出〜App Store 審査通過後の自動公開まで）
+desc "iOS・Android: ビルド→アップロード→審査提出。iOS は審査通過後に自動でストア公開"
 desc "オプション: skip_build:true (既存ビルドを使用), skip_ios:true (iOSをスキップ), skip_android:true (Androidをスキップ)"
 lane :release_all_platforms do |options|
   # オプション or デフォルトのリリースノート（ただし deliver 側は固定に上書き）
@@ -230,9 +224,8 @@ lane :release_all_platforms do |options|
       skip_metadata: false,
       skip_screenshots: true,
       skip_app_version_update: false,
-      # ユーザーが App Store Connect 上で「審査へ提出」ボタンを押す前提なので、ここでは提出しない
-      submit_for_review: false,
-      automatic_release: false, # 審査通過後の自動リリースはしない（手動でリリース）
+      submit_for_review: true,
+      automatic_release: true, # 審査承認後、App Store へ自動公開
       ignore_language_directory_validation: true, # ja-JPディレクトリの検証をスキップ
       promotional_text: {
         "en-US" => FIXED_PROMOTIONAL_EN,
@@ -254,7 +247,9 @@ lane :release_all_platforms do |options|
         export_compliance_uses_non_exempt_encryption: uses_non_exempt,
         export_compliance_is_exempt: !uses_non_exempt
       },
-      run_precheck_before_submit: false
+      run_precheck_before_submit: true,
+      # API キーでは IAP の precheck が未対応のため（deliver 制限）
+      precheck_include_in_app_purchases: false
     }
 
     # deliver_common のロケールを正規化（念のため）
@@ -267,21 +262,8 @@ lane :release_all_platforms do |options|
     UI.message("   - Other metadata files (full_description.txt, short_description.txt, title.txt, name.txt, etc.) will be used as-is")
     UI.message("🔍 deliver_common.promotional_text = #{deliver_common[:promotional_text].inspect}")
 
-    # deliver 実行
-    begin
-      deliver(deliver_common)
-      UI.success("✅ iOS app successfully submitted for review!")
-    rescue => e
-      UI.error("❌ Failed to submit iOS app for review")
-      UI.error("   Error: #{e.message}")
-      UI.error("   Class: #{e.class}")
-      if e.backtrace
-        UI.error("   Backtrace:")
-        e.backtrace.first(5).each { |line| UI.error("     #{line}") }
-      end
-      UI.message("⚠️  Continuing with Android release despite iOS error...")
-      # raise を削除して続行
-    end
+    deliver(deliver_common)
+    UI.success("✅ iOS: uploaded, submitted for review, automatic release on approval enabled")
   else
     UI.message("⚠️  App Store Connect API Key not found, using Apple ID fallback")
     UI.message("💡 Set ASC_KEY_ID, ASC_ISSUER_ID, ASC_P8_PATH environment variables to use API Key")
@@ -290,10 +272,9 @@ lane :release_all_platforms do |options|
     # FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD を環境変数にセットしてください。
     deliver_common = {
       username: ENV['FASTLANE_USER'] || "syunsukerunrun0306@yahoo.co.jp",
-      # ユーザーが App Store Connect 上で「審査へ提出」ボタンを押す前提なので、ここでは提出しない
-      submit_for_review: false,
+      submit_for_review: true,
       force: true,
-      automatic_release: false, # 審査通過後の自動リリースはしない（手動でリリース）
+      automatic_release: true,
       # メタデータファイル（fastlane/metadata/*/）から全ての情報を読み込む
       # - release_notes.txt: コマンドラインで指定された内容が書き込まれている
       # - full_description.txt, short_description.txt, title.txt, name.txt: 既存のファイルが使用される
@@ -310,7 +291,9 @@ lane :release_all_platforms do |options|
         export_compliance_is_exempt: !uses_non_exempt,
         export_compliance_encryption_updated: false,
         add_id_info_uses_idfa: false
-      }
+      },
+      run_precheck_before_submit: true,
+      precheck_include_in_app_purchases: false
     }
 
     # deliver_common のロケールを正規化（念のため）
@@ -323,21 +306,8 @@ lane :release_all_platforms do |options|
     UI.message("   - Other metadata files (full_description.txt, short_description.txt, title.txt, name.txt, etc.) will be used as-is")
     UI.message("🔍 deliver_common.promotional_text = #{deliver_common[:promotional_text].inspect}")
 
-    # deliver 実行
-    begin
-      deliver(deliver_common)
-      UI.success("✅ iOS app successfully submitted for review!")
-    rescue => e
-      UI.error("❌ Failed to submit iOS app for review")
-      UI.error("   Error: #{e.message}")
-      UI.error("   Class: #{e.class}")
-      if e.backtrace
-        UI.error("   Backtrace:")
-        e.backtrace.first(5).each { |line| UI.error("     #{line}") }
-      end
-      UI.message("⚠️  Continuing with Android release despite iOS error...")
-      # raise を削除して続行
-    end
+    deliver(deliver_common)
+    UI.success("✅ iOS: uploaded, submitted for review, automatic release on approval enabled")
   end
   else
     UI.message("⏭️  Skipping iOS upload")
@@ -358,21 +328,15 @@ lane :release_all_platforms do |options|
         package_name: "com.joymath",
         json_key: File.expand_path("./joy-math-fastlane.json", __dir__),
         track: "production",
-        # ユーザーが Play Console 上で「審査へ送信」操作をする前提なので、ここでは review 送信しない
-        changes_not_sent_for_review: true,
+        changes_not_sent_for_review: false,
+        ack_bundle_installation_warning: true,
         aab: File.expand_path("../build/app/outputs/bundle/release/app-release.aab", __dir__),
         metadata_path: File.expand_path("./metadata/android", __dir__)
       )
-      UI.success("✅ Android app successfully uploaded!")
+      UI.success("✅ Android: AAB & metadata on production, sent for review")
     rescue => e
-      UI.error("❌ Failed to upload Android app")
-      UI.error("   Error: #{e.message}")
-      UI.error("   Class: #{e.class}")
-      if e.backtrace
-        UI.error("   Backtrace:")
-        e.backtrace.first(5).each { |line| UI.error("     #{line}") }
-      end
-      raise unless skip_ios  # iOSもスキップしている場合はエラーを投げる
+      UI.error("❌ Android (Google Play) failed: #{e.message}")
+      raise e
     end
   else
     UI.message("⏭️  Skipping Android upload")
@@ -385,7 +349,7 @@ lane :release_all_platforms do |options|
 end
 
 platform :ios do
-  desc "Flutter Android と iOS のリリースを自動化"
+  desc "iOS + Android をビルドし、審査提出・iOS 自動公開（承認後）まで実行"
   lane :release_all do |options|
     release_note = options[:notes] || "バグ修正と改善を行いました"
     release_note_en = options[:notes_en] || "Bug fixes and improvements"
@@ -436,8 +400,10 @@ platform :ios do
     # deliver：Apple ID フォールバックを含め、必要なロケールの whatsNew を必ず渡す
     deliver_common = {
       username: ENV['FASTLANE_USER'] || "syunsukerunrun0306@yahoo.co.jp",
-      # ユーザーが App Store Connect 上で「審査へ提出」ボタンを押す前提なので、ここでは提出しない
-      submit_for_review: false,
+      submit_for_review: true,
+      automatic_release: true,
+      run_precheck_before_submit: true,
+      precheck_include_in_app_purchases: false,
       force: true,
       skip_metadata: true,
       skip_screenshots: true,
@@ -474,43 +440,24 @@ platform :ios do
 
     deliver(deliver_common)
 
-    #####################
-    # Android changelog 自動生成
-    #####################
-    changelog_path = "./metadata/android/ja-JP/changelogs/#{build_number}.txt"
-    sh("mkdir -p #{File.dirname(changelog_path)}")
-    File.write(changelog_path, release_note)
-    UI.message("Android changelog generated at #{changelog_path}")
+    generate_android_changelogs(build_number, release_note, release_note_en)
 
-    #####################
-    # Android ビルド
-    #####################
-    gradle(
-      task: "assembleRelease",
-      project_dir: "../android",
-      properties: {
-        "versionName" => version_number,
-        "versionCode" => build_number
-      }
-    )
-
-    #####################
-    # Android アップロード
-    #####################
     upload_to_play_store(
       package_name: "com.joymath",
       json_key: File.expand_path("./joy-math-fastlane.json", __dir__),
       track: "production",
+      changes_not_sent_for_review: false,
+      ack_bundle_installation_warning: true,
       aab: File.expand_path("../build/app/outputs/bundle/release/app-release.aab", __dir__),
       metadata_path: File.expand_path("./metadata/android", __dir__)
     )
 
-    UI.success("✅ iOS & Android release complete")
+    UI.success("✅ iOS & Android: review submitted; iOS will auto-release when approved")
   end
 end
 
 platform :android do
-  desc "Android リリースを自動化"
+  desc "Android をビルドし Google Play へ審査提出"
   desc "オプション: skip_build:true (既存ビルドを使用)"
   lane :release_all do |options|
     release_note = options[:notes] || "バグ修正と改善を行いました"
@@ -559,12 +506,12 @@ platform :android do
       package_name: "com.joymath",
       json_key: File.expand_path("./joy-math-fastlane.json", __dir__),
       track: "production",
-      # ユーザーが Play Console 上で「審査へ送信」操作をする前提なので、ここでは review 送信しない
-      changes_not_sent_for_review: true,
+      changes_not_sent_for_review: false,
+      ack_bundle_installation_warning: true,
       aab: File.expand_path("../build/app/outputs/bundle/release/app-release.aab", __dir__),
       metadata_path: File.expand_path("./metadata/android", __dir__)
     )
 
-    UI.success("✅ Android release complete")
+    UI.success("✅ Android: production upload & sent for review")
   end
 end

@@ -523,6 +523,7 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
                           MaterialPageRoute(builder: (context) => const AuthPage()),
                         );
                         if (result == true && mounted) {
+                          updateProgress();
                           setState(() {});
                         }
                       },
@@ -1312,18 +1313,9 @@ class _SyncButtonState extends State<_SyncButton> {
     });
 
     try {
-      // ローカルデータをFirestoreに同期（並列実行で高速化）
-      final results = await Future.wait([
-        SimpleDataManager.syncLocalDataToFirestore(),
-        SimpleDataManager.syncLocalSettingsToFirestore(),
-      ], eagerError: false);
-      
-      // Firestoreからデータを取得してマージ（エラーが発生しても続行）
-      try {
-        await SimpleDataManager.initialize();
-      } catch (e) {
-        print('Warning: Error initializing from Firestore: $e');
-        // 初期化エラーは無視（ローカルデータは既に同期済み）
+      final success = await SimpleDataManager.performCloudSync(force: true);
+      if (!success) {
+        throw Exception('Cloud sync did not complete');
       }
       
       if (mounted) {

@@ -147,10 +147,15 @@ void main() {
       expect(deleteSuccess, true,
           reason: '認証されていない状態でもローカル削除は成功する必要があります');
 
-      // ローカルから削除されていることを確認
+      // ローカルは3スロットnone（履歴クリア後の正規化形）
       final clearedHistory = await SimpleDataManager.getLearningHistory(testProblem);
-      expect(clearedHistory.length, 0,
-          reason: 'ローカルから学習記録が削除されている必要があります');
+      expect(clearedHistory.length, 3,
+          reason: 'クリア後は3スロットのnoneが返る');
+      expect(
+        clearedHistory.every((e) => e['status'] == 'none'),
+        isTrue,
+        reason: 'ローカルから意味のある学習記録は消えている必要があります',
+      );
     });
   });
 }

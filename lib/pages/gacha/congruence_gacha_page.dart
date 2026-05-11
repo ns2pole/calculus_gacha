@@ -13,6 +13,7 @@ import '../../problems/congruence_equations/congruence_equations.dart';
 import '../../widgets/congruence/congruence_card.dart';
 import '../../widgets/congruence/congruence_calculator.dart';
 import '../../services/problems/simple_data_manager.dart';
+import '../../services/problems/learning_history_slots.dart';
 import '../../models/math_problem.dart';
 import '../common/common.dart';
 import '../common/problem_status.dart';
@@ -537,51 +538,9 @@ class _CongruenceGachaPageState extends State<CongruenceGachaPage> {
       steps: [],
     );
 
-    final status = isCorrect ? ProblemStatus.solved : ProblemStatus.failed;
+    final newStatus = isCorrect ? ProblemStatus.solved : ProblemStatus.failed;
 
-    final history = await SimpleDataManager.getLearningHistory(mathProblem);
-    final current = <Map<String, dynamic>>[];
-
-    const slotCount = 3;
-    for (var i = 0; i < slotCount; i++) {
-      if (i < history.length) {
-        final h = history[i];
-        final status = ProblemStatus.values.firstWhere(
-          (s) => s.name == h['status'],
-          orElse: () => ProblemStatus.none,
-        );
-        final timeStr = h['time'] as String?;
-        current.add({'status': status, 'time': timeStr});
-      } else {
-        current.add({'status': ProblemStatus.none, 'time': null});
-      }
-    }
-
-    while (current.length < slotCount) {
-      current.add({'status': ProblemStatus.none, 'time': null});
-    }
-
-    int targetSlot = -1;
-    for (var i = 0; i < slotCount; i++) {
-      final slotStatus = current[i]['status'] as ProblemStatus? ?? ProblemStatus.none;
-      if (slotStatus == ProblemStatus.none) {
-        targetSlot = i;
-        break;
-      }
-    }
-
-    if (targetSlot == -1) {
-      targetSlot = 0;
-    }
-
-    final t = DateTime.now().toIso8601String();
-    current[targetSlot] = {'status': status, 'time': t};
-
-    for (var j = targetSlot + 1; j < current.length; j++) {
-      current[j] = {'status': ProblemStatus.none, 'time': null};
-    }
-
-    final success = await SimpleDataManager.saveLearningHistory(mathProblem, current);
+    final success = await appendLearningHistorySlot(mathProblem, newStatus);
     if (!success) {
       await SimpleDataManager.ensureWebCloudSyncReady(force: true);
       if (!mounted) return;

@@ -24,8 +24,10 @@ import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/common/back_button.dart';
 import '../gacha/gacha_settings_page.dart';
 import '../../widgets/gacha/filter_chips.dart';
+import '../../utils/gacha_settings_utils.dart';
 
-const int _slotCount = 3;
+/// SimpleDataManager 側の学習履歴スロット数（保存は常に3）
+const int _storageSlotCount = 3;
 
 // ExclusionMode、ExclusionModeExt、kExclusionDisplayOrderはexclusion_logic.dartからインポート
 
@@ -50,8 +52,9 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
 
   GachaFilterMode _gachaFilterMode = GachaFilterMode.random;
 
-  // 集計モードは常に最新3回分に固定
-  static const AggregationMode _aggregationMode = AggregationMode.latest3;
+  /// ガチャと同じ集計設定。直近1回なら一覧も1スロット、3回なら3スロット
+  AggregationMode _aggregationMode = AggregationMode.latest1;
+  int get _displaySlotCount => _aggregationMode.recentTries;
 
   final GlobalKey _filterChipKey = GlobalKey();
 
@@ -70,16 +73,14 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
   void initState() {
     super.initState();
     _allProblems = widget.problemPool;
-    // 集計モードは常に最新3回分に固定のため、読み込み不要
-    _loadGachaFilterMode();
+    _loadGachaListSettings();
     _loadSelectedKeywords();
 
     // カテゴリー分類は廃止
   }
 
-  // 集計モードは常に最新3回分に固定のため、読み込み・保存処理は不要
-
-  Future<void> _loadGachaFilterMode() async {
+  Future<void> _loadGachaListSettings() async {
+    _aggregationMode = await GachaSettingsLoader.loadAggregationMode(widget.prefsPrefix);
     final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
     final filterModeStr = settings['filterMode'] as String?;
     
@@ -243,17 +244,12 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
     return filteredList;
   }
 
-  /// 永続化キーは problem.id を返す（ここが最重要）
-  String _problemKey(MathProblem p) => p.id;
-
   Future<List<Map<String, dynamic>>> _getSlots(MathProblem p) async {
     final history = await SimpleDataManager.getLearningHistory(p);
-    // 履歴が3つを超える場合は、時刻でソートしてから最新3つを取得
-    final latestHistory = history.length > _slotCount
-        ? sortHistoryByTimeNewestFirst(history).take(_slotCount).toList()
-        : history;
+    final n = _displaySlotCount;
+    final latestHistory = sortHistoryByTimeNewestFirst(history).take(n).toList();
     final slots = <Map<String, dynamic>>[];
-    for (var i = 0; i < _slotCount; i++) {
+    for (var i = 0; i < n; i++) {
       if (i < latestHistory.length) {
         final h = latestHistory[i];
         final status = ProblemStatus.values.firstWhere(
@@ -279,11 +275,11 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
 
   /// p.id を使って更新する（連鎖クリア・前詰め制約あり）
   Future<void> _setSlot(MathProblem p, int idx, ProblemStatus newStatus) async {
-    final key = _problemKey(p);
-    // SimpleDataManagerから履歴を取得
+    if (idx < 0 || idx >= _displaySlotCount) return;
+    // SimpleDataManagerから履歴を取得（常に古い順の3スロット）
     final history = await SimpleDataManager.getLearningHistory(p);
     final current = <Map<String, dynamic>>[];
-    for (var i = 0; i < _slotCount; i++) {
+    for (var i = 0; i < _storageSlotCount; i++) {
       if (i < history.length) {
         final h = history[i];
         final status = ProblemStatus.values.firstWhere(
@@ -305,11 +301,12 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
       }
     }
 
-    while (current.length < _slotCount) current.add({'status': ProblemStatus.none, 'time': null});
+    while (current.length < _storageSlotCount) current.add({'status': ProblemStatus.none, 'time': null});
 
-    // 次のスロットに入れるには前が埋まっている必要がある
-    if (newStatus != ProblemStatus.none && idx > 0) {
-      for (var j = 0; j < idx; j++) {
+    final storageIdx = _storageSlotCount - 1 - idx;
+
+    if (newStatus != ProblemStatus.none && storageIdx > 0) {
+      for (var j = 0; j < storageIdx; j++) {
         final prevStatus = current[j]['status'] as ProblemStatus? ?? ProblemStatus.none;
         if (prevStatus == ProblemStatus.none) {
           // 前スロットが空なら操作を拒否
@@ -319,11 +316,10 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
     }
 
     final t = newStatus == ProblemStatus.none ? null : DateTime.now().toIso8601String();
-    current[idx] = {'status': newStatus, 'time': t};
+    current[storageIdx] = {'status': newStatus, 'time': t};
 
-    // none に戻したら右側を連鎖クリア
     if (newStatus == ProblemStatus.none) {
-      for (var j = idx + 1; j < current.length; j++) {
+      for (var j = storageIdx + 1; j < current.length; j++) {
         current[j] = {'status': ProblemStatus.none, 'time': null};
       }
     }
@@ -369,9 +365,9 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
     
     // 分類定義
     const typeList = ['数値', '一般'];
-    const mechanicsList = ['等加速度直線運動', '空気抵抗', '単振動'];
+    const mechanicsList = ['等加速度直線運動', '空気抵抗', '単振動', '加速度'];
     const dcacList = ['直流', '交流', '電圧0']; // グループ3の定義順序に合わせる
-    const electricalList = ['コンデンサ', 'コイル', '抵抗'];
+    const electricalList = ['コンデンサ', 'コイル', '抵抗', '磁場'];
     
     for (final keyword in allKeywords) {
       if (typeList.contains(keyword)) {
@@ -684,43 +680,20 @@ class _PhysicsMathProblemListPageState extends State<PhysicsMathProblemListPage>
 
     for (final problem in problems) {
       final slots = await _getSlots(problem);
-      
-      // 集計モードに基づいて集計
-      if (_aggregationMode == AggregationMode.latest1) {
-        // 最新1回のみ（インデックス0）
-        if (slots.isNotEmpty) {
-          final status = slots[0]['status'] as ProblemStatus? ?? ProblemStatus.none;
-          switch (status) {
-            case ProblemStatus.solved:
-              solvedCount++;
-              break;
-            case ProblemStatus.understood:
-              understoodCount++;
-              break;
-            case ProblemStatus.failed:
-              failedCount++;
-              break;
-            case ProblemStatus.none:
-              break;
-          }
-        }
-      } else {
-        // 最新3回分（全スロット）
-        for (final slot in slots) {
-          final status = slot['status'] as ProblemStatus? ?? ProblemStatus.none;
-          switch (status) {
-            case ProblemStatus.solved:
-              solvedCount++;
-              break;
-            case ProblemStatus.understood:
-              understoodCount++;
-              break;
-            case ProblemStatus.failed:
-              failedCount++;
-              break;
-            case ProblemStatus.none:
-              break;
-          }
+      for (final slot in slots) {
+        final status = slot['status'] as ProblemStatus? ?? ProblemStatus.none;
+        switch (status) {
+          case ProblemStatus.solved:
+            solvedCount++;
+            break;
+          case ProblemStatus.understood:
+            understoodCount++;
+            break;
+          case ProblemStatus.failed:
+            failedCount++;
+            break;
+          case ProblemStatus.none:
+            break;
         }
       }
     }

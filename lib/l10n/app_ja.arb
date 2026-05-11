@@ -598,6 +598,8 @@
   "keyword_homogeneous": "斉次",
   "keyword_nonHomogeneous": "非斉次",
   "keyword_university": "大学",
+  "keyword_acceleration": "加速度",
+  "keyword_magnetic_field": "磁場",
 
   "cloudBackupConfirmTitle": "クラウドにデータをバックアップしますか？",
 

@@ -606,6 +606,8 @@
   "keyword_homogeneous": "Homogeneous",
   "keyword_nonHomogeneous": "Non-homogeneous",
   "keyword_university": "University",
+  "keyword_acceleration": "Acceleration",
+  "keyword_magnetic_field": "Magnetic field",
 
   "cloudBackupConfirmTitle": "Back up your data to the cloud?",
 
