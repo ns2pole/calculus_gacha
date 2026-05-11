@@ -757,9 +757,6 @@ class _GachaPageState extends State<GachaPage> {
       _isContentUpdating = true;
     }
     
-    // 有料オプション購入状態を確認
-    final isPremium = await SimpleDataManager.isPremiumPurchased();
-    
     // 微分方程式ガチャの場合はキーワードベースで3問ランダムに選ぶ（level分類なし）
     if (widget.prefsPrefix == 'physics_math') {
           // キーワードベースのフィルタリング（グループ内OR、グループ間AND）
@@ -803,15 +800,15 @@ class _GachaPageState extends State<GachaPage> {
       }
     } else {
       // 通常のlevelベースの処理（他のガチャ）
-      // 予備問題は廃止されたため、除外する
-      final mainProblems = widget.problemPool.where((p) {
-        final no = p.no;
-        final isReserveProblem = no is String && no.startsWith('op');
-        if (isReserveProblem) {
-          return false;
-        }
-        return true;
-      }).toList();
+      // 因数分解は全42問（op含む）。それ以外は非プレミアム時のみ op を除外
+      final poolIncludesReserve = widget.prefsPrefix == 'factorization' ||
+          await SimpleDataManager.isPremiumPurchased();
+      final mainProblems = poolIncludesReserve
+          ? List<MathProblem>.from(widget.problemPool)
+          : widget.problemPool.where((p) {
+              final no = p.no;
+              return !(no is String && no.startsWith('op'));
+            }).toList();
       final cand = <int, List<MathProblem>>{};
       for (var i = 0; i < 3; i++) {
         final levelIndex = (i < _slotLevels.length) ? _slotLevels[i] : 0;
@@ -885,9 +882,9 @@ class _GachaPageState extends State<GachaPage> {
       }
     });
 
-    // 有料オプション購入状態を確認
-    final isPremium = await SimpleDataManager.isPremiumPurchased();
-    
+    final poolIncludesReserve = widget.prefsPrefix == 'factorization' ||
+        await SimpleDataManager.isPremiumPurchased();
+
     const iterations = 12;
     for (var t = 0; t < iterations; t++) {
       if (t < iterations - 1) {
@@ -922,13 +919,13 @@ class _GachaPageState extends State<GachaPage> {
             }
           });
         } else {
-          // 通常のlevelベースの処理
-          // 予備問題は廃止されたため、除外する
-          final mainProblems = widget.problemPool.where((p) {
-            final no = p.no;
-            final isReserveProblem = no is String && no.startsWith('op');
-            return !isReserveProblem;
-          }).toList();
+          // 通常のlevelベースの処理（因数分解は全問・それ以外は poolIncludesReserve に従う）
+          final mainProblems = poolIncludesReserve
+              ? List<MathProblem>.from(widget.problemPool)
+              : widget.problemPool.where((p) {
+                  final no = p.no;
+                  return !(no is String && no.startsWith('op'));
+                }).toList();
           final candidatesPerSlot = <int, List<MathProblem>>{};
           for (var i = 0; i < 3; i++) {
             final levelIndex = (i < _slotLevels.length) ? _slotLevels[i] : 0;
@@ -962,9 +959,6 @@ class _GachaPageState extends State<GachaPage> {
         await Future.delayed(Duration(milliseconds: 60 + t * 8));
         if (!mounted) return;
       } else {
-        // 有料オプション購入状態を確認
-        final isPremium = await SimpleDataManager.isPremiumPurchased();
-        
         // 微分方程式ガチャの場合はキーワードベース（level分類なし）
         if (widget.prefsPrefix == 'physics_math') {
           // キーワードベースのフィルタリング（グループ内OR、グループ間AND）
@@ -998,12 +992,9 @@ class _GachaPageState extends State<GachaPage> {
           setState(() => _current.setRange(0, 3, newList));
           for (var i = 0; i < 3; i++) _pendingNotifiers[i].value = ProblemStatus.none;
         } else {
-          // 通常のlevelベースの処理
-          // 因数分解ガチャの場合はオプション問題も無料で含める
-          final isFactorizationGacha = widget.prefsPrefix == 'factorization';
-          // 有料オプション購入者でない場合のみ予備問題を除外（因数分解ガチャは除く）
-          final mainProblems = (isPremium || isFactorizationGacha)
-              ? widget.problemPool
+          // 通常のlevelベースの処理（poolIncludesReserve は _rollAll 先頭で取得済み）
+          final mainProblems = poolIncludesReserve
+              ? List<MathProblem>.from(widget.problemPool)
               : widget.problemPool.where((p) {
                   final no = p.no;
                   return !(no is String && no.startsWith('op'));
@@ -1202,17 +1193,16 @@ class _GachaPageState extends State<GachaPage> {
       final slotLevel = _slotLevelFromIndex(levelIndex);
       candidateProblems = widget.problemPool.where((p) => _problemMatchesLevel(context, p, slotLevel)).toList();
     }
-    
-    // 予備問題は廃止されたため、除外する
-    candidateProblems = candidateProblems.where((p) {
-      final no = p.no;
-      final isReserveProblem = no is String && no.startsWith('op');
-      if (isReserveProblem) {
-        return false;
-      }
-      return true;
-    }).toList();
-    
+
+    final poolIncludesReserve = widget.prefsPrefix == 'factorization' ||
+        await SimpleDataManager.isPremiumPurchased();
+    if (!poolIncludesReserve) {
+      candidateProblems = candidateProblems.where((p) {
+        final no = p.no;
+        return !(no is String && no.startsWith('op'));
+      }).toList();
+    }
+
     // フィルタリングを非同期で実行
     final filteredProblems = <MathProblem>[];
     for (final p in candidateProblems) {

@@ -321,8 +321,11 @@ class _ProblemListPageState extends State<ProblemListPage> {
     for (final level in levels) {
       var list = _allIntegralProblems.where((p) => _levelKeyForProblem(p) == level).toList();
 
-      // 予備問題は廃止されたため、非表示にする（prefetch対象にも含めない）
-      list = list.where((p) => !(p.no is String && (p.no as String).startsWith('op'))).toList();
+      // 因数分解一覧は op 予備を含む全問表示。その他は予備を非表示。
+      if (widget.prefsPrefix != 'factorization') {
+        list =
+            list.where((p) => !(p.no is String && (p.no as String).startsWith('op'))).toList();
+      }
 
       rawByLevel[level] = list;
       for (final p in list) {
