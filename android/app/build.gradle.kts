@@ -13,8 +13,8 @@ plugins {
 android {
     namespace = "com.joymath"
     
-    compileSdk = 35           // 直接数値で指定
-    ndkVersion = "27.0.12077973"  // プラグインが要求するNDK
+    compileSdk = 36
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

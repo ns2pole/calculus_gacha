@@ -34,6 +34,7 @@ local.properties
 .DS_Store
 *.log
 *.lock
+!pubspec.lock
 *.swp
 *.tmp Miscellaneous
 *.class

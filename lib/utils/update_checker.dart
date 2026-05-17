@@ -3,7 +3,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:new_version_plus/new_version_plus.dart';
-import 'package:new_version_plus/model/version_status.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../l10n/app_localizations.dart';
@@ -77,7 +76,11 @@ class UpdateChecker {
         if (forceShowForDebug) {
           debugPrint('[UpdateChecker] forceShowForDebug is true -> showing debug dialog');
           // 擬似ステータス情報でダイアログ表示（storeVersion を示すなど）
-          await _ensureContextAndShowDialog(newVersion, prefs, fakeStoreVersion: 'dev-test');
+          await _ensureContextAndShowDialog(
+            newVersion,
+            prefs,
+            fakeStoreVersion: 'dev-test',
+          );
         }
         return;
       }
@@ -90,7 +93,13 @@ class UpdateChecker {
 
       if (status.canUpdate || forceShowForDebug) {
         debugPrint('[UpdateChecker] update available or forced -> show dialog');
-        await _ensureContextAndShowDialog(newVersion, prefs, status: status);
+        await _ensureContextAndShowDialog(
+          newVersion,
+          prefs,
+          storeVersion: status.storeVersion,
+          releaseNotes: status.releaseNotes,
+          appStoreLink: status.appStoreLink,
+        );
       } else {
         debugPrint('[UpdateChecker] no update available');
       }
@@ -106,7 +115,9 @@ class UpdateChecker {
   Future<void> _ensureContextAndShowDialog(
     NewVersionPlus newVersion,
     SharedPreferences prefs, {
-    VersionStatus? status,
+    String? storeVersion,
+    String? releaseNotes,
+    String? appStoreLink,
     String? fakeStoreVersion,
   }) async {
     int tries = 0;
@@ -114,7 +125,15 @@ class UpdateChecker {
       final context = navigatorKey.currentContext;
       if (context != null) {
         debugPrint('[UpdateChecker] context available after $tries tries');
-        _showUpdateDialog(newVersion, prefs, context, status: status, fakeStoreVersion: fakeStoreVersion);
+        _showUpdateDialog(
+          newVersion,
+          prefs,
+          context,
+          storeVersion: storeVersion,
+          releaseNotes: releaseNotes,
+          appStoreLink: appStoreLink,
+          fakeStoreVersion: fakeStoreVersion,
+        );
         return;
       }
       tries++;
@@ -128,12 +147,14 @@ class UpdateChecker {
     NewVersionPlus newVersion,
     SharedPreferences prefs,
     BuildContext context, {
-    VersionStatus? status,
+    String? storeVersion,
+    String? releaseNotes,
+    String? appStoreLink,
     String? fakeStoreVersion,
   }) {
     debugPrint('[UpdateChecker] _showUpdateDialog: showing AlertDialog');
-    final storeInfo = status?.storeVersion ?? fakeStoreVersion;
-    final releaseNotes = status?.releaseNotes ?? '';
+    final storeInfo = storeVersion ?? fakeStoreVersion;
+    final releaseNotesText = releaseNotes ?? '';
 
     // ローカライゼーションを取得
     final localizations = AppLocalizations.of(context);
@@ -159,10 +180,10 @@ class UpdateChecker {
                 style: const TextStyle(fontSize: 12),
               ),
             ],
-            if (releaseNotes.isNotEmpty) ...[
+            if (releaseNotesText.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                '$dialogReleaseNotesLabel: $releaseNotes',
+                '$dialogReleaseNotesLabel: $releaseNotesText',
                 style: const TextStyle(fontSize: 12),
               ),
             ],
@@ -185,18 +206,17 @@ class UpdateChecker {
 
               // ここが重要：launchAppStore は "ストアのリンク（URL）" を期待するので、
               // status?.appStoreLink を使い、なければフォールバックで URL を組み立てる。
-              final String? statusLink = status?.appStoreLink;
               final String fallbackLink = Platform.isIOS
                   // iOS: App Store の id は通常数字（例: 123456789）。`iosId` が numeric でない場合は正しい URL にならない点に注意。
                   ? 'https://apps.apple.com/app/id$iosId'
                   // Android: package name を使って Play Store の URL を組み立てる
                   : 'https://play.google.com/store/apps/details?id=$androidId';
 
-              final String appStoreLink = statusLink ?? fallbackLink;
-              debugPrint('[UpdateChecker] launching app store with appStoreLink=$appStoreLink');
+              final String storeUrl = appStoreLink ?? fallbackLink;
+              debugPrint('[UpdateChecker] launching app store with appStoreLink=$storeUrl');
 
               try {
-                await newVersion.launchAppStore(appStoreLink);
+                await newVersion.launchAppStore(storeUrl);
               } catch (e, st) {
                 debugPrint('[UpdateChecker] launchAppStore error: $e');
                 debugPrint(st.toString());
