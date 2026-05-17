@@ -1,0 +1,80 @@
+# Codemagic: iOS をクラウド Mac（Xcode 26）でビルドし App Store Connect へ提出
+#
+# Developer Portal 連携（UI）が FORBIDDEN でも動くよう、API Key は環境変数で渡す。
+#
+# === Codemagic アプリ設定でやること ===
+#
+# 1. Application → Environment variables → グループ appstore_credentials を作成
+#
+# 2. 環境変数グループ appstore_credentials に Secret を 1 つだけ追加:
+#    APP_STORE_CONNECT_PRIVATE_KEY = AuthKey_ATBD5UGJTG.p8 の全文
+#    （Key ID / Issuer ID / Apple ID は下の vars に書いてある）
+#
+# 3. Team settings → Code signing identities（Developer Portal 連携なしで可）
+#    - Upload: Apple Distribution 証明書 (.p12)
+#    - Upload: com.joymath の App Store プロビジョニング (.mobileprovision)
+#    ※ Fetch は Portal 連携が要るため、手元 Mac からエクスポートして Upload
+#
+# 4. このファイルを push → アプリで YAML ワークフロー ios-appstore-release を実行
+#
+# 参考: https://docs.codemagic.io/yaml-publishing/app-store-connect/
+
+workflows:
+  ios-appstore-release:
+    name: iOS App Store (IPA ビルドと審査提出)
+    max_build_duration: 120
+    # 無料枠（M2 500分/月）を使う場合は mac_mini_m2 に変更（Xcode 26.4 が使えるか要確認）
+    instance_type: mac_mini_m4
+    environment:
+      groups:
+        - appstore_credentials
+      vars:
+        APP_STORE_CONNECT_KEY_IDENTIFIER: ATBD5UGJTG
+        APP_STORE_CONNECT_ISSUER_ID: c64fb6be-f1d2-4e04-80b5-2841def3da52
+        APP_STORE_APPLE_ID: "6753078774"
+      xcode: 26.4
+      flutter: stable
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.joymath
+    scripts:
+      - name: Flutter pub get
+        script: |
+          set -e
+          flutter pub get
+      - name: CocoaPods (ios)
+        script: |
+          set -e
+          cd ios && pod install && cd ..
+      - name: Apply provisioning profiles
+        script: |
+          set -e
+          xcode-project use-profiles
+      - name: Flutter build IPA
+        script: |
+          set -e
+          VER_LINE=$(grep '^version:' pubspec.yaml | head -1 | awk '{print $2}' | tr -d "'\"")
+          VERSION_NAME="${VER_LINE%+*}"
+          if [ -n "${APP_STORE_APPLE_ID:-}" ]; then
+            LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+            VERSION_CODE=$((LATEST + 1))
+          else
+            VERSION_CODE="${VER_LINE#*+}"
+          fi
+          echo "Building $VERSION_NAME ($VERSION_CODE)"
+          flutter build ipa --release \
+            --build-name="$VERSION_NAME" \
+            --build-number="$VERSION_CODE"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        # Developer Portal integration 不要（環境変数で認証）
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: false
+        submit_to_app_store: true
+        cancel_previous_submissions: true
+        release_type: AFTER_APPROVAL

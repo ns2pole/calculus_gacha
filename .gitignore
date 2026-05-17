@@ -138,6 +138,9 @@ logs/
 .appstoreconnect/
 *.p8
 
+# Codemagic 署名素材（ローカル生成。リポジトリに含めない）
+codemagic-signing/
+
 # Firebase iOS (実ファイルはコピーで配置。リポジトリには example のみ)
 ios/GoogleService-Info.plist
 **/GoogleService-Info.plist
