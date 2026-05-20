@@ -108,6 +108,8 @@ __pycache__/
 !analysis_options.json
 !devtools_options.yaml
 !web/manifest.json
+# Xcode asset catalogs require Contents.json in the repo; *.json above would omit it and break iOS IPA builds.
+!**/Assets.xcassets/**/Contents.json
 
 # macOS
 .DS_Store
