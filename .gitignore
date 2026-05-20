@@ -147,6 +147,10 @@ ios/GoogleService-Info.plist
 **/GoogleService-Info.plist
 !**/GoogleService-Info.plist.example
 
+# Firebase Android (実ファイルはローカル / CI 注入。リポジトリには example のみ)
+android/app/google-services.json
+!android/app/google-services.json.example
+
 # Environment variables
 .env
 .env.local

@@ -51,6 +51,30 @@ For **Google sign-in on Web**, also confirm:
 
 **Local web:** paste the same values into `lib/firebase_web_options.dart` (do not commit).
 
+## Firebase on Android (local & CI)
+
+1. Firebase Console → Project settings → Your apps → Android (`com.joymath`) → download `google-services.json`.
+2. **Local:** save as `android/app/google-services.json` (see `android/app/google-services.json.example`).
+3. **Codemagic / CI:** add secret **`GOOGLE_SERVICES_JSON`** (full JSON from the file) or **`GOOGLE_SERVICES_JSON_BASE64`**, then run before any Android build:
+
+   ```bash
+   dart run tool/inject_google_services_json.dart
+   ```
+
+   Codemagic: group `firebase_credentials` with that secret; `codemagic.yaml` runs the script automatically.
+
+## Firebase on iOS (local & CI)
+
+1. Firebase Console → Project settings → Your apps → iOS (`com.joymath`) → download `GoogleService-Info.plist`.
+2. **Local:** save as `ios/GoogleService-Info.plist` (see `ios/GoogleService-Info.plist.example`).
+3. **Codemagic / CI:** add secret **`GOOGLE_SERVICE_INFO_PLIST`** (full plist) or **`GOOGLE_SERVICE_INFO_PLIST_BASE64`**, then run before iOS build:
+
+   ```bash
+   dart run tool/inject_google_service_info_plist.dart
+   ```
+
+   Codemagic: group `firebase_credentials` with that secret; `codemagic.yaml` runs the script automatically.
+
 ## Other secrets (do not commit)
 
 - iOS: `GoogleService-Info.plist` from `.example` locally.
