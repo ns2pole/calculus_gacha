@@ -17,6 +17,12 @@
 #
 # 4. このファイルを push → アプリで YAML ワークフロー ios-appstore-release を実行
 #
+# 5. Firebase（Android / iOS ビルド用）— 環境変数グループ firebase_credentials を作成し Secret を追加:
+#    GOOGLE_SERVICES_JSON = Firebase Console からダウンロードした google-services.json の全文
+#    （改行込みの JSON をそのまま貼り付け。base64 なら GOOGLE_SERVICES_JSON_BASE64 でも可）
+#    GOOGLE_SERVICE_INFO_PLIST = Firebase の GoogleService-Info.plist の全文
+#    （base64 なら GOOGLE_SERVICE_INFO_PLIST_BASE64 でも可）
+#
 # 参考: https://docs.codemagic.io/yaml-publishing/app-store-connect/
 
 workflows:
@@ -24,10 +30,11 @@ workflows:
     name: iOS App Store (IPA ビルドと審査提出)
     max_build_duration: 120
     # 無料枠（M2 500分/月）を使う場合は mac_mini_m2 に変更（Xcode 26.4 が使えるか要確認）
-    instance_type: mac_mini_m4
+    instance_type: mac_mini_m2
     environment:
       groups:
         - appstore_credentials
+        - firebase_credentials
       vars:
         APP_STORE_CONNECT_KEY_IDENTIFIER: ATBD5UGJTG
         APP_STORE_CONNECT_ISSUER_ID: c64fb6be-f1d2-4e04-80b5-2841def3da52
@@ -43,6 +50,14 @@ workflows:
         script: |
           set -e
           flutter pub get
+      - name: Inject Firebase Android config
+        script: |
+          set -e
+          dart run tool/inject_google_services_json.dart
+      - name: Inject Firebase iOS config
+        script: |
+          set -e
+          dart run tool/inject_google_service_info_plist.dart
       - name: CocoaPods (ios)
         script: |
           set -e
