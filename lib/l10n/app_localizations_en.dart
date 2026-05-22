@@ -475,7 +475,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'High School Physics with Animation & Experiments';
 
   @override
-  String get joyPhysicsCaption => 'Use your phone\'s sensors too!';
+  String get joyPhysicsCaption => 'Use smartphone sensors too!';
 
   @override
   String get factorizationGachaSubtitle =>
