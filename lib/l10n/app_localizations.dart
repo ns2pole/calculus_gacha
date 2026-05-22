@@ -908,6 +908,36 @@ abstract class AppLocalizations {
   /// **'※単位ガチャは別アプリでリリース予定！'**
   String get unitGachaComingSoon;
 
+  /// No description provided for @unitGachaSectionLabel.
+  ///
+  /// In ja, this message translates to:
+  /// **'物理系もよろしく！'**
+  String get unitGachaSectionLabel;
+
+  /// No description provided for @unitGachaHeaderTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'単位ガチャ !'**
+  String get unitGachaHeaderTitle;
+
+  /// No description provided for @unitGachaCaption.
+  ///
+  /// In ja, this message translates to:
+  /// **'高校物理の単位をサクサク学べるよ'**
+  String get unitGachaCaption;
+
+  /// No description provided for @joyPhysicsHeaderTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'アニメと実験で学ぶ高校物理'**
+  String get joyPhysicsHeaderTitle;
+
+  /// No description provided for @joyPhysicsCaption.
+  ///
+  /// In ja, this message translates to:
+  /// **'スマホセンサーも活用！'**
+  String get joyPhysicsCaption;
+
   /// No description provided for @factorizationGachaSubtitle.
   ///
   /// In ja, this message translates to:

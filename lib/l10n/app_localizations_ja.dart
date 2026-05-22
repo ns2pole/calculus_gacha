@@ -450,6 +450,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get unitGachaComingSoon => '※単位ガチャは別アプリでリリース予定！';
 
   @override
+  String get unitGachaSectionLabel => '物理系もよろしく！';
+
+  @override
+  String get unitGachaHeaderTitle => '単位ガチャ !';
+
+  @override
+  String get unitGachaCaption => '高校物理の単位をサクサク学べるよ';
+
+  @override
+  String get joyPhysicsHeaderTitle => 'アニメと実験で学ぶ高校物理';
+
+  @override
+  String get joyPhysicsCaption => 'スマホセンサーも活用！';
+
+  @override
   String get factorizationGachaSubtitle => '整数係数の範囲で\n因数分解してください 0️⃣';
 
   @override

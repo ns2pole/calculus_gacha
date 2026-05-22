@@ -1,6 +1,8 @@
 // lib/pages/bonus_gacha_page.dart
+import 'dart:io' show Platform;
 import 'dart:math';
 import 'package:flutter/material.dart' hide BackButton;
+import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import 'gacha_wrappers.dart';
 import '../problem/problem_list_page.dart';
@@ -187,22 +189,6 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                // 物理単位ガチャは別アプリへ移行
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    l10n.unitGachaComingSoon,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-                
                 // 因数分解ガチャ
                 Column(
                   children: [
@@ -361,6 +347,12 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
                       ),
                   ],
                 ),
+
+                const SizedBox(height: 24),
+                _buildUnitGachaAppLink(context, l10n, responsive),
+
+                const SizedBox(height: 3),
+                _buildJoyPhysicsAppLink(context, l10n, responsive),
                 
                 const SizedBox(height: 16),
                 
@@ -535,6 +527,171 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  static const String _unitGachaIosStoreId = '6756411322';
+  static const String _unitGachaAndroidPackageId = 'com.joyphysics.unitgacha';
+  static const String _unitGachaIconAsset = 'assets/icon/unit_gacha_icon_removebg.png';
+  static const String _joyPhysicsIosStoreId = '6748957698';
+  static const String _joyPhysicsAndroidPackageId = 'com.joyphysics';
+  static const String _joyPhysicsIconAsset = 'assets/icon/profile_arrange.png';
+
+  Future<void> _openUnitGachaStore() => _openAppStore(
+        iosStoreId: _unitGachaIosStoreId,
+        androidPackageId: _unitGachaAndroidPackageId,
+      );
+
+  Future<void> _openJoyPhysicsStore() => _openAppStore(
+        iosStoreId: _joyPhysicsIosStoreId,
+        androidPackageId: _joyPhysicsAndroidPackageId,
+      );
+
+  Future<void> _openAppStore({
+    required String iosStoreId,
+    required String androidPackageId,
+  }) async {
+    final uri = Uri.parse(
+      Platform.isIOS
+          ? 'https://apps.apple.com/app/id$iosStoreId'
+          : 'https://play.google.com/store/apps/details?id=$androidPackageId',
+    );
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Widget _buildUnitGachaAppLink(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppResponsiveData responsive,
+  ) {
+    return _buildAppStoreLink(
+      onTap: _openUnitGachaStore,
+      iconAsset: _unitGachaIconAsset,
+      fallbackIcon: Icons.science_outlined,
+      responsive: responsive,
+      sectionLabel: l10n.unitGachaSectionLabel,
+      title: l10n.unitGachaHeaderTitle,
+      caption: l10n.unitGachaCaption,
+    );
+  }
+
+  Widget _buildJoyPhysicsAppLink(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppResponsiveData responsive,
+  ) {
+    return _buildAppStoreLink(
+      onTap: _openJoyPhysicsStore,
+      iconAsset: _joyPhysicsIconAsset,
+      fallbackIcon: Icons.biotech_outlined,
+      responsive: responsive,
+      title: l10n.joyPhysicsHeaderTitle,
+      caption: l10n.joyPhysicsCaption,
+      titleFontSize: responsive.isCompact ? 20.0 : 24.0,
+    );
+  }
+
+  Widget _buildAppStoreLink({
+    required VoidCallback onTap,
+    required String iconAsset,
+    required IconData fallbackIcon,
+    required AppResponsiveData responsive,
+    String? sectionLabel,
+    required String title,
+    required String caption,
+    double? titleFontSize,
+  }) {
+    const titleColor = Color(0xFF8B7355);
+    final resolvedTitleFontSize =
+        titleFontSize ?? (responsive.isCompact ? 24.0 : 28.0);
+    final sectionFontSize = responsive.isCompact ? 16.0 : 19.0;
+    final captionFontSize = responsive.isCompact ? 13.0 : 15.0;
+    final iconHeight = responsive.isCompact ? 30.0 : 36.0;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (sectionLabel != null) ...[
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: responsive.isCompact ? 14.0 : 18.0,
+                    vertical: responsive.isCompact ? 6.0 : 8.0,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: titleColor.withValues(alpha: 0.55),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Text(
+                    sectionLabel,
+                    style: TextStyle(
+                      fontSize: sectionFontSize,
+                      fontWeight: FontWeight.w600,
+                      color: titleColor.withValues(alpha: 0.9),
+                      height: 1.2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  Image.asset(
+                    iconAsset,
+                    height: iconHeight,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        fallbackIcon,
+                        size: iconHeight,
+                        color: titleColor,
+                      );
+                    },
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: resolvedTitleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: titleColor,
+                      height: 1.1,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                caption,
+                style: TextStyle(
+                  fontSize: captionFontSize,
+                  fontWeight: FontWeight.bold,
+                  color: titleColor.withValues(alpha: 0.75),
+                  height: 1.2,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -462,6 +462,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unitGachaComingSoon => '*Unit Gacha coming soon!';
 
   @override
+  String get unitGachaSectionLabel => 'Physics apps — enjoy!';
+
+  @override
+  String get unitGachaHeaderTitle => 'Unit Gacha !';
+
+  @override
+  String get unitGachaCaption => 'Master high school physics units in a snap';
+
+  @override
+  String get joyPhysicsHeaderTitle =>
+      'High School Physics with Animation & Experiments';
+
+  @override
+  String get joyPhysicsCaption => 'Use your phone\'s sensors too!';
+
+  @override
   String get factorizationGachaSubtitle =>
       'Factorize within integer coefficients 0️⃣';
 
