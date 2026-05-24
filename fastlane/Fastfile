@@ -116,12 +116,10 @@ def generate_android_changelogs(build_number, release_note, release_note_en)
   sh("mkdir -p #{File.dirname(changelog_ja_path)}")
   sh("mkdir -p #{File.dirname(changelog_en_path)}")
   
-  File.write(changelog_ja_path, release_note)
-  File.write(changelog_en_path, release_note_en)
+  File.write(changelog_ja_path, release_note, encoding: 'UTF-8')
+  File.write(changelog_en_path, release_note_en, encoding: 'UTF-8')
   
-  UI.message("✅ Android changelogs generated:")
-  UI.message("   - #{changelog_ja_path}: #{release_note}")
-  UI.message("   - #{changelog_en_path}: #{release_note_en}")
+  UI.message("✅ Android changelogs generated: #{changelog_ja_path}, #{changelog_en_path}")
 end
 
 # 固定の whatsNew（ここを変えたいなら書き換えてください）
@@ -557,7 +555,10 @@ platform :android do
       changes_not_sent_for_review: false,
       ack_bundle_installation_warning: true,
       aab: REPO_ROOT.join('build/app/outputs/bundle/release/app-release.aab').to_s,
-      metadata_path: FASTLANE_DIR.join('metadata/android').to_s
+      metadata_path: FASTLANE_DIR.join('metadata/android').to_s,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      timeout: 1200
     )
 
     UI.success("✅ Android: production upload & sent for review")

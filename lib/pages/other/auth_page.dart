@@ -8,6 +8,7 @@ import '../../services/auth/firebase_auth_service.dart';
 import '../../services/problems/simple_data_manager.dart';
 import '../../utils/l10n_utils.dart';
 import '../../utils/responsive_layout.dart';
+import '../../widgets/home/background_image_widget.dart';
 
 class AuthPage extends StatefulWidget {
   final bool isInitialSignUp;
@@ -660,21 +661,28 @@ class _AuthPageState extends State<AuthPage> {
     final responsive = context.appResponsive;
     
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: null,
-        automaticallyImplyLeading: false,
-      ),
-      body: SingleChildScrollView(
-        child: ResponsiveContentFrame(
-        maxWidth: responsive.isPhone ? 520 : 640,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 32),
-              
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          const Positioned.fill(
+            child: BackgroundImageWidget(),
+          ),
+          SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: ResponsiveContentFrame(
+                      alignment: Alignment.center,
+                      maxWidth: responsive.isPhone ? 520 : 640,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
               // Firebaseが利用できない場合の警告
               if (!isFirebaseAvailable) ...[
                 const SizedBox(height: 16),
@@ -1049,9 +1057,15 @@ class _AuthPageState extends State<AuthPage> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
-          ],
-        ),
-        ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

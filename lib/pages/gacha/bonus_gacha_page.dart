@@ -87,10 +87,11 @@ class _BonusGachaPageState extends State<BonusGachaPage> with ProgressUpdateMixi
 
     return Scaffold(
       body: Stack(
+        fit: StackFit.expand,
         children: [
           // 背景画像（薄く、画面サイズに合わせて4枚周期的に表示）
-          Positioned.fill(
-            child: const BackgroundImageWidget(),
+          const Positioned.fill(
+            child: BackgroundImageWidget(),
           ),
           // コンテンツ
           SingleChildScrollView(
