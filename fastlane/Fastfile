@@ -198,7 +198,9 @@ lane :release_all_platforms do |options|
     unless skip_android
       UI.message("📱 Building Android AAB...")
       inject_firebase_android_config!
-      sh_flutter("flutter build appbundle --release --build-name #{version_number} --build-number #{build_number}")
+      sh_flutter("flutter build appbundle --release " \
+        "--dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat " \
+        "--build-name #{version_number} --build-number #{build_number}")
     end
 
     #####################
@@ -419,7 +421,9 @@ platform :ios do
 
     # Android AAB
     inject_firebase_android_config!
-    sh_flutter("flutter build appbundle --release --build-name #{version_number} --build-number #{build_number}")
+    sh_flutter("flutter build appbundle --release " \
+      "--dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat " \
+      "--build-name #{version_number} --build-number #{build_number}")
 
     #####################
     # iOS ビルド
@@ -529,7 +533,9 @@ platform :android do
       sh_flutter('flutter clean')
       sh_flutter('flutter pub get')
       inject_firebase_android_config!
-      sh_flutter("flutter build appbundle --release --build-name #{version_number} --build-number #{build_number}")
+      sh_flutter("flutter build appbundle --release " \
+        "--dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat " \
+        "--build-name #{version_number} --build-number #{build_number}")
     else
       UI.message("⏭️  Skipping build (using existing AAB)")
       aab_path = REPO_ROOT.join('build/app/outputs/bundle/release/app-release.aab').to_s

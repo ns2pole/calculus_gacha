@@ -1131,6 +1131,7 @@ class _GachaPageState extends State<GachaPage> {
       forceTex: false,
       labelStyle: const TextStyle(fontSize: 16, height: 1.45),
       mathStyle: const TextStyle(fontSize: 18),
+      displayInlineFractions: true,
     );
   }
 

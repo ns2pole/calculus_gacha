@@ -3,7 +3,7 @@ import {hashValue} from "./auth";
 import {UsageIdentity, UsageLimit} from "./types";
 
 const defaultPolicy = {
-  freeDailyLimit: 10,
+  freeDailyLimit: 15,
   paidMonthlyLimit: 1500,
 };
 

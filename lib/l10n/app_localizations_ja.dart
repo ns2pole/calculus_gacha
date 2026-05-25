@@ -388,7 +388,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get showAnswer => '答えを見る';
 
   @override
-  String get askAi => 'AIに聞く';
+  String get askAi => 'AIに聞いてみる';
 
   @override
   String get askAiSheetTitle => 'AIに聞く';

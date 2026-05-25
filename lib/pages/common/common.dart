@@ -20,12 +20,14 @@ class MixedTextMath extends StatelessWidget {
   final TextStyle? labelStyle;
   final TextStyle? mathStyle;
   final bool forceTex;
+  final bool displayInlineFractions;
 
   const MixedTextMath(
     this.mixed, {
     this.labelStyle,
     this.mathStyle,
     this.forceTex = false,
+    this.displayInlineFractions = false,
     Key? key,
   }) : super(key: key);
 
@@ -171,7 +173,11 @@ class MixedTextMath extends StatelessWidget {
     TextStyle? style,
   ) {
     final effective = style ?? const TextStyle(fontSize: 22);
-    final core = _mathCoreSafe(tex, effective, mathStyle: MathStyle.text);
+    final core = _mathCoreSafe(
+      tex,
+      effective,
+      mathStyle: _inlineMathStyleFor(tex),
+    );
 
     final maxAllowed = maxWidth.isFinite ? maxWidth * 0.95 : 300.0;
     return ConstrainedBox(
@@ -185,6 +191,15 @@ class MixedTextMath extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  MathStyle _inlineMathStyleFor(String tex) {
+    if (!displayInlineFractions) return MathStyle.text;
+    return _containsFractionCommand(tex) ? MathStyle.display : MathStyle.text;
+  }
+
+  bool _containsFractionCommand(String tex) {
+    return RegExp(r'\\(?:frac|dfrac|cfrac)\b').hasMatch(tex);
   }
 
   // 正規表現パターン定義
