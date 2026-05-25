@@ -129,6 +129,10 @@ class _CongruenceGachaPageState extends State<CongruenceGachaPage> {
   }
 
   String? _getLocalizedShortExplanation(CongruenceProblem p) {
+    final langCode = Localizations.localeOf(context).languageCode;
+    if (langCode == 'ja') {
+      return p.shortExplanation;
+    }
     final t = _getProblemTranslation(p);
     return t?.shortExplanation ?? p.shortExplanation;
   }

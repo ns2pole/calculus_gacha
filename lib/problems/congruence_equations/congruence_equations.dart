@@ -253,6 +253,69 @@ const congruenceGachaProblems = <CongruenceProblem>[
     ],
   ),
 
+  // ─────────────────────────────────────────────
+  // 問題 23: 割ると間違う例 - 3x ≡ 9 (mod 15)
+  // ─────────────────────────────────────────────
+  CongruenceProblem(
+    id: "28B2989A-F492-4A1A-AF07-4CE5ACCF89FA",
+    no: 23,
+    question: r"3x \equiv 9 \pmod{15}",
+    answer: r"x \equiv 3, 8, 13 \pmod{15}",
+    modulus: 15,
+    coefficient: 3,
+    constant: 9,
+    shortExplanation: r"""\text{ }0\le x\le14\text{ のとき }3x\text{ を調べ、}9,24,39\text{ に対応する }x\text{ を答える。}""",
+    detailedExplanation: [
+      StepItem(tex: r"\color{black}\textbf{【ステップ1：素朴に調べる】}"),
+      StepItem(tex: r"\color{black}0\le x \le 14 \text{ について考える。このとき }3x\text{ は }0\le3x\le42\text{ の範囲。}"),
+      StepItem(tex: r"\color{black}\text{この中で }15\text{ で割った余りが }9\text{ になるのは }9,\ 24,\ 39\text{。}"),
+      StepItem(tex: r"\color{black}\text{それぞれ }3x=9,\ 24,\ 39\text{ より }x=3,\ 8,\ 13\text{。}"),
+
+      StepItem(tex: r"\color{black}\textbf{【結論】}"),
+      StepItem(tex: r"\color{black}\boxed{x\equiv3,\ 8,\ 13\pmod{15}}"),
+
+      StepItem(tex: r"\color{black}\textbf{【注意】}"),
+      StepItem(tex: r"\color{black}\text{両辺を }3\text{ で割ると }x\equiv3\pmod{15}\text{ となり、この解は正しい。}"),
+      StepItem(tex: r"\color{black}\text{しかし }\gcd(3,15)=3\neq1\text{ なので、他にも }x\equiv8,\ 13\pmod{15}\text{ という解がある。}"),
+      StepItem(tex: r"\color{black}\text{安易に両辺を }3\text{ で割って解が }1\text{ つだけと結論づけないこと。}"),
+    ],
+  ),
+
+  // ─────────────────────────────────────────────
+  // 問題 7: 互いに素なら割れる - 7x ≡ 49 (mod 52)
+  // ─────────────────────────────────────────────
+  CongruenceProblem(
+    id: "F1BB13BE-C37C-4B1B-8767-4C161A7DBF9C",
+    no: 7,
+    question: r"7x \equiv 49 \pmod{52}",
+    answer: r"x \equiv 7 \pmod{52}",
+    modulus: 52,
+    coefficient: 7,
+    constant: 49,
+    shortExplanation: r"""\gcd(7,52)=1\text{ なので、}7x\equiv7\cdot7\text{ から両辺を }7\text{ で割れる。}""",
+    detailedExplanation: [
+      StepItem(tex: r"\color{black}\textbf{【ステップ1】}"),
+      StepItem(tex: r"\color{black}7x\equiv49\pmod{52}\text{ を }7\cdot x\equiv7\cdot7\pmod{52}\text{ と書く。}"),
+      StepItem(tex: r"\color{black}\text{ここで }\gcd(7,52)=1\text{（}7\text{ と }52=4\cdot13\text{ は互いに素）。}"),
+
+      StepItem(tex: r"\color{black}\textbf{【ステップ2】}"),
+      StepItem(tex: r"\color{black}\text{性質どおり、}\gcd(7,52)=1\text{ なので両辺から }7\text{ を消してよい。}"),
+      StepItem(tex: r"\color{black}\Rightarrow\ x\equiv7\pmod{52}"),
+
+      StepItem(tex: r"\color{black}\textbf{【結論】}"),
+      StepItem(tex: r"\color{black}\boxed{x\equiv7\pmod{52}}"),
+
+      StepItem(tex: r"\color{black}\textbf{【この問題で使った合同の性質（証明）】}"),
+      StepItem(tex: r"\color{black}\textbf{(性質D)}\ ab\equiv ac\pmod{n}\ \text{かつ }\gcd(a,n)=1\Rightarrow b\equiv c\pmod{n}."),
+      StepItem(tex: r"\color{black}\text{（言い換え）}a\text{ と }n\text{ が互いに素のとき、両辺から }a\text{ を消しても合同が保たれる。}"),
+      StepItem(tex: r"\color{black}\text{証明：}\gcd(a,n)=1\text{ なら、}at+ns=1\text{ となる整数 }t,s\text{ が存在（ベズー）。}"),
+      StepItem(tex: r"\color{black}\text{これを }n\text{ で見ると }at\equiv1\pmod{n}\text{（}a\text{ に }t\text{ を掛けると }1\text{ 余る）。}"),
+      StepItem(tex: r"\color{black}ab\equiv ac\pmod{n}\text{ の両辺に }t\text{ を掛けると}"),
+      StepItem(tex: r"\color{black}b(at)\equiv c(at)\pmod{n}"),
+      StepItem(tex: r"\color{black}at\equiv1\pmod{n}\text{ より }b\equiv c\pmod{n}."),
+    ],
+  ),
+
 
   // ─────────────────────────────────────────────
   // 問題 6: x ≡ 3^143 (mod 71)（フェルマー）
@@ -556,42 +619,6 @@ const congruenceGachaProblems = <CongruenceProblem>[
   //     StepItem(tex: r"\color{black}4^6=(4^3)^2\equiv7^2=49\equiv11 \pmod{19}"),
   //     StepItem(tex: r"\color{black}4^9=4^6\cdot4^3\equiv11\cdot7=77=19\times4+1\equiv1 \pmod{19}"),
   //     StepItem(tex: r"\color{black}\text{したがって最小正位数は }9\text{。全解は }x\equiv0\pmod{9}\text{（＝ }x=9k\text{）である。}"),
-  //   ],
-  // ),
-
-
-  // // 問題 23: 割ると間違う例 - 3x ≡ 9 (mod 15)
-  // CongruenceProblem(
-  //   id: "28B2989A-F492-4A1A-AF07-4CE5ACCF89FA",
-  //   no: 23,
-  //   question: r"3x \equiv 9 \pmod{15}",
-  //   answer: r"x \equiv 3, 8, 13 \pmod{15}",
-  //   modulus: 15,
-  //   coefficient: 3,
-  //   constant: 9,
-  //   shortExplanation: r"""\text{両辺を3で割ることはできない（}\gcd(3,15)=3\neq1\text{）。正しくは }x\equiv3,8,13\pmod{15}\text{。}""",
-  //   detailedExplanation: [
-  //     StepItem(tex: r"\color{black}\textbf{【誤った解法】}"),
-  //     StepItem(tex: r"\color{black}\text{両辺を3で割ると、} 3x \equiv 9 \pmod{15} \Rightarrow x \equiv 3 \pmod{15}"),
-  //     StepItem(tex: r"\color{red}\text{これは間違いです！なぜなら、}\gcd(3,15)=3\neq1\text{なので、3で割ることはできません。}"),
-  //     StepItem(tex: r"\color{black}\textbf{【正しい解法】}"),
-  //     StepItem(tex: r"\color{black}3x \equiv 9 \pmod{15} \text{を変形する。}"),
-  //     StepItem(tex: r"\color{black}3x - 9 \equiv 0 \pmod{15}"),
-  //     StepItem(tex: r"\color{black}3(x - 3) \equiv 0 \pmod{15}"),
-  //     StepItem(tex: r"\color{black}\textbf{【ステップ1】}"),
-  //     StepItem(tex: r"\color{black}\text{3}(x-3)\text{が15の倍数であることから、}x-3\text{は5の倍数でなければならない。}"),
-  //     StepItem(tex: r"\color{black}\text{（なぜなら、}3(x-3)=15k\text{とすると、}x-3=5k\text{となるから）}"),
-  //     StepItem(tex: r"\color{black}\textbf{【ステップ2】}"),
-  //     StepItem(tex: r"\color{black}x - 3 \equiv 0 \pmod{5} \text{より、} x \equiv 3 \pmod{5}"),
-  //     StepItem(tex: r"\color{black}\textbf{【ステップ3】}"),
-  //     StepItem(tex: r"\color{black}\text{mod 15で考えると、} x \equiv 3, 8, 13 \pmod{15}"),
-  //     StepItem(tex: r"\color{black}\text{（検証：} 3 \times 3 = 9 \equiv 9 \pmod{15}, \quad 3 \times 8 = 24 \equiv 9 \pmod{15}, \quad 3 \times 13 = 39 \equiv 9 \pmod{15} \text{）}"),
-  //     StepItem(tex: r"\color{black}\textbf{【補足：なぜ割ることができないのか】}"),
-  //     StepItem(tex: r"\color{black}\text{一般に、} ac \equiv bc \pmod{m} \text{で、}\gcd(c,m)=d\text{のとき、}"),
-  //     StepItem(tex: r"\color{black}a \equiv b \pmod{\frac{m}{d}} \text{が成り立つ。}"),
-  //     StepItem(tex: r"\color{black}\text{本問題では}\gcd(3,15)=3\text{なので、}x\equiv3\pmod{5}\text{が成り立ち、}"),
-  //     StepItem(tex: r"\color{black}\text{mod 15では}3\text{つの解} x\equiv3,8,13\pmod{15}\text{が存在する。}"),
-  //     StepItem(tex: r"\color{black}\text{両辺を3で割って}x\equiv3\pmod{15}\text{とすると、解が1つしかないと誤って結論づけてしまう。}"),
   //   ],
   // ),
 ];

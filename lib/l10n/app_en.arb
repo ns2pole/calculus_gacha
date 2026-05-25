@@ -216,6 +216,16 @@
   },
   "hideAnswer": "Hide Answer",
   "showAnswer": "Show Answer",
+  "askAi": "Ask AI",
+  "askAiSheetTitle": "Ask AI",
+  "askAiGreeting": "Tell me your work so far or where you are stuck!\nYou can choose an option below or type freely.",
+  "askAiChoiceApproach": "I want a solution strategy or hint",
+  "askAiChoiceAnalog": "Explain with a simpler similar problem",
+  "askAiMoreDetail": "More detail",
+  "askAiSend": "Send",
+  "askAiPlaceholder": "Enter a message",
+  "askAiImageComingSoon": "Image sending is coming soon",
+  "askAiError": "Could not connect. Please try again.",
   "recordSaved": "Learning record saved: {status}",
   "@recordSaved": {
     "placeholders": {

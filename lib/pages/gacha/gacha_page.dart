@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
+import '../../models/ai_chat_context.dart';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
 import '../../utils/l10n_utils.dart';
@@ -18,13 +19,21 @@ import '../../widgets/common/back_button.dart' as custom;
 import '../../managers/timer_manager.dart';
 import '../../widgets/timer/timer_display.dart';
 import '../../widgets/timer/timer_toggle.dart';
-import '../common/common.dart' show categorizeKeywords4Groups, filterProblemsByKeywords, MixedTextMath;
+import '../common/common.dart'
+    show categorizeKeywords4Groups, filterProblemsByKeywords, MixedTextMath;
 import '../other/scratch_paper_page.dart';
 import '../../utils/l10n_utils.dart';
-import 'gacha_settings_page.dart' show GachaFilterMode, GachaFilterModeExt, GachaFilterModeFactory, GachaSettingsPage, kGachaDisplayOrder;
+import 'gacha_settings_page.dart'
+    show
+        GachaFilterMode,
+        GachaFilterModeExt,
+        GachaFilterModeFactory,
+        GachaSettingsPage,
+        kGachaDisplayOrder;
 import '../../utils/navigation_utils.dart' show navigateToProblemList;
 import '../../problems/all_problems.dart';
 import '../../widgets/gacha/filter_chips.dart' show GachaExclusionFilterWidget;
+import '../../widgets/ai/ai_chat_bottom_sheet.dart';
 import '../../utils/progress_display_utils.dart' show getTotalProblemCount;
 import '../../l10n/app_localizations.dart';
 import '../../utils/problem_level_utils.dart';
@@ -49,10 +58,7 @@ Widget _statusBadgeSmall(LearningStatus status, {double diameter = 18.0}) {
   return Container(
     width: diameter,
     height: diameter,
-    decoration: BoxDecoration(
-      color: status.color,
-      shape: BoxShape.circle,
-    ),
+    decoration: BoxDecoration(color: status.color, shape: BoxShape.circle),
     alignment: Alignment.center,
     child: Icon(status.icon, size: iconSize, color: Colors.white),
   );
@@ -74,7 +80,11 @@ ProblemLevel _slotLevelFromIndex(int index) {
   return _gachaLevelOrder[index];
 }
 
-bool _problemMatchesLevel(BuildContext context, MathProblem p, ProblemLevel target) {
+bool _problemMatchesLevel(
+  BuildContext context,
+  MathProblem p,
+  ProblemLevel target,
+) {
   final localized = p.getLocalizedLevel(context);
   final parsed = parseProblemLevel(localized) ?? parseProblemLevel(p.level);
   return parsed == target;
@@ -118,9 +128,12 @@ class _AutoScrollIfOverflowState extends State<AutoScrollIfOverflow> {
       if (rb is! RenderBox) return;
       final w = rb.size.width;
       final newOverflow = maxWidth.isFinite && w > maxWidth - 1.0;
-      
+
       // スクロール位置を保持するため、setStateの頻度を制限
-      final shouldUpdate = newOverflow != _overflow || w != _measuredWidth || maxWidth != _lastMaxWidth;
+      final shouldUpdate =
+          newOverflow != _overflow ||
+          w != _measuredWidth ||
+          maxWidth != _lastMaxWidth;
       if (shouldUpdate && mounted) {
         // スクロール位置を保持するため、setStateを遅延実行
         Future.microtask(() {
@@ -145,7 +158,8 @@ class _AutoScrollIfOverflowState extends State<AutoScrollIfOverflow> {
           if (rb2 is! RenderBox) return;
           final w2 = rb2.size.width;
           final newOverflow2 = maxWidth.isFinite && w2 > maxWidth - 1.0;
-          final shouldUpdate2 = newOverflow2 != _overflow || w2 != _measuredWidth;
+          final shouldUpdate2 =
+              newOverflow2 != _overflow || w2 != _measuredWidth;
           if (shouldUpdate2 && mounted) {
             // スクロール位置を保持するため、setStateを遅延実行
             Future.microtask(() {
@@ -165,26 +179,30 @@ class _AutoScrollIfOverflowState extends State<AutoScrollIfOverflow> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (ctx, constraints) {
-      final maxW = constraints.hasBoundedWidth ? constraints.maxWidth : double.infinity;
-      _scheduleCheck(maxW);
+    return LayoutBuilder(
+      builder: (ctx, constraints) {
+        final maxW = constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : double.infinity;
+        _scheduleCheck(maxW);
 
-      final child = Container(
-        key: _childKey,
-        padding: widget.padding ?? EdgeInsets.zero,
-        child: widget.child,
-      );
-
-      if (_overflow) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const ClampingScrollPhysics(),
-          child: child,
+        final child = Container(
+          key: _childKey,
+          padding: widget.padding ?? EdgeInsets.zero,
+          child: widget.child,
         );
-      } else {
-        return widget.centerWhenNotOverflow ? Center(child: child) : child;
-      }
-    });
+
+        if (_overflow) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const ClampingScrollPhysics(),
+            child: child,
+          );
+        } else {
+          return widget.centerWhenNotOverflow ? Center(child: child) : child;
+        }
+      },
+    );
   }
 }
 
@@ -215,19 +233,18 @@ class _GachaPageState extends State<GachaPage> {
   final List<bool> _showHint = [false, false, false];
   bool _isRolling = false;
 
-  
   // 計算用紙で学習記録を登録した問題を追跡
   final Set<String> _scratchPaperRecordedProblems = {};
-  
+
   // 学習記録ボタンが押された時に計算用紙ボタンを明るくするための状態
   final List<bool> _shouldHighlightScratchPaperButton = [false, false, false];
-  
+
   // 学習記録のキャッシュ（除外判定用）
   final Map<String, ProblemStatus> _learningStatusCache = {};
 
   late GachaFilterMode _gachaFilterMode = GachaFilterMode.random;
   List<int> _slotLevels = [0, 1, 2];
-  
+
   // 微分方程式ガチャ用：キーワード選択（複数選択可能）
   Set<String> _selectedKeywords = {};
   // キーワード選択UIの折りたたみ状態
@@ -236,15 +253,20 @@ class _GachaPageState extends State<GachaPage> {
   // SimpleDataManagerに統一されたため、古いマップは不要
   // Map<String, dynamic> _problemStatuses = {};
 
-  final List<ValueNotifier<ProblemStatus>> _pendingNotifiers =
-      List.generate(3, (_) => ValueNotifier<ProblemStatus>(ProblemStatus.none));
+  final List<ValueNotifier<ProblemStatus>> _pendingNotifiers = List.generate(
+    3,
+    (_) => ValueNotifier<ProblemStatus>(ProblemStatus.none),
+  );
 
   // instance-specific prefs keys
   // SimpleDataManagerに統一されたため、古いキーは不要
 
   final ScrollController _scrollController = ScrollController();
-  final FocusNode _noFocusNode = FocusNode(skipTraversal: true, canRequestFocus: false);
-  
+  final FocusNode _noFocusNode = FocusNode(
+    skipTraversal: true,
+    canRequestFocus: false,
+  );
+
   // スクロール位置保持のための追加
   double _savedScrollPosition = 0.0;
   bool _isContentUpdating = false;
@@ -252,9 +274,8 @@ class _GachaPageState extends State<GachaPage> {
   // タイマー関連（タイマーマネージャーを使用）
   final TimerManager _timerManager = TimerManager();
 
-
   bool _isInitialized = false;
-  
+
   AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   bool get _allCardsNull =>
@@ -268,7 +289,7 @@ class _GachaPageState extends State<GachaPage> {
   @override
   void initState() {
     super.initState();
-    
+
     // ウィジェットがマージされた後に実行されるようにスケジュール
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.title.isEmpty) {
@@ -288,7 +309,7 @@ class _GachaPageState extends State<GachaPage> {
     _timerManager.isTimerEnabledNotifier.addListener(_onTimerStateChanged);
     _timerManager.isTimerRunningNotifier.addListener(_onTimerStateChanged);
     _timerManager.remainingSecondsNotifier.addListener(_onTimerStateChanged);
-    
+
     // タイマー終了時のコールバックを設定
     _timerManager.onTimerFinished = () {
       if (mounted) {
@@ -368,30 +389,32 @@ class _GachaPageState extends State<GachaPage> {
     keywords.remove('共振');
     return keywords.toList()..sort();
   }
-  
+
   // 共通関数を使用するため、ローカル関数は削除
-  
+
   // 微分方程式ガチャ用：選択されたキーワードを読み込み
   Future<void> _loadSelectedKeywords() async {
-    final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
+    final settings = await SimpleDataManager.getGachaSettings(
+      widget.prefsPrefix,
+    );
     final keywordsList = settings['selectedKeywords'] as List<dynamic>?;
     if (keywordsList != null && keywordsList.isNotEmpty) {
-          _selectedKeywords = keywordsList.cast<String>().toSet();
-          // 存在しないキーワード（「一階斉次」など）を削除
-          _selectedKeywords.remove('一階斉次');
-          _selectedKeywords.remove('斉次');
-          _selectedKeywords.remove('非斉次');
-          // 「その他」キーワードを削除（廃止）
-          _selectedKeywords.remove('その他');
-          // 「共振」キーワードを削除（廃止）
-          _selectedKeywords.remove('共振');
-          // 存在するキーワードのみを保持（現在の問題から実際に使われているキーワードのみ）
-          final validKeywords = _getKeywords().toSet();
-          _selectedKeywords = _selectedKeywords.intersection(validKeywords);
-          // もし有効なキーワードが残っていない場合は、デフォルト設定を使用（数値と等加速度直線運動）
-          if (_selectedKeywords.isEmpty) {
-            _selectedKeywords = {'数値', '等加速度直線運動'};
-          }
+      _selectedKeywords = keywordsList.cast<String>().toSet();
+      // 存在しないキーワード（「一階斉次」など）を削除
+      _selectedKeywords.remove('一階斉次');
+      _selectedKeywords.remove('斉次');
+      _selectedKeywords.remove('非斉次');
+      // 「その他」キーワードを削除（廃止）
+      _selectedKeywords.remove('その他');
+      // 「共振」キーワードを削除（廃止）
+      _selectedKeywords.remove('共振');
+      // 存在するキーワードのみを保持（現在の問題から実際に使われているキーワードのみ）
+      final validKeywords = _getKeywords().toSet();
+      _selectedKeywords = _selectedKeywords.intersection(validKeywords);
+      // もし有効なキーワードが残っていない場合は、デフォルト設定を使用（数値と等加速度直線運動）
+      if (_selectedKeywords.isEmpty) {
+        _selectedKeywords = {'数値', '等加速度直線運動'};
+      }
       // 変更があれば保存
       await _saveSelectedKeywords();
     } else {
@@ -402,11 +425,11 @@ class _GachaPageState extends State<GachaPage> {
         // 「その他」キーワードを削除（廃止）
         _selectedKeywords.remove('その他');
         // 存在しないキーワードを削除
-          final validKeywords = _getKeywords().toSet();
-          _selectedKeywords = _selectedKeywords.intersection(validKeywords);
-          if (_selectedKeywords.isEmpty) {
-            _selectedKeywords = {'数値', '等加速度直線運動'};
-          }
+        final validKeywords = _getKeywords().toSet();
+        _selectedKeywords = _selectedKeywords.intersection(validKeywords);
+        if (_selectedKeywords.isEmpty) {
+          _selectedKeywords = {'数値', '等加速度直線運動'};
+        }
         await _saveSelectedKeywords();
       } else {
         final oldCategory = settings['selectedCategory'] as String?;
@@ -429,10 +452,12 @@ class _GachaPageState extends State<GachaPage> {
     if (!mounted) return;
     setState(() {});
   }
-  
+
   // 微分方程式ガチャ用：選択されたキーワードを保存
   Future<void> _saveSelectedKeywords() async {
-    final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
+    final settings = await SimpleDataManager.getGachaSettings(
+      widget.prefsPrefix,
+    );
     if (_selectedKeywords.isNotEmpty) {
       settings['selectedKeywords'] = _selectedKeywords.toList();
     } else {
@@ -443,14 +468,14 @@ class _GachaPageState extends State<GachaPage> {
     settings.remove('selectedCategory');
     await SimpleDataManager.saveGachaSettings(widget.prefsPrefix, settings);
   }
-  
+
   // スクロール位置を保存するメソッド
   void _saveScrollPosition() {
     if (_scrollController.hasClients) {
       _savedScrollPosition = _scrollController.offset;
     }
   }
-  
+
   // スクロール位置を復元するメソッド
   void _restoreScrollPosition() {
     if (_scrollController.hasClients && _savedScrollPosition > 0) {
@@ -471,7 +496,9 @@ class _GachaPageState extends State<GachaPage> {
 
   Future<void> _loadSlotLevels() async {
     // SimpleDataManagerからスロットレベルを読み込み
-    final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
+    final settings = await SimpleDataManager.getGachaSettings(
+      widget.prefsPrefix,
+    );
     final slotLevels = settings['slotLevels'] as List<dynamic>?;
     if (slotLevels != null && slotLevels.length >= 3) {
       _slotLevels = slotLevels.cast<int>();
@@ -489,14 +516,18 @@ class _GachaPageState extends State<GachaPage> {
 
   Future<void> _saveSlotLevels() async {
     // SimpleDataManagerにスロットレベルを保存
-    final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
+    final settings = await SimpleDataManager.getGachaSettings(
+      widget.prefsPrefix,
+    );
     settings['slotLevels'] = _slotLevels;
     await SimpleDataManager.saveGachaSettings(widget.prefsPrefix, settings);
   }
 
   Future<void> _loadGachaFilterMode() async {
     // SimpleDataManagerからフィルタモードを読み込み
-    final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
+    final settings = await SimpleDataManager.getGachaSettings(
+      widget.prefsPrefix,
+    );
     final filterMode = settings['filterMode'] as String?;
     switch (filterMode) {
       case 'random':
@@ -527,7 +558,9 @@ class _GachaPageState extends State<GachaPage> {
 
   Future<void> _saveGachaFilterMode() async {
     // SimpleDataManagerにフィルタモードを保存
-    final settings = await SimpleDataManager.getGachaSettings(widget.prefsPrefix);
+    final settings = await SimpleDataManager.getGachaSettings(
+      widget.prefsPrefix,
+    );
     switch (_gachaFilterMode) {
       case GachaFilterMode.random:
         settings['filterMode'] = 'random';
@@ -558,23 +591,20 @@ class _GachaPageState extends State<GachaPage> {
     setState(() {});
   }
 
-
   // SimpleDataManagerに統一されたため、古いロードメソッドは不要
 
-
-
   String _problemKey(MathProblem p) => p.id;
-  
+
   // 問題一覧の学習記録データを取得（積分ガチャと同じロジック）
   Future<List<Map<String, dynamic>>> _getSlotsForProblem(MathProblem p) async {
     // SimpleDataManagerから学習履歴を取得
     final history = await SimpleDataManager.getLearningHistory(p);
-    
+
     final slots = <Map<String, dynamic>>[];
-    
+
     // 履歴を逆順にして、最新の記録を左から表示
     final reversedHistory = history.reversed.toList();
-    
+
     for (var i = 0; i < _slotCount; i++) {
       if (i < reversedHistory.length) {
         final h = reversedHistory[i];
@@ -602,7 +632,7 @@ class _GachaPageState extends State<GachaPage> {
   // 問題一覧の学習記録データを使用して除外判定を行う（積分ガチャと同じロジック）
   Future<bool> _shouldExcludeProblem(MathProblem p) async {
     if (_gachaFilterMode == GachaFilterMode.random) return false;
-    
+
     try {
       // SimpleDataManagerから学習記録データを取得（タイムアウト付き）
       final slots = await _getSlotsForProblem(p).timeout(
@@ -617,7 +647,7 @@ class _GachaPageState extends State<GachaPage> {
           ];
         },
       );
-      
+
       int needed;
       switch (_gachaFilterMode) {
         case GachaFilterMode.excludeSolvedGE1:
@@ -661,7 +691,9 @@ class _GachaPageState extends State<GachaPage> {
     }
   }
 
-  Map<int, MathProblem?> _assignSlotsPreferEarly(Map<int, List<MathProblem>> candidatesPerSlot) {
+  Map<int, MathProblem?> _assignSlotsPreferEarly(
+    Map<int, List<MathProblem>> candidatesPerSlot,
+  ) {
     final assigned = <int, MathProblem?>{0: null, 1: null, 2: null};
 
     final uniqueMap = <String, MathProblem>{};
@@ -698,7 +730,9 @@ class _GachaPageState extends State<GachaPage> {
     final usedKeys = <String>{};
     for (var i = 0; i < _slotCount; i++) {
       final pool = candidatesPerSlot[i] ?? [];
-      final available = pool.where((p) => !usedKeys.contains(_problemKey(p))).toList();
+      final available = pool
+          .where((p) => !usedKeys.contains(_problemKey(p)))
+          .toList();
       if (available.isNotEmpty) {
         final pick = available[_rand.nextInt(available.length)];
         assigned[i] = pick;
@@ -756,28 +790,31 @@ class _GachaPageState extends State<GachaPage> {
     } else {
       _isContentUpdating = true;
     }
-    
+
     // 微分方程式ガチャの場合はキーワードベースで3問ランダムに選ぶ（level分類なし）
     if (widget.prefsPrefix == 'physics_math') {
-          // キーワードベースのフィルタリング（グループ内OR、グループ間AND）
-          final targetProblems = filterProblemsByKeywords(widget.problemPool, _selectedKeywords);
-          
-          // フィルタリングを非同期で実行
-          final filteredProblems = <MathProblem>[];
-          for (final p in targetProblems) {
-            // 予備問題は廃止されたため、除外する
-            final no = p.no;
-            final isReserveProblem = no is String && no.startsWith('op');
-            if (isReserveProblem) {
-              continue;
-            }
-            
-            final shouldExclude = await _shouldExcludeProblem(p);
-            if (!shouldExclude) {
-              filteredProblems.add(p);
-            }
-          }
-      
+      // キーワードベースのフィルタリング（グループ内OR、グループ間AND）
+      final targetProblems = filterProblemsByKeywords(
+        widget.problemPool,
+        _selectedKeywords,
+      );
+
+      // フィルタリングを非同期で実行
+      final filteredProblems = <MathProblem>[];
+      for (final p in targetProblems) {
+        // 予備問題は廃止されたため、除外する
+        final no = p.no;
+        final isReserveProblem = no is String && no.startsWith('op');
+        if (isReserveProblem) {
+          continue;
+        }
+
+        final shouldExclude = await _shouldExcludeProblem(p);
+        if (!shouldExclude) {
+          filteredProblems.add(p);
+        }
+      }
+
       // フィルタリング後の問題数が0の場合は全てnullに設定
       if (filteredProblems.isEmpty) {
         for (var i = 0; i < 3; i++) {
@@ -790,7 +827,7 @@ class _GachaPageState extends State<GachaPage> {
         // 3問ランダムに選ぶ
         filteredProblems.shuffle(_rand);
         final selected = filteredProblems.take(3).toList();
-        
+
         for (var i = 0; i < 3; i++) {
           _current[i] = i < selected.length ? selected[i] : null;
           _showAnswer[i] = false;
@@ -801,7 +838,8 @@ class _GachaPageState extends State<GachaPage> {
     } else {
       // 通常のlevelベースの処理（他のガチャ）
       // 因数分解は全42問（op含む）。それ以外は非プレミアム時のみ op を除外
-      final poolIncludesReserve = widget.prefsPrefix == 'factorization' ||
+      final poolIncludesReserve =
+          widget.prefsPrefix == 'factorization' ||
           await SimpleDataManager.isPremiumPurchased();
       final mainProblems = poolIncludesReserve
           ? List<MathProblem>.from(widget.problemPool)
@@ -813,8 +851,10 @@ class _GachaPageState extends State<GachaPage> {
       for (var i = 0; i < 3; i++) {
         final levelIndex = (i < _slotLevels.length) ? _slotLevels[i] : 0;
         final slotLevel = _slotLevelFromIndex(levelIndex);
-        final levelProblems = mainProblems.where((p) => _problemMatchesLevel(context, p, slotLevel)).toList();
-        
+        final levelProblems = mainProblems
+            .where((p) => _problemMatchesLevel(context, p, slotLevel))
+            .toList();
+
         // フィルタリングを非同期で実行
         final filteredProblems = <MathProblem>[];
         for (final p in levelProblems) {
@@ -823,7 +863,7 @@ class _GachaPageState extends State<GachaPage> {
             filteredProblems.add(p);
           }
         }
-        
+
         cand[i] = filteredProblems;
       }
 
@@ -835,7 +875,7 @@ class _GachaPageState extends State<GachaPage> {
           break;
         }
       }
-      
+
       if (allEmpty) {
         // 全てのスロットで問題がない場合は全てnullに設定
         for (var i = 0; i < 3; i++) {
@@ -848,7 +888,8 @@ class _GachaPageState extends State<GachaPage> {
         final assigned = _assignSlotsPreferEarly(cand);
 
         // カード3枚をシャッフル（難易度ネタバレ防止）
-        final shuffled = [assigned[0], assigned[1], assigned[2]]..shuffle(_rand);
+        final shuffled = [assigned[0], assigned[1], assigned[2]]
+          ..shuffle(_rand);
 
         for (var i = 0; i < 3; i++) {
           _current[i] = shuffled[i];
@@ -864,16 +905,16 @@ class _GachaPageState extends State<GachaPage> {
     setState(() {
       _isContentUpdating = false;
     });
-    
+
     // レンダリング完了後にスクロール位置を復元
     _restoreScrollPosition();
   }
 
   Future<void> _rollAll() async {
     if (_isRolling) return;
-    
+
     _saveScrollPosition();
-    
+
     setState(() {
       _isRolling = true;
       for (var i = 0; i < 3; i++) {
@@ -882,7 +923,8 @@ class _GachaPageState extends State<GachaPage> {
       }
     });
 
-    final poolIncludesReserve = widget.prefsPrefix == 'factorization' ||
+    final poolIncludesReserve =
+        widget.prefsPrefix == 'factorization' ||
         await SimpleDataManager.isPremiumPurchased();
 
     const iterations = 12;
@@ -891,8 +933,11 @@ class _GachaPageState extends State<GachaPage> {
         // 微分方程式ガチャの場合はキーワードベース（level分類なし）
         if (widget.prefsPrefix == 'physics_math') {
           // キーワードベースのフィルタリング（グループ内OR、グループ間AND）
-          final targetProblems = filterProblemsByKeywords(widget.problemPool, _selectedKeywords);
-          
+          final targetProblems = filterProblemsByKeywords(
+            widget.problemPool,
+            _selectedKeywords,
+          );
+
           // フィルタリングを非同期で実行
           final filteredProblems = <MathProblem>[];
           for (final p in targetProblems) {
@@ -902,16 +947,16 @@ class _GachaPageState extends State<GachaPage> {
             if (isReserveProblem) {
               continue;
             }
-            
+
             final shouldExclude = await _shouldExcludeProblem(p);
             if (!shouldExclude) {
               filteredProblems.add(p);
             }
           }
-          
+
           filteredProblems.shuffle(_rand);
           final selected = filteredProblems.take(3).toList();
-          
+
           setState(() {
             for (var i = 0; i < 3; i++) {
               _current[i] = i < selected.length ? selected[i] : null;
@@ -930,8 +975,10 @@ class _GachaPageState extends State<GachaPage> {
           for (var i = 0; i < 3; i++) {
             final levelIndex = (i < _slotLevels.length) ? _slotLevels[i] : 0;
             final slotLevel = _slotLevelFromIndex(levelIndex);
-            final levelProblems = mainProblems.where((p) => _problemMatchesLevel(context, p, slotLevel)).toList();
-            
+            final levelProblems = mainProblems
+                .where((p) => _problemMatchesLevel(context, p, slotLevel))
+                .toList();
+
             // フィルタリングを非同期で実行
             final filteredProblems = <MathProblem>[];
             for (final p in levelProblems) {
@@ -940,10 +987,10 @@ class _GachaPageState extends State<GachaPage> {
                 filteredProblems.add(p);
               }
             }
-            
+
             candidatesPerSlot[i] = filteredProblems;
           }
-          
+
           setState(() {
             for (var i = 0; i < 3; i++) {
               final pool = candidatesPerSlot[i] ?? [];
@@ -962,8 +1009,11 @@ class _GachaPageState extends State<GachaPage> {
         // 微分方程式ガチャの場合はキーワードベース（level分類なし）
         if (widget.prefsPrefix == 'physics_math') {
           // キーワードベースのフィルタリング（グループ内OR、グループ間AND）
-          final targetProblems = filterProblemsByKeywords(widget.problemPool, _selectedKeywords);
-          
+          final targetProblems = filterProblemsByKeywords(
+            widget.problemPool,
+            _selectedKeywords,
+          );
+
           // フィルタリングを非同期で実行
           final filteredProblems = <MathProblem>[];
           for (final p in targetProblems) {
@@ -973,16 +1023,16 @@ class _GachaPageState extends State<GachaPage> {
             if (isReserveProblem) {
               continue;
             }
-            
+
             final shouldExclude = await _shouldExcludeProblem(p);
             if (!shouldExclude) {
               filteredProblems.add(p);
             }
           }
-          
+
           filteredProblems.shuffle(_rand);
           final selected = filteredProblems.take(3).toList();
-          
+
           final newList = <MathProblem?>[
             selected.isNotEmpty ? selected[0] : null,
             selected.length > 1 ? selected[1] : null,
@@ -990,7 +1040,8 @@ class _GachaPageState extends State<GachaPage> {
           ];
           if (!mounted) return;
           setState(() => _current.setRange(0, 3, newList));
-          for (var i = 0; i < 3; i++) _pendingNotifiers[i].value = ProblemStatus.none;
+          for (var i = 0; i < 3; i++)
+            _pendingNotifiers[i].value = ProblemStatus.none;
         } else {
           // 通常のlevelベースの処理（poolIncludesReserve は _rollAll 先頭で取得済み）
           final mainProblems = poolIncludesReserve
@@ -1003,8 +1054,10 @@ class _GachaPageState extends State<GachaPage> {
           for (var i = 0; i < 3; i++) {
             final levelIndex = (i < _slotLevels.length) ? _slotLevels[i] : 0;
             final slotLevel = _slotLevelFromIndex(levelIndex);
-            final levelProblems = mainProblems.where((p) => _problemMatchesLevel(context, p, slotLevel)).toList();
-            
+            final levelProblems = mainProblems
+                .where((p) => _problemMatchesLevel(context, p, slotLevel))
+                .toList();
+
             // フィルタリングを非同期で実行
             final filteredProblems = <MathProblem>[];
             for (final p in levelProblems) {
@@ -1013,17 +1066,19 @@ class _GachaPageState extends State<GachaPage> {
                 filteredProblems.add(p);
               }
             }
-            
+
             candidatesPerSlot[i] = filteredProblems;
           }
 
           final assigned = _assignSlotsPreferEarly(candidatesPerSlot);
           // カード3枚をシャッフル（難易度ネタバレ防止）
-          final shuffled = [assigned[0], assigned[1], assigned[2]]..shuffle(_rand);
+          final shuffled = [assigned[0], assigned[1], assigned[2]]
+            ..shuffle(_rand);
           final newList = <MathProblem?>[shuffled[0], shuffled[1], shuffled[2]];
           if (!mounted) return;
           setState(() => _current.setRange(0, 3, newList));
-          for (var i = 0; i < 3; i++) _pendingNotifiers[i].value = ProblemStatus.none;
+          for (var i = 0; i < 3; i++)
+            _pendingNotifiers[i].value = ProblemStatus.none;
         }
       }
     }
@@ -1033,7 +1088,7 @@ class _GachaPageState extends State<GachaPage> {
       _isRolling = false;
     });
     for (var i = 0; i < 3; i++) _pendingNotifiers[i].value = ProblemStatus.none;
-    
+
     // ロール完了後にスクロール位置を復元
     _restoreScrollPosition();
   }
@@ -1041,6 +1096,76 @@ class _GachaPageState extends State<GachaPage> {
   void _toggleAnswer(int idx) {
     setState(() {
       _showAnswer[idx] = !_showAnswer[idx];
+    });
+  }
+
+  void _openAiChat(int idx, MathProblem problem) {
+    final l10n = AppLocalizations.of(context)!;
+    final questionText = _buildAiChatQuestionText(problem);
+
+    showAiChatBottomSheet(
+      context: context,
+      chatContext: AiChatContext(
+        title: '${l10n.askAi} - ${l10n.problemIndex(idx + 1)}',
+        questionText: questionText,
+        category: problem.getLocalizedCategory(context),
+        level: problem.getLocalizedLevel(context),
+        hintShown: _showHint[idx],
+        answerShown: _showAnswer[idx],
+      ),
+      mathTextBuilder: _buildAiChatText,
+    );
+  }
+
+  Widget _buildAiChatText(String text) {
+    if (!_containsTex(text)) {
+      return Text(
+        text,
+        softWrap: true,
+        style: const TextStyle(fontSize: 16, height: 1.45),
+      );
+    }
+
+    return MixedTextMath(
+      text,
+      forceTex: false,
+      labelStyle: const TextStyle(fontSize: 16, height: 1.45),
+      mathStyle: const TextStyle(fontSize: 18),
+    );
+  }
+
+  bool _containsTex(String text) {
+    return RegExp(r'(\\[A-Za-z]+|[_^]|\$)').hasMatch(text);
+  }
+
+  String _buildAiChatQuestionText(MathProblem problem) {
+    final equation = problem.getLocalizedEquation(context);
+    final conditions = problem.getLocalizedConditions(context);
+    if (equation != null && conditions != null) {
+      return _joinAiChatQuestionParts([equation, conditions]);
+    }
+
+    return _joinAiChatQuestionParts(
+      problem.getLocalizedQuestion(context).split(RegExp(r'\s*\n+\s*')),
+    );
+  }
+
+  String _joinAiChatQuestionParts(Iterable<String> parts) {
+    return parts
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .map(_normalizePrimeNotation)
+        .join(r',\quad ');
+  }
+
+  String _normalizePrimeNotation(String tex) {
+    return tex.replaceAllMapped(RegExp(r"([A-Za-z])('{1,3})(?=\s*\()"), (
+      match,
+    ) {
+      final symbol = match.group(1)!;
+      final primes = match.group(2)!.length;
+      final primeTex = List.filled(primes, r'\prime').join();
+      return '$symbol^{$primeTex}';
     });
   }
 
@@ -1065,7 +1190,7 @@ class _GachaPageState extends State<GachaPage> {
     if (problem != null) {
       final problemKey = _problemKey(problem);
       _scratchPaperRecordedProblems.add(problemKey);
-      
+
       // 最新の学習記録を取得してキャッシュを更新
       final latestStatus = await SimpleDataManager.getLearningRecord(problem);
       final problemStatus = ProblemStatus.values.firstWhere(
@@ -1073,7 +1198,7 @@ class _GachaPageState extends State<GachaPage> {
         orElse: () => ProblemStatus.none,
       );
       _learningStatusCache[problem.id] = problemStatus;
-      
+
       // 学習記録の履歴も取得
       final history = await SimpleDataManager.getLearningHistory(problem);
       if (history.isNotEmpty) {
@@ -1091,9 +1216,7 @@ class _GachaPageState extends State<GachaPage> {
     });
   }
 
-
   void _cycleLearningStatus(int idx) {
-    
     final currentStatus = _pendingNotifiers[idx].value;
     ProblemStatus nextStatus;
     switch (currentStatus) {
@@ -1177,24 +1300,29 @@ class _GachaPageState extends State<GachaPage> {
   Future<LearningStatus> _getProblemLearningStatus(MathProblem problem) async {
     return await SimpleDataManager.getLearningRecord(problem);
   }
-  
 
   Future<void> _rerollSingle(int idx) async {
     if (_isRolling) return;
-    
+
     List<MathProblem> candidateProblems;
-    
+
     // 微分方程式ガチャの場合はキーワードベースでフィルタリング
     if (widget.prefsPrefix == 'physics_math') {
-      candidateProblems = filterProblemsByKeywords(widget.problemPool, _selectedKeywords);
+      candidateProblems = filterProblemsByKeywords(
+        widget.problemPool,
+        _selectedKeywords,
+      );
     } else {
       // 通常のlevelベースのフィルタリング
       final levelIndex = (idx < _slotLevels.length) ? _slotLevels[idx] : 0;
       final slotLevel = _slotLevelFromIndex(levelIndex);
-      candidateProblems = widget.problemPool.where((p) => _problemMatchesLevel(context, p, slotLevel)).toList();
+      candidateProblems = widget.problemPool
+          .where((p) => _problemMatchesLevel(context, p, slotLevel))
+          .toList();
     }
 
-    final poolIncludesReserve = widget.prefsPrefix == 'factorization' ||
+    final poolIncludesReserve =
+        widget.prefsPrefix == 'factorization' ||
         await SimpleDataManager.isPremiumPurchased();
     if (!poolIncludesReserve) {
       candidateProblems = candidateProblems.where((p) {
@@ -1211,11 +1339,17 @@ class _GachaPageState extends State<GachaPage> {
         filteredProblems.add(p);
       }
     }
-    
+
     if (filteredProblems.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(widget.prefsPrefix == 'physics_math'
-          ? l10n.noProblems
-          : '${_getLocalizedLevelName(context, (idx < _slotLevels.length) ? _slotLevels[idx] : 0)} ${l10n.noProblems}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.prefsPrefix == 'physics_math'
+                ? l10n.noProblems
+                : '${_getLocalizedLevelName(context, (idx < _slotLevels.length) ? _slotLevels[idx] : 0)} ${l10n.noProblems}',
+          ),
+        ),
+      );
       return;
     }
 
@@ -1226,7 +1360,9 @@ class _GachaPageState extends State<GachaPage> {
       if (mp != null) usedKeys.add(_problemKey(mp));
     }
 
-    final available = filteredProblems.where((p) => !usedKeys.contains(_problemKey(p))).toList();
+    final available = filteredProblems
+        .where((p) => !usedKeys.contains(_problemKey(p)))
+        .toList();
     if (available.isNotEmpty) {
       final pick = available[_rand.nextInt(available.length)];
       setState(() {
@@ -1270,24 +1406,22 @@ class _GachaPageState extends State<GachaPage> {
     _pendingNotifiers[idx].value = ProblemStatus.none;
   }
 
-
-
   // 微分方程式ガチャ用：キーワード選択UI
   Widget _buildKeywordSelector() {
     final allKeywords = _getKeywords();
-    
+
     // キーワードを分類
     final typeKeywords = <String>[]; // 数値、一般
     final mechanicsKeywords = <String>[]; // 力学系
     final dcacKeywords = <String>[]; // 直流、交流
     final electricalKeywords = <String>[]; // その他の電磁気系
-    
+
     // 分類定義
     const typeList = ['数値', '一般'];
     const mechanicsList = ['等加速度直線運動', '空気抵抗', '単振動', '加速度'];
     const dcacList = ['直流', '交流', '電圧0']; // グループ3の定義順序に合わせる
     const electricalList = ['コンデンサ', 'コイル', '抵抗', '磁場'];
-    
+
     for (final keyword in allKeywords) {
       if (typeList.contains(keyword)) {
         typeKeywords.add(keyword);
@@ -1302,11 +1436,17 @@ class _GachaPageState extends State<GachaPage> {
         electricalKeywords.add(keyword);
       }
     }
-    
+
     // 指定された順序でソート
-    typeKeywords.sort((a, b) => typeList.indexOf(a).compareTo(typeList.indexOf(b)));
-    mechanicsKeywords.sort((a, b) => mechanicsList.indexOf(a).compareTo(mechanicsList.indexOf(b)));
-    dcacKeywords.sort((a, b) => dcacList.indexOf(a).compareTo(dcacList.indexOf(b)));
+    typeKeywords.sort(
+      (a, b) => typeList.indexOf(a).compareTo(typeList.indexOf(b)),
+    );
+    mechanicsKeywords.sort(
+      (a, b) => mechanicsList.indexOf(a).compareTo(mechanicsList.indexOf(b)),
+    );
+    dcacKeywords.sort(
+      (a, b) => dcacList.indexOf(a).compareTo(dcacList.indexOf(b)),
+    );
     electricalKeywords.sort((a, b) {
       final idxA = electricalList.indexOf(a);
       final idxB = electricalList.indexOf(b);
@@ -1315,11 +1455,14 @@ class _GachaPageState extends State<GachaPage> {
       if (idxB != -1) return 1;
       return a.compareTo(b);
     });
-    
+
     // フィルタリング結果のカウント
-    final filteredCount = filterProblemsByKeywords(widget.problemPool, _selectedKeywords).length;
+    final filteredCount = filterProblemsByKeywords(
+      widget.problemPool,
+      _selectedKeywords,
+    ).length;
     final totalCount = widget.problemPool.length;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
@@ -1362,7 +1505,9 @@ class _GachaPageState extends State<GachaPage> {
                 ),
                 const SizedBox(width: 8),
                 Icon(
-                  _isKeywordSelectorExpanded ? Icons.expand_less : Icons.expand_more,
+                  _isKeywordSelectorExpanded
+                      ? Icons.expand_less
+                      : Icons.expand_more,
                   color: Colors.purple[700],
                   size: 24,
                 ),
@@ -1412,14 +1557,20 @@ class _GachaPageState extends State<GachaPage> {
               Text(
                 l10n.selectedKeywordsLabel(
                   _selectedKeywords.length,
-                  _selectedKeywords.map((k) => getLocalizedKeyword(context, k)).join(', '),
+                  _selectedKeywords
+                      .map((k) => getLocalizedKeyword(context, k))
+                      .join(', '),
                 ),
                 style: TextStyle(color: Colors.purple[700], fontSize: 14),
               ),
             ] else ...[
               Text(
                 l10n.noKeywordsSelected,
-                style: TextStyle(color: Colors.grey[600], fontSize: 14, fontStyle: FontStyle.italic),
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ],
@@ -1427,13 +1578,16 @@ class _GachaPageState extends State<GachaPage> {
       ),
     );
   }
-  
+
   // キーワードチップを生成するヘルパーメソッド
   List<Widget> _buildKeywordChips(List<String> keywords) {
     return keywords.map((keyword) {
       final isSelected = _selectedKeywords.contains(keyword);
       return FilterChip(
-        label: Text(getLocalizedKeyword(context, keyword), style: const TextStyle(fontSize: 14)),
+        label: Text(
+          getLocalizedKeyword(context, keyword),
+          style: const TextStyle(fontSize: 14),
+        ),
         selected: isSelected,
         onSelected: (selected) {
           setState(() {
@@ -1461,18 +1615,20 @@ class _GachaPageState extends State<GachaPage> {
     }).toList();
   }
 
-
   // フィルタリング後の問題数を計算
   Future<int> _getFilteredProblemCount() async {
     List<MathProblem> targetProblems;
-    
+
     // 微分方程式ガチャの場合はキーワードフィルタリング後の問題
     if (widget.prefsPrefix == 'physics_math') {
-      targetProblems = filterProblemsByKeywords(widget.problemPool, _selectedKeywords);
+      targetProblems = filterProblemsByKeywords(
+        widget.problemPool,
+        _selectedKeywords,
+      );
     } else {
       targetProblems = widget.problemPool;
     }
-    
+
     // 除外判定を実行
     int count = 0;
     for (final p in targetProblems) {
@@ -1481,15 +1637,18 @@ class _GachaPageState extends State<GachaPage> {
         count++;
       }
     }
-    
+
     return count;
   }
-  
+
   // 全問題数を取得（キーワードフィルタリング後の問題数）
   int _getTotalProblemCount() {
     if (widget.prefsPrefix == 'physics_math') {
       // physics_mathの場合はキーワードフィルタリングを考慮
-      return filterProblemsByKeywords(widget.problemPool, _selectedKeywords).length;
+      return filterProblemsByKeywords(
+        widget.problemPool,
+        _selectedKeywords,
+      ).length;
     } else {
       // それ以外の場合は共通関数を使用
       return getTotalProblemCount(
@@ -1502,17 +1661,21 @@ class _GachaPageState extends State<GachaPage> {
   String _getLocalizedLevelName(BuildContext context, int index) {
     final l10n = AppLocalizations.of(context)!;
     switch (index) {
-      case 0: return l10n.easy;
-      case 1: return l10n.mid;
-      case 2: return l10n.advanced;
-      default: return l10n.easy;
+      case 0:
+        return l10n.easy;
+      case 1:
+        return l10n.mid;
+      case 2:
+        return l10n.advanced;
+      default:
+        return l10n.easy;
     }
   }
 
   // ガチャ本画面に表示するフィルタ説明（設定に合わせて読み取る）
   Widget _buildGachaFilterSummary() {
     final totalCount = _getTotalProblemCount();
-    
+
     return FutureBuilder<int>(
       future: _getFilteredProblemCount(),
       builder: (context, snapshot) {
@@ -1520,7 +1683,7 @@ class _GachaPageState extends State<GachaPage> {
         final problemCountText = _gachaFilterMode == GachaFilterMode.random
             ? l10n.noExclusionAllCount(totalCount)
             : l10n.problemCountRemaining(filteredCount, totalCount);
-        
+
         return GachaExclusionFilterWidget(
           gachaFilterMode: _gachaFilterMode,
           onGachaFilterModeChanged: (GachaFilterMode newMode) async {
@@ -1533,7 +1696,9 @@ class _GachaPageState extends State<GachaPage> {
           prefsPrefix: widget.prefsPrefix,
           problemCountText: problemCountText,
           showStatusBadge: _gachaFilterMode != GachaFilterMode.random,
-          additionalText: _gachaFilterMode != GachaFilterMode.random ? l10n.removeFromGacha : null,
+          additionalText: _gachaFilterMode != GachaFilterMode.random
+              ? l10n.removeFromGacha
+              : null,
           iconSize: 26,
         );
       },
@@ -1541,33 +1706,39 @@ class _GachaPageState extends State<GachaPage> {
   }
 
   // 難易度設定メニューを表示
-  Future<void> _showDifficultyMenu(BuildContext context, int slotIndex, {Offset? position, Size? size}) async {
+  Future<void> _showDifficultyMenu(
+    BuildContext context,
+    int slotIndex, {
+    Offset? position,
+    Size? size,
+  }) async {
     final l10n = AppLocalizations.of(context)!;
-    final RenderBox? overlay = Overlay.of(context).context.findRenderObject() as RenderBox?;
+    final RenderBox? overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox?;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    
+
     if (position == null || size == null || overlay == null) {
       return; // positionが取得できない場合は表示しない
     }
-    
+
     // メニューの幅を適切なサイズに設定（200px程度）
     const menuWidth = 200.0;
-    
+
     // ボタンの位置を基準にメニューの左端を計算
     // ボタンの中央にメニューの中央を合わせる
     double menuLeft = position.dx + (size.width / 2) - (menuWidth / 2);
-    
+
     // 画面外にはみ出さないように調整
     if (menuLeft < 8) {
       menuLeft = 8; // 左端から8px
     } else if (menuLeft + menuWidth > screenWidth - 8) {
       menuLeft = screenWidth - menuWidth - 8; // 右端から8px
     }
-    
+
     // メニューのY位置はボタンの下
     final menuY = position.dy + size.height;
-    
+
     final int? selected = await showMenu<int>(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -1576,9 +1747,7 @@ class _GachaPageState extends State<GachaPage> {
         screenWidth - menuLeft - menuWidth, // 右側のマージン
         overlay.size.height - menuY,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       items: List.generate(_gachaLevelOrder.length, (index) {
         final localizedLevel = _getLocalizedLevelName(context, index);
         return PopupMenuItem<int>(
@@ -1591,7 +1760,10 @@ class _GachaPageState extends State<GachaPage> {
                 const SizedBox(width: 20),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(localizedLevel, style: TextStyle(fontSize: 14, color: Colors.grey[900])),
+                child: Text(
+                  localizedLevel,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[900]),
+                ),
               ),
             ],
           ),
@@ -1621,10 +1793,7 @@ class _GachaPageState extends State<GachaPage> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.orange.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.orange.withOpacity(0.3), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.orange.withOpacity(0.1),
@@ -1640,29 +1809,25 @@ class _GachaPageState extends State<GachaPage> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.tune, color: Colors.orange[700], size: 20),
                 ),
-                child: Icon(
-                  Icons.tune,
-                  color: Colors.orange[700],
-                  size: 20,
+                const SizedBox(width: 12),
+                Text(
+                  l10n.selectDifficultyForEachSlot,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange[700],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                l10n.selectDifficultyForEachSlot,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange[700],
-                ),
-              ),
-            ],
+              ],
             ),
           ),
           const SizedBox(height: 12),
@@ -1676,36 +1841,56 @@ class _GachaPageState extends State<GachaPage> {
                       final levelIndex = _slotLevels[i];
                       String localizedLevel;
                       switch (levelIndex) {
-                        case 0: localizedLevel = l10n.easy; break;
-                        case 1: localizedLevel = l10n.mid; break;
-                        case 2: localizedLevel = l10n.advanced; break;
-                        default: localizedLevel = l10n.easy;
+                        case 0:
+                          localizedLevel = l10n.easy;
+                          break;
+                        case 1:
+                          localizedLevel = l10n.mid;
+                          break;
+                        case 2:
+                          localizedLevel = l10n.advanced;
+                          break;
+                        default:
+                          localizedLevel = l10n.easy;
                       }
                       return Material(
                         color: Colors.transparent,
                         child: InkWell(
-                        onTap: () {
-                          final RenderBox? renderBox = difficultyChipKey.currentContext?.findRenderObject() as RenderBox?;
-                          if (renderBox != null) {
-                            final position = renderBox.localToGlobal(Offset.zero);
-                            final size = renderBox.size;
-                            _showDifficultyMenu(context, i, position: position, size: size);
-                          } else {
-                            _showDifficultyMenu(context, i);
-                          }
-                        },
+                          onTap: () {
+                            final RenderBox? renderBox =
+                                difficultyChipKey.currentContext
+                                        ?.findRenderObject()
+                                    as RenderBox?;
+                            if (renderBox != null) {
+                              final position = renderBox.localToGlobal(
+                                Offset.zero,
+                              );
+                              final size = renderBox.size;
+                              _showDifficultyMenu(
+                                context,
+                                i,
+                                position: position,
+                                size: size,
+                              );
+                            } else {
+                              _showDifficultyMenu(context, i);
+                            }
+                          },
                           borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          key: difficultyChipKey,
-                          margin: EdgeInsets.only(right: i < 2 ? 8 : 0),
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.orange.withOpacity(0.3),
-                              width: 1,
+                          child: Container(
+                            key: difficultyChipKey,
+                            margin: EdgeInsets.only(right: i < 2 ? 8 : 0),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 8,
                             ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.orange.withOpacity(0.3),
+                                width: 1,
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.orange.withOpacity(0.2),
@@ -1713,29 +1898,33 @@ class _GachaPageState extends State<GachaPage> {
                                   offset: const Offset(0, 2),
                                 ),
                               ],
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      localizedLevel,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.orange[700],
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        localizedLevel,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.orange[700],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(Icons.expand_more, size: 18, color: Colors.orange[700]),
-                              ],
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.expand_more,
+                                    size: 18,
+                                    color: Colors.orange[700],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
                           ),
                         ),
                       );
@@ -1762,9 +1951,7 @@ class _GachaPageState extends State<GachaPage> {
       body: Stack(
         children: [
           // 背景画像（薄く、画面サイズに合わせて4枚周期的に表示）
-          Positioned.fill(
-            child: const BackgroundImageWidget(),
-          ),
+          Positioned.fill(child: const BackgroundImageWidget()),
           // コンテンツ
           Padding(
             padding: responsive.pagePadding,
@@ -1772,200 +1959,220 @@ class _GachaPageState extends State<GachaPage> {
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: responsive.isPhone ? 560 : responsive.contentMaxWidth,
+                  maxWidth: responsive.isPhone
+                      ? 560
+                      : responsive.contentMaxWidth,
                 ),
                 child: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    controller: _scrollController,
-                    cacheExtent: 1000.0, // レンダリング時の再計算を最小限にする
-                    physics: const ClampingScrollPhysics(), // スクロール位置の保持を改善
-                    children: [
-                  // タイトル、タイマー、問題一覧ボタンをスクロール可能なコンテンツ内に配置
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0.0, bottom: 20.0), // ヘッダの矢印部分と被ってもOK
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      runSpacing: 8,
-                      spacing: 8,
-                      children: [
-                        Text(
-                          widget.title.isEmpty ? l10n.rollGacha : widget.title,
-                          style: TextStyle(
-                            fontSize: responsive.titleFontSize,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF8B7355),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        // タイマートグルスイッチ
-                        TimerToggle(timerManager: _timerManager),
-                        // 問題一覧ボタン
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            minimumSize: const Size(90, 40),
-                            backgroundColor: Colors.grey.shade200,
-                            foregroundColor: Colors.black,
-                            elevation: 0,
-                            side: BorderSide(
-                              color: Colors.grey.shade400,
-                              width: 2,
-                            ),
-                          ),
-                          onPressed: () async {
-                            await navigateToProblemList(
-                              context: context,
-                              problemPool: widget.problemPool,
-                              prefsPrefix: widget.prefsPrefix,
-                            );
-                            // 問題一覧から戻ってきた時に設定を再読み込み
-                            if (mounted) {
-                              await _loadGachaFilterMode();
-                            }
-                          },
-                          child: Text(
-                            l10n.problemList,
-                            style: TextStyle(
-                              fontSize: responsive.isCompact ? 16 : 20,
-                              color: Color(0xFF8B7355),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: _isRolling ? null : _rollAll,
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Colors.blue, Colors.blueAccent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        controller: _scrollController,
+                        cacheExtent: 1000.0, // レンダリング時の再計算を最小限にする
+                        physics: const ClampingScrollPhysics(), // スクロール位置の保持を改善
+                        children: [
+                          // タイトル、タイマー、問題一覧ボタンをスクロール可能なコンテンツ内に配置
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 0.0,
+                              bottom: 20.0,
+                            ), // ヘッダの矢印部分と被ってもOK
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              runSpacing: 8,
+                              spacing: 8,
+                              children: [
+                                Text(
+                                  widget.title.isEmpty
+                                      ? l10n.rollGacha
+                                      : widget.title,
+                                  style: TextStyle(
+                                    fontSize: responsive.titleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF8B7355),
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                child: Icon(
-                                  Icons.casino,
-                                  size: responsive.cardIconSize,
-                                  color: Colors.white,
+                                // タイマートグルスイッチ
+                                TimerToggle(timerManager: _timerManager),
+                                // 問題一覧ボタン
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    minimumSize: const Size(90, 40),
+                                    backgroundColor: Colors.grey.shade200,
+                                    foregroundColor: Colors.black,
+                                    elevation: 0,
+                                    side: BorderSide(
+                                      color: Colors.grey.shade400,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    await navigateToProblemList(
+                                      context: context,
+                                      problemPool: widget.problemPool,
+                                      prefsPrefix: widget.prefsPrefix,
+                                    );
+                                    // 問題一覧から戻ってきた時に設定を再読み込み
+                                    if (mounted) {
+                                      await _loadGachaFilterMode();
+                                    }
+                                  },
+                                  child: Text(
+                                    l10n.problemList,
+                                    style: TextStyle(
+                                      fontSize: responsive.isCompact ? 16 : 20,
+                                      color: Color(0xFF8B7355),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(20),
+                                onTap: _isRolling ? null : _rollAll,
+                                child: Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [Colors.blue, Colors.blueAccent],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.casino,
+                                          size: responsive.cardIconSize,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Text(
+                                        _isRolling
+                                            ? l10n.rolling
+                                            : l10n.rollGacha,
+                                        style: TextStyle(
+                                          fontSize: responsive.isCompact
+                                              ? 20
+                                              : 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 16),
-                              Text(
-                                _isRolling ? l10n.rolling : l10n.rollGacha,
-                                style: TextStyle(
-                                  fontSize: responsive.isCompact ? 20 : 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 4),
+                          // フィルタ設定の説明をここに表示
+                          // 微分方程式ガチャの場合はキーワード選択を表示
+                          if (widget.prefsPrefix == 'physics_math') ...[
+                            _buildKeywordSelector(),
+                            const SizedBox(height: 6),
+                          ],
+
+                          _buildGachaFilterSummary(),
+
+                          // 難易度設定（フィルタ設定の下に配置、微分方程式ガチャ以外）
+                          if (widget.prefsPrefix != 'physics_math') ...[
+                            const SizedBox(height: 1.5),
+                            _buildDifficultySettings(),
+                          ],
+
+                          const SizedBox(height: 30),
+                          // タイマー表示（トグルがオンの場合のみ表示）
+                          _buildTimerDisplay(),
+
+                          const SizedBox(height: 6),
+
+                          // 全てのカードがnullの場合は完了メッセージを1つだけ表示
+                          Builder(
+                            builder: (context) {
+                              if (_isBootstrapping) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(32.0),
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 28,
+                                      height: 28,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 3,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (_shouldShowAllProblemsSolved) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(32.0),
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.allProblemsSolved,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green[700],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Column(
+                                children: [
+                                  for (var i = 0; i < 3; i++) _buildCard(i),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  // フィルタ設定の説明をここに表示
-                  // 微分方程式ガチャの場合はキーワード選択を表示
-                  if (widget.prefsPrefix == 'physics_math') ...[
-                    _buildKeywordSelector(),
-                    const SizedBox(height: 6),
                   ],
-                  
-                  _buildGachaFilterSummary(),
-
-                  // 難易度設定（フィルタ設定の下に配置、微分方程式ガチャ以外）
-                  if (widget.prefsPrefix != 'physics_math') ...[
-                    const SizedBox(height: 1.5),
-                    _buildDifficultySettings(),
-                  ],
-
-                  const SizedBox(height: 30),
-                  // タイマー表示（トグルがオンの場合のみ表示）
-                  _buildTimerDisplay(),
-
-                  const SizedBox(height: 6),
-
-                  // 全てのカードがnullの場合は完了メッセージを1つだけ表示
-                  Builder(
-                    builder: (context) {
-                      if (_isBootstrapping) {
-                        return const Padding(
-                          padding: EdgeInsets.all(32.0),
-                          child: Center(
-                            child: SizedBox(
-                              width: 28,
-                              height: 28,
-                              child: CircularProgressIndicator(strokeWidth: 3),
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (_shouldShowAllProblemsSolved) {
-                        return Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.allProblemsSolved,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[700],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      }
-                      return Column(
-                        children: [
-                          for (var i = 0; i < 3; i++) _buildCard(i),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
                 ),
               ),
             ),
+          ),
           // 戻るボタン（最前面に配置）
           const custom.BackButton(),
         ],
@@ -1995,13 +2202,16 @@ class _GachaPageState extends State<GachaPage> {
     final double gapAfterScratch = compactTopIconRow ? 10 : 16;
     final double gapAfterHint = compactTopIconRow ? 4 : 8;
     final double gapBeforeSave = compactTopIconRow ? 4 : 8;
-    final EdgeInsetsGeometry iconPadding =
-        compactTopIconRow ? const EdgeInsets.all(6) : const EdgeInsets.all(8);
-    final BoxConstraints? iconConstraints =
-        compactTopIconRow ? const BoxConstraints.tightFor(width: 44, height: 44) : null;
-    final VisualDensity iconVisualDensity =
-        compactTopIconRow ? const VisualDensity(horizontal: -2, vertical: -2) : VisualDensity.standard;
-    
+    final EdgeInsetsGeometry iconPadding = compactTopIconRow
+        ? const EdgeInsets.all(6)
+        : const EdgeInsets.all(8);
+    final BoxConstraints? iconConstraints = compactTopIconRow
+        ? const BoxConstraints.tightFor(width: 44, height: 44)
+        : null;
+    final VisualDensity iconVisualDensity = compactTopIconRow
+        ? const VisualDensity(horizontal: -2, vertical: -2)
+        : VisualDensity.standard;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
@@ -2026,10 +2236,18 @@ class _GachaPageState extends State<GachaPage> {
               spacing: 0,
               runSpacing: 6,
               children: [
-                Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
                 SizedBox(width: gapAfterLabel),
                 Theme(
-                  data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(splashFactory: NoSplash.splashFactory),
                   child: IconButton(
                     focusNode: _noFocusNode,
                     tooltip: l10n.rerollSlot,
@@ -2042,27 +2260,42 @@ class _GachaPageState extends State<GachaPage> {
                 ),
                 SizedBox(width: gapAfterRefresh),
                 Theme(
-                  data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(splashFactory: NoSplash.splashFactory),
                   child: FutureBuilder<LearningStatus>(
-                    future: p != null ? _getProblemLearningStatus(p) : Future.value(LearningStatus.none),
+                    future: p != null
+                        ? _getProblemLearningStatus(p)
+                        : Future.value(LearningStatus.none),
                     builder: (context, snapshot) {
-                      final isRecorded = p != null && _scratchPaperRecordedProblems.contains(_problemKey(p));
-                      final hasStatus = snapshot.hasData && snapshot.data != null;
-                      final shouldHighlight = _shouldHighlightScratchPaperButton[idx];
-                      
+                      final isRecorded =
+                          p != null &&
+                          _scratchPaperRecordedProblems.contains(
+                            _problemKey(p),
+                          );
+                      final hasStatus =
+                          snapshot.hasData && snapshot.data != null;
+                      final shouldHighlight =
+                          _shouldHighlightScratchPaperButton[idx];
+
                       return Container(
-                        decoration: shouldHighlight ? BoxDecoration(
-                          color: Colors.orange[50],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.orange[400]!, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.orange[400]!.withOpacity(0.4),
-                              blurRadius: 8,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ) : null,
+                        decoration: shouldHighlight
+                            ? BoxDecoration(
+                                color: Colors.orange[50],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.orange[400]!,
+                                  width: 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.orange[400]!.withOpacity(0.4),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                              )
+                            : null,
                         child: IconButton(
                           focusNode: _noFocusNode,
                           tooltip: l10n.openScratchPaper,
@@ -2076,7 +2309,7 @@ class _GachaPageState extends State<GachaPage> {
                                 ),
                               ),
                             );
-                            
+
                             // 計算用紙から戻った際の処理
                             if (result == true) {
                               // 学習記録が登録された場合の処理
@@ -2086,12 +2319,17 @@ class _GachaPageState extends State<GachaPage> {
                               // 学習記録のキャッシュを再読み込み
                               _learningStatusCache.clear();
                               for (final problem in widget.problemPool) {
-                                final status = await SimpleDataManager.getLearningRecord(problem);
-                                final problemStatus = ProblemStatus.values.firstWhere(
-                                  (s) => s.name == status.name,
-                                  orElse: () => ProblemStatus.none,
-                                );
-                                _learningStatusCache[problem.id] = problemStatus;
+                                final status =
+                                    await SimpleDataManager.getLearningRecord(
+                                      problem,
+                                    );
+                                final problemStatus = ProblemStatus.values
+                                    .firstWhere(
+                                      (s) => s.name == status.name,
+                                      orElse: () => ProblemStatus.none,
+                                    );
+                                _learningStatusCache[problem.id] =
+                                    problemStatus;
                               }
                               // UIを強制的に再描画
                               setState(() {});
@@ -2101,9 +2339,11 @@ class _GachaPageState extends State<GachaPage> {
                           constraints: iconConstraints,
                           visualDensity: iconVisualDensity,
                           icon: Icon(
-                            Icons.edit_note, 
-                            size: shouldHighlight ? 28 : 26, 
-                            color: shouldHighlight ? Colors.orange[600] : Colors.blue,
+                            Icons.edit_note,
+                            size: shouldHighlight ? 28 : 26,
+                            color: shouldHighlight
+                                ? Colors.orange[600]
+                                : Colors.blue,
                           ),
                         ),
                       );
@@ -2130,22 +2370,32 @@ class _GachaPageState extends State<GachaPage> {
                 ],
                 // 学習記録切り替えボタン
                 FutureBuilder<LearningStatus>(
-                  future: p != null ? _getProblemLearningStatus(p) : Future.value(LearningStatus.none),
+                  future: p != null
+                      ? _getProblemLearningStatus(p)
+                      : Future.value(LearningStatus.none),
                   builder: (context, snapshot) {
-                    final isRecorded = p != null && _scratchPaperRecordedProblems.contains(_problemKey(p));
-                    final savedStatus = snapshot.hasData ? snapshot.data! : LearningStatus.none;
-                    
+                    final isRecorded =
+                        p != null &&
+                        _scratchPaperRecordedProblems.contains(_problemKey(p));
+                    final savedStatus = snapshot.hasData
+                        ? snapshot.data!
+                        : LearningStatus.none;
+
                     if (isRecorded && savedStatus != LearningStatus.none) {
                       // 計算用紙で記録済みの場合、保存された状態を表示
                       return Container(
                         decoration: BoxDecoration(
                           color: savedStatus.color.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: savedStatus.color.withOpacity(0.3), width: 2),
+                          border: Border.all(
+                            color: savedStatus.color.withOpacity(0.3),
+                            width: 2,
+                          ),
                         ),
                         child: IconButton(
                           focusNode: _noFocusNode,
-                          tooltip: '${l10n.recordSavedAt('')}: ${savedStatus.getLocalizedTooltip(context)}',
+                          tooltip:
+                              '${l10n.recordSavedAt('')}: ${savedStatus.getLocalizedTooltip(context)}',
                           onPressed: null, // 無効化
                           padding: iconPadding,
                           constraints: iconConstraints,
@@ -2160,7 +2410,7 @@ class _GachaPageState extends State<GachaPage> {
                     } else {
                       // 通常の学習記録ボタン
                       return ValueListenableBuilder<ProblemStatus>(
-                  valueListenable: _pendingNotifiers[idx],
+                        valueListenable: _pendingNotifiers[idx],
                         builder: (context, problemStatus, child) {
                           // ProblemStatusをLearningStatusに変換
                           LearningStatus learningStatus;
@@ -2178,20 +2428,20 @@ class _GachaPageState extends State<GachaPage> {
                               learningStatus = LearningStatus.none;
                               break;
                           }
-                          
-                    return IconButton(
-                      focusNode: _noFocusNode,
-                      tooltip: _getStatusTooltip(context, learningStatus),
-                      onPressed: () => _cycleLearningStatus(idx),
-                      padding: iconPadding,
-                      constraints: iconConstraints,
-                      visualDensity: iconVisualDensity,
-                      icon: Icon(
-                        learningStatus.icon,
-                        size: 28,
-                        color: learningStatus.color,
-                      ),
-                    );
+
+                          return IconButton(
+                            focusNode: _noFocusNode,
+                            tooltip: _getStatusTooltip(context, learningStatus),
+                            onPressed: () => _cycleLearningStatus(idx),
+                            padding: iconPadding,
+                            constraints: iconConstraints,
+                            visualDensity: iconVisualDensity,
+                            icon: Icon(
+                              learningStatus.icon,
+                              size: 28,
+                              color: learningStatus.color,
+                            ),
+                          );
                         },
                       );
                     }
@@ -2200,11 +2450,17 @@ class _GachaPageState extends State<GachaPage> {
                 SizedBox(width: gapBeforeSave),
                 // セーブボタン - 一番右
                 FutureBuilder<LearningStatus>(
-                  future: p != null ? _getProblemLearningStatus(p) : Future.value(LearningStatus.none),
+                  future: p != null
+                      ? _getProblemLearningStatus(p)
+                      : Future.value(LearningStatus.none),
                   builder: (context, snapshot) {
-                    final isRecorded = p != null && _scratchPaperRecordedProblems.contains(_problemKey(p));
-                    final savedStatus = snapshot.hasData ? snapshot.data! : LearningStatus.none;
-                    
+                    final isRecorded =
+                        p != null &&
+                        _scratchPaperRecordedProblems.contains(_problemKey(p));
+                    final savedStatus = snapshot.hasData
+                        ? snapshot.data!
+                        : LearningStatus.none;
+
                     if (isRecorded && savedStatus != LearningStatus.none) {
                       // 計算用紙で記録済みの場合、通常の保存アイコンをdisable状態で表示
                       return IconButton(
@@ -2228,8 +2484,8 @@ class _GachaPageState extends State<GachaPage> {
                           return IconButton(
                             focusNode: _noFocusNode,
                             tooltip: l10n.saveLearningRecord,
-                            onPressed: problemStatus != ProblemStatus.none 
-                                ? () => _saveSingleLearningRecord(idx) 
+                            onPressed: problemStatus != ProblemStatus.none
+                                ? () => _saveSingleLearningRecord(idx)
                                 : null,
                             padding: iconPadding,
                             constraints: iconConstraints,
@@ -2237,8 +2493,8 @@ class _GachaPageState extends State<GachaPage> {
                             icon: Icon(
                               Icons.save,
                               size: 28,
-                              color: problemStatus != ProblemStatus.none 
-                                  ? Colors.blue 
+                              color: problemStatus != ProblemStatus.none
+                                  ? Colors.blue
                                   : Colors.grey[400],
                             ),
                           );
@@ -2287,9 +2543,13 @@ class _GachaPageState extends State<GachaPage> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.grey.shade300),
                       ),
-                      child: Center(child: Text(widget.prefsPrefix == 'physics_math'
-                          ? l10n.noProblems
-                          : '${_getLocalizedLevelName(context, (idx < _slotLevels.length) ? _slotLevels[idx] : 0)} ${l10n.noProblems}')),
+                      child: Center(
+                        child: Text(
+                          widget.prefsPrefix == 'physics_math'
+                              ? l10n.noProblems
+                              : '${_getLocalizedLevelName(context, (idx < _slotLevels.length) ? _slotLevels[idx] : 0)} ${l10n.noProblems}',
+                        ),
+                      ),
                     );
                   }
                   return const SizedBox.shrink();
@@ -2305,7 +2565,8 @@ class _GachaPageState extends State<GachaPage> {
                     RepaintBoundary(
                       child: Center(
                         child: PhysicsMathCaseDisplay(
-                          equation: p.getLocalizedEquation(context) ?? p.equation!,
+                          equation:
+                              p.getLocalizedEquation(context) ?? p.equation!,
                           conditions: p.getLocalizedConditions(context)!,
                           constants: p.getLocalizedConstants(context),
                           fontSize: 24,
@@ -2324,7 +2585,9 @@ class _GachaPageState extends State<GachaPage> {
                       ),
                     ),
                   // ヒント表示
-                  if (_showHint[idx] && p.getLocalizedHint(context) != null && p.getLocalizedHint(context)!.isNotEmpty) ...[
+                  if (_showHint[idx] &&
+                      p.getLocalizedHint(context) != null &&
+                      p.getLocalizedHint(context)!.isNotEmpty) ...[
                     const SizedBox(height: 20),
                     Container(
                       width: double.infinity,
@@ -2367,22 +2630,59 @@ class _GachaPageState extends State<GachaPage> {
                   ],
                   const SizedBox(height: 38),
                   Center(
-                    child: ElevatedButton(
-                      focusNode: _noFocusNode,
-                      onPressed: () => _toggleAnswer(idx),
-                      child: Text(
-                        _showAnswer[idx] ? l10n.hideAnswer : l10n.showAnswer,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          focusNode: _noFocusNode,
+                          onPressed: () => _toggleAnswer(idx),
+                          child: Text(
+                            _showAnswer[idx]
+                                ? l10n.hideAnswer
+                                : l10n.showAnswer,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          style:
+                              ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 12,
+                                ),
+                              ).copyWith(
+                                overlayColor: MaterialStateProperty.all(
+                                  Colors.transparent,
+                                ),
+                                elevation: MaterialStateProperty.all(0),
+                              ),
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ).copyWith(
-                        overlayColor: MaterialStateProperty.all(Colors.transparent),
-                        elevation: MaterialStateProperty.all(0),
-                      ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          focusNode: _noFocusNode,
+                          onPressed: () => _openAiChat(idx, p),
+                          child: Text(
+                            l10n.askAi,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          style:
+                              ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 12,
+                                ),
+                              ).copyWith(
+                                overlayColor: MaterialStateProperty.all(
+                                  Colors.transparent,
+                                ),
+                                elevation: MaterialStateProperty.all(0),
+                              ),
+                        ),
+                      ],
                     ),
                   ),
                   if (_showAnswer[idx]) ...[
@@ -2394,10 +2694,13 @@ class _GachaPageState extends State<GachaPage> {
                           // 全ガチャの画像を不定方程式と同じサイズ感（1.65倍）で表示
                           final maxHeight = 220 * 1.65;
                           final minHeight = 220 * 1.65;
-                          
+
                           if (snap.connectionState != ConnectionState.done) {
                             return ConstrainedBox(
-                              constraints: BoxConstraints(maxHeight: minHeight, minHeight: minHeight),
+                              constraints: BoxConstraints(
+                                maxHeight: minHeight,
+                                minHeight: minHeight,
+                              ),
                               child: const SizedBox.shrink(),
                             );
                           }
@@ -2406,11 +2709,14 @@ class _GachaPageState extends State<GachaPage> {
                             // 全画像を不定方程式と同じサイズ感（1.65倍）で統一し、センタリング
                             return Center(
                               child: ConstrainedBox(
-                                constraints: BoxConstraints(maxHeight: maxHeight),
+                                constraints: BoxConstraints(
+                                  maxHeight: maxHeight,
+                                ),
                                 child: Image.asset(
                                   p.imageAsset!,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const SizedBox.shrink(),
                                 ),
                               ),
                             );
@@ -2443,7 +2749,10 @@ class _GachaPageState extends State<GachaPage> {
                           child: MixedTextMath(
                             p.getLocalizedAnswer(context),
                             labelStyle: const TextStyle(fontSize: 19),
-                            mathStyle: const TextStyle(fontSize: 28, color: Colors.green),
+                            mathStyle: const TextStyle(
+                              fontSize: 28,
+                              color: Colors.green,
+                            ),
                             forceTex: false,
                           ),
                         ),
@@ -2472,7 +2781,8 @@ class _GachaPageState extends State<GachaPage> {
                                 FutureBuilder<bool>(
                                   future: _assetExists(s.imageAsset!),
                                   builder: (ctx, snap) {
-                                    if (snap.connectionState != ConnectionState.done) {
+                                    if (snap.connectionState !=
+                                        ConnectionState.done) {
                                       return const SizedBox.shrink();
                                     }
                                     if (snap.hasData && snap.data == true) {
@@ -2482,11 +2792,19 @@ class _GachaPageState extends State<GachaPage> {
                                           const SizedBox(height: 6),
                                           Center(
                                             child: ConstrainedBox(
-                                              constraints: const BoxConstraints(maxHeight: 400),
+                                              constraints: const BoxConstraints(
+                                                maxHeight: 400,
+                                              ),
                                               child: Image.asset(
                                                 s.imageAsset!,
                                                 fit: BoxFit.contain,
-                                                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                                                errorBuilder:
+                                                    (
+                                                      context,
+                                                      error,
+                                                      stackTrace,
+                                                    ) =>
+                                                        const SizedBox.shrink(),
                                               ),
                                             ),
                                           ),
@@ -2511,4 +2829,3 @@ class _GachaPageState extends State<GachaPage> {
     );
   }
 }
-

@@ -124,6 +124,10 @@ extension MathProblemLocalization on MathProblem {
   }
 
   String? getLocalizedShortExplanation(BuildContext context) {
+    final langCode = Localizations.localeOf(context).languageCode;
+    if (langCode == 'ja') {
+      return shortExplanation;
+    }
     final localeTag = Localizations.localeOf(context).toLanguageTag();
     final translation =
         TranslationManager.getTranslation(localeTag, id, expectedStepsLength: steps.length);

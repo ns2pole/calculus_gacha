@@ -388,6 +388,36 @@ class AppLocalizationsJa extends AppLocalizations {
   String get showAnswer => '答えを見る';
 
   @override
+  String get askAi => 'AIに聞く';
+
+  @override
+  String get askAiSheetTitle => 'AIに聞く';
+
+  @override
+  String get askAiGreeting => '途中式や迷っている点があれば教えてください！\n下から選ぶか、そのまま入力しても大丈夫です。';
+
+  @override
+  String get askAiChoiceApproach => '問題の解法の方針・ヒントを知りたい';
+
+  @override
+  String get askAiChoiceAnalog => '類題でもう少し簡単に説明してほしい';
+
+  @override
+  String get askAiMoreDetail => 'もう少し詳しく';
+
+  @override
+  String get askAiSend => '送信';
+
+  @override
+  String get askAiPlaceholder => 'メッセージを入力';
+
+  @override
+  String get askAiImageComingSoon => '画像の送信は準備中です';
+
+  @override
+  String get askAiError => '通信に失敗しました。もう一度お試しください。';
+
+  @override
   String recordSaved(String status) {
     return '学習記録を保存しました: $status';
   }

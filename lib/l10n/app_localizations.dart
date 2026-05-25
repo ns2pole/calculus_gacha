@@ -800,6 +800,66 @@ abstract class AppLocalizations {
   /// **'答えを見る'**
   String get showAnswer;
 
+  /// No description provided for @askAi.
+  ///
+  /// In ja, this message translates to:
+  /// **'AIに聞く'**
+  String get askAi;
+
+  /// No description provided for @askAiSheetTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'AIに聞く'**
+  String get askAiSheetTitle;
+
+  /// No description provided for @askAiGreeting.
+  ///
+  /// In ja, this message translates to:
+  /// **'途中式や迷っている点があれば教えてください！\n下から選ぶか、そのまま入力しても大丈夫です。'**
+  String get askAiGreeting;
+
+  /// No description provided for @askAiChoiceApproach.
+  ///
+  /// In ja, this message translates to:
+  /// **'問題の解法の方針・ヒントを知りたい'**
+  String get askAiChoiceApproach;
+
+  /// No description provided for @askAiChoiceAnalog.
+  ///
+  /// In ja, this message translates to:
+  /// **'類題でもう少し簡単に説明してほしい'**
+  String get askAiChoiceAnalog;
+
+  /// No description provided for @askAiMoreDetail.
+  ///
+  /// In ja, this message translates to:
+  /// **'もう少し詳しく'**
+  String get askAiMoreDetail;
+
+  /// No description provided for @askAiSend.
+  ///
+  /// In ja, this message translates to:
+  /// **'送信'**
+  String get askAiSend;
+
+  /// No description provided for @askAiPlaceholder.
+  ///
+  /// In ja, this message translates to:
+  /// **'メッセージを入力'**
+  String get askAiPlaceholder;
+
+  /// No description provided for @askAiImageComingSoon.
+  ///
+  /// In ja, this message translates to:
+  /// **'画像の送信は準備中です'**
+  String get askAiImageComingSoon;
+
+  /// No description provided for @askAiError.
+  ///
+  /// In ja, this message translates to:
+  /// **'通信に失敗しました。もう一度お試しください。'**
+  String get askAiError;
+
   /// No description provided for @recordSaved.
   ///
   /// In ja, this message translates to:

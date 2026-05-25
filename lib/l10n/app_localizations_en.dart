@@ -400,6 +400,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showAnswer => 'Show Answer';
 
   @override
+  String get askAi => 'Ask AI';
+
+  @override
+  String get askAiSheetTitle => 'Ask AI';
+
+  @override
+  String get askAiGreeting =>
+      'Tell me your work so far or where you are stuck!\nYou can choose an option below or type freely.';
+
+  @override
+  String get askAiChoiceApproach => 'I want a solution strategy or hint';
+
+  @override
+  String get askAiChoiceAnalog => 'Explain with a simpler similar problem';
+
+  @override
+  String get askAiMoreDetail => 'More detail';
+
+  @override
+  String get askAiSend => 'Send';
+
+  @override
+  String get askAiPlaceholder => 'Enter a message';
+
+  @override
+  String get askAiImageComingSoon => 'Image sending is coming soon';
+
+  @override
+  String get askAiError => 'Could not connect. Please try again.';
+
+  @override
   String recordSaved(String status) {
     return 'Learning record saved: $status';
   }
