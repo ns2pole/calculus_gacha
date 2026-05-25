@@ -26,6 +26,8 @@ export function parseAiChatRequest(body: unknown): AiChatRequest {
       questionText: context.questionText,
       category: readString(context.category),
       level: readString(context.level),
+      referenceAnswer: readString(context.referenceAnswer),
+      referenceSolution: readString(context.referenceSolution),
       hintShown: Boolean(context.hintShown),
       answerShown: Boolean(context.answerShown),
       attachmentsEnabled: Boolean(context.attachmentsEnabled),

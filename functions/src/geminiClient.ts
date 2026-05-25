@@ -1,25 +1,96 @@
-import {buildGeminiContents, buildSystemInstruction} from "./prompt";
+import {
+  buildGeminiContents,
+  buildSystemInstruction,
+  GeminiContent,
+  isBriefGuidanceRequest,
+} from "./prompt";
 import {AiChatRequest} from "./types";
 import {HttpError} from "./http";
 
 const model = "gemini-2.5-flash";
 const endpoint =
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-const maxOutputTokens = 2048;
+const defaultMaxOutputTokens = 1280;
+const briefGuidanceMaxOutputTokens = 512;
 const thinkingBudget = 256;
 
 export async function generateAiChatReply(
   apiKey: string,
   request: AiChatRequest,
 ): Promise<string> {
+  const systemInstruction = buildSystemInstruction(request);
+  const contents = buildGeminiContents(request);
+  const maxOutputTokens = resolveMaxOutputTokens(request);
+  let result = await requestGeminiText(apiKey, systemInstruction, contents, maxOutputTokens);
+  if (result.finishReason === "MAX_TOKENS") {
+    result = await requestGeminiText(
+      apiKey,
+      systemInstruction,
+      [
+        ...contents,
+        {
+          role: "model",
+          parts: [{text: result.text}],
+        },
+        {
+          role: "user",
+          parts: [{
+            text: [
+              "直前の返答は長すぎて途中で切れています。",
+              "内容を大幅に短くし、ヒントや方針なら2〜3文だけで、",
+              "必ず文と数式を完結させて書き直してください。",
+            ].join(""),
+          }],
+        },
+      ],
+      briefGuidanceMaxOutputTokens,
+    );
+  }
+
+  const text = result.text;
+
+  if (!hasSuspiciousLatex(text)) {
+    return text;
+  }
+
+  return (await requestGeminiText(
+    apiKey,
+    systemInstruction,
+    [
+      ...contents,
+      {
+        role: "model",
+        parts: [{text}],
+      },
+      {
+        role: "user",
+        parts: [{
+          text: [
+            "直前の返答はLaTeX構文が壊れている可能性があります。",
+            "$...$、$$...$$、{}、\\left/\\right の対応を確認し、",
+            "複雑な式は短く分けて、同じ内容をレンダリングしやすい形で書き直してください。",
+          ].join(""),
+        }],
+      },
+    ],
+    maxOutputTokens,
+  )).text;
+}
+
+async function requestGeminiText(
+  apiKey: string,
+  systemInstruction: string,
+  contents: GeminiContent[],
+  maxOutputTokens: number,
+): Promise<GeminiTextResult> {
   const response = await fetch(`${endpoint}?key=${encodeURIComponent(apiKey)}`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
       system_instruction: {
-        parts: [{text: buildSystemInstruction(request)}],
+        parts: [{text: systemInstruction}],
       },
-      contents: buildGeminiContents(request),
+      contents,
       generationConfig: {
         temperature: 0.25,
         maxOutputTokens,
@@ -37,14 +108,6 @@ export async function generateAiChatReply(
   }
 
   const candidate = body?.candidates?.[0];
-  if (candidate?.finishReason === "MAX_TOKENS") {
-    throw new HttpError(
-      502,
-      "truncated_gemini_response",
-      "AIの応答が長くなりすぎました。もう少し短く質問してください。",
-    );
-  }
-
   const text = candidate?.content?.parts
     ?.map((part) => part.text ?? "")
     .join("")
@@ -52,7 +115,61 @@ export async function generateAiChatReply(
   if (text == null || text.length === 0) {
     throw new HttpError(502, "empty_gemini_response", "AIから空の応答が返されました。");
   }
-  return text;
+  return {
+    text,
+    finishReason: candidate?.finishReason,
+  };
+}
+
+function resolveMaxOutputTokens(request: AiChatRequest): number {
+  return isBriefGuidanceRequest(request.userMessage.text) ?
+    briefGuidanceMaxOutputTokens :
+    defaultMaxOutputTokens;
+}
+
+function hasSuspiciousLatex(text: string): boolean {
+  const dollarCounts = countMathDelimiters(text);
+  if (dollarCounts.single % 2 !== 0 || dollarCounts.double % 2 !== 0) {
+    return true;
+  }
+
+  let braceDepth = 0;
+  for (const char of text) {
+    if (char === "{") braceDepth++;
+    if (char === "}") braceDepth--;
+    if (braceDepth < 0) return true;
+  }
+  if (braceDepth !== 0) return true;
+
+  const leftCount = text.match(/\\left\b/g)?.length ?? 0;
+  const rightCount = text.match(/\\right\b/g)?.length ?? 0;
+  return leftCount !== rightCount;
+}
+
+function countMathDelimiters(text: string): {single: number; double: number} {
+  let single = 0;
+  let double = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] !== "$" || isEscaped(text, i)) continue;
+
+    if (text[i + 1] === "$") {
+      double++;
+      i++;
+    } else {
+      single++;
+    }
+  }
+
+  return {single, double};
+}
+
+function isEscaped(text: string, index: number): boolean {
+  let slashCount = 0;
+  for (let i = index - 1; i >= 0 && text[i] === "\\"; i--) {
+    slashCount++;
+  }
+  return slashCount % 2 === 1;
 }
 
 interface GeminiResponse {
@@ -67,4 +184,9 @@ interface GeminiResponse {
   error?: {
     message?: string;
   };
+}
+
+interface GeminiTextResult {
+  text: string;
+  finishReason?: string;
 }

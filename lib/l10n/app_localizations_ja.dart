@@ -388,16 +388,22 @@ class AppLocalizationsJa extends AppLocalizations {
   String get showAnswer => '答えを見る';
 
   @override
-  String get askAi => 'AIに聞いてみる';
+  String get askAi => 'AIに聞く';
 
   @override
   String get askAiSheetTitle => 'AIに聞く';
 
   @override
-  String get askAiGreeting => '途中式や迷っている点があれば教えてください！\n下から選ぶか、そのまま入力しても大丈夫です。';
+  String get askAiGreeting => 'もし困っていることがあったら教えてください！\n下から選ぶか、疑問を入力しても大丈夫です。';
 
   @override
-  String get askAiChoiceApproach => '問題の解法の方針・ヒントを知りたい';
+  String get askAiChoiceHint => 'ヒントを教えて';
+
+  @override
+  String get askAiChoiceApproach => '方針だけ教えて';
+
+  @override
+  String get askAiChoiceFirstStep => '最初の一手だけ教えて';
 
   @override
   String get askAiChoiceAnalog => '類題でもう少し簡単に説明してほしい';

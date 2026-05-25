@@ -13,6 +13,9 @@ Future<void> showAiChatBottomSheet({
   required AiChatContext chatContext,
   AiChatClient? client,
   MathTextBuilder? mathTextBuilder,
+  MathTextBuilder? assistantTextBuilder,
+  List<AiChatMessage> initialMessages = const [],
+  ValueChanged<List<AiChatMessage>>? onMessagesChanged,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -22,6 +25,9 @@ Future<void> showAiChatBottomSheet({
       chatContext: chatContext,
       client: client ?? AiChatClientFactory.createDefault(),
       mathTextBuilder: mathTextBuilder,
+      assistantTextBuilder: assistantTextBuilder,
+      initialMessages: initialMessages,
+      onMessagesChanged: onMessagesChanged,
     ),
   );
 }
@@ -30,12 +36,18 @@ class AiChatBottomSheet extends StatefulWidget {
   final AiChatContext chatContext;
   final AiChatClient client;
   final MathTextBuilder? mathTextBuilder;
+  final MathTextBuilder? assistantTextBuilder;
+  final List<AiChatMessage> initialMessages;
+  final ValueChanged<List<AiChatMessage>>? onMessagesChanged;
 
   const AiChatBottomSheet({
     super.key,
     required this.chatContext,
     required this.client,
     this.mathTextBuilder,
+    this.assistantTextBuilder,
+    this.initialMessages = const [],
+    this.onMessagesChanged,
   });
 
   @override
@@ -45,15 +57,26 @@ class AiChatBottomSheet extends StatefulWidget {
 class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
-  final List<AiChatMessage> _messages = [];
+  late final List<AiChatMessage> _messages;
   bool _isSending = false;
   String? _errorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _messages = List<AiChatMessage>.of(widget.initialMessages);
+    if (_messages.isNotEmpty) _scrollToBottom();
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _notifyMessagesChanged() {
+    widget.onMessagesChanged?.call(List<AiChatMessage>.unmodifiable(_messages));
   }
 
   Future<void> _sendText(String text, {String? choiceId}) async {
@@ -74,6 +97,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       _errorText = null;
       _controller.clear();
     });
+    _notifyMessagesChanged();
     _scrollToBottom();
 
     try {
@@ -87,6 +111,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         _messages.add(response);
         _isSending = false;
       });
+      _notifyMessagesChanged();
       _scrollToBottom();
     } on AiChatClientException catch (e) {
       if (!mounted) return;
@@ -143,7 +168,8 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
                   children: [
                     _AssistantBubble(
                       text: l10n.askAiGreeting,
-                      mathTextBuilder: widget.mathTextBuilder,
+                      mathTextBuilder:
+                          widget.assistantTextBuilder ?? widget.mathTextBuilder,
                     ),
                     if (_messages.isEmpty) ...[
                       const SizedBox(height: 12),
@@ -154,6 +180,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
                       _MessageBubble(
                         message: message,
                         mathTextBuilder: widget.mathTextBuilder,
+                        assistantTextBuilder: widget.assistantTextBuilder,
                       ),
                     ],
                     if (_isSending) ...[
@@ -251,14 +278,18 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       runSpacing: 8,
       children: [
         ActionChip(
-          label: Text(l10n.askAiChoiceApproach),
-          onPressed: () =>
-              _sendText(l10n.askAiChoiceApproach, choiceId: 'approach_hint'),
+          label: Text(l10n.askAiChoiceHint),
+          onPressed: () => _sendText(l10n.askAiChoiceHint, choiceId: 'hint'),
         ),
         ActionChip(
-          label: Text(l10n.askAiChoiceAnalog),
+          label: Text(l10n.askAiChoiceApproach),
           onPressed: () =>
-              _sendText(l10n.askAiChoiceAnalog, choiceId: 'easier_analog'),
+              _sendText(l10n.askAiChoiceApproach, choiceId: 'approach_only'),
+        ),
+        ActionChip(
+          label: Text(l10n.askAiChoiceFirstStep),
+          onPressed: () =>
+              _sendText(l10n.askAiChoiceFirstStep, choiceId: 'first_step'),
         ),
       ],
     );
@@ -271,13 +302,6 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
         child: Row(
           children: [
-            Tooltip(
-              message: l10n.askAiImageComingSoon,
-              child: IconButton(
-                onPressed: widget.chatContext.attachmentsEnabled ? () {} : null,
-                icon: const Icon(Icons.image_outlined),
-              ),
-            ),
             Expanded(
               child: TextField(
                 controller: _controller,
@@ -307,8 +331,13 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
 class _MessageBubble extends StatelessWidget {
   final AiChatMessage message;
   final MathTextBuilder? mathTextBuilder;
+  final MathTextBuilder? assistantTextBuilder;
 
-  const _MessageBubble({required this.message, this.mathTextBuilder});
+  const _MessageBubble({
+    required this.message,
+    this.mathTextBuilder,
+    this.assistantTextBuilder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +345,7 @@ class _MessageBubble extends StatelessWidget {
     if (!isUser) {
       return _AssistantBubble(
         text: message.text,
-        mathTextBuilder: mathTextBuilder,
+        mathTextBuilder: assistantTextBuilder ?? mathTextBuilder,
       );
     }
 

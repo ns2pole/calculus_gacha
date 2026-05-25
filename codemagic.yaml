@@ -17,6 +17,9 @@
 #
 # 4. このファイルを push → アプリで YAML ワークフロー ios-appstore-release を実行
 #
+#    App Store の "What's New" はリポジトリ直下の release_notes.json を Codemagic が自動で使用する。
+#    iOS 審査提出ではプライマリロケール分の "What's New" が必須。
+#
 # 5. Firebase（Android / iOS ビルド用）— 環境変数グループ firebase_credentials を作成し Secret を追加:
 #    GOOGLE_SERVICES_JSON = Firebase Console からダウンロードした google-services.json の全文
 #    （改行込みの JSON をそのまま貼り付け。base64 なら GOOGLE_SERVICES_JSON_BASE64 でも可）

@@ -5,6 +5,8 @@ export interface AiChatContext {
   questionText: string;
   category?: string | null;
   level?: string | null;
+  referenceAnswer?: string | null;
+  referenceSolution?: string | null;
   hintShown?: boolean;
   answerShown?: boolean;
   attachmentsEnabled?: boolean;

@@ -815,14 +815,26 @@ abstract class AppLocalizations {
   /// No description provided for @askAiGreeting.
   ///
   /// In ja, this message translates to:
-  /// **'途中式や迷っている点があれば教えてください！\n下から選ぶか、そのまま入力しても大丈夫です。'**
+  /// **'もし困っていることがあったら教えてください！\n下から選ぶか、疑問を入力しても大丈夫です。'**
   String get askAiGreeting;
+
+  /// No description provided for @askAiChoiceHint.
+  ///
+  /// In ja, this message translates to:
+  /// **'ヒントを教えて'**
+  String get askAiChoiceHint;
 
   /// No description provided for @askAiChoiceApproach.
   ///
   /// In ja, this message translates to:
-  /// **'問題の解法の方針・ヒントを知りたい'**
+  /// **'方針だけ教えて'**
   String get askAiChoiceApproach;
+
+  /// No description provided for @askAiChoiceFirstStep.
+  ///
+  /// In ja, this message translates to:
+  /// **'最初の一手だけ教えて'**
+  String get askAiChoiceFirstStep;
 
   /// No description provided for @askAiChoiceAnalog.
   ///

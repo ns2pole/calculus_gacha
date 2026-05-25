@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import '../../models/ai_chat_context.dart';
+import '../../models/ai_chat_message.dart';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
 import '../../utils/l10n_utils.dart';
@@ -235,6 +236,7 @@ class _GachaPageState extends State<GachaPage> {
 
   // 計算用紙で学習記録を登録した問題を追跡
   final Set<String> _scratchPaperRecordedProblems = {};
+  final Map<String, List<AiChatMessage>> _aiChatHistories = {};
 
   // 学習記録ボタンが押された時に計算用紙ボタンを明るくするための状態
   final List<bool> _shouldHighlightScratchPaperButton = [false, false, false];
@@ -1102,6 +1104,9 @@ class _GachaPageState extends State<GachaPage> {
   void _openAiChat(int idx, MathProblem problem) {
     final l10n = AppLocalizations.of(context)!;
     final questionText = _buildAiChatQuestionText(problem);
+    final referenceAnswer = _buildAiChatReferenceAnswer(problem);
+    final referenceSolution = _buildAiChatReferenceSolution(problem);
+    final problemKey = _problemKey(problem);
 
     showAiChatBottomSheet(
       context: context,
@@ -1110,10 +1115,17 @@ class _GachaPageState extends State<GachaPage> {
         questionText: questionText,
         category: problem.getLocalizedCategory(context),
         level: problem.getLocalizedLevel(context),
+        referenceAnswer: referenceAnswer,
+        referenceSolution: referenceSolution,
         hintShown: _showHint[idx],
         answerShown: _showAnswer[idx],
       ),
       mathTextBuilder: _buildAiChatText,
+      assistantTextBuilder: _buildAiChatAssistantText,
+      initialMessages: _aiChatHistories[problemKey] ?? const [],
+      onMessagesChanged: (messages) {
+        _aiChatHistories[problemKey] = List<AiChatMessage>.of(messages);
+      },
     );
   }
 
@@ -1132,11 +1144,28 @@ class _GachaPageState extends State<GachaPage> {
       labelStyle: const TextStyle(fontSize: 16, height: 1.45),
       mathStyle: const TextStyle(fontSize: 18),
       displayInlineFractions: true,
+      plainTextOnMathError: true,
     );
+  }
+
+  Widget _buildAiChatAssistantText(String text) {
+    if (!_containsDelimitedTex(text)) {
+      return Text(
+        text,
+        softWrap: true,
+        style: const TextStyle(fontSize: 16, height: 1.45),
+      );
+    }
+
+    return _buildAiChatText(text);
   }
 
   bool _containsTex(String text) {
     return RegExp(r'(\\[A-Za-z]+|[_^]|\$)').hasMatch(text);
+  }
+
+  bool _containsDelimitedTex(String text) {
+    return RegExp(r'(^|\n)\s*tex[:：]|\$').hasMatch(text);
   }
 
   String _buildAiChatQuestionText(MathProblem problem) {
@@ -1149,6 +1178,31 @@ class _GachaPageState extends State<GachaPage> {
     return _joinAiChatQuestionParts(
       problem.getLocalizedQuestion(context).split(RegExp(r'\s*\n+\s*')),
     );
+  }
+
+  String _buildAiChatReferenceAnswer(MathProblem problem) {
+    return _joinAiChatQuestionParts(
+      problem.getLocalizedAnswer(context).split(RegExp(r'\s*\n+\s*')),
+    );
+  }
+
+  String? _buildAiChatReferenceSolution(MathProblem problem) {
+    const maxReferenceSolutionLength = 6000;
+    final solution = problem
+        .getLocalizedSteps(context)
+        .map((step) => step.tex.trim())
+        .where((step) => step.isNotEmpty)
+        .map(_normalizePrimeNotation)
+        .join('\n');
+
+    if (solution.isEmpty) {
+      return null;
+    }
+    if (solution.length <= maxReferenceSolutionLength) {
+      return solution;
+    }
+
+    return '${solution.substring(0, maxReferenceSolutionLength)}\n（以降省略）';
   }
 
   String _joinAiChatQuestionParts(Iterable<String> parts) {

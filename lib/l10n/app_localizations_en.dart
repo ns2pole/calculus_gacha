@@ -407,10 +407,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get askAiGreeting =>
-      'Tell me your work so far or where you are stuck!\nYou can choose an option below or type freely.';
+      'If you\'re stuck, let me know!\nYou can choose an option below or type your question.';
 
   @override
-  String get askAiChoiceApproach => 'I want a solution strategy or hint';
+  String get askAiChoiceHint => 'Give me a hint';
+
+  @override
+  String get askAiChoiceApproach => 'Just give me the strategy';
+
+  @override
+  String get askAiChoiceFirstStep => 'Show only the first step';
 
   @override
   String get askAiChoiceAnalog => 'Explain with a simpler similar problem';

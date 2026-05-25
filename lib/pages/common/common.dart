@@ -21,6 +21,7 @@ class MixedTextMath extends StatelessWidget {
   final TextStyle? mathStyle;
   final bool forceTex;
   final bool displayInlineFractions;
+  final bool plainTextOnMathError;
 
   const MixedTextMath(
     this.mixed, {
@@ -28,6 +29,7 @@ class MixedTextMath extends StatelessWidget {
     this.mathStyle,
     this.forceTex = false,
     this.displayInlineFractions = false,
+    this.plainTextOnMathError = false,
     Key? key,
   }) : super(key: key);
 
@@ -128,6 +130,15 @@ class MixedTextMath extends StatelessWidget {
   /// 出力: Math.texウィジェット、またはエラー時はSelectableText
   Widget _mathCoreSafe(String tex, TextStyle style, {MathStyle? mathStyle}) {
     try {
+      if (plainTextOnMathError) {
+        return Math.tex(
+          tex,
+          textStyle: style,
+          mathStyle: mathStyle ?? MathStyle.text,
+          onErrorFallback: (_) => SelectableText(tex, style: style),
+        );
+      }
+
       return Math.tex(
         tex,
         textStyle: style,
@@ -206,9 +217,6 @@ class MixedTextMath extends StatelessWidget {
   /// 段落区切り（空行）を検出: "\n\n" や "\n  \n"
   static final RegExp _paraSplit = RegExp(r'\n\s*\n', dotAll: true);
 
-  /// インライン数式を検出: "$x^2$" → "x^2"
-  static final RegExp _inlineDollar = RegExp(r'\$(.+?)\$', dotAll: true);
-
   /// ブロック数式を検出: "$$x^2 + y^2 = 1$$" → "x^2 + y^2 = 1"
   static final RegExp _blockMath = RegExp(
     r'^\s*\$\$(.+?)\$\$\s*$',
@@ -267,6 +275,98 @@ class MixedTextMath extends StatelessWidget {
     final end = s.length - trailing.length;
     final core = (end > start) ? s.substring(start, end) : '';
     return {'leading': leading, 'core': core, 'trailing': trailing};
+  }
+
+  void _appendTextSpan(List<InlineSpan> spans, String text, TextStyle style) {
+    if (text.isEmpty) return;
+    spans.add(TextSpan(text: text, style: style));
+  }
+
+  int _findClosingSingleDollar(String source, int start) {
+    for (var i = start; i < source.length; i++) {
+      if (source.codeUnitAt(i) != 36) continue; // $
+      final isPartOfDoubleDollar =
+          (i > 0 && source.codeUnitAt(i - 1) == 36) ||
+          (i + 1 < source.length && source.codeUnitAt(i + 1) == 36);
+      if (!isPartOfDoubleDollar) return i;
+    }
+    return -1;
+  }
+
+  void _appendDollarMathSpans({
+    required List<InlineSpan> spans,
+    required String source,
+    required double maxWidth,
+    required TextStyle textStyle,
+  }) {
+    var cursor = 0;
+
+    while (cursor < source.length) {
+      final dollarIndex = source.indexOf(r'$', cursor);
+      if (dollarIndex < 0) {
+        _appendTextSpan(spans, source.substring(cursor), textStyle);
+        return;
+      }
+
+      _appendTextSpan(spans, source.substring(cursor, dollarIndex), textStyle);
+
+      if (source.startsWith(r'$$', dollarIndex)) {
+        final end = source.indexOf(r'$$', dollarIndex + 2);
+        if (end < 0) {
+          _appendTextSpan(spans, source.substring(dollarIndex), textStyle);
+          return;
+        }
+
+        final mathBody = source.substring(dollarIndex + 2, end).trim();
+        if (mathBody.isEmpty) {
+          _appendTextSpan(
+            spans,
+            source.substring(dollarIndex, end + 2),
+            textStyle,
+          );
+        } else {
+          spans.add(
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: _inlineMathWidgetConstrained(
+                mathBody,
+                maxWidth,
+                mathStyle ?? const TextStyle(fontSize: 22),
+              ),
+            ),
+          );
+        }
+        cursor = end + 2;
+        continue;
+      }
+
+      final end = _findClosingSingleDollar(source, dollarIndex + 1);
+      if (end < 0) {
+        _appendTextSpan(spans, source.substring(dollarIndex), textStyle);
+        return;
+      }
+
+      final mathBody = source.substring(dollarIndex + 1, end).trim();
+      if (mathBody.isEmpty) {
+        _appendTextSpan(
+          spans,
+          source.substring(dollarIndex, end + 1),
+          textStyle,
+        );
+      } else {
+        spans.add(
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: _inlineMathWidgetConstrained(
+              mathBody,
+              maxWidth,
+              mathStyle ?? const TextStyle(fontSize: 22),
+            ),
+          ),
+        );
+      }
+      cursor = end + 1;
+    }
   }
 
   TextStyle _defaultLabelStyle(BuildContext context) {
@@ -386,40 +486,13 @@ class MixedTextMath extends StatelessWidget {
                     }
 
                     if (core.isNotEmpty) {
-                      int lastIndex = 0;
-                      bool foundDollar = false;
-                      for (final m in _inlineDollar.allMatches(core)) {
-                        foundDollar = true;
-                        if (m.start > lastIndex) {
-                          spans.add(
-                            TextSpan(
-                              text: core.substring(lastIndex, m.start),
-                              style: labelStyle ?? defaultLabel,
-                            ),
-                          );
-                        }
-                        final mathBody = m.group(1) ?? '';
-                        spans.add(
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            child: _inlineMathWidgetConstrained(
-                              mathBody,
-                              maxW,
-                              mathStyle ?? const TextStyle(fontSize: 22),
-                            ),
-                          ),
+                      if (core.contains(r'$')) {
+                        _appendDollarMathSpans(
+                          spans: spans,
+                          source: core,
+                          maxWidth: maxW,
+                          textStyle: labelStyle ?? defaultLabel,
                         );
-                        lastIndex = m.end;
-                      }
-                      if (foundDollar) {
-                        if (lastIndex < core.length) {
-                          spans.add(
-                            TextSpan(
-                              text: core.substring(lastIndex),
-                              style: labelStyle ?? defaultLabel,
-                            ),
-                          );
-                        }
                       } else {
                         spans.add(
                           WidgetSpan(
@@ -456,37 +529,12 @@ class MixedTextMath extends StatelessWidget {
               }
 
               final spans = <InlineSpan>[];
-              int lastIndex = 0;
-              for (final m in _inlineDollar.allMatches(para)) {
-                if (m.start > lastIndex) {
-                  spans.add(
-                    TextSpan(
-                      text: para.substring(lastIndex, m.start),
-                      style: labelStyle ?? defaultLabel,
-                    ),
-                  );
-                }
-                final mathBody = m.group(1) ?? '';
-                spans.add(
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: _inlineMathWidgetConstrained(
-                      mathBody,
-                      maxW,
-                      mathStyle ?? const TextStyle(fontSize: 22),
-                    ),
-                  ),
-                );
-                lastIndex = m.end;
-              }
-              if (lastIndex < para.length) {
-                spans.add(
-                  TextSpan(
-                    text: para.substring(lastIndex),
-                    style: labelStyle ?? defaultLabel,
-                  ),
-                );
-              }
+              _appendDollarMathSpans(
+                spans: spans,
+                source: para,
+                maxWidth: maxW,
+                textStyle: labelStyle ?? defaultLabel,
+              );
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),

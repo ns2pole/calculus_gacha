@@ -24,6 +24,8 @@ class AiChatRequestCodec {
       'questionText': context.questionText,
       'category': context.category,
       'level': context.level,
+      'referenceAnswer': context.referenceAnswer,
+      'referenceSolution': context.referenceSolution,
       'hintShown': context.hintShown,
       'answerShown': context.answerShown,
       'attachmentsEnabled': context.attachmentsEnabled,

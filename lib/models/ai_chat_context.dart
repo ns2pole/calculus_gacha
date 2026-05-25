@@ -3,6 +3,8 @@ class AiChatContext {
   final String questionText;
   final String? category;
   final String? level;
+  final String? referenceAnswer;
+  final String? referenceSolution;
   final bool hintShown;
   final bool answerShown;
   final bool attachmentsEnabled;
@@ -12,6 +14,8 @@ class AiChatContext {
     required this.questionText,
     this.category,
     this.level,
+    this.referenceAnswer,
+    this.referenceSolution,
     this.hintShown = false,
     this.answerShown = false,
     this.attachmentsEnabled = false,
