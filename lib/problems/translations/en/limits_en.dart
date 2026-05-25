@@ -716,7 +716,7 @@ n\log n-n+1
     category: 'Limit of Integrals (Squeeze Theorem)',
     level: 'Advanced',
     question:
-        r"""\displaystyle \lim_{n\to\infty}\int_{0}^{\displaystyle\frac{\pi}{4}}\tan^{2n}x\,dx""",
+        r"""\displaystyle \lim_{n\to\infty}\int_{0}^{\frac{\pi}{4}}\tan^{2n}x\,dx""",
     answer: r"""\displaystyle 0""",
     hint:
         r"""\text{Compare } \tan x \text{ with the line } y=\displaystyle\frac{4x}{\pi} \text{ on } \left[0,\displaystyle\frac{\pi}{4}\right].""",
