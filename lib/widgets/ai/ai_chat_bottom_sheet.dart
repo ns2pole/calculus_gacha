@@ -46,7 +46,6 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   final _scrollController = ScrollController();
   final List<AiChatMessage> _messages = [];
   bool _isSending = false;
-  bool _showProblem = false;
   String? _errorText;
 
   @override
@@ -227,37 +226,15 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     final text = widget.chatContext.questionText;
     final builder = widget.mathTextBuilder;
     final content = builder != null ? builder(text) : Text(text);
-    return InkWell(
-      onTap: () => setState(() => _showProblem = !_showProblem),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(Icons.subject, size: 20),
-            const SizedBox(width: 8),
-            Expanded(
-              child: AnimatedSize(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOut,
-                alignment: Alignment.topCenter,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: _showProblem ? double.infinity : 72,
-                  ),
-                  child: ClipRect(
-                    child: Align(alignment: Alignment.topLeft, child: content),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              _showProblem ? Icons.expand_less : Icons.expand_more,
-              size: 20,
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(Icons.subject, size: 20),
+          const SizedBox(width: 8),
+          Expanded(child: content),
+        ],
       ),
     );
   }
