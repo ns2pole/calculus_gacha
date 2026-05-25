@@ -43,10 +43,6 @@ export function parseAiChatRequest(body: unknown): AiChatRequest {
     clientInstallationId: sanitizeIdentifier(
       readString(body.clientInstallationId) ?? "",
     ),
-    usagePolicy: isRecord(body.usagePolicy) ? {
-      freeDailyLimit: readPositiveInt(body.usagePolicy.freeDailyLimit),
-      paidMonthlyLimit: readPositiveInt(body.usagePolicy.paidMonthlyLimit),
-    } : undefined,
   };
 }
 
@@ -60,13 +56,6 @@ function isNonEmptyString(value: unknown): value is string {
 
 function readString(value: unknown): string | null {
   return typeof value === "string" ? value : null;
-}
-
-function readPositiveInt(value: unknown): number | undefined {
-  if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
-    return undefined;
-  }
-  return value;
 }
 
 function sanitizeIdentifier(value: string): string {

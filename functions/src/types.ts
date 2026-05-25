@@ -16,17 +16,11 @@ export interface AiChatMessage {
   choiceId?: string | null;
 }
 
-export interface AiChatUsagePolicy {
-  freeDailyLimit: number;
-  paidMonthlyLimit: number;
-}
-
 export interface AiChatRequest {
   context: AiChatContext;
   history: AiChatMessage[];
   userMessage: AiChatMessage;
   clientInstallationId: string;
-  usagePolicy?: Partial<AiChatUsagePolicy>;
 }
 
 export interface UsageIdentity {

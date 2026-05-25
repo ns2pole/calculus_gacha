@@ -1,8 +1,8 @@
 import * as admin from "firebase-admin";
 import {hashValue} from "./auth";
-import {AiChatRequest, AiChatUsagePolicy, UsageIdentity, UsageLimit} from "./types";
+import {UsageIdentity, UsageLimit} from "./types";
 
-const defaultPolicy: AiChatUsagePolicy = {
+const defaultPolicy = {
   freeDailyLimit: 5,
   paidMonthlyLimit: 1500,
 };
@@ -18,16 +18,14 @@ export class RateLimitExceededError extends Error {
 }
 
 export function resolveUsageLimit(
-  request: AiChatRequest,
   isPremiumUser: boolean,
 ): UsageLimit {
-  const policy = normalizePolicy(request.usagePolicy);
   const now = new Date();
   if (isPremiumUser) {
     return {
       tier: "paid",
       period: "monthly",
-      limit: policy.paidMonthlyLimit,
+      limit: defaultPolicy.paidMonthlyLimit,
       periodKey: formatJstMonth(now),
     };
   }
@@ -35,7 +33,7 @@ export function resolveUsageLimit(
   return {
     tier: "free",
     period: "daily",
-    limit: policy.freeDailyLimit,
+    limit: defaultPolicy.freeDailyLimit,
     periodKey: formatJstDate(now),
   };
 }
@@ -70,13 +68,6 @@ export async function consumeUsage(
     }, {merge: true});
     return next;
   });
-}
-
-function normalizePolicy(policy?: Partial<AiChatUsagePolicy>): AiChatUsagePolicy {
-  return {
-    freeDailyLimit: policy?.freeDailyLimit ?? defaultPolicy.freeDailyLimit,
-    paidMonthlyLimit: policy?.paidMonthlyLimit ?? defaultPolicy.paidMonthlyLimit,
-  };
 }
 
 function formatJstDate(date: Date): string {

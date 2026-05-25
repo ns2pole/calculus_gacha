@@ -1,6 +1,5 @@
 import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
-import 'ai_chat_usage_policy.dart';
 
 class AiChatRequestCodec {
   const AiChatRequestCodec();
@@ -10,14 +9,12 @@ class AiChatRequestCodec {
     required List<AiChatMessage> history,
     required AiChatMessage userMessage,
     required String clientInstallationId,
-    required AiChatUsagePolicy usagePolicy,
   }) {
     return {
       'context': _encodeContext(context),
       'history': history.map(_encodeMessage).toList(growable: false),
       'userMessage': _encodeMessage(userMessage),
       'clientInstallationId': clientInstallationId,
-      'usagePolicy': usagePolicy.toJson(),
     };
   }
 

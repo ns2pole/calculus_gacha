@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import {defineSecret} from "firebase-functions/params";
-import {onRequest} from "firebase-functions/v2/https";
+import {onRequest, Request} from "firebase-functions/v2/https";
 import {resolveUsageIdentity} from "./auth";
 import {applyRevenueCatWebhook, hasAiTutorEntitlement} from "./entitlements";
 import {generateAiChatReply} from "./geminiClient";
@@ -20,11 +20,12 @@ export const aiChat = onRequest({
 }, async (request, response) => {
   try {
     assertPost(request);
+    await assertAppCheckAuthorized(request);
 
     const chatRequest = parseAiChatRequest(request.body);
     const identity = await resolveUsageIdentity(request, chatRequest);
     const isPremiumUser = await hasAiTutorEntitlement(admin.firestore(), identity);
-    const limit = resolveUsageLimit(chatRequest, isPremiumUser);
+    const limit = resolveUsageLimit(isPremiumUser);
     const usageCount = await consumeUsage(admin.firestore(), identity, limit);
     const text = await generateAiChatReply(geminiApiKey.value(), chatRequest);
 
@@ -68,6 +69,19 @@ export const aiChat = onRequest({
     });
   }
 });
+
+async function assertAppCheckAuthorized(request: Request): Promise<void> {
+  const token = request.header("X-Firebase-AppCheck");
+  if (token == null || token.length === 0) {
+    throw new HttpError(401, "app_check_required", "App Check token is required.");
+  }
+
+  try {
+    await admin.appCheck().verifyToken(token);
+  } catch {
+    throw new HttpError(401, "app_check_failed", "App Check verification failed.");
+  }
+}
 
 export const revenueCatWebhook = onRequest({
   cors: false,

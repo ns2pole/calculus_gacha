@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_web_options.dart';
 import 'pages/other/home_page.dart';
@@ -23,7 +24,6 @@ void main() async {
   // 初期化プロセスのセクション数を設定（アプリ初期化、RevenueCat初期化、StoreKit設定テスト）
   AppLogger.resetSectionCounter(totalSections: 3);
   AppLogger.section('アプリケーション初期化', showNumber: true);
-  bool firebaseInitialized = false;
   try {
     if (kIsWeb && !FirebaseWebOptions.isConfigured) {
       AppLogger.warning(
@@ -41,10 +41,10 @@ void main() async {
       AppLogger.warning('Firebaseアプリリストが空です',
         details: '設定ファイルが不足している可能性があります:\n- Web: lib/firebase_web_options.dart（Firebase Console で Web アプリを追加し値を設定）\n- Android: android/app/google-services.json\n- iOS: ios/GoogleService-Info.plist（ios/GoogleService-Info.plist.example をコピーして Firebase の値を埋める）\nFirebase機能は利用できません。');
     } else {
-      firebaseInitialized = true;
       AppLogger.success('Firebaseの初期化が完了しました', details: 'アプリ数: ${apps.length}');
+      await _activateFirebaseAppCheck();
     }
-  } catch (e, stackTrace) {
+  } catch (e) {
     AppLogger.error('Firebaseの初期化に失敗しました', error: e,
       details: '設定ファイルを確認してください:\n- Android: android/app/google-services.json\n- iOS: ios/GoogleService-Info.plist\nアプリは続行しますが、Firebase機能は利用できません。');
     // Firebase初期化エラー時もアプリは起動を続行
@@ -129,8 +129,25 @@ void main() async {
   });
 }
 
+Future<void> _activateFirebaseAppCheck() async {
+  if (kIsWeb) {
+    AppLogger.info('Web: Firebase App Check の初期化をスキップしました');
+    return;
+  }
+
+  await FirebaseAppCheck.instance.activate(
+    androidProvider:
+        kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    appleProvider: kDebugMode
+        ? AppleProvider.debug
+        : AppleProvider.appAttestWithDeviceCheckFallback,
+  );
+  AppLogger.success('Firebase App Checkの初期化が完了しました');
+}
+
 /// 初回起動時に購入情報を復元
 /// アンインストール後の再インストール時にも動作する
+// ignore: unused_element
 Future<void> _restorePurchasesOnFirstLaunch() async {
   try {
     final prefs = await SharedPreferences.getInstance();

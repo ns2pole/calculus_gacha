@@ -5,6 +5,8 @@ import {HttpError} from "./http";
 const model = "gemini-2.5-flash";
 const endpoint =
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+const maxOutputTokens = 2048;
+const thinkingBudget = 256;
 
 export async function generateAiChatReply(
   apiKey: string,
@@ -20,9 +22,9 @@ export async function generateAiChatReply(
       contents: buildGeminiContents(request),
       generationConfig: {
         temperature: 0.25,
-        maxOutputTokens: 700,
+        maxOutputTokens,
         thinkingConfig: {
-          thinkingBudget: 1024,
+          thinkingBudget,
         },
       },
     }),
@@ -34,7 +36,16 @@ export async function generateAiChatReply(
     throw new HttpError(response.status, "gemini_error", message);
   }
 
-  const text = body?.candidates?.[0]?.content?.parts
+  const candidate = body?.candidates?.[0];
+  if (candidate?.finishReason === "MAX_TOKENS") {
+    throw new HttpError(
+      502,
+      "truncated_gemini_response",
+      "AIの応答が長くなりすぎました。もう少し短く質問してください。",
+    );
+  }
+
+  const text = candidate?.content?.parts
     ?.map((part) => part.text ?? "")
     .join("")
     .trim();
@@ -46,6 +57,7 @@ export async function generateAiChatReply(
 
 interface GeminiResponse {
   candidates?: Array<{
+    finishReason?: string;
     content?: {
       parts?: Array<{
         text?: string;

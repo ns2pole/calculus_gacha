@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,29 +11,31 @@ import '../../models/ai_chat_message.dart';
 import 'ai_chat_api_config.dart';
 import 'ai_chat_client.dart';
 import 'ai_chat_request_codec.dart';
-import 'ai_chat_usage_policy.dart';
 
 typedef AiChatAuthTokenProvider = Future<String?> Function();
+typedef AiChatAppCheckTokenProvider = Future<String?> Function();
 typedef AiChatInstallationIdProvider = Future<String> Function();
 
 class CloudAiChatClient implements AiChatClient {
   static const _installationIdKey = 'joymath/ai_chat_installation_id';
 
   final AiChatApiConfig config;
-  final AiChatUsagePolicy usagePolicy;
   final AiChatRequestCodec requestCodec;
   final AiChatAuthTokenProvider authTokenProvider;
+  final AiChatAppCheckTokenProvider appCheckTokenProvider;
   final AiChatInstallationIdProvider installationIdProvider;
   final http.Client _httpClient;
 
   CloudAiChatClient({
     required this.config,
-    this.usagePolicy = const AiChatUsagePolicy(),
     this.requestCodec = const AiChatRequestCodec(),
     AiChatAuthTokenProvider? authTokenProvider,
+    AiChatAppCheckTokenProvider? appCheckTokenProvider,
     AiChatInstallationIdProvider? installationIdProvider,
     http.Client? httpClient,
   }) : authTokenProvider = authTokenProvider ?? _defaultAuthTokenProvider,
+       appCheckTokenProvider =
+           appCheckTokenProvider ?? _defaultAppCheckTokenProvider,
        installationIdProvider =
            installationIdProvider ?? _defaultInstallationIdProvider,
        _httpClient = httpClient ?? http.Client();
@@ -49,6 +52,7 @@ class CloudAiChatClient implements AiChatClient {
     }
 
     final token = await authTokenProvider();
+    final appCheckToken = await appCheckTokenProvider();
     final installationId = await installationIdProvider();
 
     final payload = requestCodec.encode(
@@ -56,12 +60,12 @@ class CloudAiChatClient implements AiChatClient {
       history: _trimHistory(history),
       userMessage: userMessage,
       clientInstallationId: installationId,
-      usagePolicy: usagePolicy,
     );
 
     final headers = <String, String>{
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
+      if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
     };
 
     final response = await _httpClient
@@ -124,6 +128,10 @@ class CloudAiChatClient implements AiChatClient {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return null;
     return user.getIdToken();
+  }
+
+  static Future<String?> _defaultAppCheckTokenProvider() {
+    return FirebaseAppCheck.instance.getToken();
   }
 
   static Future<String> _defaultInstallationIdProvider() async {
