@@ -104,6 +104,10 @@ __pycache__/
 
 # Service account keys (重要!)
 *.json
+!firebase.json
+!functions/package.json
+!functions/package-lock.json
+!functions/tsconfig.json
 !pubspec.json
 !analysis_options.json
 !devtools_options.yaml

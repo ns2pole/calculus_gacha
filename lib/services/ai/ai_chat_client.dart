@@ -9,6 +9,15 @@ abstract class AiChatClient {
   });
 }
 
+class AiChatClientException implements Exception {
+  final String message;
+
+  const AiChatClientException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 class StubAiChatClient implements AiChatClient {
   const StubAiChatClient();
 

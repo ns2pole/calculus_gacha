@@ -4,13 +4,14 @@ import '../../l10n/app_localizations.dart';
 import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
 import '../../services/ai/ai_chat_client.dart';
+import '../../services/ai/ai_chat_client_factory.dart';
 
 typedef MathTextBuilder = Widget Function(String text);
 
 Future<void> showAiChatBottomSheet({
   required BuildContext context,
   required AiChatContext chatContext,
-  AiChatClient client = const StubAiChatClient(),
+  AiChatClient? client,
   MathTextBuilder? mathTextBuilder,
 }) {
   return showModalBottomSheet<void>(
@@ -19,7 +20,7 @@ Future<void> showAiChatBottomSheet({
     useSafeArea: true,
     builder: (context) => AiChatBottomSheet(
       chatContext: chatContext,
-      client: client,
+      client: client ?? AiChatClientFactory.createDefault(),
       mathTextBuilder: mathTextBuilder,
     ),
   );
@@ -87,6 +88,12 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         _isSending = false;
       });
       _scrollToBottom();
+    } on AiChatClientException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isSending = false;
+        _errorText = e.message;
+      });
     } catch (_) {
       if (!mounted) return;
       setState(() {

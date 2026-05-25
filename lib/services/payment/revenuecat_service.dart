@@ -1,7 +1,9 @@
 // lib/services/revenuecat_service.dart
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 import 'iap_secondary_products_config.dart';
@@ -11,9 +13,11 @@ class RevenueCatService {
   // product IDs（実際の App Store Connect に合わせてください）
   /// 因数分解オプション（常時有効なメイン IAP）。デバッグ用 StoreKit 診断などから参照。
   static const String factorizationOptionProductId = 'factorization_double_option_80yen';
+  static const String aiTutorSubscriptionProductId = 'ai_tutor_subscription_500yen';
 
   // entitlement IDs（RevenueCat ダッシュボードの entitlement 名）
   static const String _factorizationEntitlementId = 'factorization_option';
+  static const String _aiTutorEntitlementId = 'ai_tutor_subscription';
 
   // RevenueCat の「public」APIキー（SDK key）。--dart-define で渡す（リポジトリに実値を置かない）。
   // 例: flutter run --dart-define=REVENUECAT_IOS_API_KEY=appl_xxx
@@ -28,6 +32,8 @@ class RevenueCatService {
 
   static bool _isInitialized = false;
   static String? _initializationError;
+  static StreamSubscription<User?>? _authSubscription;
+  static String? _identifiedFirebaseUserId;
 
   static bool get isInitialized => _isInitialized;
   static String? get initializationError => _initializationError;
@@ -69,11 +75,46 @@ class RevenueCatService {
       }
 
       _isInitialized = true;
+      await _syncFirebaseUserId(FirebaseAuth.instance.currentUser);
+      bindFirebaseAuthUser();
       return true;
     } catch (e) {
       _initializationError = e.toString();
       debugPrint('RevenueCat: Initialization exception: $e');
       return false;
+    }
+  }
+
+  /// RevenueCat の App User ID を Firebase UID と同期する。
+  ///
+  /// Webhook で受け取る app_user_id が Firebase UID になるため、
+  /// Cloud Functions 側で課金状態を安全に判定できる。
+  static void bindFirebaseAuthUser() {
+    if (kIsWeb || _authSubscription != null) return;
+
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
+      _syncFirebaseUserId(user);
+    });
+  }
+
+  static Future<void> _syncFirebaseUserId(User? user) async {
+    if (kIsWeb || !_isInitialized) return;
+
+    try {
+      final uid = user?.uid;
+      if (uid == null || uid.isEmpty) {
+        if (_identifiedFirebaseUserId != null) {
+          await Purchases.logOut();
+          _identifiedFirebaseUserId = null;
+        }
+        return;
+      }
+
+      if (_identifiedFirebaseUserId == uid) return;
+      await Purchases.logIn(uid);
+      _identifiedFirebaseUserId = uid;
+    } catch (e) {
+      debugPrint('RevenueCat: Error syncing Firebase user ID: $e');
     }
   }
 
@@ -175,6 +216,22 @@ class RevenueCatService {
       return _hasPurchasedProduct(info, factorizationOptionProductId, _factorizationEntitlementId);
     } catch (e) {
       debugPrint('RevenueCat: Error checking factorization purchase: $e');
+      return false;
+    }
+  }
+
+  /// AIチューター月額サブスクリプションの購入状態
+  static Future<bool> isAiTutorSubscriptionPurchased() async {
+    if (!_isInitialized) {
+      final ok = await initialize();
+      if (!ok) return false;
+    }
+
+    try {
+      final info = await Purchases.getCustomerInfo();
+      return _hasPurchasedProduct(info, aiTutorSubscriptionProductId, _aiTutorEntitlementId);
+    } catch (e) {
+      debugPrint('RevenueCat: Error checking AI tutor subscription: $e');
       return false;
     }
   }
