@@ -126,7 +126,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       curve: Curves.easeOut,
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       child: FractionallySizedBox(
-        heightFactor: 0.85,
+        heightFactor: 0.99,
         child: Material(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -134,7 +134,6 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
           child: Column(
             children: [
               _buildHandle(),
-              _buildHeader(l10n),
               _buildProblemPreview(),
               const Divider(height: 1),
               Expanded(
