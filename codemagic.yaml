@@ -38,6 +38,7 @@ workflows:
       groups:
         - appstore_credentials
         - firebase_credentials
+        - revenuecat_credentials
       vars:
         APP_STORE_CONNECT_KEY_IDENTIFIER: ATBD5UGJTG
         APP_STORE_CONNECT_ISSUER_ID: c64fb6be-f1d2-4e04-80b5-2841def3da52
