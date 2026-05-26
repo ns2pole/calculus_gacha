@@ -1,5 +1,7 @@
-import {AiChatMessage, AiChatRequest} from "./types";
+import {AiChatLocale, AiChatMessage, AiChatRequest} from "./types";
 import {HttpError} from "./http";
+
+const supportedLocales: ReadonlySet<string> = new Set(["ja", "en"]);
 
 export function parseAiChatRequest(body: unknown): AiChatRequest {
   if (!isRecord(body)) {
@@ -45,6 +47,7 @@ export function parseAiChatRequest(body: unknown): AiChatRequest {
     clientInstallationId: sanitizeIdentifier(
       readString(body.clientInstallationId) ?? "",
     ),
+    locale: parseLocale(readString(body.locale)),
   };
 }
 
@@ -62,4 +65,9 @@ function readString(value: unknown): string | null {
 
 function sanitizeIdentifier(value: string): string {
   return value.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 80);
+}
+
+function parseLocale(value: string | null): AiChatLocale {
+  if (value && supportedLocales.has(value)) return value as AiChatLocale;
+  return "ja";
 }

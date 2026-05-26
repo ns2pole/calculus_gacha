@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,6 +46,7 @@ class CloudAiChatClient implements AiChatClient {
     required AiChatContext context,
     required List<AiChatMessage> history,
     required AiChatMessage userMessage,
+    String? locale,
   }) async {
     final endpoint = config.endpoint;
     if (endpoint == null) {
@@ -60,6 +62,7 @@ class CloudAiChatClient implements AiChatClient {
       history: _trimHistory(history),
       userMessage: userMessage,
       clientInstallationId: installationId,
+      locale: locale ?? _resolveLocale(),
     );
 
     final headers = <String, String>{
@@ -86,8 +89,20 @@ class CloudAiChatClient implements AiChatClient {
       );
     }
 
+    final errorCode = _readErrorCode(decoded);
+    final errorMessage = _readErrorMessage(decoded) ?? 'AIチャットの応答取得に失敗しました。';
+    if (response.statusCode == 429 || errorCode == 'rate_limited') {
+      throw AiChatRateLimitException(
+        errorMessage,
+        code: errorCode,
+        statusCode: response.statusCode,
+      );
+    }
+
     throw AiChatClientException(
-      _readErrorMessage(decoded) ?? 'AIチャットの応答取得に失敗しました。',
+      errorMessage,
+      code: errorCode,
+      statusCode: response.statusCode,
     );
   }
 
@@ -124,6 +139,14 @@ class CloudAiChatClient implements AiChatClient {
     return null;
   }
 
+  String? _readErrorCode(Map<String, dynamic> decoded) {
+    final error = decoded['error'];
+    if (error is Map<String, dynamic> && error['code'] is String) {
+      return error['code'] as String;
+    }
+    return null;
+  }
+
   static Future<String?> _defaultAuthTokenProvider() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return null;
@@ -148,5 +171,11 @@ class CloudAiChatClient implements AiChatClient {
     final random = Random.secure();
     final bytes = List<int>.generate(16, (_) => random.nextInt(256));
     return base64UrlEncode(bytes).replaceAll('=', '');
+  }
+
+  static String _resolveLocale() {
+    final locale = PlatformDispatcher.instance.locale;
+    if (locale.languageCode == 'en') return 'en';
+    return 'ja';
   }
 }

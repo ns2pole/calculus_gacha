@@ -97,6 +97,11 @@ class RevenueCatService {
     });
   }
 
+  /// 現在の Firebase ユーザーを RevenueCat の App User ID に明示的に同期する。
+  static Future<void> syncCurrentFirebaseUser() async {
+    await _syncFirebaseUserId(FirebaseAuth.instance.currentUser);
+  }
+
   static Future<void> _syncFirebaseUserId(User? user) async {
     if (kIsWeb || !_isInitialized) return;
 
@@ -281,6 +286,12 @@ class RevenueCatService {
     return _purchaseByProductId(factorizationOptionProductId, _factorizationEntitlementId);
   }
 
+  /// AIチューター月額サブスクリプション購入
+  static Future<PurchaseResult> purchaseAiTutorSubscription() async {
+    debugPrint('RevenueCat: Starting AI tutor subscription purchase');
+    return _purchaseByProductId(aiTutorSubscriptionProductId, _aiTutorEntitlementId);
+  }
+
   /// 学習履歴オプション購入
   static Future<PurchaseResult> purchaseLearningHistoryOption() async {
     if (!kEnableLearningHistoryAndStoreKitDiagnostics) {
@@ -299,8 +310,10 @@ class RevenueCatService {
   /// 共通購入フロー（offerings -> package -> getProducts -> purchase）
   static Future<PurchaseResult> _purchaseByProductId(String productId, String entitlementId) async {
     if (!_isInitialized) {
+      debugPrint('RevenueCat: Not initialized before purchase. Initializing...');
       final ok = await initialize();
       if (!ok) {
+        debugPrint('RevenueCat: Purchase initialization failed: $_initializationError');
         return PurchaseResult(success: false, error: 'RevenueCat initialization failed');
       }
     }
@@ -308,18 +321,27 @@ class RevenueCatService {
     try {
       // 1) Try offerings -> package
       try {
+        debugPrint('RevenueCat: Fetching offerings for purchase: $productId');
         final offerings = await Purchases.getOfferings();
         if (offerings.current != null && offerings.current!.availablePackages.isNotEmpty) {
           final pkg = _findPackageForProduct(offerings, productId);
           if (pkg != null) {
+            debugPrint('RevenueCat: Purchasing package for product: $productId');
             // package purchase
             final customerInfo = await Purchases.purchasePackage(pkg);
             if (_hasPurchasedProduct(customerInfo, productId, entitlementId)) {
+              debugPrint('RevenueCat: Package purchase succeeded: $productId');
               return PurchaseResult(success: true);
             } else {
+              debugPrint('RevenueCat: Package purchase completed but entitlement inactive: $entitlementId');
               return PurchaseResult(success: false, error: 'Purchase completed but entitlement not active');
             }
           }
+          debugPrint(
+            'RevenueCat: Product not found in current offering. '
+            'Looking for: $productId, available: '
+            '${offerings.current!.availablePackages.map((p) => p.storeProduct.identifier).toList()}',
+          );
         }
       } catch (e) {
         // offerings 取得に失敗した場合は次の手段へ（ログは残す）
@@ -328,6 +350,7 @@ class RevenueCatService {
 
       // 2) Fallback: getProducts -> purchaseStoreProduct
       try {
+        debugPrint('RevenueCat: Fetching store product directly: $productId');
         final products = await Purchases.getProducts([productId]);
         if (products.isEmpty) {
           // プロダクトが見つからない場合、現時点の所有情報を再確認して成功判定する
@@ -341,10 +364,13 @@ class RevenueCatService {
         }
 
         final storeProduct = products.first;
+        debugPrint('RevenueCat: Purchasing store product: ${storeProduct.identifier}');
         final customerInfo = await Purchases.purchaseStoreProduct(storeProduct);
         if (_hasPurchasedProduct(customerInfo, productId, entitlementId)) {
+          debugPrint('RevenueCat: Store product purchase succeeded: $productId');
           return PurchaseResult(success: true);
         } else {
+          debugPrint('RevenueCat: Store product purchase completed but entitlement inactive: $entitlementId');
           return PurchaseResult(success: false, error: 'Purchase completed but entitlement not active');
         }
       } catch (e) {
@@ -352,15 +378,20 @@ class RevenueCatService {
         if (e is PlatformException) {
           final errorCode = PurchasesErrorHelper.getErrorCode(e);
           if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
+            debugPrint('RevenueCat: Purchase cancelled by user');
             return PurchaseResult(success: false, error: 'Purchase cancelled', cancelled: true);
           } else if (errorCode == PurchasesErrorCode.networkError) {
+            debugPrint('RevenueCat: Purchase network error');
             return PurchaseResult(success: false, error: 'Network error. Please check your connection.');
           } else if (errorCode == PurchasesErrorCode.purchaseNotAllowedError) {
+            debugPrint('RevenueCat: Purchase not allowed');
             return PurchaseResult(success: false, error: 'Purchase not allowed');
           } else if (errorCode == PurchasesErrorCode.purchaseInvalidError) {
+            debugPrint('RevenueCat: Purchase invalid');
             return PurchaseResult(success: false, error: 'Invalid purchase');
           }
         }
+        debugPrint('RevenueCat: Purchase failed: $e');
         return PurchaseResult(success: false, error: e.toString());
       }
     } catch (e) {
@@ -386,8 +417,33 @@ class RevenueCatService {
     }
   }
 
+  /// AIチューター月額サブスクリプションの購入復元
+  static Future<bool> restoreAiTutorSubscription() async {
+    if (!_isInitialized) {
+      final ok = await initialize();
+      if (!ok) return false;
+    }
+
+    try {
+      final info = await Purchases.restorePurchases();
+      return _hasPurchasedProduct(info, aiTutorSubscriptionProductId, _aiTutorEntitlementId);
+    } catch (e) {
+      debugPrint('RevenueCat: AI tutor restore error: $e');
+      return false;
+    }
+  }
+
   /// 価格取得（因数分解オプションの例）
   static Future<String?> getFactorizationOptionPrice() async {
+    return _getProductPrice(factorizationOptionProductId, fallbackToFirstPackage: true);
+  }
+
+  /// AIチューター月額サブスクリプションの商品価格を取得
+  static Future<String?> getAiTutorSubscriptionPrice() async {
+    return _getProductPrice(aiTutorSubscriptionProductId);
+  }
+
+  static Future<String?> _getProductPrice(String productId, {bool fallbackToFirstPackage = false}) async {
     if (!_isInitialized) {
       final ok = await initialize();
       if (!ok) return null;
@@ -398,10 +454,12 @@ class RevenueCatService {
       try {
         final offerings = await Purchases.getOfferings();
         if (offerings.current != null && offerings.current!.availablePackages.isNotEmpty) {
-          final pkg = _findPackageForProduct(offerings, factorizationOptionProductId);
+          final pkg = _findPackageForProduct(offerings, productId);
           if (pkg != null) return pkg.storeProduct.priceString;
           // fallback to first package
-          return offerings.current!.availablePackages.first.storeProduct.priceString;
+          if (fallbackToFirstPackage) {
+            return offerings.current!.availablePackages.first.storeProduct.priceString;
+          }
         }
       } catch (e) {
         debugPrint('RevenueCat: getOfferings for price failed: $e');
@@ -409,7 +467,7 @@ class RevenueCatService {
 
       // offerings 取得できないなら直接 getProducts
       try {
-        final products = await Purchases.getProducts([factorizationOptionProductId]);
+        final products = await Purchases.getProducts([productId]);
         if (products.isNotEmpty) return products.first.priceString;
       } catch (e) {
         debugPrint('RevenueCat: getProducts for price failed: $e');

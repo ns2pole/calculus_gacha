@@ -1148,16 +1148,39 @@ class _GachaPageState extends State<GachaPage> {
     );
   }
 
+  static final RegExp _boldMarkdown = RegExp(r'\*\*(.+?)\*\*');
+
   Widget _buildAiChatAssistantText(String text) {
     if (!_containsDelimitedTex(text)) {
-      return Text(
-        text,
-        softWrap: true,
-        style: const TextStyle(fontSize: 16, height: 1.45),
-      );
+      return _buildBoldAwareText(text);
     }
 
-    return _buildAiChatText(text);
+    final cleaned = text.replaceAllMapped(_boldMarkdown, (m) => m.group(1)!);
+    return _buildAiChatText(cleaned);
+  }
+
+  Widget _buildBoldAwareText(String text) {
+    const style = TextStyle(fontSize: 16, height: 1.45);
+    if (!_boldMarkdown.hasMatch(text)) {
+      return Text(text, softWrap: true, style: style);
+    }
+
+    final spans = <InlineSpan>[];
+    var cursor = 0;
+    for (final match in _boldMarkdown.allMatches(text)) {
+      if (match.start > cursor) {
+        spans.add(TextSpan(text: text.substring(cursor, match.start), style: style));
+      }
+      spans.add(TextSpan(
+        text: match.group(1),
+        style: style.copyWith(fontWeight: FontWeight.bold),
+      ));
+      cursor = match.end;
+    }
+    if (cursor < text.length) {
+      spans.add(TextSpan(text: text.substring(cursor), style: style));
+    }
+    return Text.rich(TextSpan(children: spans), softWrap: true);
   }
 
   bool _containsTex(String text) {

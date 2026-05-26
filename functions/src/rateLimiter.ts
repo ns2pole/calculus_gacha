@@ -3,7 +3,7 @@ import {hashValue} from "./auth";
 import {UsageIdentity, UsageLimit} from "./types";
 
 const defaultPolicy = {
-  freeDailyLimit: 15,
+  freeMonthlyLimit: 30,
   paidMonthlyLimit: 1500,
 };
 
@@ -12,7 +12,7 @@ export class RateLimitExceededError extends Error {
     super(
       limit.tier === "paid" ?
         `今月のAIチャット利用上限 (${limit.limit}回) に達しました。` :
-        `本日の無料AIチャット利用上限 (${limit.limit}回) に達しました。`,
+        `今月の無料AIチャット利用上限 (${limit.limit}回) に達しました。`,
     );
   }
 }
@@ -32,9 +32,9 @@ export function resolveUsageLimit(
 
   return {
     tier: "free",
-    period: "daily",
-    limit: defaultPolicy.freeDailyLimit,
-    periodKey: formatJstDate(now),
+    period: "monthly",
+    limit: defaultPolicy.freeMonthlyLimit,
+    periodKey: formatJstMonth(now),
   };
 }
 
@@ -67,14 +67,6 @@ export async function consumeUsage(
         admin.firestore.FieldValue.serverTimestamp(),
     }, {merge: true});
     return next;
-  });
-}
-
-function formatJstDate(date: Date): string {
-  return formatJst(date, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
   });
 }
 

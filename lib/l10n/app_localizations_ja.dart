@@ -424,6 +424,51 @@ class AppLocalizationsJa extends AppLocalizations {
   String get askAiError => '通信に失敗しました。もう一度お試しください。';
 
   @override
+  String get aiTutorLimitReachedTitle => '無料利用の上限に達しました';
+
+  @override
+  String aiTutorLimitReachedBody(String price) {
+    return '$price/月のAIチューター Plus に登録すると、AIチャットを月1500回まで使えます。';
+  }
+
+  @override
+  String get aiTutorUpgradeButton => '月1500回プランを見る';
+
+  @override
+  String get aiTutorPurchaseTitle => 'AIチューター Plus';
+
+  @override
+  String aiTutorPurchaseDescription(String price) {
+    return '$price/月でAIチャットを月1500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。';
+  }
+
+  @override
+  String get aiTutorPurchaseBenefitMonthlyLimit => 'AIチャットを月1500回まで利用可能';
+
+  @override
+  String get aiTutorPurchaseBenefitPlatformBilling =>
+      'App Store / Google Play の決済画面で安全に購入';
+
+  @override
+  String get aiTutorPurchaseSuccess => 'AIチューター Plus が有効になりました';
+
+  @override
+  String get aiTutorPurchaseRestore => '購入を復元';
+
+  @override
+  String get aiTutorSignInRequiredTitle => 'ログインが必要です';
+
+  @override
+  String get aiTutorSignInRequiredBody =>
+      '購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。';
+
+  @override
+  String get aiTutorSignInToPurchase => 'Googleでログインして購入へ';
+
+  @override
+  String get aiTutorPurchaseInProgress => '購入処理中...';
+
+  @override
   String recordSaved(String status) {
     return '学習記録を保存しました: $status';
   }

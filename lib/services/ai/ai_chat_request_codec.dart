@@ -9,12 +9,14 @@ class AiChatRequestCodec {
     required List<AiChatMessage> history,
     required AiChatMessage userMessage,
     required String clientInstallationId,
+    required String locale,
   }) {
     return {
       'context': _encodeContext(context),
       'history': history.map(_encodeMessage).toList(growable: false),
       'userMessage': _encodeMessage(userMessage),
       'clientInstallationId': clientInstallationId,
+      'locale': locale,
     };
   }
 

@@ -3,6 +3,8 @@ import {
   buildSystemInstruction,
   GeminiContent,
   isBriefGuidanceRequest,
+  retryBrokenLatexMessage,
+  retryTooLongMessage,
 } from "./prompt";
 import {AiChatRequest} from "./types";
 import {HttpError} from "./http";
@@ -10,7 +12,7 @@ import {HttpError} from "./http";
 const model = "gemini-2.5-flash";
 const endpoint =
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-const defaultMaxOutputTokens = 1280;
+const defaultMaxOutputTokens = 1024;
 const briefGuidanceMaxOutputTokens = 512;
 const thinkingBudget = 256;
 
@@ -34,13 +36,7 @@ export async function generateAiChatReply(
         },
         {
           role: "user",
-          parts: [{
-            text: [
-              "直前の返答は長すぎて途中で切れています。",
-              "内容を大幅に短くし、ヒントや方針なら2〜3文だけで、",
-              "必ず文と数式を完結させて書き直してください。",
-            ].join(""),
-          }],
+          parts: [{text: retryTooLongMessage(request.locale)}],
         },
       ],
       briefGuidanceMaxOutputTokens,
@@ -64,13 +60,7 @@ export async function generateAiChatReply(
       },
       {
         role: "user",
-        parts: [{
-          text: [
-            "直前の返答はLaTeX構文が壊れている可能性があります。",
-            "$...$、$$...$$、{}、\\left/\\right の対応を確認し、",
-            "複雑な式は短く分けて、同じ内容をレンダリングしやすい形で書き直してください。",
-          ].join(""),
-        }],
+        parts: [{text: retryBrokenLatexMessage(request.locale)}],
       },
     ],
     maxOutputTokens,

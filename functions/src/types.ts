@@ -18,11 +18,14 @@ export interface AiChatMessage {
   choiceId?: string | null;
 }
 
+export type AiChatLocale = "ja" | "en";
+
 export interface AiChatRequest {
   context: AiChatContext;
   history: AiChatMessage[];
   userMessage: AiChatMessage;
   clientInstallationId: string;
+  locale: AiChatLocale;
 }
 
 export interface UsageIdentity {

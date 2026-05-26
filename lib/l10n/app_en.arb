@@ -228,6 +228,33 @@
   "askAiPlaceholder": "Enter a message",
   "askAiImageComingSoon": "Image sending is coming soon",
   "askAiError": "Could not connect. Please try again.",
+  "aiTutorLimitReachedTitle": "Free usage limit reached",
+  "aiTutorLimitReachedBody": "Subscribe to AI Tutor Plus for {price}/month to use AI chat up to 1,500 times per month.",
+  "@aiTutorLimitReachedBody": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTutorUpgradeButton": "View 1,500/month plan",
+  "aiTutorPurchaseTitle": "AI Tutor Plus",
+  "aiTutorPurchaseDescription": "Use AI chat up to 1,500 times per month for {price}/month. If you purchase, you will continue to the iOS/Android payment screen.",
+  "@aiTutorPurchaseDescription": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTutorPurchaseBenefitMonthlyLimit": "Use AI chat up to 1,500 times per month",
+  "aiTutorPurchaseBenefitPlatformBilling": "Purchase securely through the App Store / Google Play payment screen",
+  "aiTutorPurchaseSuccess": "AI Tutor Plus is now active",
+  "aiTutorPurchaseRestore": "Restore purchase",
+  "aiTutorSignInRequiredTitle": "Sign-in required",
+  "aiTutorSignInRequiredBody": "Please sign in with Google first so your purchase can be applied to your AI usage limit.",
+  "aiTutorSignInToPurchase": "Sign in with Google to purchase",
+  "aiTutorPurchaseInProgress": "Processing purchase...",
   "recordSaved": "Learning record saved: {status}",
   "@recordSaved": {
     "placeholders": {

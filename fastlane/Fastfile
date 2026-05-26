@@ -200,6 +200,7 @@ lane :release_all_platforms do |options|
       inject_firebase_android_config!
       sh_flutter("flutter build appbundle --release " \
         "--dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat " \
+        "--dart-define=REVENUECAT_ANDROID_API_KEY=#{ENV.fetch('REVENUECAT_ANDROID_API_KEY')} " \
         "--build-name #{version_number} --build-number #{build_number}")
     end
 
@@ -423,6 +424,7 @@ platform :ios do
     inject_firebase_android_config!
     sh_flutter("flutter build appbundle --release " \
       "--dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat " \
+      "--dart-define=REVENUECAT_ANDROID_API_KEY=#{ENV.fetch('REVENUECAT_ANDROID_API_KEY')} " \
       "--build-name #{version_number} --build-number #{build_number}")
 
     #####################
@@ -535,6 +537,7 @@ platform :android do
       inject_firebase_android_config!
       sh_flutter("flutter build appbundle --release " \
         "--dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat " \
+        "--dart-define=REVENUECAT_ANDROID_API_KEY=#{ENV.fetch('REVENUECAT_ANDROID_API_KEY')} " \
         "--build-name #{version_number} --build-number #{build_number}")
     else
       UI.message("⏭️  Skipping build (using existing AAB)")

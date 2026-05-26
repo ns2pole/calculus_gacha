@@ -872,6 +872,84 @@ abstract class AppLocalizations {
   /// **'通信に失敗しました。もう一度お試しください。'**
   String get askAiError;
 
+  /// No description provided for @aiTutorLimitReachedTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'無料利用の上限に達しました'**
+  String get aiTutorLimitReachedTitle;
+
+  /// No description provided for @aiTutorLimitReachedBody.
+  ///
+  /// In ja, this message translates to:
+  /// **'{price}/月のAIチューター Plus に登録すると、AIチャットを月1500回まで使えます。'**
+  String aiTutorLimitReachedBody(String price);
+
+  /// No description provided for @aiTutorUpgradeButton.
+  ///
+  /// In ja, this message translates to:
+  /// **'月1500回プランを見る'**
+  String get aiTutorUpgradeButton;
+
+  /// No description provided for @aiTutorPurchaseTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'AIチューター Plus'**
+  String get aiTutorPurchaseTitle;
+
+  /// No description provided for @aiTutorPurchaseDescription.
+  ///
+  /// In ja, this message translates to:
+  /// **'{price}/月でAIチャットを月1500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。'**
+  String aiTutorPurchaseDescription(String price);
+
+  /// No description provided for @aiTutorPurchaseBenefitMonthlyLimit.
+  ///
+  /// In ja, this message translates to:
+  /// **'AIチャットを月1500回まで利用可能'**
+  String get aiTutorPurchaseBenefitMonthlyLimit;
+
+  /// No description provided for @aiTutorPurchaseBenefitPlatformBilling.
+  ///
+  /// In ja, this message translates to:
+  /// **'App Store / Google Play の決済画面で安全に購入'**
+  String get aiTutorPurchaseBenefitPlatformBilling;
+
+  /// No description provided for @aiTutorPurchaseSuccess.
+  ///
+  /// In ja, this message translates to:
+  /// **'AIチューター Plus が有効になりました'**
+  String get aiTutorPurchaseSuccess;
+
+  /// No description provided for @aiTutorPurchaseRestore.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入を復元'**
+  String get aiTutorPurchaseRestore;
+
+  /// No description provided for @aiTutorSignInRequiredTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'ログインが必要です'**
+  String get aiTutorSignInRequiredTitle;
+
+  /// No description provided for @aiTutorSignInRequiredBody.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。'**
+  String get aiTutorSignInRequiredBody;
+
+  /// No description provided for @aiTutorSignInToPurchase.
+  ///
+  /// In ja, this message translates to:
+  /// **'Googleでログインして購入へ'**
+  String get aiTutorSignInToPurchase;
+
+  /// No description provided for @aiTutorPurchaseInProgress.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入処理中...'**
+  String get aiTutorPurchaseInProgress;
+
   /// No description provided for @recordSaved.
   ///
   /// In ja, this message translates to:

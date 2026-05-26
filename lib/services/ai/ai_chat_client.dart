@@ -6,16 +6,23 @@ abstract class AiChatClient {
     required AiChatContext context,
     required List<AiChatMessage> history,
     required AiChatMessage userMessage,
+    String? locale,
   });
 }
 
 class AiChatClientException implements Exception {
   final String message;
+  final String? code;
+  final int? statusCode;
 
-  const AiChatClientException(this.message);
+  const AiChatClientException(this.message, {this.code, this.statusCode});
 
   @override
   String toString() => message;
+}
+
+class AiChatRateLimitException extends AiChatClientException {
+  const AiChatRateLimitException(super.message, {super.code, super.statusCode});
 }
 
 class StubAiChatClient implements AiChatClient {
@@ -26,6 +33,7 @@ class StubAiChatClient implements AiChatClient {
     required AiChatContext context,
     required List<AiChatMessage> history,
     required AiChatMessage userMessage,
+    String? locale,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 350));
 

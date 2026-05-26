@@ -437,6 +437,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get askAiError => 'Could not connect. Please try again.';
 
   @override
+  String get aiTutorLimitReachedTitle => 'Free usage limit reached';
+
+  @override
+  String aiTutorLimitReachedBody(String price) {
+    return 'Subscribe to AI Tutor Plus for $price/month to use AI chat up to 1,500 times per month.';
+  }
+
+  @override
+  String get aiTutorUpgradeButton => 'View 1,500/month plan';
+
+  @override
+  String get aiTutorPurchaseTitle => 'AI Tutor Plus';
+
+  @override
+  String aiTutorPurchaseDescription(String price) {
+    return 'Use AI chat up to 1,500 times per month for $price/month. If you purchase, you will continue to the iOS/Android payment screen.';
+  }
+
+  @override
+  String get aiTutorPurchaseBenefitMonthlyLimit =>
+      'Use AI chat up to 1,500 times per month';
+
+  @override
+  String get aiTutorPurchaseBenefitPlatformBilling =>
+      'Purchase securely through the App Store / Google Play payment screen';
+
+  @override
+  String get aiTutorPurchaseSuccess => 'AI Tutor Plus is now active';
+
+  @override
+  String get aiTutorPurchaseRestore => 'Restore purchase';
+
+  @override
+  String get aiTutorSignInRequiredTitle => 'Sign-in required';
+
+  @override
+  String get aiTutorSignInRequiredBody =>
+      'Please sign in with Google first so your purchase can be applied to your AI usage limit.';
+
+  @override
+  String get aiTutorSignInToPurchase => 'Sign in with Google to purchase';
+
+  @override
+  String get aiTutorPurchaseInProgress => 'Processing purchase...';
+
+  @override
   String recordSaved(String status) {
     return 'Learning record saved: $status';
   }

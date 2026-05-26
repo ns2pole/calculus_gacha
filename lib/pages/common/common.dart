@@ -110,7 +110,7 @@ class MixedTextMath extends StatelessWidget {
       r'\,',
     ];
     for (final k in keywords) {
-      if (t.contains(k) || lower.contains(k.replaceAll(r'\', ''))) return true;
+      if (t.contains(k)) return true;
     }
 
     final macroRe = RegExp(r'\\[A-Za-z]+');

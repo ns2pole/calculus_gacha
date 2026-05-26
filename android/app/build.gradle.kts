@@ -51,7 +51,7 @@ flutter {
 
 dependencies {
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
     
     // Firebase Analytics (optional, but recommended)
     implementation("com.google.firebase:firebase-analytics")

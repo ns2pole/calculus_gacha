@@ -102,6 +102,7 @@ workflows:
           # use-profiles が生成した export_options を渡さないと IPA export で別プロファイルが使われる
           flutter build ipa --release \
             --dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat \
+            --dart-define=REVENUECAT_IOS_API_KEY="$REVENUECAT_IOS_API_KEY" \
             --build-name="$VERSION_NAME" \
             --build-number="$VERSION_CODE" \
             --export-options-plist=/Users/builder/export_options.plist
