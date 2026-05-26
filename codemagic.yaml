@@ -1,4 +1,4 @@
-# Codemagic: iOS をクラウド Mac（Xcode 26）でビルドし App Store Connect へ提出
+# Codemagic: iOS をクラウド Mac（Xcode 26）で IPA ビルド
 #
 # Developer Portal 連携（UI）が FORBIDDEN でも動くよう、API Key は環境変数で渡す。
 #
@@ -15,10 +15,7 @@
 #    - Upload: com.joymath の App Store プロビジョニング (.mobileprovision)
 #    ※ Fetch は Portal 連携が要るため、手元 Mac からエクスポートして Upload
 #
-# 4. このファイルを push → アプリで YAML ワークフロー ios-appstore-release を実行
-#
-#    App Store の "What's New" はリポジトリ直下の release_notes.json を Codemagic が自動で使用する。
-#    iOS 審査提出ではプライマリロケール分の "What's New" が必須。
+# 4. このファイルを push → アプリで YAML ワークフロー ios-ipa-build を実行
 #
 # 5. Firebase（Android / iOS ビルド用）— 環境変数グループ firebase_credentials を作成し Secret を追加:
 #    GOOGLE_SERVICES_JSON = Firebase Console からダウンロードした google-services.json の全文
@@ -29,8 +26,8 @@
 # 参考: https://docs.codemagic.io/yaml-publishing/app-store-connect/
 
 workflows:
-  ios-appstore-release:
-    name: iOS App Store (IPA ビルドと審査提出)
+  ios-ipa-build:
+    name: iOS IPA Build
     max_build_duration: 120
     # 無料枠（M2 500分/月）を使う場合は mac_mini_m2 に変更（Xcode 26.4 が使えるか要確認）
     instance_type: mac_mini_m2
@@ -109,13 +106,3 @@ workflows:
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        # Developer Portal integration 不要（環境変数で認証）
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: false
-        submit_to_app_store: true
-        cancel_previous_submissions: true
-        release_type: AFTER_APPROVAL

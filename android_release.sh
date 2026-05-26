@@ -4,6 +4,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
+export LANG="${LANG:-ja_JP.UTF-8}"
+export LC_ALL="${LC_ALL:-ja_JP.UTF-8}"
+export RUBYOPT="${RUBYOPT:-} -EUTF-8:UTF-8"
+
 if [[ ! -f ".env" ]]; then
   echo "ERROR: .env が見つかりません。REVENUECAT_ANDROID_API_KEY を .env に設定してください。" >&2
   exit 1
