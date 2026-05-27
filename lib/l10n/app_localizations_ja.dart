@@ -448,6 +448,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aiTutorUpgradeButton => '月500回プランを見る';
 
   @override
+  String get aiTutorRestorePurchasedButton => 'すでに購入されている方はこちら';
+
+  @override
+  String get aiTutorRestoreInProgress => '購入状態を確認中...';
+
+  @override
   String get aiTutorPurchaseTitle => 'AIチューター Plus';
 
   @override

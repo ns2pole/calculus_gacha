@@ -255,6 +255,8 @@
     }
   },
   "aiTutorUpgradeButton": "View 500/month plan",
+  "aiTutorRestorePurchasedButton": "Already purchased? Restore here",
+  "aiTutorRestoreInProgress": "Checking purchase status...",
   "aiTutorPurchaseTitle": "AI Tutor Plus",
   "aiTutorPurchaseDescription": "Use AI chat up to 500 times per month for {price}/month. If you purchase, you will continue to the iOS/Android payment screen.",
   "@aiTutorPurchaseDescription": {

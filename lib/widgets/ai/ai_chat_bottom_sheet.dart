@@ -63,6 +63,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   late final List<AiChatMessage> _messages;
   bool _isSending = false;
   bool _showUpgradeOffer = false;
+  bool _isRestoringPurchase = false;
   String? _errorText;
   String? _aiTutorPrice;
 
@@ -195,6 +196,68 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     );
   }
 
+  bool get _usesAppleSignIn =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+
+  Future<void> _restoreAiTutorPurchase() async {
+    if (_isRestoringPurchase) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final providerLabel = _usesAppleSignIn ? 'Apple' : 'Google';
+    debugPrint('[AiTutorRestore] Restore from upgrade card started');
+    setState(() {
+      _isRestoringPurchase = true;
+    });
+
+    try {
+      if (!FirebaseAuthService.isAuthenticated) {
+        debugPrint(
+          '[AiTutorRestore] $providerLabel sign-in before restore started',
+        );
+        final credential = _usesAppleSignIn
+            ? await FirebaseAuthService.signInWithApple()
+            : await FirebaseAuthService.signInWithGoogle();
+        if (!mounted) return;
+        if (credential == null) {
+          debugPrint('[AiTutorRestore] $providerLabel sign-in cancelled');
+          setState(() {
+            _isRestoringPurchase = false;
+          });
+          return;
+        }
+        await RevenueCatService.syncCurrentFirebaseUser();
+      }
+
+      final restored = await RevenueCatService.restoreAiTutorSubscription();
+      debugPrint('[AiTutorRestore] Restore result: $restored');
+      if (!mounted) return;
+      setState(() {
+        _isRestoringPurchase = false;
+        if (restored) {
+          _showUpgradeOffer = false;
+          _errorText = null;
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            restored ? l10n.restoredPurchases : l10n.noRestorablePurchases,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[AiTutorRestore] Restore failed: $e');
+      if (!mounted) return;
+      setState(() {
+        _isRestoringPurchase = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.restoreFailed(e.toString()))));
+    }
+  }
+
   String _newMessageId() => DateTime.now().microsecondsSinceEpoch.toString();
 
   @override
@@ -252,6 +315,8 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
                       _AiTutorUpgradeCard(
                         price: _aiTutorPrice ?? l10n.defaultPrice,
                         onPressed: _showAiTutorPurchaseDialog,
+                        onRestorePressed: _restoreAiTutorPurchase,
+                        isRestoring: _isRestoringPurchase,
                       ),
                     ],
                     if (_canShowMoreDetailButton) ...[
@@ -473,8 +538,15 @@ class _ErrorMessage extends StatelessWidget {
 class _AiTutorUpgradeCard extends StatelessWidget {
   final String price;
   final VoidCallback onPressed;
+  final VoidCallback onRestorePressed;
+  final bool isRestoring;
 
-  const _AiTutorUpgradeCard({required this.price, required this.onPressed});
+  const _AiTutorUpgradeCard({
+    required this.price,
+    required this.onPressed,
+    required this.onRestorePressed,
+    required this.isRestoring,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -524,6 +596,25 @@ class _AiTutorUpgradeCard extends StatelessWidget {
               child: FilledButton(
                 onPressed: onPressed,
                 child: Text(l10n.aiTutorUpgradeButton),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: isRestoring ? null : onRestorePressed,
+                icon: isRestoring
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.restore),
+                label: Text(
+                  isRestoring
+                      ? l10n.aiTutorRestoreInProgress
+                      : l10n.aiTutorRestorePurchasedButton,
+                ),
               ),
             ),
           ],
@@ -621,7 +712,9 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
   Future<void> _signInAndPurchase() async {
     final l10n = AppLocalizations.of(context)!;
     final providerLabel = _usesAppleSignIn ? 'Apple' : 'Google';
-    debugPrint('[AiTutorPurchase] $providerLabel sign-in before purchase started');
+    debugPrint(
+      '[AiTutorPurchase] $providerLabel sign-in before purchase started',
+    );
     setState(() {
       _isProcessing = true;
     });

@@ -461,6 +461,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiTutorUpgradeButton => 'View 500/month plan';
 
   @override
+  String get aiTutorRestorePurchasedButton => 'Already purchased? Restore here';
+
+  @override
+  String get aiTutorRestoreInProgress => 'Checking purchase status...';
+
+  @override
   String get aiTutorPurchaseTitle => 'AI Tutor Plus';
 
   @override

@@ -247,6 +247,8 @@
     }
   },
   "aiTutorUpgradeButton": "月500回プランを見る",
+  "aiTutorRestorePurchasedButton": "すでに購入されている方はこちら",
+  "aiTutorRestoreInProgress": "購入状態を確認中...",
   "aiTutorPurchaseTitle": "AIチューター Plus",
   "aiTutorPurchaseDescription": "{price}/月でAIチャットを月500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。",
   "@aiTutorPurchaseDescription": {

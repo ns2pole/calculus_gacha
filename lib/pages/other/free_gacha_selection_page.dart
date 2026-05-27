@@ -4,10 +4,17 @@ import 'package:flutter/material.dart';
 import '../../services/problems/simple_data_manager.dart';
 import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/home/home_card_widgets.dart';
-import '../../problems/all_problems.dart' show allIntegralProblems, allLimitProblems;
-import '../../problems/physics_math/physics_math_gacha.dart' show physicsMathGachaProblems;
-import '../../problems/all_problems.dart' show allFactorizationProblems, allIndeterminateEquationProblems, allSequenceProblems;
-import '../../problems/congruence_equations/congruence_equations.dart' show congruenceGachaProblems;
+import '../../problems/all_problems.dart'
+    show allIntegralProblems, allLimitProblems;
+import '../../problems/physics_math/physics_math_gacha.dart'
+    show physicsMathGachaProblems;
+import '../../problems/all_problems.dart'
+    show
+        allFactorizationProblems,
+        allIndeterminateEquationProblems,
+        allSequenceProblems;
+import '../../problems/congruence_equations/congruence_equations.dart'
+    show congruenceGachaProblems;
 import 'cloud_backup_confirmation_page.dart';
 import '../../l10n/app_localizations.dart';
 import '../../utils/responsive_layout.dart';
@@ -75,10 +82,10 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
         return '';
     }
   }
-  
+
   // ガチャの無効化フラグ（Coming Soon表示用）
   static const bool _isModGachaDisabled = false;
-  
+
   // メインガチャの情報（home_page.dartから取得）
   static const List<Map<String, dynamic>> _mainGachas = [
     {
@@ -169,7 +176,7 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
     if (prefsPrefix == 'congruence' && _isModGachaDisabled) {
       return;
     }
-    
+
     setState(() {
       if (_selectedGachas.contains(prefsPrefix)) {
         _selectedGachas.remove(prefsPrefix);
@@ -198,7 +205,7 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
       }
     });
   }
-  
+
   bool _isGachaDisabled(String prefsPrefix) {
     return prefsPrefix == 'congruence' && _isModGachaDisabled;
   }
@@ -223,7 +230,9 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         content: Text(
-          AppLocalizations.of(context)!.freeGachaConfirmDialog(gachaNames[0], gachaNames[1]),
+          AppLocalizations.of(
+            context,
+          )!.freeGachaConfirmDialog(gachaNames[0], gachaNames[1]),
         ),
         actions: [
           TextButton(
@@ -262,12 +271,12 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
     if (_selectedGachas.length != 2) {
       return;
     }
-    
+
     try {
       final success = await SimpleDataManager.saveSelectedFreeGachas(
         _selectedGachas.toList(),
       );
-      
+
       if (success && mounted) {
         // ガチャ名を取得
         final gachaNames = _selectedGachas.map((prefix) {
@@ -279,7 +288,7 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
           return _resolveTitle(gacha);
         }).toList();
         final l10n = AppLocalizations.of(context)!;
-        
+
         // 成功メッセージを表示
         await showDialog(
           context: context,
@@ -299,9 +308,7 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
                 const SizedBox(height: 16),
                 Text(
                   l10n.freeGachaEnjoyMessage,
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -363,9 +370,7 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
         body: Stack(
           children: [
             // 背景画像（薄く、画面サイズに合わせて4枚周期的に表示）
-            Positioned.fill(
-              child: const BackgroundImageWidget(),
-            ),
+            Positioned.fill(child: const BackgroundImageWidget()),
             // コンテンツ
             SingleChildScrollView(
               child: ResponsiveContentFrame(
@@ -377,314 +382,349 @@ class _FreeGachaSelectionPageState extends State<FreeGachaSelectionPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                  // タイトル（スクロール可能）
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).padding.top + 60.0,
-                      bottom: 20.0,
-                    ),
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        Image.asset(
-                          'assets/icon/home_icon_removebg.png',
-                          width: responsive.isCompact ? 36 : 43,
-                          height: responsive.isCompact ? 36 : 43,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.apps,
-                              size: responsive.isCompact ? 36 : 43,
-                              color: Color(0xFF8B7355),
-                            );
-                          },
-                        ),
-                        Text(
-                          l10n.appTitle,
-                          style: TextStyle(
-                            fontSize: responsive.titleFontSize,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8B7355),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 2.0),
-                  
-                  // 説明文
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 24.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20.0),
-                            border: Border.all(
-                              color: Colors.blue.shade700,
-                              width: 3.0,
-                            ),
-                          ),
-                          child: Text(
-                            l10n.freeGachaSelectionInstruction,
-                            style: TextStyle(
-                              fontSize: responsive.isCompact ? 22 : 28,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              height: 1.4,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '（${_selectedGachas.length}/2）',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 20),
-
-                  // メインガチャボタン群
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: _mainGachas.map((gacha) {
-                      final prefsPrefix = gacha['prefsPrefix'] as String;
-                      final title = _resolveTitle(gacha);
-                      final subtitle = _resolveSubtitle(gacha);
-                      final icon = gacha['icon'] as IconData;
-                      final gradient = gacha['gradient'] as Gradient;
-                      final isSelected = _selectedGachas.contains(prefsPrefix);
-                      
-                      // 問題数を取得
-                      int problemCount = 0;
-                      if (prefsPrefix == 'integral') {
-                        problemCount = allIntegralProblems.length;
-                      } else if (prefsPrefix == 'limit') {
-                        problemCount = allLimitProblems.length;
-                      } else if (prefsPrefix == 'physics_math') {
-                        problemCount = physicsMathGachaProblems.length;
-                      }
-                      
-                      final isDisabled = _isGachaDisabled(prefsPrefix);
-                      
-                      return Column(
-                        children: [
-                          Stack(
-                            children: [
-                              SelectableModernCard(
-                                buttonWidth: buttonWidth,
-                                icon: icon,
-                                title: problemCount > 0 ? '$title ${_formatProblemCount(problemCount)}' : title,
-                                subtitle: subtitle,
-                                gradient: gradient,
-                                isSelected: isSelected && !isDisabled,
-                                onPressed: isDisabled ? () {} : () => _onGachaTapped(prefsPrefix),
-                              ),
-                              // Coming Soon透かし
-                              if (isDisabled)
-                                Positioned.fill(
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(20),
-                                      onTap: () {
-                                        // タップを無効化（何もしない）
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
-                                          color: Colors.black.withOpacity(0.3),
-                                        ),
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                l10n.comingSoon,
-                                                style: TextStyle(
-                                                  fontSize: 32,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white.withOpacity(0.6),
-                                                  shadows: [
-                                                    Shadow(
-                                                      color: Colors.black.withOpacity(0.5),
-                                                      offset: const Offset(2, 2),
-                                                      blurRadius: 4,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                  
-                  // おまけガチャタイトル
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        Image.asset(
-                          'assets/icon/home_icon_removebg.png',
-                          width: responsive.isCompact ? 36 : 43,
-                          height: responsive.isCompact ? 36 : 43,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.apps,
-                              size: responsive.isCompact ? 36 : 43,
-                              color: Color(0xFF8B7355),
-                            );
-                          },
-                        ),
-                        Text(
-                          l10n.bonusGachaTitle,
-                          style: TextStyle(
-                            fontSize: responsive.titleFontSize,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8B7355),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  // おまけガチャボタン群
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: _bonusGachas.map((gacha) {
-                      final prefsPrefix = gacha['prefsPrefix'] as String;
-                      final title = _resolveTitle(gacha);
-                      final subtitle = _resolveSubtitle(gacha);
-                      final icon = gacha['icon'] as IconData;
-                      final gradient = gacha['gradient'] as Gradient;
-                      final isSelected = _selectedGachas.contains(prefsPrefix);
-                      
-                      // 問題数を取得
-                      int problemCount = 0;
-                      if (prefsPrefix == 'factorization') {
-                        problemCount = allFactorizationProblems.length;
-                      } else if (prefsPrefix == 'indeterminate_equation') {
-                        problemCount = allIndeterminateEquationProblems.length;
-                      } else if (prefsPrefix == 'sequence') {
-                        problemCount = allSequenceProblems.length;
-                      } else if (prefsPrefix == 'congruence') {
-                        problemCount = congruenceGachaProblems.length;
-                      }
-                      
-                      final isDisabled = _isGachaDisabled(prefsPrefix);
-                      
-                      return Column(
-                        children: [
-                          Stack(
-                            children: [
-                              SelectableModernCard(
-                                buttonWidth: buttonWidth,
-                                icon: icon,
-                                title: problemCount > 0 ? '$title ${_formatProblemCount(problemCount)}' : title,
-                                subtitle: subtitle,
-                                gradient: gradient,
-                                isSelected: isSelected && !isDisabled,
-                                onPressed: isDisabled ? () {} : () => _onGachaTapped(prefsPrefix),
-                              ),
-                              // Coming Soon透かし
-                              if (isDisabled)
-                                Positioned.fill(
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(20),
-                                      onTap: () {
-                                        // タップを無効化（何もしない）
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
-                                          color: Colors.black.withOpacity(0.3),
-                                        ),
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Coming Soon',
-                                                style: TextStyle(
-                                                  fontSize: 32,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white.withOpacity(0.6),
-                                                  shadows: [
-                                                    Shadow(
-                                                      color: Colors.black.withOpacity(0.5),
-                                                      offset: const Offset(2, 2),
-                                                      blurRadius: 4,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                  
-                  const SizedBox(height: 32),
-                  
-                  // 説明文
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      () {
-                        final price = l10n.defaultPrice;
-                        return l10n.freeGachaProNote(price);
-                      }(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                    // タイトル（スクロール可能）
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).padding.top + 60.0,
+                        bottom: 20.0,
                       ),
-                      textAlign: TextAlign.center,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          Image.asset(
+                            'assets/icon/home_icon_removebg.png',
+                            width: responsive.isCompact ? 36 : 43,
+                            height: responsive.isCompact ? 36 : 43,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.apps,
+                                size: responsive.isCompact ? 36 : 43,
+                                color: Color(0xFF8B7355),
+                              );
+                            },
+                          ),
+                          Text(
+                            l10n.appTitle,
+                            style: TextStyle(
+                              fontSize: responsive.titleFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF8B7355),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 2.0),
+
+                    // 説明文
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 20.0,
+                              horizontal: 24.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20.0),
+                              border: Border.all(
+                                color: Colors.blue.shade700,
+                                width: 3.0,
+                              ),
+                            ),
+                            child: Text(
+                              l10n.freeGachaSelectionInstruction,
+                              style: TextStyle(
+                                fontSize: responsive.isCompact ? 22 : 28,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                                height: 1.4,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '（${_selectedGachas.length}/2）',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // メインガチャボタン群
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: _mainGachas.map((gacha) {
+                        final prefsPrefix = gacha['prefsPrefix'] as String;
+                        final title = _resolveTitle(gacha);
+                        final subtitle = _resolveSubtitle(gacha);
+                        final icon = gacha['icon'] as IconData;
+                        final gradient = gacha['gradient'] as Gradient;
+                        final isSelected = _selectedGachas.contains(
+                          prefsPrefix,
+                        );
+
+                        // 問題数を取得
+                        int problemCount = 0;
+                        if (prefsPrefix == 'integral') {
+                          problemCount = allIntegralProblems.length;
+                        } else if (prefsPrefix == 'limit') {
+                          problemCount = allLimitProblems.length;
+                        } else if (prefsPrefix == 'physics_math') {
+                          problemCount = physicsMathGachaProblems.length;
+                        }
+
+                        final isDisabled = _isGachaDisabled(prefsPrefix);
+
+                        return Column(
+                          children: [
+                            Stack(
+                              children: [
+                                SelectableModernCard(
+                                  buttonWidth: buttonWidth,
+                                  icon: icon,
+                                  title: problemCount > 0
+                                      ? '$title ${_formatProblemCount(problemCount)}'
+                                      : title,
+                                  subtitle: subtitle,
+                                  gradient: gradient,
+                                  isSelected: isSelected && !isDisabled,
+                                  onPressed: isDisabled
+                                      ? () {}
+                                      : () => _onGachaTapped(prefsPrefix),
+                                ),
+                                // Coming Soon透かし
+                                if (isDisabled)
+                                  Positioned.fill(
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(20),
+                                        onTap: () {
+                                          // タップを無効化（何もしない）
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                            color: Colors.black.withOpacity(
+                                              0.3,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  l10n.comingSoon,
+                                                  style: TextStyle(
+                                                    fontSize: 32,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white
+                                                        .withOpacity(0.6),
+                                                    shadows: [
+                                                      Shadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.5),
+                                                        offset: const Offset(
+                                                          2,
+                                                          2,
+                                                        ),
+                                                        blurRadius: 4,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+
+                    // おまけガチャタイトル
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          Image.asset(
+                            'assets/icon/home_icon_removebg.png',
+                            width: responsive.isCompact ? 36 : 43,
+                            height: responsive.isCompact ? 36 : 43,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.apps,
+                                size: responsive.isCompact ? 36 : 43,
+                                color: Color(0xFF8B7355),
+                              );
+                            },
+                          ),
+                          Text(
+                            l10n.bonusGachaTitle,
+                            style: TextStyle(
+                              fontSize: responsive.titleFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF8B7355),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // おまけガチャボタン群
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: _bonusGachas.map((gacha) {
+                        final prefsPrefix = gacha['prefsPrefix'] as String;
+                        final title = _resolveTitle(gacha);
+                        final subtitle = _resolveSubtitle(gacha);
+                        final icon = gacha['icon'] as IconData;
+                        final gradient = gacha['gradient'] as Gradient;
+                        final isSelected = _selectedGachas.contains(
+                          prefsPrefix,
+                        );
+
+                        // 問題数を取得
+                        int problemCount = 0;
+                        if (prefsPrefix == 'factorization') {
+                          problemCount = allFactorizationProblems.length;
+                        } else if (prefsPrefix == 'indeterminate_equation') {
+                          problemCount =
+                              allIndeterminateEquationProblems.length;
+                        } else if (prefsPrefix == 'sequence') {
+                          problemCount = allSequenceProblems.length;
+                        } else if (prefsPrefix == 'congruence') {
+                          problemCount = congruenceGachaProblems.length;
+                        }
+
+                        final isDisabled = _isGachaDisabled(prefsPrefix);
+
+                        return Column(
+                          children: [
+                            Stack(
+                              children: [
+                                SelectableModernCard(
+                                  buttonWidth: buttonWidth,
+                                  icon: icon,
+                                  title: problemCount > 0
+                                      ? '$title ${_formatProblemCount(problemCount)}'
+                                      : title,
+                                  subtitle: subtitle,
+                                  gradient: gradient,
+                                  isSelected: isSelected && !isDisabled,
+                                  onPressed: isDisabled
+                                      ? () {}
+                                      : () => _onGachaTapped(prefsPrefix),
+                                ),
+                                // Coming Soon透かし
+                                if (isDisabled)
+                                  Positioned.fill(
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(20),
+                                        onTap: () {
+                                          // タップを無効化（何もしない）
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                            color: Colors.black.withOpacity(
+                                              0.3,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Coming Soon',
+                                                  style: TextStyle(
+                                                    fontSize: 32,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white
+                                                        .withOpacity(0.6),
+                                                    shadows: [
+                                                      Shadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.5),
+                                                        offset: const Offset(
+                                                          2,
+                                                          2,
+                                                        ),
+                                                        blurRadius: 4,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // 説明文
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        () {
+                          final price = l10n.defaultPrice;
+                          return l10n.freeGachaProNote(price);
+                        }(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
                   ],
                 ),
-              ),
               ),
             ),
           ],

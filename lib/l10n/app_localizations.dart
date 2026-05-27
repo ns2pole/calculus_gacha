@@ -908,6 +908,18 @@ abstract class AppLocalizations {
   /// **'月500回プランを見る'**
   String get aiTutorUpgradeButton;
 
+  /// No description provided for @aiTutorRestorePurchasedButton.
+  ///
+  /// In ja, this message translates to:
+  /// **'すでに購入されている方はこちら'**
+  String get aiTutorRestorePurchasedButton;
+
+  /// No description provided for @aiTutorRestoreInProgress.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入状態を確認中...'**
+  String get aiTutorRestoreInProgress;
+
   /// No description provided for @aiTutorPurchaseTitle.
   ///
   /// In ja, this message translates to:
