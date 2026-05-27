@@ -299,6 +299,29 @@
   "excludeSuffix": "の問題を除く",
   "restoredPurchases": "購入を復元しました",
   "noRestorablePurchases": "復元できる購入が見つかりませんでした",
+  "aiTutorRestoreSuccessVerified": "購入を復元しました。AIチューター Plus が有効です。",
+  "aiTutorRestoreFailureNoPurchase": "復元に失敗しました: 復元できる有効な購入が見つかりませんでした。",
+  "aiTutorRestoreFailureNotSignedIn": "復元に失敗しました: ログイン状態を確認できませんでした。再ログインしてもう一度お試しください。",
+  "aiTutorRestoreFailureSyncNotConfigured": "復元に失敗しました: サーバー確認の設定が未完了です。",
+  "aiTutorRestoreFailureSyncTimeout": "復元に失敗しました: サーバー確認がタイムアウトしました。通信状態を確認してもう一度お試しください。",
+  "aiTutorRestoreFailureSyncUnknown": "復元に失敗しました: サーバー確認に失敗しました。もう一度お試しください。",
+  "aiTutorRestoreFailureInactive": "復元に失敗しました: 購入情報は見つかりましたが、有効期限が切れている可能性があります。",
+  "aiTutorRestoreFailureServerRejected": "復元に失敗しました: サーバー確認でエラーが返されました。{detail}",
+  "@aiTutorRestoreFailureServerRejected": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTutorRestoreFailureUnexpected": "復元に失敗しました: 予期しないエラーが発生しました。{detail}",
+  "@aiTutorRestoreFailureUnexpected": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
   "restoreFailed": "復元に失敗しました: {error}",
   "@restoreFailed": {
     "placeholders": {

@@ -548,6 +548,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noRestorablePurchases => 'No restorable purchases found';
 
   @override
+  String get aiTutorRestoreSuccessVerified =>
+      'Purchase restored. AI Tutor Plus is active.';
+
+  @override
+  String get aiTutorRestoreFailureNoPurchase =>
+      'Restore failed: no active restorable purchase was found.';
+
+  @override
+  String get aiTutorRestoreFailureNotSignedIn =>
+      'Restore failed: sign-in status could not be verified. Please sign in again and retry.';
+
+  @override
+  String get aiTutorRestoreFailureSyncNotConfigured =>
+      'Restore failed: server verification is not configured.';
+
+  @override
+  String get aiTutorRestoreFailureSyncTimeout =>
+      'Restore failed: server verification timed out. Please check your connection and retry.';
+
+  @override
+  String get aiTutorRestoreFailureSyncUnknown =>
+      'Restore failed: server verification failed. Please retry.';
+
+  @override
+  String get aiTutorRestoreFailureInactive =>
+      'Restore failed: purchase information was found, but it may have expired.';
+
+  @override
+  String aiTutorRestoreFailureServerRejected(String detail) {
+    return 'Restore failed: server verification returned an error. $detail';
+  }
+
+  @override
+  String aiTutorRestoreFailureUnexpected(String detail) {
+    return 'Restore failed: an unexpected error occurred. $detail';
+  }
+
+  @override
   String restoreFailed(String error) {
     return 'Restore failed: $error';
   }

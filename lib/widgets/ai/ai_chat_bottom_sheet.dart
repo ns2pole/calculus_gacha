@@ -7,6 +7,7 @@ import '../../models/ai_chat_message.dart';
 import '../../services/ai/ai_chat_client.dart';
 import '../../services/ai/ai_chat_client_factory.dart';
 import '../../services/auth/firebase_auth_service.dart';
+import '../../services/payment/ai_tutor_entitlement_sync_service.dart';
 import '../../services/payment/revenuecat_service.dart';
 
 typedef MathTextBuilder = Widget Function(String text);
@@ -33,6 +34,77 @@ Future<void> showAiChatBottomSheet({
       onMessagesChanged: onMessagesChanged,
     ),
   );
+}
+
+void _showAiTutorResultSnackBar(
+  BuildContext context, {
+  required bool success,
+  required String message,
+}) {
+  final backgroundColor = success ? Colors.green.shade700 : Colors.red.shade700;
+  final icon = success ? Icons.check_circle : Icons.cancel;
+  final overlay = Overlay.of(context, rootOverlay: true);
+
+  late final OverlayEntry entry;
+  entry = OverlayEntry(
+    builder: (context) {
+      return Positioned(
+        top: 16,
+        left: 16,
+        right: 16,
+        child: SafeArea(
+          child: IgnorePointer(
+            child: Material(
+              color: backgroundColor,
+              elevation: 8,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                child: Row(
+                  children: [
+                    Icon(icon, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+  overlay.insert(entry);
+  Future<void>.delayed(const Duration(seconds: 4), entry.remove);
+}
+
+String _restoreSyncFailureMessage(
+  AppLocalizations l10n,
+  AiTutorEntitlementSyncResult result,
+) {
+  return switch (result.failureReason) {
+    AiTutorEntitlementSyncFailureReason.endpointNotConfigured =>
+      l10n.aiTutorRestoreFailureSyncNotConfigured,
+    AiTutorEntitlementSyncFailureReason.notSignedIn =>
+      l10n.aiTutorRestoreFailureNotSignedIn,
+    AiTutorEntitlementSyncFailureReason.serverRejected =>
+      l10n.aiTutorRestoreFailureServerRejected(result.detail ?? ''),
+    AiTutorEntitlementSyncFailureReason.inactive =>
+      l10n.aiTutorRestoreFailureInactive,
+    AiTutorEntitlementSyncFailureReason.timeout =>
+      l10n.aiTutorRestoreFailureSyncTimeout,
+    AiTutorEntitlementSyncFailureReason.unexpected =>
+      l10n.aiTutorRestoreFailureUnexpected(result.detail ?? ''),
+    null => l10n.aiTutorRestoreFailureSyncUnknown,
+  };
 }
 
 class AiChatBottomSheet extends StatefulWidget {
@@ -189,10 +261,10 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       _showUpgradeOffer = false;
       _errorText = null;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.aiTutorPurchaseSuccess),
-      ),
+    _showAiTutorResultSnackBar(
+      context,
+      success: true,
+      message: AppLocalizations.of(context)!.aiTutorPurchaseSuccess,
     );
   }
 
@@ -225,26 +297,37 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
           });
           return;
         }
-        await RevenueCatService.syncCurrentFirebaseUser();
       }
 
+      await RevenueCatService.syncCurrentFirebaseUser();
       final restored = await RevenueCatService.restoreAiTutorSubscription();
       debugPrint('[AiTutorRestore] Restore result: $restored');
+      final syncResult = restored
+          ? await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed()
+          : const AiTutorEntitlementSyncResult.failed(
+              AiTutorEntitlementSyncFailureReason.inactive,
+            );
+      debugPrint(
+        '[AiTutorRestore] Server entitlement synced: ${syncResult.active}',
+      );
       if (!mounted) return;
+      final restoreSucceeded = restored && syncResult.active;
       setState(() {
         _isRestoringPurchase = false;
-        if (restored) {
+        if (restoreSucceeded) {
           _showUpgradeOffer = false;
           _errorText = null;
         }
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            restored ? l10n.restoredPurchases : l10n.noRestorablePurchases,
-          ),
-        ),
+      _showAiTutorResultSnackBar(
+        context,
+        success: restoreSucceeded,
+        message: restoreSucceeded
+            ? l10n.aiTutorRestoreSuccessVerified
+            : restored
+            ? _restoreSyncFailureMessage(l10n, syncResult)
+            : l10n.aiTutorRestoreFailureNoPurchase,
       );
     } catch (e) {
       debugPrint('[AiTutorRestore] Restore failed: $e');
@@ -252,9 +335,11 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       setState(() {
         _isRestoringPurchase = false;
       });
-      ScaffoldMessenger.of(
+      _showAiTutorResultSnackBar(
         context,
-      ).showSnackBar(SnackBar(content: Text(l10n.restoreFailed(e.toString()))));
+        success: false,
+        message: l10n.restoreFailed(e.toString()),
+      );
     }
   }
 
@@ -747,12 +832,11 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       setState(() {
         _isProcessing = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+      _showAiTutorResultSnackBar(
+        context,
+        success: false,
+        message:
             '${_usesAppleSignIn ? l10n.auth_appleSignInFailed : l10n.auth_googleSignInFailed}: $e',
-          ),
-        ),
       );
     }
   }
@@ -763,20 +847,32 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       _isProcessing = true;
     });
     try {
+      await RevenueCatService.syncCurrentFirebaseUser();
       final restored = await RevenueCatService.restoreAiTutorSubscription();
       debugPrint('[AiTutorPurchase] Restore result: $restored');
+      final syncResult = restored
+          ? await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed()
+          : const AiTutorEntitlementSyncResult.failed(
+              AiTutorEntitlementSyncFailureReason.inactive,
+            );
+      debugPrint(
+        '[AiTutorPurchase] Server entitlement synced: ${syncResult.active}',
+      );
       if (!mounted) return;
       setState(() {
         _isProcessing = false;
       });
-      if (restored) {
+      if (restored && syncResult.active) {
         Navigator.of(context).pop(true);
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.noRestorablePurchases),
-        ),
+      final l10n = AppLocalizations.of(context)!;
+      _showAiTutorResultSnackBar(
+        context,
+        success: false,
+        message: restored
+            ? _restoreSyncFailureMessage(l10n, syncResult)
+            : l10n.aiTutorRestoreFailureNoPurchase,
       );
     } catch (e) {
       debugPrint('[AiTutorPurchase] Restore failed: $e');
@@ -784,12 +880,10 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       setState(() {
         _isProcessing = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.restoreFailed(e.toString()),
-          ),
-        ),
+      _showAiTutorResultSnackBar(
+        context,
+        success: false,
+        message: AppLocalizations.of(context)!.restoreFailed(e.toString()),
       );
     }
   }
@@ -801,6 +895,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       _isProcessing = true;
     });
     try {
+      await RevenueCatService.syncCurrentFirebaseUser();
       debugPrint('[AiTutorPurchase] RevenueCat purchase started');
       final result = await action();
       debugPrint(
@@ -808,22 +903,40 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         'success=${result.success}, cancelled=${result.cancelled}, error=${result.error}',
       );
       if (!mounted) return;
+      if (result.success) {
+        final syncResult =
+            await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed();
+        debugPrint(
+          '[AiTutorPurchase] Server entitlement synced: ${syncResult.active}',
+        );
+        if (!mounted) return;
+        setState(() {
+          _isProcessing = false;
+        });
+        if (syncResult.active) {
+          Navigator.of(context).pop(true);
+          return;
+        }
+        _showAiTutorResultSnackBar(
+          context,
+          success: false,
+          message: _restoreSyncFailureMessage(
+            AppLocalizations.of(context)!,
+            syncResult,
+          ),
+        );
+        return;
+      }
       setState(() {
         _isProcessing = false;
       });
-      if (result.success) {
-        Navigator.of(context).pop(true);
-        return;
-      }
       if (result.cancelled) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.purchaseFailed(
-              result.error ?? AppLocalizations.of(context)!.unknownError,
-            ),
-          ),
+      _showAiTutorResultSnackBar(
+        context,
+        success: false,
+        message: AppLocalizations.of(context)!.purchaseFailed(
+          result.error ?? AppLocalizations.of(context)!.unknownError,
         ),
       );
     } catch (e) {
@@ -832,12 +945,10 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       setState(() {
         _isProcessing = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.purchaseFailed(e.toString()),
-          ),
-        ),
+      _showAiTutorResultSnackBar(
+        context,
+        success: false,
+        message: AppLocalizations.of(context)!.purchaseFailed(e.toString()),
       );
     }
   }

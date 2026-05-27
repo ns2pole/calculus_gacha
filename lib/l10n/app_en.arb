@@ -307,6 +307,29 @@
   "excludeSuffix": "excluding",
   "restoredPurchases": "Purchases restored",
   "noRestorablePurchases": "No restorable purchases found",
+  "aiTutorRestoreSuccessVerified": "Purchase restored. AI Tutor Plus is active.",
+  "aiTutorRestoreFailureNoPurchase": "Restore failed: no active restorable purchase was found.",
+  "aiTutorRestoreFailureNotSignedIn": "Restore failed: sign-in status could not be verified. Please sign in again and retry.",
+  "aiTutorRestoreFailureSyncNotConfigured": "Restore failed: server verification is not configured.",
+  "aiTutorRestoreFailureSyncTimeout": "Restore failed: server verification timed out. Please check your connection and retry.",
+  "aiTutorRestoreFailureSyncUnknown": "Restore failed: server verification failed. Please retry.",
+  "aiTutorRestoreFailureInactive": "Restore failed: purchase information was found, but it may have expired.",
+  "aiTutorRestoreFailureServerRejected": "Restore failed: server verification returned an error. {detail}",
+  "@aiTutorRestoreFailureServerRejected": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTutorRestoreFailureUnexpected": "Restore failed: an unexpected error occurred. {detail}",
+  "@aiTutorRestoreFailureUnexpected": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
   "restoreFailed": "Restore failed: {error}",
   "@restoreFailed": {
     "placeholders": {

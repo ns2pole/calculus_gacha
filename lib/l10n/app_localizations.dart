@@ -1052,6 +1052,60 @@ abstract class AppLocalizations {
   /// **'復元できる購入が見つかりませんでした'**
   String get noRestorablePurchases;
 
+  /// No description provided for @aiTutorRestoreSuccessVerified.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入を復元しました。AIチューター Plus が有効です。'**
+  String get aiTutorRestoreSuccessVerified;
+
+  /// No description provided for @aiTutorRestoreFailureNoPurchase.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: 復元できる有効な購入が見つかりませんでした。'**
+  String get aiTutorRestoreFailureNoPurchase;
+
+  /// No description provided for @aiTutorRestoreFailureNotSignedIn.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: ログイン状態を確認できませんでした。再ログインしてもう一度お試しください。'**
+  String get aiTutorRestoreFailureNotSignedIn;
+
+  /// No description provided for @aiTutorRestoreFailureSyncNotConfigured.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: サーバー確認の設定が未完了です。'**
+  String get aiTutorRestoreFailureSyncNotConfigured;
+
+  /// No description provided for @aiTutorRestoreFailureSyncTimeout.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: サーバー確認がタイムアウトしました。通信状態を確認してもう一度お試しください。'**
+  String get aiTutorRestoreFailureSyncTimeout;
+
+  /// No description provided for @aiTutorRestoreFailureSyncUnknown.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: サーバー確認に失敗しました。もう一度お試しください。'**
+  String get aiTutorRestoreFailureSyncUnknown;
+
+  /// No description provided for @aiTutorRestoreFailureInactive.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: 購入情報は見つかりましたが、有効期限が切れている可能性があります。'**
+  String get aiTutorRestoreFailureInactive;
+
+  /// No description provided for @aiTutorRestoreFailureServerRejected.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: サーバー確認でエラーが返されました。{detail}'**
+  String aiTutorRestoreFailureServerRejected(String detail);
+
+  /// No description provided for @aiTutorRestoreFailureUnexpected.
+  ///
+  /// In ja, this message translates to:
+  /// **'復元に失敗しました: 予期しないエラーが発生しました。{detail}'**
+  String aiTutorRestoreFailureUnexpected(String detail);
+
   /// No description provided for @restoreFailed.
   ///
   /// In ja, this message translates to:

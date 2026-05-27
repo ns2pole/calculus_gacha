@@ -532,6 +532,43 @@ class AppLocalizationsJa extends AppLocalizations {
   String get noRestorablePurchases => '復元できる購入が見つかりませんでした';
 
   @override
+  String get aiTutorRestoreSuccessVerified => '購入を復元しました。AIチューター Plus が有効です。';
+
+  @override
+  String get aiTutorRestoreFailureNoPurchase =>
+      '復元に失敗しました: 復元できる有効な購入が見つかりませんでした。';
+
+  @override
+  String get aiTutorRestoreFailureNotSignedIn =>
+      '復元に失敗しました: ログイン状態を確認できませんでした。再ログインしてもう一度お試しください。';
+
+  @override
+  String get aiTutorRestoreFailureSyncNotConfigured =>
+      '復元に失敗しました: サーバー確認の設定が未完了です。';
+
+  @override
+  String get aiTutorRestoreFailureSyncTimeout =>
+      '復元に失敗しました: サーバー確認がタイムアウトしました。通信状態を確認してもう一度お試しください。';
+
+  @override
+  String get aiTutorRestoreFailureSyncUnknown =>
+      '復元に失敗しました: サーバー確認に失敗しました。もう一度お試しください。';
+
+  @override
+  String get aiTutorRestoreFailureInactive =>
+      '復元に失敗しました: 購入情報は見つかりましたが、有効期限が切れている可能性があります。';
+
+  @override
+  String aiTutorRestoreFailureServerRejected(String detail) {
+    return '復元に失敗しました: サーバー確認でエラーが返されました。$detail';
+  }
+
+  @override
+  String aiTutorRestoreFailureUnexpected(String detail) {
+    return '復元に失敗しました: 予期しないエラーが発生しました。$detail';
+  }
+
+  @override
   String restoreFailed(String error) {
     return '復元に失敗しました: $error';
   }

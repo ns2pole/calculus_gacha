@@ -2,9 +2,13 @@ import * as admin from "firebase-admin";
 import {defineSecret} from "firebase-functions/params";
 import {onRequest, Request} from "firebase-functions/v2/https";
 import {resolveUsageIdentity} from "./auth";
-import {applyRevenueCatWebhook, hasAiTutorEntitlement} from "./entitlements";
+import {
+  applyRevenueCatWebhook,
+  hasAiTutorEntitlement,
+  syncAiTutorEntitlementFromRevenueCat,
+} from "./entitlements";
 import {generateAiChatReply} from "./geminiClient";
-import {assertPost, HttpError, sendJson} from "./http";
+import {assertPost, HttpError, readBearerToken, sendJson} from "./http";
 import {consumeUsage, RateLimitExceededError, resolveUsageLimit} from "./rateLimiter";
 import {parseAiChatRequest} from "./requestValidator";
 
@@ -12,6 +16,7 @@ admin.initializeApp();
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const revenueCatWebhookAuth = defineSecret("REVENUECAT_WEBHOOK_AUTH");
+const revenueCatRestApiKey = defineSecret("REVENUECAT_REST_API_KEY");
 
 export const aiChat = onRequest({
   cors: true,
@@ -118,3 +123,55 @@ export const revenueCatWebhook = onRequest({
     });
   }
 });
+
+export const syncAiTutorEntitlement = onRequest({
+  cors: true,
+  region: "asia-northeast1",
+  secrets: [revenueCatRestApiKey],
+}, async (request, response) => {
+  try {
+    assertPost(request);
+    await assertAppCheckAuthorized(request);
+
+    const uid = await requireFirebaseUid(request);
+    const active = await syncAiTutorEntitlementFromRevenueCat(
+      admin.firestore(),
+      uid,
+      revenueCatRestApiKey.value(),
+    );
+
+    sendJson(response, 200, {active});
+  } catch (error) {
+    if (error instanceof HttpError) {
+      sendJson(response, error.status, {
+        error: {
+          code: error.code,
+          message: error.message,
+        },
+      });
+      return;
+    }
+
+    console.error(error);
+    sendJson(response, 500, {
+      error: {
+        code: "internal",
+        message: "Entitlement sync failed.",
+      },
+    });
+  }
+});
+
+async function requireFirebaseUid(request: Request): Promise<string> {
+  const token = readBearerToken(request);
+  if (token == null) {
+    throw new HttpError(401, "auth_required", "Firebase authentication is required.");
+  }
+
+  try {
+    const decoded = await admin.auth().verifyIdToken(token);
+    return decoded.uid;
+  } catch {
+    throw new HttpError(401, "auth_failed", "Firebase authentication failed.");
+  }
+}
