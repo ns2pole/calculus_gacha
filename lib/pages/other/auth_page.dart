@@ -783,31 +783,32 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 const SizedBox(height: 16),
                 
-                // 3. Googleでクラウドに保存
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: (_isLoading || !isFirebaseAvailable) ? null : _signInWithGoogle,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
-                      side: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.g_mobiledata, size: 24),
-                        const SizedBox(width: 8),
-                        Flexible(child: Text(l10n.auth_googleSignInButton)),
-                      ],
+                // 3. Googleでクラウドに保存（iOSはAppleのみ）
+                if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: (_isLoading || !isFirebaseAvailable) ? null : _signInWithGoogle,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.g_mobiledata, size: 24),
+                          const SizedBox(width: 8),
+                          Flexible(child: Text(l10n.auth_googleSignInButton)),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
                 
                 // 4. iOSのみAppleアカウントでクラウドに保存
                 if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) ...[
-                  const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     height: 56,

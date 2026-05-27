@@ -597,31 +597,32 @@ class FirebaseAuthService {
         return null;
       }
 
-      // authorizationCodeの検証を緩和（iOSではnullでも動作する可能性がある）
-      // iOSではauthorizationCodeがnullの場合があるため、必須チェックを削除
-      if (appleCredential.authorizationCode != null && 
-          appleCredential.authorizationCode!.isEmpty) {
+      final authorizationCode = appleCredential.authorizationCode;
+
+      // authorizationCode が空の場合も idToken で Firebase 認証を試行する
+      if (authorizationCode.isEmpty) {
         print('Warning: Apple Sign-In authorization code is empty (but continuing with idToken only)');
       }
 
-      // デバッグ用: トークンの最初の部分を表示（完全なトークンは表示しない）
+      // デバッグ用: トークンの長さのみ表示（完全なトークンは表示しない）
       print('Apple Sign-In: Received identity token (length: ${identityToken.length})');
-      print('Apple Sign-In: Received authorization code (length: ${appleCredential.authorizationCode!.length})');
+      print(
+        'Apple Sign-In: Received authorization code '
+        '(length: ${authorizationCode.length})',
+      );
       print('Apple Sign-In: User ID: ${appleCredential.userIdentifier}');
       print('Apple Sign-In: Email: ${appleCredential.email ?? "not provided"}');
 
       // Firebaseに認証情報を送信
-      // iOSではauthorizationCodeがnullの場合、idTokenだけでクレデンシャルを作成
-      // authorizationCodeがnullの場合は、accessTokenパラメータを省略するか、nullを渡す
+      // iOSではauthorizationCodeが空の場合も、idTokenを使ってクレデンシャルを作成する
       final oauthCredential = OAuthProvider("apple.com").credential(
         idToken: identityToken,
-        // iOSではauthorizationCodeがnullの場合、accessTokenを省略
-        accessToken: appleCredential.authorizationCode,
+        accessToken: authorizationCode,
       );
 
       print('Apple Sign-In: Attempting to sign in with Firebase...');
       print('Apple Sign-In: Using idToken (length: ${identityToken.length})');
-      print('Apple Sign-In: authorizationCode is ${appleCredential.authorizationCode != null ? "provided" : "null"}');
+      print('Apple Sign-In: authorizationCode is ${authorizationCode.isNotEmpty ? "provided" : "empty"}');
       
       try {
         final userCredential = await _auth.signInWithCredential(oauthCredential);

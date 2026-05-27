@@ -228,6 +228,23 @@
   "askAiPlaceholder": "Enter a message",
   "askAiImageComingSoon": "Image sending is coming soon",
   "askAiError": "Could not connect. Please try again.",
+  "aiChatFreeMonthlyLimitReached": "You've reached this month's free AI chat limit ({limit} uses).",
+  "@aiChatFreeMonthlyLimitReached": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "aiChatPaidMonthlyLimitReached": "You've reached this month's AI chat limit ({limit} uses).",
+  "@aiChatPaidMonthlyLimitReached": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "aiTutorPlusBadge": "Tutor Plus +",
   "aiTutorLimitReachedTitle": "Free usage limit reached",
   "aiTutorLimitReachedBody": "Subscribe to AI Tutor Plus for {price}/month to use AI chat up to 500 times per month.",
   "@aiTutorLimitReachedBody": {
@@ -253,7 +270,11 @@
   "aiTutorPurchaseRestore": "Restore purchase",
   "aiTutorSignInRequiredTitle": "Sign-in required",
   "aiTutorSignInRequiredBody": "Please sign in with Google first so your purchase can be applied to your AI usage limit.",
+  "aiTutorSignInRequiredGoogleBody": "Please sign in with Google first so your purchase can be applied to your AI usage limit.",
+  "aiTutorSignInRequiredAppleBody": "Please sign in with Apple first so your purchase can be applied to your AI usage limit.",
   "aiTutorSignInToPurchase": "Sign in with Google to purchase",
+  "aiTutorSignInWithGoogleToPurchase": "Sign in with Google to purchase",
+  "aiTutorSignInWithAppleToPurchase": "Sign in with Apple to purchase",
   "aiTutorPurchaseInProgress": "Processing purchase...",
   "recordSaved": "Learning record saved: {status}",
   "@recordSaved": {

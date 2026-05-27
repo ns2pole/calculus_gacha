@@ -872,6 +872,24 @@ abstract class AppLocalizations {
   /// **'通信に失敗しました。もう一度お試しください。'**
   String get askAiError;
 
+  /// No description provided for @aiChatFreeMonthlyLimitReached.
+  ///
+  /// In ja, this message translates to:
+  /// **'今月の無料AIチャット利用上限（{limit}回）に達しました。'**
+  String aiChatFreeMonthlyLimitReached(int limit);
+
+  /// No description provided for @aiChatPaidMonthlyLimitReached.
+  ///
+  /// In ja, this message translates to:
+  /// **'今月のAIチャット利用上限（{limit}回）に達しました。'**
+  String aiChatPaidMonthlyLimitReached(int limit);
+
+  /// No description provided for @aiTutorPlusBadge.
+  ///
+  /// In ja, this message translates to:
+  /// **'Tutor Plus +'**
+  String get aiTutorPlusBadge;
+
   /// No description provided for @aiTutorLimitReachedTitle.
   ///
   /// In ja, this message translates to:
@@ -938,11 +956,35 @@ abstract class AppLocalizations {
   /// **'購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。'**
   String get aiTutorSignInRequiredBody;
 
+  /// No description provided for @aiTutorSignInRequiredGoogleBody.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。'**
+  String get aiTutorSignInRequiredGoogleBody;
+
+  /// No description provided for @aiTutorSignInRequiredAppleBody.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入状態をAI利用上限に反映するため、先にAppleでログインしてください。'**
+  String get aiTutorSignInRequiredAppleBody;
+
   /// No description provided for @aiTutorSignInToPurchase.
   ///
   /// In ja, this message translates to:
   /// **'Googleでログインして購入へ'**
   String get aiTutorSignInToPurchase;
+
+  /// No description provided for @aiTutorSignInWithGoogleToPurchase.
+  ///
+  /// In ja, this message translates to:
+  /// **'Googleでログインして購入へ'**
+  String get aiTutorSignInWithGoogleToPurchase;
+
+  /// No description provided for @aiTutorSignInWithAppleToPurchase.
+  ///
+  /// In ja, this message translates to:
+  /// **'Appleでログインして購入へ'**
+  String get aiTutorSignInWithAppleToPurchase;
 
   /// No description provided for @aiTutorPurchaseInProgress.
   ///

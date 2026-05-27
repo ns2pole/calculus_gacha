@@ -437,6 +437,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get askAiError => 'Could not connect. Please try again.';
 
   @override
+  String aiChatFreeMonthlyLimitReached(int limit) {
+    return 'You\'ve reached this month\'s free AI chat limit ($limit uses).';
+  }
+
+  @override
+  String aiChatPaidMonthlyLimitReached(int limit) {
+    return 'You\'ve reached this month\'s AI chat limit ($limit uses).';
+  }
+
+  @override
+  String get aiTutorPlusBadge => 'Tutor Plus +';
+
+  @override
   String get aiTutorLimitReachedTitle => 'Free usage limit reached';
 
   @override
@@ -477,7 +490,23 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please sign in with Google first so your purchase can be applied to your AI usage limit.';
 
   @override
+  String get aiTutorSignInRequiredGoogleBody =>
+      'Please sign in with Google first so your purchase can be applied to your AI usage limit.';
+
+  @override
+  String get aiTutorSignInRequiredAppleBody =>
+      'Please sign in with Apple first so your purchase can be applied to your AI usage limit.';
+
+  @override
   String get aiTutorSignInToPurchase => 'Sign in with Google to purchase';
+
+  @override
+  String get aiTutorSignInWithGoogleToPurchase =>
+      'Sign in with Google to purchase';
+
+  @override
+  String get aiTutorSignInWithAppleToPurchase =>
+      'Sign in with Apple to purchase';
 
   @override
   String get aiTutorPurchaseInProgress => 'Processing purchase...';

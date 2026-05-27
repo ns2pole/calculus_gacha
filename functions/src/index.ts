@@ -45,6 +45,8 @@ export const aiChat = onRequest({
         error: {
           code: "rate_limited",
           message: error.message,
+          tier: error.limit.tier,
+          limit: error.limit.limit,
         },
       });
       return;

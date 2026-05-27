@@ -99,10 +99,13 @@ class CloudAiChatClient implements AiChatClient {
       final errorMessage = _readErrorMessage(decoded) ?? 'AIチャットの応答取得に失敗しました。';
       _logHttpError(response.statusCode, errorCode, errorMessage);
       if (response.statusCode == 429 || errorCode == 'rate_limited') {
+        final rateLimit = _readRateLimitDetails(decoded);
         throw AiChatRateLimitException(
           errorMessage,
           code: errorCode,
           statusCode: response.statusCode,
+          tier: rateLimit?.tier,
+          monthlyLimit: rateLimit?.limit,
         );
       }
 
@@ -185,6 +188,20 @@ class CloudAiChatClient implements AiChatClient {
       return error['code'] as String;
     }
     return null;
+  }
+
+  ({String? tier, int? limit})? _readRateLimitDetails(
+    Map<String, dynamic> decoded,
+  ) {
+    final error = decoded['error'];
+    if (error is! Map<String, dynamic>) return null;
+
+    final tier = error['tier'];
+    final limit = error['limit'];
+    return (
+      tier: tier is String ? tier : null,
+      limit: limit is num ? limit.toInt() : null,
+    );
   }
 
   String _toUserMessage(int statusCode, String? code) {

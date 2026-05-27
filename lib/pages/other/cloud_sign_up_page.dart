@@ -764,46 +764,47 @@ class _CloudSignUpPageState extends State<CloudSignUpPage> {
                       ),
                       const SizedBox(height: 16),
                       
-                      // 3. Googleでクラウドに保存
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _signInWithGoogle,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(color: Colors.grey.shade300),
+                      // 3. Googleでクラウドに保存（iOSはAppleのみ）
+                      if (!Platform.isIOS) ...[
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _signInWithGoogle,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black87,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.grey.shade300),
+                              ),
                             ),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
-                                  ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.g_mobiledata, size: 24),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      l10n.auth_googleSignInButton,
-                                      style: const TextStyle(fontSize: 18),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
                                     ),
-                                  ],
-                                ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.g_mobiledata, size: 24),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        l10n.auth_googleSignInButton,
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                    ],
+                                  ),
+                          ),
                         ),
-                      ),
+                      ],
                       
                       // 4. iOSのみAppleアカウントでクラウドに保存
                       if (Platform.isIOS) ...[
-                        const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
                           height: 56,

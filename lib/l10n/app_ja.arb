@@ -220,6 +220,23 @@
   "askAiPlaceholder": "メッセージを入力",
   "askAiImageComingSoon": "画像の送信は準備中です",
   "askAiError": "通信に失敗しました。もう一度お試しください。",
+  "aiChatFreeMonthlyLimitReached": "今月の無料AIチャット利用上限（{limit}回）に達しました。",
+  "@aiChatFreeMonthlyLimitReached": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "aiChatPaidMonthlyLimitReached": "今月のAIチャット利用上限（{limit}回）に達しました。",
+  "@aiChatPaidMonthlyLimitReached": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "aiTutorPlusBadge": "Tutor Plus +",
   "aiTutorLimitReachedTitle": "無料利用の上限に達しました",
   "aiTutorLimitReachedBody": "{price}/月のAIチューター Plus に登録すると、AIチャットを月500回まで使えます。",
   "@aiTutorLimitReachedBody": {
@@ -245,7 +262,11 @@
   "aiTutorPurchaseRestore": "購入を復元",
   "aiTutorSignInRequiredTitle": "ログインが必要です",
   "aiTutorSignInRequiredBody": "購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。",
+  "aiTutorSignInRequiredGoogleBody": "購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。",
+  "aiTutorSignInRequiredAppleBody": "購入状態をAI利用上限に反映するため、先にAppleでログインしてください。",
   "aiTutorSignInToPurchase": "Googleでログインして購入へ",
+  "aiTutorSignInWithGoogleToPurchase": "Googleでログインして購入へ",
+  "aiTutorSignInWithAppleToPurchase": "Appleでログインして購入へ",
   "aiTutorPurchaseInProgress": "購入処理中...",
   "recordSaved": "学習記録を保存しました: {status}",
   "@recordSaved": {

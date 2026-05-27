@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -121,10 +122,11 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       _scrollToBottom();
     } on AiChatRateLimitException catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
         _isSending = false;
-        _errorText = e.message;
-        _showUpgradeOffer = true;
+        _errorText = _rateLimitMessage(l10n, e);
+        _showUpgradeOffer = e.tier != 'paid';
       });
       _scrollToBottom();
     } on AiChatClientException catch (e) {
@@ -277,6 +279,14 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   bool get _canShowMoreDetailButton {
     if (_isSending || _messages.isEmpty) return false;
     return _messages.last.role == AiChatMessageRole.assistant;
+  }
+
+  String _rateLimitMessage(AppLocalizations l10n, AiChatRateLimitException e) {
+    final limit = e.monthlyLimit ?? (e.tier == 'paid' ? 500 : 10);
+    if (e.tier == 'paid') {
+      return l10n.aiChatPaidMonthlyLimitReached(limit);
+    }
+    return l10n.aiChatFreeMonthlyLimitReached(limit);
   }
 
   Widget _buildHandle() {
@@ -535,10 +545,16 @@ class _AiTutorPurchaseDialog extends StatefulWidget {
 class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
   bool _isProcessing = false;
 
+  bool get _usesAppleSignIn =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isAuthenticated = FirebaseAuthService.isAuthenticated;
+    final signInButtonText = _usesAppleSignIn
+        ? l10n.aiTutorSignInWithAppleToPurchase
+        : l10n.aiTutorSignInWithGoogleToPurchase;
 
     return AlertDialog(
       title: Text(l10n.aiTutorPurchaseTitle),
@@ -553,7 +569,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
           _BenefitRow(text: l10n.aiTutorPurchaseBenefitPlatformBilling),
           if (!isAuthenticated) ...[
             const SizedBox(height: 16),
-            _SignInNotice(),
+            _SignInNotice(usesAppleSignIn: _usesAppleSignIn),
           ],
           if (_isProcessing) ...[
             const SizedBox(height: 16),
@@ -580,8 +596,8 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         ),
         if (!isAuthenticated)
           FilledButton(
-            onPressed: _isProcessing ? null : _signInWithGoogleAndPurchase,
-            child: Text(l10n.aiTutorSignInToPurchase),
+            onPressed: _isProcessing ? null : _signInAndPurchase,
+            child: Text(signInButtonText),
           )
         else ...[
           TextButton(
@@ -602,18 +618,21 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
     await _runPurchaseAction(RevenueCatService.purchaseAiTutorSubscription);
   }
 
-  Future<void> _signInWithGoogleAndPurchase() async {
+  Future<void> _signInAndPurchase() async {
     final l10n = AppLocalizations.of(context)!;
-    debugPrint('[AiTutorPurchase] Google sign-in before purchase started');
+    final providerLabel = _usesAppleSignIn ? 'Apple' : 'Google';
+    debugPrint('[AiTutorPurchase] $providerLabel sign-in before purchase started');
     setState(() {
       _isProcessing = true;
     });
 
     try {
-      final credential = await FirebaseAuthService.signInWithGoogle();
+      final credential = _usesAppleSignIn
+          ? await FirebaseAuthService.signInWithApple()
+          : await FirebaseAuthService.signInWithGoogle();
       if (!mounted) return;
       if (credential == null) {
-        debugPrint('[AiTutorPurchase] Google sign-in cancelled');
+        debugPrint('[AiTutorPurchase] $providerLabel sign-in cancelled');
         setState(() {
           _isProcessing = false;
         });
@@ -621,7 +640,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       }
 
       debugPrint(
-        '[AiTutorPurchase] Google sign-in succeeded, syncing RevenueCat user',
+        '[AiTutorPurchase] $providerLabel sign-in succeeded, syncing RevenueCat user',
       );
       await RevenueCatService.syncCurrentFirebaseUser();
       if (!mounted) return;
@@ -630,13 +649,17 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       });
       await _purchase();
     } catch (e) {
-      debugPrint('[AiTutorPurchase] Google sign-in failed: $e');
+      debugPrint('[AiTutorPurchase] $providerLabel sign-in failed: $e');
       if (!mounted) return;
       setState(() {
         _isProcessing = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${l10n.auth_googleSignInFailed}: $e')),
+        SnackBar(
+          content: Text(
+            '${_usesAppleSignIn ? l10n.auth_appleSignInFailed : l10n.auth_googleSignInFailed}: $e',
+          ),
+        ),
       );
     }
   }
@@ -750,7 +773,9 @@ class _BenefitRow extends StatelessWidget {
 }
 
 class _SignInNotice extends StatelessWidget {
-  const _SignInNotice();
+  final bool usesAppleSignIn;
+
+  const _SignInNotice({required this.usesAppleSignIn});
 
   @override
   Widget build(BuildContext context) {
@@ -781,7 +806,9 @@ class _SignInNotice extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  l10n.aiTutorSignInRequiredBody,
+                  usesAppleSignIn
+                      ? l10n.aiTutorSignInRequiredAppleBody
+                      : l10n.aiTutorSignInRequiredGoogleBody,
                   style: TextStyle(color: colorScheme.onErrorContainer),
                 ),
               ],

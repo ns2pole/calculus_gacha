@@ -18,6 +18,7 @@ import '../../screens/physics_math_gacha_screen.dart';
 // Widgets
 import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/home/home_card_widgets.dart';
+import '../../widgets/home/home_title_icon.dart';
 
 // models
 import '../../models/math_problem.dart';
@@ -108,18 +109,8 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  Image.asset(
-                    'assets/icon/home_icon_removebg.png',
-                    width: responsive.isCompact ? 36 : 43,
-                    height: responsive.isCompact ? 36 : 43,
-                    errorBuilder: (context, error, stackTrace) {
-                      // アイコンが見つからない場合のフォールバック
-                      return Icon(
-                        Icons.apps,
-                        size: responsive.isCompact ? 36 : 43,
-                        color: Color(0xFF8B7355),
-                      );
-                    },
+                  HomeTitleIcon(
+                    size: responsive.isCompact ? 36 : 43,
                   ),
                   // タイトルを一つのRowとしてセンタリング
                   Row(

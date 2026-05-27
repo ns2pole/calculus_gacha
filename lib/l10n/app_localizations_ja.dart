@@ -424,6 +424,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get askAiError => '通信に失敗しました。もう一度お試しください。';
 
   @override
+  String aiChatFreeMonthlyLimitReached(int limit) {
+    return '今月の無料AIチャット利用上限（$limit回）に達しました。';
+  }
+
+  @override
+  String aiChatPaidMonthlyLimitReached(int limit) {
+    return '今月のAIチャット利用上限（$limit回）に達しました。';
+  }
+
+  @override
+  String get aiTutorPlusBadge => 'Tutor Plus +';
+
+  @override
   String get aiTutorLimitReachedTitle => '無料利用の上限に達しました';
 
   @override
@@ -463,7 +476,21 @@ class AppLocalizationsJa extends AppLocalizations {
       '購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。';
 
   @override
+  String get aiTutorSignInRequiredGoogleBody =>
+      '購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。';
+
+  @override
+  String get aiTutorSignInRequiredAppleBody =>
+      '購入状態をAI利用上限に反映するため、先にAppleでログインしてください。';
+
+  @override
   String get aiTutorSignInToPurchase => 'Googleでログインして購入へ';
+
+  @override
+  String get aiTutorSignInWithGoogleToPurchase => 'Googleでログインして購入へ';
+
+  @override
+  String get aiTutorSignInWithAppleToPurchase => 'Appleでログインして購入へ';
 
   @override
   String get aiTutorPurchaseInProgress => '購入処理中...';

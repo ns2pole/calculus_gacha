@@ -22,7 +22,16 @@ class AiChatClientException implements Exception {
 }
 
 class AiChatRateLimitException extends AiChatClientException {
-  const AiChatRateLimitException(super.message, {super.code, super.statusCode});
+  final String? tier;
+  final int? monthlyLimit;
+
+  const AiChatRateLimitException(
+    super.message, {
+    super.code,
+    super.statusCode,
+    this.tier,
+    this.monthlyLimit,
+  });
 }
 
 class StubAiChatClient implements AiChatClient {
