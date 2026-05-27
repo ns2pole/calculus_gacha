@@ -9,7 +9,7 @@ class AiChatApiConfig {
 
   const AiChatApiConfig({
     this.endpoint,
-    this.timeout = const Duration(seconds: 30),
+    this.timeout = const Duration(seconds: 60),
   });
 
   factory AiChatApiConfig.fromEnvironment() {

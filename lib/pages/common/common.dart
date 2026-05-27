@@ -129,10 +129,11 @@ class MixedTextMath extends StatelessWidget {
   /// 入力: TeX文字列（例: "\\int_0^1 x dx"）
   /// 出力: Math.texウィジェット、またはエラー時はSelectableText
   Widget _mathCoreSafe(String tex, TextStyle style, {MathStyle? mathStyle}) {
+    final normalizedTex = _wrapBareCjkTextInTex(tex);
     try {
       if (plainTextOnMathError) {
         return Math.tex(
-          tex,
+          normalizedTex,
           textStyle: style,
           mathStyle: mathStyle ?? MathStyle.text,
           onErrorFallback: (_) => SelectableText(tex, style: style),
@@ -140,15 +141,172 @@ class MixedTextMath extends StatelessWidget {
       }
 
       return Math.tex(
-        tex,
+        normalizedTex,
         textStyle: style,
         mathStyle: mathStyle ?? MathStyle.text,
       );
     } catch (e, st) {
       // ignore: avoid_print
-      print('MixedTextMath: Math.tex build error: $e\ntex: $tex\n$st');
+      print(
+        'MixedTextMath: Math.tex build error: $e\n'
+        'tex: $tex\nnormalized: $normalizedTex\n$st',
+      );
       return SelectableText(tex, style: style);
     }
+  }
+
+  String _wrapBareCjkTextInTex(String tex) {
+    if (!_containsCjkText(tex)) return tex;
+
+    final out = StringBuffer();
+    var i = 0;
+    while (i < tex.length) {
+      final codeUnit = tex.codeUnitAt(i);
+      if (codeUnit == 0x5c) {
+        i = _copyCommandAndSkippedArgument(tex, i, out);
+        continue;
+      }
+
+      if (_isCjkTextCodeUnit(codeUnit)) {
+        final start = i;
+        i++;
+        while (i < tex.length) {
+          final current = tex.codeUnitAt(i);
+          if (_isCjkTextCodeUnit(current)) {
+            i++;
+            continue;
+          }
+          if (_isInlineWhitespace(current) &&
+              _hasFollowingCjkText(tex, i + 1)) {
+            i++;
+            continue;
+          }
+          break;
+        }
+
+        final textRun = tex.substring(start, i);
+        out
+          ..write(r'\text{')
+          ..write(_escapeTextMacroContent(textRun))
+          ..write('}');
+        continue;
+      }
+
+      out.writeCharCode(codeUnit);
+      i++;
+    }
+
+    return out.toString();
+  }
+
+  int _copyCommandAndSkippedArgument(String tex, int start, StringBuffer out) {
+    var i = start + 1;
+    while (i < tex.length && _isAsciiLetter(tex.codeUnitAt(i))) {
+      i++;
+    }
+
+    final command = tex.substring(start + 1, i);
+    out.write(tex.substring(start, i));
+
+    if (i < tex.length && tex.codeUnitAt(i) == 0x2a) {
+      out.writeCharCode(tex.codeUnitAt(i));
+      i++;
+    }
+
+    if (!_shouldSkipTextWrappingInside(command)) return i;
+
+    final spacesStart = i;
+    while (i < tex.length && _isInlineWhitespace(tex.codeUnitAt(i))) {
+      i++;
+    }
+    out.write(tex.substring(spacesStart, i));
+
+    if (i >= tex.length || tex.codeUnitAt(i) != 0x7b) return i;
+
+    final end = _findBalancedBraceEnd(tex, i);
+    if (end < 0) return i;
+
+    out.write(tex.substring(i, end + 1));
+    return end + 1;
+  }
+
+  int _findBalancedBraceEnd(String tex, int openIndex) {
+    var depth = 0;
+    for (var i = openIndex; i < tex.length; i++) {
+      final codeUnit = tex.codeUnitAt(i);
+      if (codeUnit == 0x5c) {
+        i++;
+        continue;
+      }
+      if (codeUnit == 0x7b) depth++;
+      if (codeUnit == 0x7d) {
+        depth--;
+        if (depth == 0) return i;
+      }
+    }
+    return -1;
+  }
+
+  bool _shouldSkipTextWrappingInside(String command) {
+    const skippedCommands = {
+      'text',
+      'textrm',
+      'textbf',
+      'textit',
+      'textnormal',
+      'mbox',
+      'hbox',
+      'operatorname',
+      'mathrm',
+      'mathit',
+      'mathbf',
+      'mathsf',
+      'mathtt',
+    };
+    return skippedCommands.contains(command);
+  }
+
+  bool _containsCjkText(String text) {
+    for (var i = 0; i < text.length; i++) {
+      if (_isCjkTextCodeUnit(text.codeUnitAt(i))) return true;
+    }
+    return false;
+  }
+
+  bool _hasFollowingCjkText(String text, int start) {
+    for (var i = start; i < text.length; i++) {
+      final codeUnit = text.codeUnitAt(i);
+      if (_isInlineWhitespace(codeUnit)) continue;
+      return _isCjkTextCodeUnit(codeUnit);
+    }
+    return false;
+  }
+
+  bool _isAsciiLetter(int codeUnit) {
+    return (codeUnit >= 0x41 && codeUnit <= 0x5a) ||
+        (codeUnit >= 0x61 && codeUnit <= 0x7a);
+  }
+
+  bool _isInlineWhitespace(int codeUnit) {
+    return codeUnit == 0x20 || codeUnit == 0x09;
+  }
+
+  bool _isCjkTextCodeUnit(int codeUnit) {
+    return (codeUnit >= 0x3040 && codeUnit <= 0x30ff) ||
+        (codeUnit >= 0x3400 && codeUnit <= 0x4dbf) ||
+        (codeUnit >= 0x4e00 && codeUnit <= 0x9fff) ||
+        (codeUnit >= 0x3000 && codeUnit <= 0x303f) ||
+        (codeUnit >= 0xff01 && codeUnit <= 0xff60) ||
+        codeUnit == 0x3005 ||
+        codeUnit == 0x3006 ||
+        codeUnit == 0x3007;
+  }
+
+  String _escapeTextMacroContent(String text) {
+    return text
+        .replaceAll(r'\', r'\textbackslash{}')
+        .replaceAll('{', r'\{')
+        .replaceAll('}', r'\}');
   }
 
   /// ブロック数式（独立行の数式）を表示するウィジェット

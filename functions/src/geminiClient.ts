@@ -25,6 +25,7 @@ export async function generateAiChatReply(
   const maxOutputTokens = resolveMaxOutputTokens(request);
   let result = await requestGeminiText(apiKey, systemInstruction, contents, maxOutputTokens);
   if (result.finishReason === "MAX_TOKENS") {
+    console.warn("[AiChat] Gemini response hit MAX_TOKENS; retrying shorter.");
     result = await requestGeminiText(
       apiKey,
       systemInstruction,
@@ -49,6 +50,7 @@ export async function generateAiChatReply(
     return text;
   }
 
+  console.warn("[AiChat] Suspicious LaTeX detected; retrying render-safe response.");
   return (await requestGeminiText(
     apiKey,
     systemInstruction,
@@ -94,20 +96,30 @@ async function requestGeminiText(
   const body = await response.json().catch(() => null) as GeminiResponse | null;
   if (!response.ok) {
     const message = body?.error?.message ?? "Gemini APIの呼び出しに失敗しました。";
+    console.error(
+      "[AiChat] Gemini API error:",
+      {status: response.status, message},
+    );
     throw new HttpError(response.status, "gemini_error", message);
   }
 
   const candidate = body?.candidates?.[0];
+  const finishReason = candidate?.finishReason;
+  if (finishReason != null && finishReason !== "STOP") {
+    console.warn("[AiChat] Gemini finishReason:", finishReason);
+  }
+
   const text = candidate?.content?.parts
     ?.map((part) => part.text ?? "")
     .join("")
     .trim();
   if (text == null || text.length === 0) {
+    console.warn("[AiChat] Gemini returned empty text.", {finishReason});
     throw new HttpError(502, "empty_gemini_response", "AIから空の応答が返されました。");
   }
   return {
     text,
-    finishReason: candidate?.finishReason,
+    finishReason,
   };
 }
 

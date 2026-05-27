@@ -110,7 +110,6 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         context: widget.chatContext,
         history: List<AiChatMessage>.unmodifiable(_messages),
         userMessage: userMessage,
-        locale: Localizations.localeOf(context).languageCode,
       );
       if (!mounted) return;
       setState(() {
@@ -129,12 +128,22 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       });
       _scrollToBottom();
     } on AiChatClientException catch (e) {
+      debugPrint(
+        '[AiChatBottomSheet] Client error: '
+        'code=${e.code ?? 'unknown'}, status=${e.statusCode ?? 'none'}, '
+        'message=${e.message}',
+      );
       if (!mounted) return;
       setState(() {
         _isSending = false;
         _errorText = e.message;
       });
-    } catch (_) {
+    } catch (error, stackTrace) {
+      debugPrint('[AiChatBottomSheet] Unexpected error: $error');
+      debugPrintStack(
+        stackTrace: stackTrace,
+        label: '[AiChatBottomSheet] stack',
+      );
       if (!mounted) return;
       setState(() {
         _isSending = false;
@@ -178,21 +187,18 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       _errorText = null;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.aiTutorPurchaseSuccess)),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.aiTutorPurchaseSuccess),
+      ),
     );
   }
 
   String _newMessageId() => DateTime.now().microsecondsSinceEpoch.toString();
 
-  bool _isTablet(BuildContext context) =>
-      MediaQuery.sizeOf(context).shortestSide >= 600;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final viewInsets = MediaQuery.viewInsetsOf(context);
-    final tablet = _isTablet(context);
-    final hPad = tablet ? 32.0 : 16.0;
 
     return AnimatedPadding(
       duration: const Duration(milliseconds: 180),
@@ -212,13 +218,12 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
               Expanded(
                 child: ListView(
                   controller: _scrollController,
-                  padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 20),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                   children: [
                     _AssistantBubble(
                       text: l10n.askAiGreeting,
                       mathTextBuilder:
                           widget.assistantTextBuilder ?? widget.mathTextBuilder,
-                      isTablet: tablet,
                     ),
                     if (_messages.isEmpty) ...[
                       const SizedBox(height: 12),
@@ -230,7 +235,6 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
                         message: message,
                         mathTextBuilder: widget.mathTextBuilder,
                         assistantTextBuilder: widget.assistantTextBuilder,
-                        isTablet: tablet,
                       ),
                     ],
                     if (_isSending) ...[
@@ -293,14 +297,12 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     final text = widget.chatContext.questionText;
     final builder = widget.mathTextBuilder;
     final content = builder != null ? builder(text) : Text(text);
-    final tablet = _isTablet(context);
-    final hPad = tablet ? 32.0 : 16.0;
     return Padding(
-      padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 12),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.subject, size: tablet ? 24.0 : 20.0),
+          const Icon(Icons.subject, size: 20),
           const SizedBox(width: 8),
           Expanded(child: content),
         ],
@@ -309,24 +311,21 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   }
 
   Widget _buildChoiceChips(AppLocalizations l10n) {
-    final tablet = _isTablet(context);
-    final chipStyle = tablet ? const TextStyle(fontSize: 16) : null;
-
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
         ActionChip(
-          label: Text(l10n.askAiChoiceHint, style: chipStyle),
+          label: Text(l10n.askAiChoiceHint),
           onPressed: () => _sendText(l10n.askAiChoiceHint, choiceId: 'hint'),
         ),
         ActionChip(
-          label: Text(l10n.askAiChoiceApproach, style: chipStyle),
+          label: Text(l10n.askAiChoiceApproach),
           onPressed: () =>
               _sendText(l10n.askAiChoiceApproach, choiceId: 'approach_only'),
         ),
         ActionChip(
-          label: Text(l10n.askAiChoiceFirstStep, style: chipStyle),
+          label: Text(l10n.askAiChoiceFirstStep),
           onPressed: () =>
               _sendText(l10n.askAiChoiceFirstStep, choiceId: 'first_step'),
         ),
@@ -335,14 +334,10 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   }
 
   Widget _buildInputBar(AppLocalizations l10n) {
-    final tablet = _isTablet(context);
-    final hPad = tablet ? 24.0 : 8.0;
-    final fontSize = tablet ? 17.0 : 14.0;
-
     return SafeArea(
       top: false,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 8),
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
         child: Row(
           children: [
             Expanded(
@@ -350,12 +345,10 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
                 controller: _controller,
                 minLines: 1,
                 maxLines: 4,
-                style: TextStyle(fontSize: fontSize),
                 textInputAction: TextInputAction.send,
                 onSubmitted: _sendText,
                 decoration: InputDecoration(
                   hintText: l10n.askAiPlaceholder,
-                  hintStyle: TextStyle(fontSize: fontSize),
                   border: const OutlineInputBorder(),
                   isDense: true,
                 ),
@@ -364,7 +357,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
             const SizedBox(width: 8),
             FilledButton(
               onPressed: _isSending ? null : () => _sendText(_controller.text),
-              child: Text(l10n.askAiSend, style: TextStyle(fontSize: fontSize)),
+              child: Text(l10n.askAiSend),
             ),
           ],
         ),
@@ -377,13 +370,11 @@ class _MessageBubble extends StatelessWidget {
   final AiChatMessage message;
   final MathTextBuilder? mathTextBuilder;
   final MathTextBuilder? assistantTextBuilder;
-  final bool isTablet;
 
   const _MessageBubble({
     required this.message,
     this.mathTextBuilder,
     this.assistantTextBuilder,
-    this.isTablet = false,
   });
 
   @override
@@ -393,28 +384,20 @@ class _MessageBubble extends StatelessWidget {
       return _AssistantBubble(
         text: message.text,
         mathTextBuilder: assistantTextBuilder ?? mathTextBuilder,
-        isTablet: isTablet,
       );
     }
 
     final colorScheme = Theme.of(context).colorScheme;
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final maxBubbleWidth = isTablet ? screenWidth * 0.65 : 320.0;
-    final fontSize = isTablet ? 17.0 : 14.0;
-
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-        constraints: BoxConstraints(maxWidth: maxBubbleWidth),
+        constraints: const BoxConstraints(maxWidth: 320),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Text(
-          message.text,
-          style: TextStyle(fontSize: fontSize),
-        ),
+        child: Text(message.text),
       ),
     );
   }
@@ -423,34 +406,22 @@ class _MessageBubble extends StatelessWidget {
 class _AssistantBubble extends StatelessWidget {
   final String text;
   final MathTextBuilder? mathTextBuilder;
-  final bool isTablet;
 
-  const _AssistantBubble({
-    required this.text,
-    this.mathTextBuilder,
-    this.isTablet = false,
-  });
+  const _AssistantBubble({required this.text, this.mathTextBuilder});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final maxBubbleWidth = isTablet ? screenWidth * 0.75 : 360.0;
-    final fontSize = isTablet ? 17.0 : 14.0;
-
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        constraints: BoxConstraints(maxWidth: maxBubbleWidth),
+        constraints: const BoxConstraints(maxWidth: 360),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: DefaultTextStyle.merge(
-          style: TextStyle(fontSize: fontSize),
-          child: mathTextBuilder != null ? mathTextBuilder!(text) : Text(text),
-        ),
+        child: mathTextBuilder != null ? mathTextBuilder!(text) : Text(text),
       ),
     );
   }
@@ -493,10 +464,7 @@ class _AiTutorUpgradeCard extends StatelessWidget {
   final String price;
   final VoidCallback onPressed;
 
-  const _AiTutorUpgradeCard({
-    required this.price,
-    required this.onPressed,
-  });
+  const _AiTutorUpgradeCard({required this.price, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -513,7 +481,10 @@ class _AiTutorUpgradeCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.workspace_premium, color: colorScheme.onPrimaryContainer),
+                Icon(
+                  Icons.workspace_premium,
+                  color: colorScheme.onPrimaryContainer,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -521,7 +492,8 @@ class _AiTutorUpgradeCard extends StatelessWidget {
                     children: [
                       Text(
                         l10n.aiTutorLimitReachedTitle,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: colorScheme.onPrimaryContainer,
                             ),
@@ -554,9 +526,7 @@ class _AiTutorUpgradeCard extends StatelessWidget {
 class _AiTutorPurchaseDialog extends StatefulWidget {
   final String price;
 
-  const _AiTutorPurchaseDialog({
-    required this.price,
-  });
+  const _AiTutorPurchaseDialog({required this.price});
 
   @override
   State<_AiTutorPurchaseDialog> createState() => _AiTutorPurchaseDialogState();
@@ -603,7 +573,9 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: _isProcessing ? null : () => Navigator.of(context).pop(false),
+          onPressed: _isProcessing
+              ? null
+              : () => Navigator.of(context).pop(false),
           child: Text(l10n.cancel),
         ),
         if (!isAuthenticated)
@@ -648,7 +620,9 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         return;
       }
 
-      debugPrint('[AiTutorPurchase] Google sign-in succeeded, syncing RevenueCat user');
+      debugPrint(
+        '[AiTutorPurchase] Google sign-in succeeded, syncing RevenueCat user',
+      );
       await RevenueCatService.syncCurrentFirebaseUser();
       if (!mounted) return;
       setState(() {
@@ -684,7 +658,9 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.noRestorablePurchases)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.noRestorablePurchases),
+        ),
       );
     } catch (e) {
       debugPrint('[AiTutorPurchase] Restore failed: $e');
@@ -693,12 +669,18 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         _isProcessing = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.restoreFailed(e.toString()))),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.restoreFailed(e.toString()),
+          ),
+        ),
       );
     }
   }
 
-  Future<void> _runPurchaseAction(Future<PurchaseResult> Function() action) async {
+  Future<void> _runPurchaseAction(
+    Future<PurchaseResult> Function() action,
+  ) async {
     setState(() {
       _isProcessing = true;
     });
@@ -736,7 +718,9 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.purchaseFailed(e.toString())),
+          content: Text(
+            AppLocalizations.of(context)!.purchaseFailed(e.toString()),
+          ),
         ),
       );
     }
@@ -753,7 +737,11 @@ class _BenefitRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.check_circle, size: 18, color: Theme.of(context).colorScheme.primary),
+        Icon(
+          Icons.check_circle,
+          size: 18,
+          color: Theme.of(context).colorScheme.primary,
+        ),
         const SizedBox(width: 8),
         Expanded(child: Text(text)),
       ],

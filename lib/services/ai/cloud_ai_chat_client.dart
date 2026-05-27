@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,57 +55,95 @@ class CloudAiChatClient implements AiChatClient {
       throw const AiChatClientException('AIチャットの接続先が設定されていません。');
     }
 
-    final token = await authTokenProvider();
-    final appCheckToken = await appCheckTokenProvider();
-    final installationId = await installationIdProvider();
+    try {
+      final token = await authTokenProvider();
+      final appCheckToken = await appCheckTokenProvider();
+      final installationId = await installationIdProvider();
 
-    final payload = requestCodec.encode(
-      context: context,
-      history: _trimHistory(history),
-      userMessage: userMessage,
-      clientInstallationId: installationId,
-      locale: locale ?? _resolveLocale(),
-    );
-
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
-      if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
-    };
-
-    final response = await _httpClient
-        .post(endpoint, headers: headers, body: jsonEncode(payload))
-        .timeout(config.timeout);
-
-    final decoded = _decodeResponseBody(response);
-    if (response.statusCode == 200) {
-      final text = _readText(decoded);
-      if (text.trim().isEmpty) {
-        throw const AiChatClientException('AIから空の応答が返されました。');
-      }
-      return AiChatMessage(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        role: AiChatMessageRole.assistant,
-        text: text,
-        createdAt: DateTime.now(),
+      final payload = requestCodec.encode(
+        context: context,
+        history: _trimHistory(history),
+        userMessage: userMessage,
+        clientInstallationId: installationId,
+        locale: locale ?? _resolveLocale(),
       );
-    }
 
-    final errorCode = _readErrorCode(decoded);
-    final errorMessage = _readErrorMessage(decoded) ?? 'AIチャットの応答取得に失敗しました。';
-    if (response.statusCode == 429 || errorCode == 'rate_limited') {
-      throw AiChatRateLimitException(
-        errorMessage,
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
+      };
+
+      final response = await _httpClient
+          .post(endpoint, headers: headers, body: jsonEncode(payload))
+          .timeout(config.timeout);
+
+      final decoded = _decodeResponseBody(response);
+      if (response.statusCode == 200) {
+        final text = _readText(decoded);
+        if (text.trim().isEmpty) {
+          throw const AiChatClientException(
+            'AIが回答を生成できませんでした。表現を変えてもう一度お試しください。',
+            code: 'empty_ai_response',
+          );
+        }
+        return AiChatMessage(
+          id: DateTime.now().microsecondsSinceEpoch.toString(),
+          role: AiChatMessageRole.assistant,
+          text: text,
+          createdAt: DateTime.now(),
+        );
+      }
+
+      final errorCode = _readErrorCode(decoded);
+      final errorMessage = _readErrorMessage(decoded) ?? 'AIチャットの応答取得に失敗しました。';
+      _logHttpError(response.statusCode, errorCode, errorMessage);
+      if (response.statusCode == 429 || errorCode == 'rate_limited') {
+        throw AiChatRateLimitException(
+          errorMessage,
+          code: errorCode,
+          statusCode: response.statusCode,
+        );
+      }
+
+      throw AiChatClientException(
+        _toUserMessage(response.statusCode, errorCode),
         code: errorCode,
         statusCode: response.statusCode,
       );
+    } on AiChatClientException {
+      rethrow;
+    } on TimeoutException catch (e, stackTrace) {
+      _logFailure('timeout', e, stackTrace);
+      throw const AiChatClientException(
+        'AIの返答に時間がかかっています。短めに質問するか、もう一度お試しください。',
+        code: 'timeout',
+      );
+    } on SocketException catch (e, stackTrace) {
+      _logFailure('socket', e, stackTrace);
+      throw const AiChatClientException(
+        '通信状態を確認して、もう一度お試しください。',
+        code: 'network',
+      );
+    } on http.ClientException catch (e, stackTrace) {
+      _logFailure('http_client', e, stackTrace);
+      throw const AiChatClientException(
+        '通信状態を確認して、もう一度お試しください。',
+        code: 'network',
+      );
+    } on FirebaseException catch (e, stackTrace) {
+      _logFailure('firebase_${e.code}', e, stackTrace);
+      throw const AiChatClientException(
+        'AIチャットの認証確認に失敗しました。アプリを再起動してもう一度お試しください。',
+        code: 'firebase',
+      );
+    } catch (e, stackTrace) {
+      _logFailure('unexpected', e, stackTrace);
+      throw const AiChatClientException(
+        'AIチャットの通信に失敗しました。もう一度お試しください。',
+        code: 'unexpected',
+      );
     }
-
-    throw AiChatClientException(
-      errorMessage,
-      code: errorCode,
-      statusCode: response.statusCode,
-    );
   }
 
   List<AiChatMessage> _trimHistory(List<AiChatMessage> history) {
@@ -145,6 +185,59 @@ class CloudAiChatClient implements AiChatClient {
       return error['code'] as String;
     }
     return null;
+  }
+
+  String _toUserMessage(int statusCode, String? code) {
+    switch (code) {
+      case 'app_check_required':
+      case 'app_check_failed':
+        return 'アプリの認証確認に失敗しました。アプリを再起動してもう一度お試しください。';
+      case 'empty_gemini_response':
+      case 'empty_ai_response':
+        return 'AIが回答を生成できませんでした。表現を変えてもう一度お試しください。';
+      case 'invalid_request':
+      case 'invalid_context':
+      case 'invalid_history':
+      case 'invalid_message':
+        return 'メッセージ内容を確認して、短くしてもう一度お試しください。';
+      case 'gemini_error':
+        if (statusCode == 503 || statusCode == 504) {
+          return 'AIサーバーが混み合っています。少し時間をおいてお試しください。';
+        }
+        return 'AIが回答を生成できませんでした。表現を変えてもう一度お試しください。';
+      case 'internal':
+        return 'AIチャット側でエラーが発生しました。少し時間をおいてお試しください。';
+    }
+
+    if (statusCode == 408 || statusCode == 504) {
+      return 'AIの返答に時間がかかっています。短めに質問するか、もう一度お試しください。';
+    }
+    if (statusCode == 413) {
+      return 'メッセージが長すぎます。短くしてもう一度お試しください。';
+    }
+    if (statusCode >= 500) {
+      return 'AIサーバーが混み合っています。少し時間をおいてお試しください。';
+    }
+    if (statusCode == 401 || statusCode == 403) {
+      return 'アプリの認証確認に失敗しました。アプリを再起動してもう一度お試しください。';
+    }
+    if (statusCode >= 400) {
+      return 'メッセージ内容を確認して、もう一度お試しください。';
+    }
+
+    return 'AIチャットの応答取得に失敗しました。もう一度お試しください。';
+  }
+
+  void _logHttpError(int statusCode, String? code, String message) {
+    debugPrint(
+      '[AiChat] HTTP error: status=$statusCode, code=${code ?? 'unknown'}, '
+      'message=$message',
+    );
+  }
+
+  void _logFailure(String code, Object error, StackTrace stackTrace) {
+    debugPrint('[AiChat] Request failed: code=$code, error=$error');
+    debugPrintStack(stackTrace: stackTrace, label: '[AiChat] stack');
   }
 
   static Future<String?> _defaultAuthTokenProvider() async {

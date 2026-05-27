@@ -17,6 +17,7 @@ flutter_*.png
 
 # Android
 .android/
+android/.kotlin/
 app/build/
 */build/
 local.properties
