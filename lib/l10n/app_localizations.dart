@@ -881,13 +881,13 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorLimitReachedBody.
   ///
   /// In ja, this message translates to:
-  /// **'{price}/月のAIチューター Plus に登録すると、AIチャットを月1500回まで使えます。'**
+  /// **'{price}/月のAIチューター Plus に登録すると、AIチャットを月500回まで使えます。'**
   String aiTutorLimitReachedBody(String price);
 
   /// No description provided for @aiTutorUpgradeButton.
   ///
   /// In ja, this message translates to:
-  /// **'月1500回プランを見る'**
+  /// **'月500回プランを見る'**
   String get aiTutorUpgradeButton;
 
   /// No description provided for @aiTutorPurchaseTitle.
@@ -899,13 +899,13 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorPurchaseDescription.
   ///
   /// In ja, this message translates to:
-  /// **'{price}/月でAIチャットを月1500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。'**
+  /// **'{price}/月でAIチャットを月500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。'**
   String aiTutorPurchaseDescription(String price);
 
   /// No description provided for @aiTutorPurchaseBenefitMonthlyLimit.
   ///
   /// In ja, this message translates to:
-  /// **'AIチャットを月1500回まで利用可能'**
+  /// **'AIチャットを月500回まで利用可能'**
   String get aiTutorPurchaseBenefitMonthlyLimit;
 
   /// No description provided for @aiTutorPurchaseBenefitPlatformBilling.

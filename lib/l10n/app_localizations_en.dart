@@ -441,23 +441,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aiTutorLimitReachedBody(String price) {
-    return 'Subscribe to AI Tutor Plus for $price/month to use AI chat up to 1,500 times per month.';
+    return 'Subscribe to AI Tutor Plus for $price/month to use AI chat up to 500 times per month.';
   }
 
   @override
-  String get aiTutorUpgradeButton => 'View 1,500/month plan';
+  String get aiTutorUpgradeButton => 'View 500/month plan';
 
   @override
   String get aiTutorPurchaseTitle => 'AI Tutor Plus';
 
   @override
   String aiTutorPurchaseDescription(String price) {
-    return 'Use AI chat up to 1,500 times per month for $price/month. If you purchase, you will continue to the iOS/Android payment screen.';
+    return 'Use AI chat up to 500 times per month for $price/month. If you purchase, you will continue to the iOS/Android payment screen.';
   }
 
   @override
   String get aiTutorPurchaseBenefitMonthlyLimit =>
-      'Use AI chat up to 1,500 times per month';
+      'Use AI chat up to 500 times per month';
 
   @override
   String get aiTutorPurchaseBenefitPlatformBilling =>

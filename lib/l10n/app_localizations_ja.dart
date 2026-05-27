@@ -428,22 +428,22 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String aiTutorLimitReachedBody(String price) {
-    return '$price/月のAIチューター Plus に登録すると、AIチャットを月1500回まで使えます。';
+    return '$price/月のAIチューター Plus に登録すると、AIチャットを月500回まで使えます。';
   }
 
   @override
-  String get aiTutorUpgradeButton => '月1500回プランを見る';
+  String get aiTutorUpgradeButton => '月500回プランを見る';
 
   @override
   String get aiTutorPurchaseTitle => 'AIチューター Plus';
 
   @override
   String aiTutorPurchaseDescription(String price) {
-    return '$price/月でAIチャットを月1500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。';
+    return '$price/月でAIチャットを月500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。';
   }
 
   @override
-  String get aiTutorPurchaseBenefitMonthlyLimit => 'AIチャットを月1500回まで利用可能';
+  String get aiTutorPurchaseBenefitMonthlyLimit => 'AIチャットを月500回まで利用可能';
 
   @override
   String get aiTutorPurchaseBenefitPlatformBilling =>

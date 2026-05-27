@@ -3,8 +3,8 @@ import {hashValue} from "./auth";
 import {UsageIdentity, UsageLimit} from "./types";
 
 const defaultPolicy = {
-  freeMonthlyLimit: 25,
-  paidMonthlyLimit: 1500,
+  freeMonthlyLimit: 10,
+  paidMonthlyLimit: 500,
 };
 
 export class RateLimitExceededError extends Error {
