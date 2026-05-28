@@ -638,6 +638,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign in with Apple to purchase';
 
   @override
+  String get aiTutorSignInInProgress => 'Signing in...';
+
+  @override
   String get aiTutorPurchaseInProgress => 'Processing purchase...';
 
   @override
@@ -1031,7 +1034,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String auth_emailSignInSuccess(String method) {
-    return 'Saved to cloud using $method';
+    return 'Linked cloud with $method';
   }
 
   @override
@@ -1262,6 +1265,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String usingCloudWith(String method) {
     return 'Using cloud with $method';
   }
+
+  @override
+  String get cloudSyncToggleLabel => 'Cloud sync';
+
+  @override
+  String get cloudSyncEnabledSnack => 'Cloud sync turned on';
+
+  @override
+  String get cloudSyncDisabledSnack => 'Cloud sync turned off';
 
   @override
   String problemCountRemaining(int filteredCount, int totalCount) {

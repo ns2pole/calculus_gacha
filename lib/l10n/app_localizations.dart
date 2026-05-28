@@ -1214,6 +1214,12 @@ abstract class AppLocalizations {
   /// **'Appleでログインして購入へ'**
   String get aiTutorSignInWithAppleToPurchase;
 
+  /// No description provided for @aiTutorSignInInProgress.
+  ///
+  /// In ja, this message translates to:
+  /// **'ログイン中...'**
+  String get aiTutorSignInInProgress;
+
   /// No description provided for @aiTutorPurchaseInProgress.
   ///
   /// In ja, this message translates to:
@@ -1907,7 +1913,7 @@ abstract class AppLocalizations {
   /// No description provided for @auth_emailSignInSuccess.
   ///
   /// In ja, this message translates to:
-  /// **'{method}でクラウドに保存しました'**
+  /// **'{method}でクラウドと連携しました'**
   String auth_emailSignInSuccess(String method);
 
   /// No description provided for @auth_signUpSuccess.
@@ -2305,6 +2311,24 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'{method}でクラウドを利用中'**
   String usingCloudWith(String method);
+
+  /// No description provided for @cloudSyncToggleLabel.
+  ///
+  /// In ja, this message translates to:
+  /// **'クラウド同期'**
+  String get cloudSyncToggleLabel;
+
+  /// No description provided for @cloudSyncEnabledSnack.
+  ///
+  /// In ja, this message translates to:
+  /// **'クラウド同期をオンにしました'**
+  String get cloudSyncEnabledSnack;
+
+  /// No description provided for @cloudSyncDisabledSnack.
+  ///
+  /// In ja, this message translates to:
+  /// **'クラウド同期をオフにしました'**
+  String get cloudSyncDisabledSnack;
 
   /// No description provided for @problemCountRemaining.
   ///

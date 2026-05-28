@@ -13,6 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
+import '../../services/auth/cloud_sync_preference_service.dart';
+import '../../services/auth/firebase_auth_service.dart';
 import '../../services/problems/simple_data_manager.dart';
 import '../../services/problems/learning_history_slots.dart';
 import '../../widgets/drawing/draggable_tool_buttons.dart';
@@ -3022,7 +3024,22 @@ class _SyncButtonState extends State<_SyncButton> {
 
   Future<void> _performSync() async {
     if (_isSyncing) return;
-    
+    final l10n = AppLocalizations.of(context)!;
+
+    if (!await CloudSyncPreferenceService.isEnabledForUser(
+      FirebaseAuthService.userId,
+    )) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.cloudSyncDisabledSnack),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() {
       _isSyncing = true;
     });

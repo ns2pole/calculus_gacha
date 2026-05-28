@@ -6,6 +6,7 @@ import '../../models/learning_status.dart';
 import '../../pages/common/problem_status.dart';
 import '../payment/revenuecat_service.dart';
 import '../payment/iap_secondary_products_config.dart';
+import '../auth/cloud_sync_preference_service.dart';
 import '../auth/firebase_auth_service.dart';
 import '../auth/firestore_learning_service.dart';
 import '../auth/firestore_settings_service.dart';
@@ -46,12 +47,32 @@ class SimpleDataManager {
   static const Duration _cloudLearningCacheTtl = Duration(seconds: 5);
   static const Duration _cloudSettingsCacheTtl = Duration(seconds: 5);
 
+  static Future<bool> _isCloudSyncEnabled() async {
+    if (!FirebaseAuthService.isAuthenticated) return false;
+    return CloudSyncPreferenceService.isEnabledForUser(
+      FirebaseAuthService.userId,
+    );
+  }
+
+  /// Clears in-memory cloud caches when the user disables cloud sync.
+  static void clearCloudCaches() {
+    _clearCloudLearningCache();
+    _clearCloudSettingsCache();
+    _webCloudReadyUserId = null;
+    _webCloudSyncFuture = null;
+  }
+
   static Future<bool> ensureWebCloudSyncReady({bool force = false}) async {
     if (!FirebaseAuthService.isAuthenticated ||
         FirebaseAuthService.userId == null) {
       _webCloudReadyUserId = null;
       _clearCloudLearningCache();
       _clearCloudSettingsCache();
+      return false;
+    }
+
+    if (!await _isCloudSyncEnabled()) {
+      clearCloudCaches();
       return false;
     }
 
@@ -580,6 +601,11 @@ class SimpleDataManager {
       return false;
     }
 
+    if (!await _isCloudSyncEnabled()) {
+      _clearCloudLearningCache();
+      return false;
+    }
+
     if (await isAccountSwitched()) {
       await syncOnAccountSwitch();
       return await _syncFromFirestore(force: false);
@@ -706,6 +732,11 @@ class SimpleDataManager {
       return false;
     }
 
+    if (!await _isCloudSyncEnabled()) {
+      _clearCloudSettingsCache();
+      return false;
+    }
+
     if (await isAccountSwitched()) {
       await syncOnAccountSwitch();
       return await _syncSettingsFromFirestore(force: false);
@@ -781,8 +812,12 @@ class SimpleDataManager {
         return true;
       }
 
-      await _ensureCloudLearningStateCurrent(force: true);
-      await _ensureCloudSettingsStateCurrent(force: true);
+      if (await _isCloudSyncEnabled()) {
+        await _ensureCloudLearningStateCurrent(force: true);
+        await _ensureCloudSettingsStateCurrent(force: true);
+      } else {
+        clearCloudCaches();
+      }
       await setLastUserId(userId);
 
       return true;
@@ -830,6 +865,9 @@ class SimpleDataManager {
   static Future<void> syncLocalSettingsToFirestore({bool force = false}) async {
     try {
       if (!FirebaseAuthService.isAuthenticated) {
+        return;
+      }
+      if (!await _isCloudSyncEnabled()) {
         return;
       }
 
@@ -996,6 +1034,9 @@ class SimpleDataManager {
       if (!FirebaseAuthService.isAuthenticated) {
         return;
       }
+      if (!await _isCloudSyncEnabled()) {
+        return;
+      }
 
       final userId = FirebaseAuthService.userId;
       if (userId == null) {
@@ -1090,6 +1131,11 @@ class SimpleDataManager {
   static Future<bool> performCloudSync({bool force = true}) async {
     final userId = FirebaseAuthService.userId;
     if (!FirebaseAuthService.isAuthenticated || userId == null) {
+      return false;
+    }
+
+    if (!await _isCloudSyncEnabled()) {
+      clearCloudCaches();
       return false;
     }
 
@@ -1798,8 +1844,12 @@ class SimpleDataManager {
       }
 
       await clearAccountSpecificData();
-      await _syncFromFirestore(force: true);
-      await _syncSettingsFromFirestore(force: true);
+      if (await _isCloudSyncEnabled()) {
+        await _syncFromFirestore(force: true);
+        await _syncSettingsFromFirestore(force: true);
+      } else {
+        clearCloudCaches();
+      }
       await setLastUserId(currentUserId);
 
       print('Account switch sync completed');

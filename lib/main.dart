@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_web_options.dart';
 import 'pages/other/home_page.dart';
 import './utils/update_checker.dart';
+import 'services/auth/cloud_sync_migration.dart';
 import 'services/problems/simple_data_manager.dart';
 import 'services/payment/revenuecat_service.dart';
 import 'services/payment/iap_secondary_products_config.dart';
@@ -54,6 +55,7 @@ void main() async {
   runApp(const MyApp());
   // runApp の後で非同期にアップデートチェックを開始（postFrame は安全） ここをオンにすればupdateがチェックされる。
   WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await CloudSyncMigration.runIfNeeded();
     // シンプルデータマネージャーを初期化
     await SimpleDataManager.initialize();
     

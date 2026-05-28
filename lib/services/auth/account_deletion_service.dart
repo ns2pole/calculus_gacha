@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 
 import '../ai/ai_chat_api_config.dart';
 import '../problems/simple_data_manager.dart';
+import 'cloud_sync_preference_service.dart';
 import 'firebase_auth_service.dart';
 
 class AccountDeletionException implements Exception {
@@ -74,6 +75,7 @@ class AccountDeletionService {
         );
       }
 
+      await CloudSyncPreferenceService.removeForUser(user.uid);
       final cleared = await SimpleDataManager.clearAllData();
       if (!cleared) {
         debugPrint(

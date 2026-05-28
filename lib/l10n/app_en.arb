@@ -327,6 +327,7 @@
   "aiTutorSignInToPurchase": "Sign in with Google to purchase",
   "aiTutorSignInWithGoogleToPurchase": "Sign in with Google to purchase",
   "aiTutorSignInWithAppleToPurchase": "Sign in with Apple to purchase",
+  "aiTutorSignInInProgress": "Signing in...",
   "aiTutorPurchaseInProgress": "Processing purchase...",
   "recordSaved": "Learning record saved: {status}",
   "@recordSaved": {
@@ -553,7 +554,7 @@
   "auth_userNotFound": "No account found for this email address.",
   "auth_invalidEmail": "Invalid email address.",
   "auth_tooManyRequests": "Too many requests.\nPlease wait a while and try again.",
-  "auth_emailSignInSuccess": "Saved to cloud using {method}",
+  "auth_emailSignInSuccess": "Linked cloud with {method}",
   "@auth_emailSignInSuccess": {
     "placeholders": {
       "method": {
@@ -673,6 +674,9 @@
       }
     }
   },
+  "cloudSyncToggleLabel": "Cloud sync",
+  "cloudSyncEnabledSnack": "Cloud sync turned on",
+  "cloudSyncDisabledSnack": "Cloud sync turned off",
   "problemCountRemaining": "({filteredCount}/{totalCount} rem.)",
   "@problemCountRemaining": {
     "placeholders": {

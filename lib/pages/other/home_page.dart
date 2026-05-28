@@ -5,10 +5,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/auth/cloud_sign_in_flow.dart';
 import '../../services/auth/firebase_auth_service.dart';
-import 'auth_page.dart';
-import '../../utils/l10n_utils.dart';
-
 // Pages
 import '../gacha/gacha_wrappers.dart'; // IntegralGachaPage / LimitGachaPage
 import 'scratch_paper_page.dart';
@@ -19,7 +17,9 @@ import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/home/home_card_widgets.dart';
 import '../../widgets/home/home_title_icon.dart';
 import '../../widgets/legal/legal_notice_footer.dart';
+import '../../widgets/account/account_cloud_sync_toggle.dart';
 import '../../widgets/account/account_deletion_flow.dart';
+import '../../services/auth/cloud_sync_preference_service.dart';
 
 // models
 import '../../models/math_problem.dart';
@@ -126,42 +126,6 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF8B7355), // クリーム色っぽい色
                               ),
-                            ),
-                            // Firebaseログイン中の場合は雲マークを表示
-                            StreamBuilder(
-                              stream: FirebaseAuthService.authStateChanges,
-                              builder: (context, snapshot) {
-                                final isAuthenticated =
-                                    FirebaseAuthService.isAuthenticated;
-                                final isNonJapanese =
-                                    Localizations.localeOf(
-                                      context,
-                                    ).languageCode !=
-                                    'ja';
-                                // Firebaseログイン中の場合のみ雲マークを表示
-                                if (isAuthenticated) {
-                                  return Stack(
-                                    alignment: Alignment.center,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      // 基準となるサイズを持つ子要素（雲アイコンの位置合わせ用）
-                                      const SizedBox(width: 20, height: 20),
-                                      // クラウド利用中の場合は雲のアイコンを表示
-                                      Positioned(
-                                        top: -35,
-                                        // 英語のときはタイトル文字に近づきやすいので少し右にずらす
-                                        left: isNonJapanese ? 2 : -5,
-                                        child: const Icon(
-                                          Icons.cloud_outlined,
-                                          size: 28,
-                                          color: Color(0xFF8B7355),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
                             ),
                           ],
                         ),
@@ -365,10 +329,29 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
               ),
             ),
           ),
-          // 右上端のアカウントアイコンと同期ボタン（最前面に配置）
+          // 左上：クラウド同期ボタン
           Positioned(
-            top: MediaQuery.of(context).padding.top + 8.0, // 少し下に移動（見えなくても問題なし）
-            right: 16.0, // 右スペースを開ける
+            top: MediaQuery.of(context).padding.top + 8.0,
+            left: 16.0,
+            child: StreamBuilder(
+              stream: FirebaseAuthService.authStateChanges,
+              builder: (context, snapshot) {
+                if (!FirebaseAuthService.isAuthenticated) {
+                  return const SizedBox.shrink();
+                }
+                CloudSyncPreferenceService.refreshForUser(
+                  FirebaseAuthService.userId,
+                );
+                return AccountCloudSyncSyncButtonSlot(
+                  child: _SyncButton(onSynced: updateProgress),
+                );
+              },
+            ),
+          ),
+          // 右上：アカウントアイコン（従来位置）
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8.0,
+            right: 16.0,
             child: StreamBuilder(
               stream: FirebaseAuthService.authStateChanges,
               builder: (context, snapshot) {
@@ -376,9 +359,10 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                 final userEmail = FirebaseAuthService.userEmail;
                 final userPhoneNumber = FirebaseAuthService.userPhoneNumber;
                 final displayName = FirebaseAuthService.displayName;
-                final loginMethod = FirebaseAuthService.loginMethod;
-
                 if (isAuthenticated) {
+                  CloudSyncPreferenceService.refreshForUser(
+                    FirebaseAuthService.userId,
+                  );
                   // 表示するアカウント情報を決定
                   String? accountInfo;
                   if (userPhoneNumber != null && userPhoneNumber.isNotEmpty) {
@@ -392,14 +376,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                     accountInfo = displayName;
                   }
 
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // 同期ボタン
-                      _SyncButton(onSynced: updateProgress),
-                      const SizedBox(width: 8),
-                      // アカウントアイコン
-                      PopupMenuButton<String>(
+                  return PopupMenuButton<String>(
                         iconSize: 42.0,
                         icon: const Icon(
                           Icons.account_circle,
@@ -416,6 +393,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                             }
                           } else if (value == 'logout') {
                             await FirebaseAuthService.signOut();
+                            await CloudSyncPreferenceService.refreshForUser(null);
                             if (mounted) {
                               // 成功メッセージを表示
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -442,36 +420,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                                 overflow: TextOverflow.visible,
                               ),
                             ),
-                          if (loginMethod != null)
-                            PopupMenuItem(
-                              enabled: false,
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.login,
-                                    size: 16,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      l10n.usingCloudWith(
-                                        getLocalizedLoginMethod(
-                                          context,
-                                          loginMethod,
-                                        ),
-                                      ),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
-                                      softWrap: true,
-                                      overflow: TextOverflow.visible,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          buildAccountCloudSyncMenuItem(),
                           const PopupMenuDivider(),
                           PopupMenuItem(
                             value: 'deleteAccount',
@@ -501,9 +450,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                             ),
                           ),
                         ],
-                      ),
-                    ],
-                  );
+                      );
                 } else {
                   return Material(
                     color: Colors.transparent,
@@ -515,13 +462,8 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                         size: 42.0,
                       ),
                       onPressed: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AuthPage(),
-                          ),
-                        );
-                        if (result == true && mounted) {
+                        final signedIn = await CloudSignInFlow.signIn(context);
+                        if (signedIn && mounted) {
                           updateProgress();
                           setState(() {});
                         }
@@ -1236,6 +1178,20 @@ class _SyncButtonState extends State<_SyncButton> {
   Future<void> _performSync() async {
     if (_isSyncing) return;
     final l10n = AppLocalizations.of(context)!;
+
+    if (!await CloudSyncPreferenceService.isEnabledForUser(
+      FirebaseAuthService.userId,
+    )) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.cloudSyncDisabledSnack),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+      return;
+    }
 
     setState(() {
       _isSyncing = true;

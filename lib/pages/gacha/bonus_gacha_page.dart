@@ -21,12 +21,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'gacha_settings_page.dart'
     show GachaFilterMode, GachaFilterModeExt, kGachaDisplayOrder;
 import '../../services/problems/simple_data_manager.dart';
-import '../../services/auth/firebase_auth_service.dart';
 import '../../models/learning_status.dart';
-import '../other/auth_page.dart';
-import '../../utils/l10n_utils.dart';
 import '../../utils/responsive_layout.dart';
-import '../../widgets/account/account_deletion_flow.dart';
 
 class BonusGachaPage extends StatefulWidget {
   const BonusGachaPage({super.key});
@@ -112,8 +108,8 @@ class _BonusGachaPageState extends State<BonusGachaPage>
                     padding: EdgeInsets.only(
                       top:
                           MediaQuery.of(context).padding.top +
-                          60.0, // 右上端のアイコンの高さを考慮
-                      bottom: 16.0,
+                          44.0, // 戻るボタンとの重なりを避ける
+                      bottom: 12.0,
                     ),
                     child: Wrap(
                       alignment: WrapAlignment.center,
@@ -147,42 +143,6 @@ class _BonusGachaPageState extends State<BonusGachaPage>
                                 color: Color(0xFF8B7355), // クリーム色っぽい色
                               ),
                             ),
-                            // Firebaseログイン中またはPro版の場合はバッジ/雲マークを表示
-                            StreamBuilder(
-                              stream: FirebaseAuthService.authStateChanges,
-                              builder: (context, snapshot) {
-                                final isAuthenticated =
-                                    FirebaseAuthService.isAuthenticated;
-                                final isNonJapanese =
-                                    Localizations.localeOf(
-                                      context,
-                                    ).languageCode !=
-                                    'ja';
-                                // Firebaseログイン中の場合のみ雲マークを表示（Pro Versionバッジは表示しない）
-                                if (isAuthenticated) {
-                                  return Stack(
-                                    alignment: Alignment.center,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      // 基準となるサイズを持つ子要素（雲アイコンの位置合わせ用）
-                                      const SizedBox(width: 20, height: 20),
-                                      // クラウド利用中の場合は雲のアイコンを表示
-                                      Positioned(
-                                        top: -35,
-                                        // 英語のときはタイトル文字に近づきやすいので少し右にずらす
-                                        left: isNonJapanese ? 2 : -5,
-                                        child: const Icon(
-                                          Icons.cloud_outlined,
-                                          size: 28,
-                                          color: Color(0xFF8B7355),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
                           ],
                         ),
                       ],
@@ -193,7 +153,7 @@ class _BonusGachaPageState extends State<BonusGachaPage>
                   // 達成率表示トグルボタン
                   _buildProgressToggleButton(),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // メインボタン群
                   Column(
@@ -425,172 +385,6 @@ class _BonusGachaPageState extends State<BonusGachaPage>
           ),
           // 戻るボタン
           const BackButton(),
-          // 右上端のアカウントアイコンと同期ボタン（最前面に配置）
-          Positioned(
-            top: MediaQuery.of(context).padding.top - 8.0, // 上スペースを詰める
-            right: 16.0, // 右スペースを開ける
-            child: StreamBuilder(
-              stream: FirebaseAuthService.authStateChanges,
-              builder: (context, snapshot) {
-                final isAuthenticated = FirebaseAuthService.isAuthenticated;
-                final userEmail = FirebaseAuthService.userEmail;
-                final userPhoneNumber = FirebaseAuthService.userPhoneNumber;
-                final displayName = FirebaseAuthService.displayName;
-                final loginMethod = FirebaseAuthService.loginMethod;
-
-                if (isAuthenticated) {
-                  // 表示するアカウント情報を決定
-                  String? accountInfo;
-                  if (userPhoneNumber != null && userPhoneNumber.isNotEmpty) {
-                    // 電話番号でログインしている場合
-                    accountInfo = userPhoneNumber;
-                  } else if (userEmail != null && userEmail.isNotEmpty) {
-                    // メールアドレスでログインしている場合（メール、Google、Apple）
-                    accountInfo = userEmail;
-                  } else if (displayName != null && displayName.isNotEmpty) {
-                    // 表示名のみの場合
-                    accountInfo = displayName;
-                  }
-
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // 同期ボタン
-                      _SyncButton(),
-                      const SizedBox(width: 8),
-                      // アカウントアイコン
-                      PopupMenuButton<String>(
-                        iconSize: 42.0,
-                        icon: Icon(
-                          Icons.account_circle,
-                          color: Color(0xFF8B7355),
-                          size: 42.0,
-                        ),
-                        onSelected: (value) async {
-                          if (value == 'deleteAccount') {
-                            final deleted = await AccountDeletionFlow.show(
-                              context,
-                            );
-                            if (deleted && mounted) {
-                              setState(() {});
-                            }
-                          } else if (value == 'logout') {
-                            await FirebaseAuthService.signOut();
-                            if (mounted) {
-                              // 成功メッセージを表示
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.loggedOut),
-                                  backgroundColor: Colors.green,
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                              setState(() {});
-                            }
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          if (accountInfo != null)
-                            PopupMenuItem(
-                              enabled: false,
-                              child: Text(
-                                accountInfo,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                softWrap: true,
-                                overflow: TextOverflow.visible,
-                              ),
-                            ),
-                          if (loginMethod != null)
-                            PopupMenuItem(
-                              enabled: false,
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.login,
-                                    size: 16,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      l10n.usingCloudWith(
-                                        getLocalizedLoginMethod(
-                                          context,
-                                          loginMethod,
-                                        ),
-                                      ),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
-                                      softWrap: true,
-                                      overflow: TextOverflow.visible,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem(
-                            value: 'deleteAccount',
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.delete_forever,
-                                  size: 20,
-                                  color: Colors.red,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  l10n.accountDeletionMenu,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 'logout',
-                            child: Row(
-                              children: [
-                                const Icon(Icons.logout, size: 20),
-                                const SizedBox(width: 8),
-                                Text(l10n.logout),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                } else {
-                  return Material(
-                    color: Colors.transparent,
-                    child: IconButton(
-                      iconSize: 42.0,
-                      icon: Icon(
-                        Icons.cloud_outlined,
-                        color: const Color(0xFF8B7355),
-                        size: 42.0,
-                      ),
-                      onPressed: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AuthPage(),
-                          ),
-                        );
-                        if (result == true && mounted) {
-                          updateProgress();
-                          setState(() {});
-                        }
-                      },
-                      tooltip: l10n.login,
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
         ],
       ),
     );
@@ -1552,94 +1346,6 @@ class _BonusGachaPageState extends State<BonusGachaPage>
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// Firebaseクラウドデータとの同期ボタン
-class _SyncButton extends StatefulWidget {
-  const _SyncButton();
-
-  @override
-  State<_SyncButton> createState() => _SyncButtonState();
-}
-
-class _SyncButtonState extends State<_SyncButton> {
-  bool _isSyncing = false;
-
-  Future<void> _performSync() async {
-    if (_isSyncing) return;
-
-    setState(() {
-      _isSyncing = true;
-    });
-
-    try {
-      final success = await SimpleDataManager.performCloudSync(force: true);
-      if (!success) {
-        throw Exception('Cloud sync did not complete');
-      }
-
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.syncCompleted),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error syncing: $e');
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        final errorStr = e.toString().toLowerCase();
-        final message = errorStr.contains('permission')
-            ? l10n.noFirestorePermission
-            : l10n.syncError;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Colors.orange,
-            duration: const Duration(seconds: 4),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSyncing = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Material(
-      color: Colors.transparent,
-      child: IconButton(
-        iconSize: 42.0,
-        icon: _isSyncing
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B7355)),
-                ),
-              )
-            : const Icon(
-                Icons.cloud_sync,
-                color: Color(0xFF8B7355),
-                size: 42.0,
-              ),
-        onPressed: _isSyncing ? null : _performSync,
-        tooltip: l10n.syncWithCloud,
       ),
     );
   }

@@ -319,6 +319,7 @@
   "aiTutorSignInToPurchase": "Googleでログインして購入へ",
   "aiTutorSignInWithGoogleToPurchase": "Googleでログインして購入へ",
   "aiTutorSignInWithAppleToPurchase": "Appleでログインして購入へ",
+  "aiTutorSignInInProgress": "ログイン中...",
   "aiTutorPurchaseInProgress": "購入処理中...",
   "recordSaved": "学習記録を保存しました: {status}",
   "@recordSaved": {
@@ -545,7 +546,7 @@
   "auth_userNotFound": "このメールアドレスのアカウントが見つかりません。",
   "auth_invalidEmail": "無効なメールアドレスです。",
   "auth_tooManyRequests": "リクエストが多すぎます。\nしばらく待ってから再度お試しください。",
-  "auth_emailSignInSuccess": "{method}でクラウドに保存しました",
+  "auth_emailSignInSuccess": "{method}でクラウドと連携しました",
   "@auth_emailSignInSuccess": {
     "placeholders": {
       "method": {
@@ -665,6 +666,9 @@
       }
     }
   },
+  "cloudSyncToggleLabel": "クラウド同期",
+  "cloudSyncEnabledSnack": "クラウド同期をオンにしました",
+  "cloudSyncDisabledSnack": "クラウド同期をオフにしました",
   "problemCountRemaining": "(残 {filteredCount}問/{totalCount}問)",
   "@problemCountRemaining": {
     "placeholders": {

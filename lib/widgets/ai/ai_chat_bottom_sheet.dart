@@ -6,6 +6,7 @@ import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
 import '../../services/ai/ai_chat_client.dart';
 import '../../services/ai/ai_chat_client_factory.dart';
+import '../../services/auth/cloud_sync_preference_service.dart';
 import '../../services/auth/firebase_auth_service.dart';
 import '../../services/payment/ai_tutor_entitlement_sync_service.dart';
 import '../../services/payment/revenuecat_service.dart';
@@ -148,6 +149,11 @@ Future<_AiTutorRestoreFlowResult> _runAiTutorRestoreWithAccountSwitch({
   if (credential == null) {
     debugPrint('[AiTutorRestore] $providerLabel sign-in cancelled');
     return const _AiTutorRestoreFlowResult.cancelled();
+  }
+
+  final uid = credential.user?.uid;
+  if (uid != null) {
+    await CloudSyncPreferenceService.refreshForUser(uid);
   }
 
   await RevenueCatService.syncCurrentFirebaseUser();
@@ -759,6 +765,7 @@ class _AiTutorPurchaseDialog extends StatefulWidget {
 
 class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
   bool _isProcessing = false;
+  bool _isSigningInBeforePurchase = false;
 
   bool get _usesAppleSignIn =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
@@ -813,7 +820,13 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
                 const SizedBox(width: 10),
-                Expanded(child: Text(l10n.aiTutorPurchaseInProgress)),
+                Expanded(
+                  child: Text(
+                    _isSigningInBeforePurchase
+                        ? l10n.aiTutorSignInInProgress
+                        : l10n.aiTutorPurchaseInProgress,
+                  ),
+                ),
               ],
             ),
           ],
@@ -850,6 +863,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
     );
     setState(() {
       _isProcessing = true;
+      _isSigningInBeforePurchase = true;
     });
 
     try {
@@ -861,8 +875,14 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         debugPrint('[AiTutorPurchase] $providerLabel sign-in cancelled');
         setState(() {
           _isProcessing = false;
+          _isSigningInBeforePurchase = false;
         });
         return;
+      }
+
+      final uid = credential.user?.uid;
+      if (uid != null) {
+        await CloudSyncPreferenceService.refreshForUser(uid);
       }
 
       debugPrint(
@@ -872,6 +892,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       if (!mounted) return;
       setState(() {
         _isProcessing = false;
+        _isSigningInBeforePurchase = false;
       });
       await _purchase();
     } catch (e) {
@@ -879,6 +900,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       if (!mounted) return;
       setState(() {
         _isProcessing = false;
+        _isSigningInBeforePurchase = false;
       });
       _showAiTutorResultSnackBar(
         context,
@@ -894,6 +916,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
   ) async {
     setState(() {
       _isProcessing = true;
+      _isSigningInBeforePurchase = false;
     });
     try {
       await RevenueCatService.syncCurrentFirebaseUser();
@@ -913,6 +936,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         if (!mounted) return;
         setState(() {
           _isProcessing = false;
+          _isSigningInBeforePurchase = false;
         });
         if (syncResult.active) {
           Navigator.of(context).pop(true);
@@ -930,6 +954,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       }
       setState(() {
         _isProcessing = false;
+        _isSigningInBeforePurchase = false;
       });
       if (result.cancelled) return;
 
@@ -945,6 +970,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       if (!mounted) return;
       setState(() {
         _isProcessing = false;
+        _isSigningInBeforePurchase = false;
       });
       _showAiTutorResultSnackBar(
         context,

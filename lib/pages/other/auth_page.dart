@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/auth/firebase_auth_service.dart';
+import '../../services/auth/cloud_sync_preference_service.dart';
 import '../../services/problems/simple_data_manager.dart';
 import '../../utils/l10n_utils.dart';
 import '../../utils/responsive_layout.dart';
@@ -471,6 +472,11 @@ class _AuthPageState extends State<AuthPage> {
       // UIスレッドに制御を戻す
       await Future.delayed(const Duration(milliseconds: 50));
       
+      final uid = FirebaseAuthService.userId;
+      if (!await CloudSyncPreferenceService.isEnabledForUser(uid)) {
+        return;
+      }
+
       if (isAccountSwitched) {
         print('Account switch detected, refreshing cloud-backed data...');
       }
