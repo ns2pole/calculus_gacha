@@ -13,12 +13,12 @@ import '../../utils/locale_utils.dart';
 class LoginLockedException implements Exception {
   final bool isPasswordResetRequired;
   final DateTime? unlockTime;
-  
+
   LoginLockedException({
     required this.isPasswordResetRequired,
     this.unlockTime,
   });
-  
+
   @override
   String toString() {
     if (isPasswordResetRequired) {
@@ -35,10 +35,7 @@ class GoogleSignInFailedException implements Exception {
   final String code;
   final String? message;
 
-  GoogleSignInFailedException({
-    required this.code,
-    this.message,
-  });
+  GoogleSignInFailedException({required this.code, this.message});
 
   @override
   String toString() => message == null ? code : '$code: $message';
@@ -72,28 +69,32 @@ class FirebaseAuthService {
   static const int _firstLockAttemptLimit = 7; // 最初のロックまでの試行回数
   static const int _secondLockAttemptLimit = 3; // 2回目のロックまでの試行回数
   static const Duration _firstLockDuration = Duration(minutes: 15); // 1回目のロック時間
-  
+
   /// メールアドレスを正規化（小文字に変換）
   static String _normalizeEmail(String email) {
     return email.trim().toLowerCase();
   }
-  
+
   /// SharedPreferencesのキーを生成
-  static String _getAttemptCountKey(String email) => 'auth_lock_attempt_count_${_normalizeEmail(email)}';
-  static String _getLockCountKey(String email) => 'auth_lock_count_${_normalizeEmail(email)}';
-  static String _getLockTimeKey(String email) => 'auth_lock_time_${_normalizeEmail(email)}';
-  static String _getUnlockTimeKey(String email) => 'auth_unlock_time_${_normalizeEmail(email)}';
-  
+  static String _getAttemptCountKey(String email) =>
+      'auth_lock_attempt_count_${_normalizeEmail(email)}';
+  static String _getLockCountKey(String email) =>
+      'auth_lock_count_${_normalizeEmail(email)}';
+  static String _getLockTimeKey(String email) =>
+      'auth_lock_time_${_normalizeEmail(email)}';
+  static String _getUnlockTimeKey(String email) =>
+      'auth_unlock_time_${_normalizeEmail(email)}';
+
   /// ロック状態をチェックし、ロックされている場合は例外をスロー
   static Future<void> _checkLockStatus(String email) async {
     final normalizedEmail = _normalizeEmail(email);
     final prefs = await SharedPreferences.getInstance();
-    
+
     final lockCount = prefs.getInt(_getLockCountKey(normalizedEmail)) ?? 0;
     if (lockCount == 0) {
       return; // ロックされていない
     }
-    
+
     // 1回目のロックの場合、自動解除をチェック
     if (lockCount == 1) {
       final unlockTimeStr = prefs.getString(_getUnlockTimeKey(normalizedEmail));
@@ -129,75 +130,87 @@ class FirebaseAuthService {
         }
       }
     }
-    
+
     // 2回目のロックの場合、パスワードリセットが必要
     if (lockCount == 2) {
-      throw LoginLockedException(
-        isPasswordResetRequired: true,
-      );
+      throw LoginLockedException(isPasswordResetRequired: true);
     }
   }
-  
+
   /// 試行回数をインクリメントし、必要に応じてロック
   static Future<void> _incrementAttemptCount(String email) async {
     final normalizedEmail = _normalizeEmail(email);
     final prefs = await SharedPreferences.getInstance();
-    
-    final currentAttempts = prefs.getInt(_getAttemptCountKey(normalizedEmail)) ?? 0;
+
+    final currentAttempts =
+        prefs.getInt(_getAttemptCountKey(normalizedEmail)) ?? 0;
     final lockCount = prefs.getInt(_getLockCountKey(normalizedEmail)) ?? 0;
     final newAttempts = currentAttempts + 1;
-    
+
     await prefs.setInt(_getAttemptCountKey(normalizedEmail), newAttempts);
-    
+
     // 1回目のロック（試行回数が7回に達した場合）
     if (lockCount == 0 && newAttempts >= _firstLockAttemptLimit) {
       final now = DateTime.now();
       final unlockTime = now.add(_firstLockDuration);
-      
+
       await prefs.setInt(_getLockCountKey(normalizedEmail), 1);
-      await prefs.setString(_getLockTimeKey(normalizedEmail), now.toIso8601String());
-      await prefs.setString(_getUnlockTimeKey(normalizedEmail), unlockTime.toIso8601String());
-      
+      await prefs.setString(
+        _getLockTimeKey(normalizedEmail),
+        now.toIso8601String(),
+      );
+      await prefs.setString(
+        _getUnlockTimeKey(normalizedEmail),
+        unlockTime.toIso8601String(),
+      );
+
       throw LoginLockedException(
         isPasswordResetRequired: false,
         unlockTime: unlockTime,
       );
     }
-    
+
     // 2回目のロック（1回目のロック解除後、試行回数が3回に達した場合）
     // 1回目のロックが発動したことがあるかチェック（lockTimeが存在するかで判定）
     // 1回目のロックが自動解除された後も、lockTimeは保持されているため、
     // これにより「1回目のロックが発動したことがある」ことを判定できる
-    final hasHadFirstLock = prefs.getString(_getLockTimeKey(normalizedEmail)) != null;
-    
+    final hasHadFirstLock =
+        prefs.getString(_getLockTimeKey(normalizedEmail)) != null;
+
     // 2回目のロック条件:
     // - lockCount == 0（1回目のロック解除後、またはまだロックされていない状態）
     // - 以前に1回目のロックが発動していた（hasHadFirstLock == true）
     // - 試行回数が3回に達した場合
     // 注意: 最初の3回の試行では hasHadFirstLock == false のため、2回目のロックは発動しない
-    if (lockCount == 0 && hasHadFirstLock && newAttempts >= _secondLockAttemptLimit) {
+    if (lockCount == 0 &&
+        hasHadFirstLock &&
+        newAttempts >= _secondLockAttemptLimit) {
       final now = DateTime.now();
-      
+
       await prefs.setInt(_getLockCountKey(normalizedEmail), 2);
-      await prefs.setString(_getLockTimeKey(normalizedEmail), now.toIso8601String());
-      await prefs.remove(_getUnlockTimeKey(normalizedEmail)); // 2回目のロックでは解除時刻は不要
-      
-      throw LoginLockedException(
-        isPasswordResetRequired: true,
+      await prefs.setString(
+        _getLockTimeKey(normalizedEmail),
+        now.toIso8601String(),
       );
+      await prefs.remove(
+        _getUnlockTimeKey(normalizedEmail),
+      ); // 2回目のロックでは解除時刻は不要
+
+      throw LoginLockedException(isPasswordResetRequired: true);
     }
   }
-  
+
   /// ロック状態をリセット（ログイン成功時やパスワードリセット時）
   static Future<void> _resetLockStatus(String email) async {
     final normalizedEmail = _normalizeEmail(email);
     final prefs = await SharedPreferences.getInstance();
-    
+
     await prefs.remove(_getAttemptCountKey(normalizedEmail));
     await prefs.remove(_getLockCountKey(normalizedEmail));
     await prefs.remove(_getLockTimeKey(normalizedEmail));
     await prefs.remove(_getUnlockTimeKey(normalizedEmail));
   }
+
   /// Firebaseが初期化されているか確認
   static bool get _isFirebaseInitialized {
     try {
@@ -206,13 +219,13 @@ class FirebaseAuthService {
       return false;
     }
   }
-  
+
   /// FirebaseAuthインスタンスを取得（初期化チェック付き）
   static FirebaseAuth get _auth {
     if (!_isFirebaseInitialized) {
       throw StateError(
         'Firebase has not been initialized. '
-        'Make sure Firebase.initializeApp() is called before using Firebase services.'
+        'Make sure Firebase.initializeApp() is called before using Firebase services.',
       );
     }
     return FirebaseAuth.instance;
@@ -290,10 +303,10 @@ class FirebaseAuthService {
         email: email,
         password: password,
       );
-      
+
       // ログイン成功時はロック状態をリセット
       await _resetLockStatus(email);
-      
+
       return userCredential;
     } on LoginLockedException {
       // ロック例外はそのまま再スロー
@@ -302,7 +315,7 @@ class FirebaseAuthService {
       print('FirebaseAuthException signing in with email:');
       print('  Code: ${e.code}');
       print('  Message: ${e.message}');
-      
+
       // ログイン失敗時（wrong-password または invalid-credential）は試行回数をインクリメント
       if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
         try {
@@ -312,7 +325,7 @@ class FirebaseAuthService {
           throw lockException;
         }
       }
-      
+
       rethrow; // 呼び出し側でエラーを処理できるように再スロー
     } catch (e, stackTrace) {
       print('Error signing in with email: $e');
@@ -371,7 +384,7 @@ class FirebaseAuthService {
 
       // Googleアカウントでサインイン
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      
+
       if (googleUser == null) {
         // ユーザーがサインインをキャンセルした
         print('Google Sign-In cancelled by user');
@@ -379,7 +392,8 @@ class FirebaseAuthService {
       }
 
       // 認証情報を取得
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       // Firebase認証用のクレデンシャルを作成
       final credential = GoogleAuthProvider.credential(
@@ -415,6 +429,8 @@ class FirebaseAuthService {
     required Function(String verificationId) codeSent,
     required Function(String error) verificationFailed,
     Function(String verificationId)? codeAutoRetrievalTimeout,
+    Future<void> Function(PhoneAuthCredential credential)?
+    verificationCompletedCredential,
   }) async {
     try {
       if (!_isFirebaseInitialized) {
@@ -432,6 +448,10 @@ class FirebaseAuthService {
           // 自動検証が成功した場合（Androidのみ）
           print('Phone number auto-verification completed');
           try {
+            if (verificationCompletedCredential != null) {
+              await verificationCompletedCredential(credential);
+              return;
+            }
             // 通常のサインイン
             await _auth.signInWithCredential(credential);
             print('Successfully signed in with phone number');
@@ -446,7 +466,7 @@ class FirebaseAuthService {
           print('  Email: ${e.email}');
           print('  Credential: ${e.credential}');
           print('  Stack trace: ${e.stackTrace}');
-          
+
           final l10n = _l10n();
           // internal-errorの場合、より詳細な情報を提供
           String errorMessage = e.message ?? l10n.auth_smsVerificationFailed;
@@ -473,10 +493,11 @@ class FirebaseAuthService {
             errorMessage = l10n.auth_phoneNumberRequired;
           } else if (e.code == 'captcha-check-failed') {
             errorMessage = l10n.auth_phoneVerificationCaptchaFailed;
-          } else if (e.code == 'missing-app-credential' || e.code == 'invalid-app-credential') {
+          } else if (e.code == 'missing-app-credential' ||
+              e.code == 'invalid-app-credential') {
             errorMessage = l10n.auth_phoneVerificationInvalidAppCredential;
           }
-          
+
           verificationFailed(errorMessage);
         },
         codeSent: (String verificationId, int? resendToken) {
@@ -484,7 +505,9 @@ class FirebaseAuthService {
           codeSent(verificationId);
         },
         codeAutoRetrievalTimeout: (String verificationId) {
-          print('SMS code auto-retrieval timeout. Verification ID: $verificationId');
+          print(
+            'SMS code auto-retrieval timeout. Verification ID: $verificationId',
+          );
           if (codeAutoRetrievalTimeout != null) {
             codeAutoRetrievalTimeout(verificationId);
           }
@@ -493,7 +516,9 @@ class FirebaseAuthService {
       );
     } catch (e) {
       print('Error verifying phone number: $e');
-      verificationFailed(_l10n().auth_phoneVerificationStartFailed(e.toString()));
+      verificationFailed(
+        _l10n().auth_phoneVerificationStartFailed(e.toString()),
+      );
     }
   }
 
@@ -554,7 +579,9 @@ class FirebaseAuthService {
       // AndroidでのApple Sign-Inは複雑で、Web認証の設定が必要
       // 通常はiOSでのみ使用することを推奨
       if (_isAndroidPlatform) {
-        print('⚠️ Apple Sign-In on Android requires complex web authentication setup.');
+        print(
+          '⚠️ Apple Sign-In on Android requires complex web authentication setup.',
+        );
         print('⚠️ It is recommended to use Apple Sign-In on iOS only.');
       }
 
@@ -576,10 +603,13 @@ class FirebaseAuthService {
         webAuthenticationOptions: _isAndroidPlatform
             ? WebAuthenticationOptions(
                 // WebクライアントID（Google Cloud Consoleで作成）
-                clientId: '845759015866-mdr1mcgspe3jg0poirh7q47pln8sb934.apps.googleusercontent.com',
+                clientId:
+                    '845759015866-mdr1mcgspe3jg0poirh7q47pln8sb934.apps.googleusercontent.com',
                 // Firebase Consoleで設定されたリダイレクトURI
                 // 実際の値: https://joymath-a36a3.firebaseapp.com/__/auth/handler
-                redirectUri: Uri.parse('https://joymath-a36a3.firebaseapp.com/__/auth/handler'),
+                redirectUri: Uri.parse(
+                  'https://joymath-a36a3.firebaseapp.com/__/auth/handler',
+                ),
               )
             : null,
       );
@@ -601,11 +631,15 @@ class FirebaseAuthService {
 
       // authorizationCode が空の場合も idToken で Firebase 認証を試行する
       if (authorizationCode.isEmpty) {
-        print('Warning: Apple Sign-In authorization code is empty (but continuing with idToken only)');
+        print(
+          'Warning: Apple Sign-In authorization code is empty (but continuing with idToken only)',
+        );
       }
 
       // デバッグ用: トークンの長さのみ表示（完全なトークンは表示しない）
-      print('Apple Sign-In: Received identity token (length: ${identityToken.length})');
+      print(
+        'Apple Sign-In: Received identity token (length: ${identityToken.length})',
+      );
       print(
         'Apple Sign-In: Received authorization code '
         '(length: ${authorizationCode.length})',
@@ -615,17 +649,20 @@ class FirebaseAuthService {
 
       // Firebaseに認証情報を送信
       // iOSではauthorizationCodeが空の場合も、idTokenを使ってクレデンシャルを作成する
-      final oauthCredential = OAuthProvider("apple.com").credential(
-        idToken: identityToken,
-        accessToken: authorizationCode,
-      );
+      final oauthCredential = OAuthProvider(
+        "apple.com",
+      ).credential(idToken: identityToken, accessToken: authorizationCode);
 
       print('Apple Sign-In: Attempting to sign in with Firebase...');
       print('Apple Sign-In: Using idToken (length: ${identityToken.length})');
-      print('Apple Sign-In: authorizationCode is ${authorizationCode.isNotEmpty ? "provided" : "empty"}');
-      
+      print(
+        'Apple Sign-In: authorizationCode is ${authorizationCode.isNotEmpty ? "provided" : "empty"}',
+      );
+
       try {
-        final userCredential = await _auth.signInWithCredential(oauthCredential);
+        final userCredential = await _auth.signInWithCredential(
+          oauthCredential,
+        );
         print('Apple Sign-In: Successfully signed in with Firebase');
         return userCredential;
       } on FirebaseAuthException catch (e) {
@@ -635,7 +672,7 @@ class FirebaseAuthService {
         print('  Message: ${e.message}');
         print('  Email: ${e.email}');
         print('  Credential: ${e.credential}');
-        
+
         // エラーコードに応じた適切な処理
         if (e.code == 'invalid-credential') {
           print('⚠️ Invalid credential error. This may indicate:');
@@ -651,7 +688,7 @@ class FirebaseAuthService {
         } else if (e.code == 'credential-already-in-use') {
           print('⚠️ Credential already in use');
         }
-        
+
         // エラーを再スローせず、nullを返して呼び出し側で処理できるようにする
         return null;
       }
@@ -670,7 +707,7 @@ class FirebaseAuthService {
       print('  Message: ${e.message}');
       print('  Email: ${e.email}');
       print('  Credential: ${e.credential}');
-      
+
       // エラーコードに応じた詳細なログ出力
       if (e.code == 'invalid-credential') {
         print('⚠️ Invalid credential error detected.');
@@ -688,12 +725,12 @@ class FirebaseAuthService {
       } else if (e.code == 'credential-already-in-use') {
         print('⚠️ Credential already in use');
       }
-      
+
       return null;
     } catch (e, stackTrace) {
       print('Error signing in with Apple: $e');
       print('Stack trace: $stackTrace');
-      
+
       // Androidでのエラーの場合、特別なメッセージを表示
       if (_isAndroidPlatform) {
         print('');
@@ -706,54 +743,77 @@ class FirebaseAuthService {
         print('⚠️ For Android, consider using Google Sign-In instead.');
         print('');
       }
-      
+
       // Firebase設定エラーの場合、より詳細な情報を提供
       final errorString = e.toString();
-      
-      if (errorString.contains('CONFIGURATION_NOT_FOUND') || 
+
+      if (errorString.contains('CONFIGURATION_NOT_FOUND') ||
           errorString.contains('17999')) {
         print('');
         print('⚠️ Apple Sign-In configuration error detected.');
-        print('⚠️ This error usually means Apple Sign-In is not configured in Firebase Console.');
+        print(
+          '⚠️ This error usually means Apple Sign-In is not configured in Firebase Console.',
+        );
         print('⚠️ To fix this:');
         print('   1. Go to Firebase Console > Authentication > Sign-in method');
         print('   2. Enable "Apple" as a sign-in provider');
-        print('   3. Make sure your bundle ID (com.joymath) matches your Firebase project');
+        print(
+          '   3. Make sure your bundle ID (com.joymath) matches your Firebase project',
+        );
         print('   4. Configure the OAuth client ID if required');
         print('');
-      } else if (errorString.contains('invalid') && errorString.contains('client')) {
+      } else if (errorString.contains('invalid') &&
+          errorString.contains('client')) {
         print('');
         print('⚠️ Invalid client ID error detected.');
-        print('⚠️ This error means the Web client ID in the code does not match Firebase Console.');
+        print(
+          '⚠️ This error means the Web client ID in the code does not match Firebase Console.',
+        );
         print('⚠️ To fix this:');
-        print('   1. Go to Firebase Console > Authentication > Sign-in method > Apple');
+        print(
+          '   1. Go to Firebase Console > Authentication > Sign-in method > Apple',
+        );
         print('   2. Check the "Web SDK configuration" section');
-        print('   3. Copy the "Web client ID" (format: PROJECT_NUMBER-XXXXX.apps.googleusercontent.com)');
-        print('   4. Update the clientId in firebase_auth_service.dart with the actual value');
-        print('   5. Also verify the redirect URI matches Firebase Console settings');
+        print(
+          '   3. Copy the "Web client ID" (format: PROJECT_NUMBER-XXXXX.apps.googleusercontent.com)',
+        );
+        print(
+          '   4. Update the clientId in firebase_auth_service.dart with the actual value',
+        );
+        print(
+          '   5. Also verify the redirect URI matches Firebase Console settings',
+        );
         print('');
-      } else if (errorString.contains('invalid-credential') || 
-                 errorString.contains('Invalid OAuth response')) {
+      } else if (errorString.contains('invalid-credential') ||
+          errorString.contains('Invalid OAuth response')) {
         print('');
         print('⚠️ Apple Sign-In credential validation error detected.');
         print('⚠️ This error usually means:');
         print('   1. The identity token from Apple is invalid or expired');
-        print('   2. The bundle ID in Firebase Console does not match your app');
-        print('   3. Apple Sign-In service configuration in Firebase is incomplete');
+        print(
+          '   2. The bundle ID in Firebase Console does not match your app',
+        );
+        print(
+          '   3. Apple Sign-In service configuration in Firebase is incomplete',
+        );
         print('');
         print('⚠️ To fix this:');
         print('   1. Verify your bundle ID (com.joymath) matches in:');
         print('      - Xcode project settings');
         print('      - Firebase Console > Project Settings > Your apps');
         print('      - Apple Developer Console');
-        print('   2. In Firebase Console > Authentication > Sign-in method > Apple:');
+        print(
+          '   2. In Firebase Console > Authentication > Sign-in method > Apple:',
+        );
         print('      - Verify the service is enabled');
         print('      - Check if OAuth client ID is required and configured');
-        print('   3. Make sure you are testing on a real device (not simulator)');
+        print(
+          '   3. Make sure you are testing on a real device (not simulator)',
+        );
         print('      or that the simulator is properly configured');
         print('');
       }
-      
+
       return null;
     }
   }
@@ -766,7 +826,7 @@ class FirebaseAuthService {
         throw StateError(_l10n().auth_firebaseNotConfigured);
       }
       await _auth.sendPasswordResetEmail(email: email);
-      
+
       // パスワードリセットメール送信成功時はロック状態をリセット
       await _resetLockStatus(email);
     } on FirebaseAuthException catch (e) {
@@ -778,6 +838,120 @@ class FirebaseAuthService {
       print('Error sending password reset email: $e');
       rethrow;
     }
+  }
+
+  static User _requireCurrentUser() {
+    final user = currentUser;
+    if (user == null) {
+      throw StateError(_l10n().auth_requiredForAccountDeletion);
+    }
+    return user;
+  }
+
+  /// メール/パスワードの削除前再認証。
+  static Future<void> reauthenticateWithEmailPassword({
+    required String password,
+  }) async {
+    final user = _requireCurrentUser();
+    final email = user.email;
+    if (email == null || email.isEmpty) {
+      throw StateError(_l10n().auth_emailUnavailableForReauthentication);
+    }
+
+    final credential = EmailAuthProvider.credential(
+      email: email,
+      password: password,
+    );
+    await user.reauthenticateWithCredential(credential);
+  }
+
+  /// Googleの削除前再認証。
+  static Future<void> reauthenticateWithGoogle() async {
+    final user = _requireCurrentUser();
+    final credential = await _requestGoogleCredential();
+    if (credential == null) {
+      throw StateError(_l10n().auth_reauthenticationCancelled);
+    }
+    await user.reauthenticateWithCredential(credential);
+  }
+
+  static Future<OAuthCredential?> _requestGoogleCredential() async {
+    if (kIsWeb) {
+      final provider = GoogleAuthProvider()
+        ..setCustomParameters({'prompt': 'select_account'});
+      final credential = await _auth.signInWithPopup(provider);
+      return credential.credential as OAuthCredential?;
+    }
+
+    final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+    await googleSignIn.signOut();
+    final googleUser = await googleSignIn.signIn();
+    if (googleUser == null) {
+      return null;
+    }
+
+    final googleAuth = await googleUser.authentication;
+    return GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+  }
+
+  /// Appleの削除前再認証。
+  static Future<void> reauthenticateWithApple() async {
+    final user = _requireCurrentUser();
+    final credential = await _requestAppleCredential();
+    await user.reauthenticateWithCredential(credential);
+  }
+
+  static Future<OAuthCredential> _requestAppleCredential() async {
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      webAuthenticationOptions: _isAndroidPlatform
+          ? WebAuthenticationOptions(
+              clientId:
+                  '845759015866-mdr1mcgspe3jg0poirh7q47pln8sb934.apps.googleusercontent.com',
+              redirectUri: Uri.parse(
+                'https://joymath-a36a3.firebaseapp.com/__/auth/handler',
+              ),
+            )
+          : null,
+    );
+
+    final identityToken = appleCredential.identityToken;
+    if (identityToken == null || identityToken.isEmpty) {
+      throw FirebaseAuthException(
+        code: 'invalid-id-token',
+        message: 'Apple Sign-In identity token is empty.',
+      );
+    }
+
+    return OAuthProvider("apple.com").credential(
+      idToken: identityToken,
+      accessToken: appleCredential.authorizationCode,
+    );
+  }
+
+  /// SMSコードを使った電話番号の削除前再認証。
+  static Future<void> reauthenticateWithPhoneNumber({
+    required String verificationId,
+    required String smsCode,
+  }) async {
+    final credential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+    await reauthenticateWithPhoneCredential(credential);
+  }
+
+  static Future<void> reauthenticateWithPhoneCredential(
+    PhoneAuthCredential credential,
+  ) async {
+    final user = _requireCurrentUser();
+    await user.reauthenticateWithCredential(credential);
   }
 
   /// ログアウト
@@ -850,6 +1024,4 @@ class FirebaseAuthService {
       return null;
     }
   }
-
 }
-

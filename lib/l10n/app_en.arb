@@ -162,6 +162,12 @@
     }
   },
   "privacyPolicy": "Privacy Policy",
+  "termsOfUse": "Terms of Use",
+  "legalNoticePrivacyPrefix": "This app uses Google Firebase for account and data sync, and RevenueCat for purchase management. See ",
+  "legalNoticePrivacySuffix": " for details.",
+  "legalNoticeTermsPrefix": "For Terms of Use, see ",
+  "legalNoticeTermsLink": "here",
+  "legalNoticeTermsSuffix": ".",
   "privacyPolicyDescription": "This app uses Google Firebase for account and data sync, and RevenueCat for purchase management. See {link} for details.",
   "@privacyPolicyDescription": {
     "placeholders": {
@@ -170,6 +176,11 @@
       }
     }
   },
+  "iapInfoLabelName": "Name",
+  "iapInfoLabelPrice": "Price",
+  "iapInfoLabelDuration": "Validity period",
+  "aiTutorPurchaseProductName": "AI Tutor Plus (500)",
+  "aiTutorPurchaseDurationValue": "1 month (non-renewing)",
   "purchaseTitle": "Pro Version - Learning History",
   "priceLabel": "Price: {price}",
   "@priceLabel": {
@@ -200,6 +211,37 @@
   },
   "pastPurchasesRestored": "Past purchases restored👍",
   "ok": "OK",
+  "accountDeletionMenu": "Delete Account",
+  "accountDeletionDialogTitle": "Delete account",
+  "accountDeletionDialogMessage": "This will permanently delete the following data:\n\n- Your login information for this app\n- Learning records, progress, and history\n- Gacha settings, display settings, and exclusion settings\n- App data saved in the cloud\n- User data saved on this device\n\nThis cannot be undone.\n\nApp Store subscriptions and purchase history will not be deleted. To cancel a subscription, use Apple ID subscription settings.",
+  "accountDeletionConfirmButton": "Delete",
+  "accountDeletionContinueButton": "Continue",
+  "accountDeletionDeleting": "Deleting your account...",
+  "accountDeletionSuccess": "Your account has been deleted.",
+  "accountDeletionFailed": "Account deletion failed",
+  "accountDeletionFailedMessage": "Account deletion failed. Please try again.",
+  "accountDeletionReauthTitle": "Confirm your identity",
+  "accountDeletionReauthenticating": "Confirming your identity...",
+  "accountDeletionPasswordMessage": "Enter your password to continue deleting your account.",
+  "accountDeletionPasswordLabel": "Password",
+  "accountDeletionGoogleReauthMessage": "Sign in with Google again to continue deleting your account.",
+  "accountDeletionAppleReauthMessage": "Sign in with Apple again to continue deleting your account.",
+  "accountDeletionPhoneMessage": "Send an SMS code to {phoneNumber} to continue deleting your account.",
+  "@accountDeletionPhoneMessage": {
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "accountDeletionPhoneUnavailable": "The phone number for this account could not be confirmed.",
+  "accountDeletionSmsCodeRequired": "Enter the SMS code.",
+  "accountDeletionReauthFailed": "Identity confirmation failed",
+  "accountDeletionReauthInvalidCredential": "The authentication information is incorrect. Please try again.",
+  "accountDeletionNetworkError": "Check your connection and try again.",
+  "auth_requiredForAccountDeletion": "Please sign in again to delete your account.",
+  "auth_emailUnavailableForReauthentication": "The email address for this account could not be confirmed.",
+  "auth_reauthenticationCancelled": "Authentication was cancelled.",
   "details": "Details",
   "aggregatedBy": " Aggregated by",
   "achievedCount": "{achieved}/{total} solved",
@@ -267,7 +309,15 @@
     }
   },
   "aiTutorPurchaseBenefitMonthlyLimit": "Use AI chat up to 500 times per month",
-  "aiTutorPurchaseBenefitPlatformBilling": "Purchase securely through the App Store / Google Play payment screen",
+  "aiTutorPurchaseBenefitPlatformBilling": "Purchase through the {store} payment screen",
+  "@aiTutorPurchaseBenefitPlatformBilling": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTutorPurchaseBenefitPlatformBillingAny": "Purchase through the App Store / Google Play payment screen",
   "aiTutorPurchaseSuccess": "AI Tutor Plus is now active",
   "aiTutorPurchaseRestore": "Restore purchase",
   "aiTutorSignInRequiredTitle": "Sign-in required",

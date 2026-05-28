@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/auth/firebase_auth_service.dart';
 import 'auth_page.dart';
@@ -19,6 +18,8 @@ import '../../screens/physics_math_gacha_screen.dart';
 import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/home/home_card_widgets.dart';
 import '../../widgets/home/home_title_icon.dart';
+import '../../widgets/legal/legal_notice_footer.dart';
+import '../../widgets/account/account_deletion_flow.dart';
 
 // models
 import '../../models/math_problem.dart';
@@ -28,13 +29,16 @@ import '../../services/problems/simple_data_manager.dart';
 // Utils
 import '../../utils/progress_display_utils.dart';
 import '../../utils/progress_update_mixin.dart';
-import '../gacha/gacha_settings_page.dart' show GachaFilterMode, kGachaDisplayOrder;
+import '../gacha/gacha_settings_page.dart'
+    show GachaFilterMode, kGachaDisplayOrder;
 import '../../models/learning_status.dart';
 import '../../utils/responsive_layout.dart';
 
 // 追加：集約リスト（積分／極限／物理数学）
-import '../../problems/all_problems.dart' show allIntegralProblems, allLimitProblems;
-import '../../problems/physics_math/physics_math_gacha.dart' show physicsMathGachaProblems;
+import '../../problems/all_problems.dart'
+    show allIntegralProblems, allLimitProblems;
+import '../../problems/physics_math/physics_math_gacha.dart'
+    show physicsMathGachaProblems;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -83,257 +87,283 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
       body: Stack(
         children: [
           // 背景画像（薄く、画面サイズに合わせて4枚周期的に表示）
-          Positioned.fill(
-            child: const BackgroundImageWidget(),
-          ),
+          Positioned.fill(child: const BackgroundImageWidget()),
           // コンテンツ
           SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
-          child: ResponsiveContentFrame(
-          padding: EdgeInsets.symmetric(
-            horizontal: responsive.pageHorizontalPadding,
-            vertical: 0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-            // タイトル（スクロール可能）
-            Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 60.0, // タイトル上のスペースを詰める
-                bottom: 20.0,
+            physics: const ClampingScrollPhysics(),
+            child: ResponsiveContentFrame(
+              padding: EdgeInsets.symmetric(
+                horizontal: responsive.pageHorizontalPadding,
+                vertical: 0,
               ),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                runSpacing: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  HomeTitleIcon(
-                    size: responsive.isCompact ? 36 : 43,
-                  ),
-                  // タイトルを一つのRowとしてセンタリング
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        l10n.appTitle,
-                        style: TextStyle(
-                          fontSize: responsive.titleFontSize,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8B7355), // クリーム色っぽい色
+                  // タイトル（スクロール可能）
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top:
+                          MediaQuery.of(context).padding.top +
+                          60.0, // タイトル上のスペースを詰める
+                      bottom: 20.0,
+                    ),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        HomeTitleIcon(size: responsive.isCompact ? 36 : 43),
+                        // タイトルを一つのRowとしてセンタリング
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              l10n.appTitle,
+                              style: TextStyle(
+                                fontSize: responsive.titleFontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF8B7355), // クリーム色っぽい色
+                              ),
+                            ),
+                            // Firebaseログイン中の場合は雲マークを表示
+                            StreamBuilder(
+                              stream: FirebaseAuthService.authStateChanges,
+                              builder: (context, snapshot) {
+                                final isAuthenticated =
+                                    FirebaseAuthService.isAuthenticated;
+                                final isNonJapanese =
+                                    Localizations.localeOf(
+                                      context,
+                                    ).languageCode !=
+                                    'ja';
+                                // Firebaseログイン中の場合のみ雲マークを表示
+                                if (isAuthenticated) {
+                                  return Stack(
+                                    alignment: Alignment.center,
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      // 基準となるサイズを持つ子要素（雲アイコンの位置合わせ用）
+                                      const SizedBox(width: 20, height: 20),
+                                      // クラウド利用中の場合は雲のアイコンを表示
+                                      Positioned(
+                                        top: -35,
+                                        // 英語のときはタイトル文字に近づきやすいので少し右にずらす
+                                        left: isNonJapanese ? 2 : -5,
+                                        child: const Icon(
+                                          Icons.cloud_outlined,
+                                          size: 28,
+                                          color: Color(0xFF8B7355),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                          ],
                         ),
-                      ),
-                      // Firebaseログイン中の場合は雲マークを表示
-                      StreamBuilder(
-                        stream: FirebaseAuthService.authStateChanges,
-                        builder: (context, snapshot) {
-                          final isAuthenticated = FirebaseAuthService.isAuthenticated;
-                          final isNonJapanese = Localizations.localeOf(context).languageCode != 'ja';
-                          // Firebaseログイン中の場合のみ雲マークを表示
-                          if (isAuthenticated) {
-                            return Stack(
-                              alignment: Alignment.center,
-                              clipBehavior: Clip.none,
-                              children: [
-                                // 基準となるサイズを持つ子要素（雲アイコンの位置合わせ用）
-                                const SizedBox(width: 20, height: 20),
-                                // クラウド利用中の場合は雲のアイコンを表示
-                                Positioned(
-                                  top: -35,
-                                  // 英語のときはタイトル文字に近づきやすいので少し右にずらす
-                                  left: isNonJapanese ? 2 : -5,
-                                  child: const Icon(
-                                    Icons.cloud_outlined,
-                                    size: 28,
-                                    color: Color(0xFF8B7355),
-                                  ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 2.0),
+
+                  // 達成率表示トグルボタン
+                  _buildProgressToggleButton(),
+
+                  const SizedBox(height: 20),
+
+                  // メインボタン群
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 積分ガチャ
+                      Column(
+                        children: [
+                          ModernCard(
+                            buttonWidth: buttonWidth,
+                            icon: Icons.layers,
+                            title:
+                                '${l10n.integralGacha} ${l10n.integralCount(integralPool.length)}',
+                            subtitle: l10n.randomIntegralPractice,
+                            gradient: const LinearGradient(
+                              colors: [Colors.blue, Colors.blueAccent],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            showBorder: false,
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const IntegralGachaPage(),
                                 ),
-                              ],
-                            );
+                              );
+                              updateProgress();
+                            },
+                          ),
+                          if (_showProgress)
+                            _buildProgressDisplay(
+                              buttonWidth: buttonWidth,
+                              prefsPrefix: 'integral',
+                              problemPool: integralPool,
+                              gradient: const LinearGradient(
+                                colors: [Colors.blue, Colors.blueAccent],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 極限ガチャ
+                      Column(
+                        children: [
+                          ModernCard(
+                            buttonWidth: buttonWidth,
+                            icon: Icons.arrow_forward,
+                            title:
+                                '${l10n.limitGacha} ${l10n.limitCount(limitPool.length)}',
+                            subtitle: l10n.someDontConverge,
+                            gradient: const LinearGradient(
+                              colors: [Colors.green, Colors.greenAccent],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            showBorder: false,
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LimitGachaPage(),
+                                ),
+                              );
+                              updateProgress();
+                            },
+                          ),
+                          if (_showProgress)
+                            _buildProgressDisplay(
+                              buttonWidth: buttonWidth,
+                              prefsPrefix: 'limit',
+                              problemPool: limitPool,
+                              gradient: const LinearGradient(
+                                colors: [Colors.green, Colors.greenAccent],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 微分方程式ガチャ
+                      Column(
+                        children: [
+                          ModernCard(
+                            buttonWidth: buttonWidth,
+                            icon: Icons.science,
+                            title:
+                                '${l10n.differentialEquationGacha} ${l10n.deCount(physicsMathPool.length)}',
+                            subtitle: l10n.physicsDECollection,
+                            gradient: const LinearGradient(
+                              colors: [Colors.purple, Colors.purpleAccent],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            showBorder: false,
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      const PhysicsMathGachaScreen(),
+                                ),
+                              );
+                              updateProgress();
+                            },
+                          ),
+                          if (_showProgress)
+                            _buildProgressDisplay(
+                              buttonWidth: buttonWidth,
+                              prefsPrefix: 'physics_math',
+                              problemPool: physicsMathPool,
+                              gradient: const LinearGradient(
+                                colors: [Colors.purple, Colors.purpleAccent],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // おまけガチャ
+                      ModernCard(
+                        buttonWidth: buttonWidth,
+                        icon: Icons.card_giftcard,
+                        title: l10n.bonusGachaHome,
+                        subtitle: l10n.bonusGachaDescription,
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const BonusGachaPage(),
+                            ),
+                          );
+                          updateProgress();
+                        },
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 計算用紙
+                      SimpleCard(
+                        buttonWidth: buttonWidth,
+                        icon: Icons.edit_note,
+                        title: l10n.scratchPaper,
+                        subtitle: '',
+                        color: Colors.teal,
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ScratchPaperPage(),
+                            ),
+                          );
+                          if (result == true) {
+                            updateProgress();
                           }
-                          return const SizedBox.shrink();
                         },
                       ),
                     ],
                   ),
+
+                  const SizedBox(height: 32),
+
+                  // 学習履歴登録機能の説明カード
+                  _buildHistoryInfoCard(buttonWidth: buttonWidth),
+
+                  const SizedBox(height: 32),
+
+                  // プライバシーポリシー等の外部リンク（ネイティブ向け。Web 版では非表示）
+                  if (!kIsWeb) ...[
+                    const LegalNoticeFooter(),
+                    const SizedBox(height: 32),
+                  ],
                 ],
               ),
             ),
-            const SizedBox(height: 2.0),
-            
-            // 達成率表示トグルボタン
-            _buildProgressToggleButton(),
-            
-            const SizedBox(height: 20),
-
-            // メインボタン群
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 積分ガチャ
-                Column(
-                  children: [
-                    ModernCard(
-                      buttonWidth: buttonWidth,
-                      icon: Icons.layers,
-                      title: '${l10n.integralGacha} ${l10n.integralCount(integralPool.length)}',
-                      subtitle: l10n.randomIntegralPractice,
-                      gradient: const LinearGradient(
-                        colors: [Colors.blue, Colors.blueAccent],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      showBorder: false,
-                      onPressed: () async {
-                        await Navigator.push(context, MaterialPageRoute(builder: (_) => const IntegralGachaPage()));
-                        updateProgress();
-                      },
-                    ),
-                    if (_showProgress)
-                      _buildProgressDisplay(
-                        buttonWidth: buttonWidth,
-                        prefsPrefix: 'integral',
-                        problemPool: integralPool,
-                        gradient: const LinearGradient(
-                          colors: [Colors.blue, Colors.blueAccent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // 極限ガチャ
-                Column(
-                  children: [
-                    ModernCard(
-                      buttonWidth: buttonWidth,
-                      icon: Icons.arrow_forward,
-                      title: '${l10n.limitGacha} ${l10n.limitCount(limitPool.length)}',
-                      subtitle: l10n.someDontConverge,
-                      gradient: const LinearGradient(
-                        colors: [Colors.green, Colors.greenAccent],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      showBorder: false,
-                      onPressed: () async {
-                        await Navigator.push(context, MaterialPageRoute(builder: (_) => const LimitGachaPage()));
-                        updateProgress();
-                      },
-                    ),
-                    if (_showProgress)
-                      _buildProgressDisplay(
-                        buttonWidth: buttonWidth,
-                        prefsPrefix: 'limit',
-                        problemPool: limitPool,
-                        gradient: const LinearGradient(
-                          colors: [Colors.green, Colors.greenAccent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // 微分方程式ガチャ
-                Column(
-                  children: [
-                    ModernCard(
-                      buttonWidth: buttonWidth,
-                      icon: Icons.science,
-                      title: '${l10n.differentialEquationGacha} ${l10n.deCount(physicsMathPool.length)}',
-                      subtitle: l10n.physicsDECollection,
-                      gradient: const LinearGradient(
-                        colors: [Colors.purple, Colors.purpleAccent],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      showBorder: false,
-                      onPressed: () async {
-                        await Navigator.push(context, MaterialPageRoute(builder: (_) => const PhysicsMathGachaScreen()));
-                        updateProgress();
-                      },
-                    ),
-                    if (_showProgress)
-                      _buildProgressDisplay(
-                        buttonWidth: buttonWidth,
-                        prefsPrefix: 'physics_math',
-                        problemPool: physicsMathPool,
-                        gradient: const LinearGradient(
-                          colors: [Colors.purple, Colors.purpleAccent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // おまけガチャ
-                ModernCard(
-                  buttonWidth: buttonWidth,
-                  icon: Icons.card_giftcard,
-                  title: l10n.bonusGachaHome,
-                  subtitle: l10n.bonusGachaDescription,
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  onPressed: () async {
-                    await Navigator.push(context, MaterialPageRoute(builder: (_) => const BonusGachaPage()));
-                    updateProgress();
-                  },
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // 計算用紙
-                SimpleCard(
-                  buttonWidth: buttonWidth,
-                  icon: Icons.edit_note,
-                  title: l10n.scratchPaper,
-                  subtitle: '',
-                  color: Colors.teal,
-                  onPressed: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ScratchPaperPage()),
-                    );
-                    if (result == true) {
-                      updateProgress();
-                    }
-                  },
-                ),
-                
-              ],
-            ),
-            
-            const SizedBox(height: 32),
-            
-            // 学習履歴登録機能の説明カード
-            _buildHistoryInfoCard(
-              buttonWidth: buttonWidth,
-            ),
-            
-            const SizedBox(height: 32),
-            
-            // プライバシーポリシー等の外部リンク（ネイティブ向け。Web 版では非表示）
-            if (!kIsWeb) ...[
-              _buildHelpLink(),
-              const SizedBox(height: 32),
-            ],
-          ],
-        ),
-      ),
           ),
           // 右上端のアカウントアイコンと同期ボタン（最前面に配置）
           Positioned(
@@ -347,7 +377,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                 final userPhoneNumber = FirebaseAuthService.userPhoneNumber;
                 final displayName = FirebaseAuthService.displayName;
                 final loginMethod = FirebaseAuthService.loginMethod;
-                
+
                 if (isAuthenticated) {
                   // 表示するアカウント情報を決定
                   String? accountInfo;
@@ -361,7 +391,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                     // 表示名のみの場合
                     accountInfo = displayName;
                   }
-                  
+
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -377,7 +407,14 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                           size: 42.0,
                         ),
                         onSelected: (value) async {
-                          if (value == 'logout') {
+                          if (value == 'deleteAccount') {
+                            final deleted = await AccountDeletionFlow.show(
+                              context,
+                            );
+                            if (deleted && mounted) {
+                              setState(() {});
+                            }
+                          } else if (value == 'logout') {
                             await FirebaseAuthService.signOut();
                             if (mounted) {
                               // 成功メッセージを表示
@@ -398,7 +435,9 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                               enabled: false,
                               child: Text(
                                 accountInfo,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 softWrap: true,
                                 overflow: TextOverflow.visible,
                               ),
@@ -408,12 +447,21 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                               enabled: false,
                               child: Row(
                                 children: [
-                                  const Icon(Icons.login, size: 16, color: Colors.grey),
+                                  const Icon(
+                                    Icons.login,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
                                   const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    l10n.usingCloudWith(getLocalizedLoginMethod(context, loginMethod)),
-                                    style: TextStyle(
+                                  Flexible(
+                                    child: Text(
+                                      l10n.usingCloudWith(
+                                        getLocalizedLoginMethod(
+                                          context,
+                                          loginMethod,
+                                        ),
+                                      ),
+                                      style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey[600],
                                       ),
@@ -424,6 +472,24 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                                 ],
                               ),
                             ),
+                          const PopupMenuDivider(),
+                          PopupMenuItem(
+                            value: 'deleteAccount',
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.delete_forever,
+                                  size: 20,
+                                  color: Colors.red,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.accountDeletionMenu,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          ),
                           PopupMenuItem(
                             value: 'logout',
                             child: Row(
@@ -451,7 +517,9 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                       onPressed: () async {
                         final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AuthPage()),
+                          MaterialPageRoute(
+                            builder: (context) => const AuthPage(),
+                          ),
                         );
                         if (result == true && mounted) {
                           updateProgress();
@@ -470,9 +538,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
     );
   }
 
-  Widget _buildHistoryInfoCard({
-    required double buttonWidth,
-  }) {
+  Widget _buildHistoryInfoCard({required double buttonWidth}) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
@@ -523,10 +589,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
             Text(
               l10n.learningHistoryDescription,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-              ),
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 12),
             _buildCheckItem(
@@ -597,19 +660,9 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
       crossAxisAlignment: WrapCrossAlignment.center,
       spacing: 8,
       children: [
-        Icon(
-          icon,
-          color: iconColor,
-          size: 24,
-        ),
+        Icon(icon, color: iconColor, size: 24),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
-          ),
-        ),
+        Text(text, style: const TextStyle(fontSize: 16, color: Colors.black87)),
       ],
     );
   }
@@ -655,7 +708,10 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
   }) {
     final l10n = AppLocalizations.of(context)!;
     return FutureBuilder<ProgressInfo>(
-      key: buildProgressKey(prefsPrefix: prefsPrefix, showProgress: _showProgress),
+      key: buildProgressKey(
+        prefsPrefix: prefsPrefix,
+        showProgress: _showProgress,
+      ),
       future: getGachaProgress(
         context: context,
         prefsPrefix: prefsPrefix,
@@ -673,11 +729,17 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
         final GlobalKey containerKey = GlobalKey();
         return InkWell(
           onTap: () {
-            final RenderBox? renderBox = containerKey.currentContext?.findRenderObject() as RenderBox?;
+            final RenderBox? renderBox =
+                containerKey.currentContext?.findRenderObject() as RenderBox?;
             if (renderBox != null) {
               final position = renderBox.localToGlobal(Offset.zero);
               final size = renderBox.size;
-              _showFilterMenu(context, prefsPrefix, position: position, size: size);
+              _showFilterMenu(
+                context,
+                prefsPrefix,
+                position: position,
+                size: size,
+              );
             } else {
               _showFilterMenu(context, prefsPrefix);
             }
@@ -698,151 +760,174 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: mainColor.withOpacity(0.3),
-                width: 1,
-              ),
+              border: Border.all(color: mainColor.withOpacity(0.3), width: 1),
             ),
             child: LayoutBuilder(
-            builder: (context, constraints) {
-              final responsive = context.appResponsive;
-              // 星の数を計算（星が二段になるかどうかを判定）
-              final progressRate = progress.totalCount > 0 
-                  ? progress.achievedCount / progress.totalCount 
-                  : 0.0;
-              int starCount = 0;
-              if (progressRate > 0.2) {
-                if (progressRate < 0.4) {
-                  starCount = 1;
-                } else if (progressRate < 0.6) {
-                  starCount = 2;
-                } else if (progressRate < 0.8) {
-                  starCount = 3;
-                } else if (progressRate < 1.0) {
-                  starCount = 4;
-                } else {
-                  starCount = 5;
+              builder: (context, constraints) {
+                final responsive = context.appResponsive;
+                // 星の数を計算（星が二段になるかどうかを判定）
+                final progressRate = progress.totalCount > 0
+                    ? progress.achievedCount / progress.totalCount
+                    : 0.0;
+                int starCount = 0;
+                if (progressRate > 0.2) {
+                  if (progressRate < 0.4) {
+                    starCount = 1;
+                  } else if (progressRate < 0.6) {
+                    starCount = 2;
+                  } else if (progressRate < 0.8) {
+                    starCount = 3;
+                  } else if (progressRate < 1.0) {
+                    starCount = 4;
+                  } else {
+                    starCount = 5;
+                  }
                 }
-              }
-              // 星が二段になるかどうか（3つ以上）
-              final isTwoRows = starCount >= 3;
-              
-              return IntrinsicHeight(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    // 虹をContainerの左端に配置（達成率が0%の時は表示しない）
-                    if (progress.filterCount > 0 && progress.filterCount <= 3 && progressRate > 0)
-                      Positioned(
-                        left: 20,
-                        top: 0,
-                        bottom: isTwoRows ? 0 : null, // 二段の場合はコンテナの高さいっぱい
-                        child: Opacity(
-                          opacity: 0.5,
-                          child: Image.asset(
-                            'assets/background/rainbow${progress.filterCount}.png',
-                            width: 70,
-                            height: isTwoRows ? null : 50, // 二段の場合は高さを指定せず、bottom: 0で引き伸ばす
-                            fit: isTwoRows ? BoxFit.contain : BoxFit.contain, // 全体が表示されるようにcontainを使用
+                // 星が二段になるかどうか（3つ以上）
+                final isTwoRows = starCount >= 3;
+
+                return IntrinsicHeight(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      // 虹をContainerの左端に配置（達成率が0%の時は表示しない）
+                      if (progress.filterCount > 0 &&
+                          progress.filterCount <= 3 &&
+                          progressRate > 0)
+                        Positioned(
+                          left: 20,
+                          top: 0,
+                          bottom: isTwoRows ? 0 : null, // 二段の場合はコンテナの高さいっぱい
+                          child: Opacity(
+                            opacity: 0.5,
+                            child: Image.asset(
+                              'assets/background/rainbow${progress.filterCount}.png',
+                              width: 70,
+                              height: isTwoRows
+                                  ? null
+                                  : 50, // 二段の場合は高さを指定せず、bottom: 0で引き伸ばす
+                              fit: isTwoRows
+                                  ? BoxFit.contain
+                                  : BoxFit.contain, // 全体が表示されるようにcontainを使用
+                            ),
                           ),
                         ),
-                      ),
-                    // 星と文字は中央寄せ
-                    Center(
-                      child: IntrinsicHeight(
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          runSpacing: 6,
-                          spacing: 8,
-                          children: [
-                            if (progress.totalCount > 0) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: _buildStarBadges(
-                                  progress.achievedCount / progress.totalCount,
-                                  progress.filterCount,
+                      // 星と文字は中央寄せ
+                      Center(
+                        child: IntrinsicHeight(
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            runSpacing: 6,
+                            spacing: 8,
+                            children: [
+                              if (progress.totalCount > 0) ...[
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: _buildStarBadges(
+                                    progress.achievedCount /
+                                        progress.totalCount,
+                                    progress.filterCount,
+                                  ),
                                 ),
-                              ),
-                            ],
-                            // 右側に2行のテキストを配置
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: max(180, constraints.maxWidth - 110),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (progress.filterCount > 0) ...[
+                              ],
+                              // 右側に2行のテキストを配置
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: max(
+                                    180,
+                                    constraints.maxWidth - 110,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (progress.filterCount > 0) ...[
+                                      Wrap(
+                                        alignment: WrapAlignment.center,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        spacing: 2,
+                                        runSpacing: 2,
+                                        children: [
+                                          Text(
+                                            progress.filterDescription,
+                                            style: TextStyle(
+                                              fontSize: responsive.isCompact
+                                                  ? 14
+                                                  : 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: mainColor,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          ...List.generate(
+                                            progress.filterCount,
+                                            (index) => _buildStatusBadge(),
+                                          ),
+                                          Text(
+                                            l10n.aggregatedBy,
+                                            style: TextStyle(
+                                              fontSize: responsive.isCompact
+                                                  ? 14
+                                                  : 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: mainColor,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                    ],
                                     Wrap(
                                       alignment: WrapAlignment.center,
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      spacing: 2,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      spacing: 4,
                                       runSpacing: 2,
                                       children: [
                                         Text(
-                                          progress.filterDescription,
+                                          l10n.achievedCount(
+                                            progress.achievedCount,
+                                            progress.totalCount,
+                                          ),
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: responsive.isCompact ? 14 : 16,
+                                            fontSize: responsive.isCompact
+                                                ? 14
+                                                : 16,
                                             fontWeight: FontWeight.bold,
                                             color: mainColor,
                                           ),
-                                          textAlign: TextAlign.center,
                                         ),
-                                        ...List.generate(progress.filterCount, (index) => _buildStatusBadge()),
-                                        Text(
-                                          l10n.aggregatedBy,
-                                          style: TextStyle(
-                                            fontSize: responsive.isCompact ? 14 : 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: mainColor,
+                                        if (progress.totalCount > 0)
+                                          Text(
+                                            '(${((progress.achievedCount / progress.totalCount) * 100).toStringAsFixed(1)}%)',
+                                            style: TextStyle(
+                                              fontSize: responsive.isCompact
+                                                  ? 14
+                                                  : 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: mainColor.withOpacity(0.7),
+                                            ),
                                           ),
-                                          textAlign: TextAlign.center,
-                                        ),
                                       ],
                                     ),
-                                    const SizedBox(height: 4),
                                   ],
-                                  Wrap(
-                                    alignment: WrapAlignment.center,
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 4,
-                                    runSpacing: 2,
-                                    children: [
-                                      Text(
-                                        l10n.achievedCount(progress.achievedCount, progress.totalCount),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: responsive.isCompact ? 14 : 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: mainColor,
-                                        ),
-                                      ),
-                                      if (progress.totalCount > 0)
-                                        Text(
-                                          '(${((progress.achievedCount / progress.totalCount) * 100).toStringAsFixed(1)}%)',
-                                          style: TextStyle(
-                                            fontSize: responsive.isCompact ? 14 : 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: mainColor.withOpacity(0.7),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         );
       },
@@ -850,12 +935,17 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
   }
 
   /// フィルタリング設定メニューを表示
-  Future<void> _showFilterMenu(BuildContext context, String prefsPrefix, {Offset? position, Size? size}) async {
+  Future<void> _showFilterMenu(
+    BuildContext context,
+    String prefsPrefix, {
+    Offset? position,
+    Size? size,
+  }) async {
     final l10n = AppLocalizations.of(context)!;
     // 現在のフィルタリング設定を読み込む
     final settings = await SimpleDataManager.getGachaSettings(prefsPrefix);
     final filterModeStr = settings['filterMode'] as String?;
-    
+
     GachaFilterMode currentMode;
     if (filterModeStr != null) {
       switch (filterModeStr) {
@@ -877,13 +967,14 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
       currentMode = GachaFilterMode.random;
     }
 
-    final RenderBox? overlay = Overlay.of(context).context.findRenderObject() as RenderBox?;
-    
+    final RenderBox? overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox?;
+
     Offset? menuPosition;
     if (position != null && size != null && overlay != null) {
       menuPosition = Offset(position.dx, position.dy + size.height);
     }
-    
+
     final GachaFilterMode? selected = await showMenu<GachaFilterMode>(
       context: context,
       position: (menuPosition != null && size != null && overlay != null)
@@ -894,13 +985,14 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
               overlay.size.height - menuPosition.dy,
             )
           : null,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       items: kGachaDisplayOrder.map((mode) {
         Widget title;
         if (mode == GachaFilterMode.random) {
-          title = Text(l10n.noExclusion, style: TextStyle(fontSize: 14, color: Colors.grey[900]));
+          title = Text(
+            l10n.noExclusion,
+            style: TextStyle(fontSize: 14, color: Colors.grey[900]),
+          );
         } else {
           int n;
           switch (mode) {
@@ -922,9 +1014,18 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(l10n.latestNTimes(n), style: TextStyle(fontSize: 14, color: Colors.grey[900])),
-                  _buildStatusBadgeForMenu(LearningStatus.solved, diameter: 16.0),
-                  Text(l10n.ifSo, style: TextStyle(fontSize: 14, color: Colors.grey[900])),
+                  Text(
+                    l10n.latestNTimes(n),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[900]),
+                  ),
+                  _buildStatusBadgeForMenu(
+                    LearningStatus.solved,
+                    diameter: 16.0,
+                  ),
+                  Text(
+                    l10n.ifSo,
+                    style: TextStyle(fontSize: 14, color: Colors.grey[900]),
+                  ),
                 ],
               ),
               Text(
@@ -934,7 +1035,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
             ],
           );
         }
-        
+
         return PopupMenuItem<GachaFilterMode>(
           value: mode,
           child: Row(
@@ -950,7 +1051,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
         );
       }).toList(),
     );
-    
+
     if (selected != null && selected != currentMode) {
       // 設定を保存
       String newFilterModeStr;
@@ -972,7 +1073,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
       }
       settings['filterMode'] = newFilterModeStr;
       await SimpleDataManager.saveGachaSettings(prefsPrefix, settings);
-      
+
       // 達成率を更新
       if (mounted) {
         updateProgress();
@@ -981,15 +1082,15 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
   }
 
   /// メニュー用のステータスバッジを生成
-  Widget _buildStatusBadgeForMenu(LearningStatus status, {double diameter = 16.0}) {
+  Widget _buildStatusBadgeForMenu(
+    LearningStatus status, {
+    double diameter = 16.0,
+  }) {
     final double iconSize = diameter * 0.6;
     return Container(
       width: diameter,
       height: diameter,
-      decoration: BoxDecoration(
-        color: status.color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: status.color, shape: BoxShape.circle),
       alignment: Alignment.center,
       child: Icon(status.icon, size: iconSize, color: Colors.white),
     );
@@ -1095,12 +1196,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
             ],
           ),
           const SizedBox(height: 0),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildStarBadge(),
-            ],
-          ),
+          Row(mainAxisSize: MainAxisSize.min, children: [_buildStarBadge()]),
         ],
       );
     } else {
@@ -1120,72 +1216,7 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
   /// 統一された質感の高い星バッジを1つ作成
   /// 最新3回分の集計のデザイン（濃い金色、強い輝き、美しい）をすべての星に適用
   Widget _buildStarBadge() {
-    return Text(
-      '⭐️',
-      style: TextStyle(
-        fontSize: 24,
-      ),
-    );
-  }
-
-  /// ヘルプページへのリンクを表示
-  Widget _buildHelpLink() {
-    final l10n = AppLocalizations.of(context)!;
-    
-    const privacyPolicyUrl = 'https://www.notion.so/calculus-gacha-joy-math-27ae4f0afd3b80cb9754ce138cbc80ca?source=copy_link';
-    
-    Future<void> launchPrivacyPolicy() async {
-      final uri = Uri.parse(privacyPolicyUrl);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
-      }
-    }
-    
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      padding: const EdgeInsets.all(16),
-      child: Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(
-              text: l10n.privacyPolicyDescription('').split(l10n.privacyPolicy)[0],
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[700],
-              ),
-            ),
-            WidgetSpan(
-              child: InkWell(
-                onTap: launchPrivacyPolicy,
-                child: Text(
-                  l10n.privacyPolicy,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Colors.blue,
-                  ),
-                ),
-              ),
-            ),
-            TextSpan(
-              text: l10n.privacyPolicyDescription('').split(l10n.privacyPolicy).length > 1 
-                  ? l10n.privacyPolicyDescription('').split(l10n.privacyPolicy)[1]
-                  : '',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[700],
-              ),
-            ),
-          ],
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
+    return Text('⭐️', style: TextStyle(fontSize: 24));
   }
 }
 
@@ -1205,7 +1236,7 @@ class _SyncButtonState extends State<_SyncButton> {
   Future<void> _performSync() async {
     if (_isSyncing) return;
     final l10n = AppLocalizations.of(context)!;
-    
+
     setState(() {
       _isSyncing = true;
     });
@@ -1215,7 +1246,7 @@ class _SyncButtonState extends State<_SyncButton> {
       if (!success) {
         throw Exception('Cloud sync did not complete');
       }
-      
+
       if (mounted) {
         widget.onSynced?.call();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1233,7 +1264,7 @@ class _SyncButtonState extends State<_SyncButton> {
         final message = errorStr.contains('permission')
             ? l10n.noFirestorePermission
             : l10n.syncError;
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
@@ -1278,4 +1309,3 @@ class _SyncButtonState extends State<_SyncButton> {
     );
   }
 }
-

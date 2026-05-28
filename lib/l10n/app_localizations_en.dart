@@ -331,9 +331,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyPolicy => 'Privacy Policy';
 
   @override
+  String get termsOfUse => 'Terms of Use';
+
+  @override
+  String get legalNoticePrivacyPrefix =>
+      'This app uses Google Firebase for account and data sync, and RevenueCat for purchase management. See ';
+
+  @override
+  String get legalNoticePrivacySuffix => ' for details.';
+
+  @override
+  String get legalNoticeTermsPrefix => 'For Terms of Use, see ';
+
+  @override
+  String get legalNoticeTermsLink => 'here';
+
+  @override
+  String get legalNoticeTermsSuffix => '.';
+
+  @override
   String privacyPolicyDescription(String link) {
     return 'This app uses Google Firebase for account and data sync, and RevenueCat for purchase management. See $link for details.';
   }
+
+  @override
+  String get iapInfoLabelName => 'Name';
+
+  @override
+  String get iapInfoLabelPrice => 'Price';
+
+  @override
+  String get iapInfoLabelDuration => 'Validity period';
+
+  @override
+  String get aiTutorPurchaseProductName => 'AI Tutor Plus (500)';
+
+  @override
+  String get aiTutorPurchaseDurationValue => '1 month (non-renewing)';
 
   @override
   String get purchaseTitle => 'Pro Version - Learning History';
@@ -367,6 +401,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get accountDeletionMenu => 'Delete Account';
+
+  @override
+  String get accountDeletionDialogTitle => 'Delete account';
+
+  @override
+  String get accountDeletionDialogMessage =>
+      'This will permanently delete the following data:\n\n- Your login information for this app\n- Learning records, progress, and history\n- Gacha settings, display settings, and exclusion settings\n- App data saved in the cloud\n- User data saved on this device\n\nThis cannot be undone.\n\nApp Store subscriptions and purchase history will not be deleted. To cancel a subscription, use Apple ID subscription settings.';
+
+  @override
+  String get accountDeletionConfirmButton => 'Delete';
+
+  @override
+  String get accountDeletionContinueButton => 'Continue';
+
+  @override
+  String get accountDeletionDeleting => 'Deleting your account...';
+
+  @override
+  String get accountDeletionSuccess => 'Your account has been deleted.';
+
+  @override
+  String get accountDeletionFailed => 'Account deletion failed';
+
+  @override
+  String get accountDeletionFailedMessage =>
+      'Account deletion failed. Please try again.';
+
+  @override
+  String get accountDeletionReauthTitle => 'Confirm your identity';
+
+  @override
+  String get accountDeletionReauthenticating => 'Confirming your identity...';
+
+  @override
+  String get accountDeletionPasswordMessage =>
+      'Enter your password to continue deleting your account.';
+
+  @override
+  String get accountDeletionPasswordLabel => 'Password';
+
+  @override
+  String get accountDeletionGoogleReauthMessage =>
+      'Sign in with Google again to continue deleting your account.';
+
+  @override
+  String get accountDeletionAppleReauthMessage =>
+      'Sign in with Apple again to continue deleting your account.';
+
+  @override
+  String accountDeletionPhoneMessage(String phoneNumber) {
+    return 'Send an SMS code to $phoneNumber to continue deleting your account.';
+  }
+
+  @override
+  String get accountDeletionPhoneUnavailable =>
+      'The phone number for this account could not be confirmed.';
+
+  @override
+  String get accountDeletionSmsCodeRequired => 'Enter the SMS code.';
+
+  @override
+  String get accountDeletionReauthFailed => 'Identity confirmation failed';
+
+  @override
+  String get accountDeletionReauthInvalidCredential =>
+      'The authentication information is incorrect. Please try again.';
+
+  @override
+  String get accountDeletionNetworkError =>
+      'Check your connection and try again.';
+
+  @override
+  String get auth_requiredForAccountDeletion =>
+      'Please sign in again to delete your account.';
+
+  @override
+  String get auth_emailUnavailableForReauthentication =>
+      'The email address for this account could not be confirmed.';
+
+  @override
+  String get auth_reauthenticationCancelled => 'Authentication was cancelled.';
 
   @override
   String get details => 'Details';
@@ -479,8 +597,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use AI chat up to 500 times per month';
 
   @override
-  String get aiTutorPurchaseBenefitPlatformBilling =>
-      'Purchase securely through the App Store / Google Play payment screen';
+  String aiTutorPurchaseBenefitPlatformBilling(String store) {
+    return 'Purchase through the $store payment screen';
+  }
+
+  @override
+  String get aiTutorPurchaseBenefitPlatformBillingAny =>
+      'Purchase through the App Store / Google Play payment screen';
 
   @override
   String get aiTutorPurchaseSuccess => 'AI Tutor Plus is now active';

@@ -110,7 +110,7 @@
   "yellowCheckDescription": "黄色チェック = 理解できた",
   "redCheckDescription": "赤チェック = 分からない",
   "registrationGuidePart1": "のように登録してご活用下さい。\n設定により",
-  "registrationGuidePart2": "をつけた問題をガチャから除外できます。",
+  "registrationGuidePart2": "の問題をガチャから除外できます。",
   "proVersion": "Pro版",
   "proVersionPrice": "Pro版({price})",
   "@proVersionPrice": {
@@ -154,6 +154,12 @@
     }
   },
   "privacyPolicy": "プライバシーポリシー",
+  "termsOfUse": "利用規約",
+  "legalNoticePrivacyPrefix": "当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は",
+  "legalNoticePrivacySuffix": "をご確認ください。",
+  "legalNoticeTermsPrefix": "利用規約は",
+  "legalNoticeTermsLink": "こちら",
+  "legalNoticeTermsSuffix": "。",
   "privacyPolicyDescription": "当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は{link}をご確認ください。",
   "@privacyPolicyDescription": {
     "placeholders": {
@@ -162,6 +168,11 @@
       }
     }
   },
+  "iapInfoLabelName": "名称",
+  "iapInfoLabelPrice": "価格",
+  "iapInfoLabelDuration": "有効期間",
+  "aiTutorPurchaseProductName": "AIチューター Plus(500)",
+  "aiTutorPurchaseDurationValue": "1か月（非自動更新）",
   "purchaseTitle": "Pro版 - 学習履歴機能",
   "priceLabel": "価格: {price}",
   "@priceLabel": {
@@ -192,6 +203,37 @@
   },
   "pastPurchasesRestored": "過去の購入を復元しました👍",
   "ok": "OK",
+  "accountDeletionMenu": "アカウントを削除",
+  "accountDeletionDialogTitle": "アカウントを削除",
+  "accountDeletionDialogMessage": "以下のデータを完全に削除します。\n\n・本アプリへのログイン情報\n・学習記録、問題ごとの進捗と履歴\n・ガチャ設定、表示設定、除外設定\n・クラウドに保存したアプリデータ\n・この端末に保存されたユーザーデータ\n\nこの操作は取り消せません。\n\nApp Store のサブスクリプションと購入履歴は削除されません。サブスクリプションの解約は Apple ID のサブスクリプション設定から行ってください。",
+  "accountDeletionConfirmButton": "削除する",
+  "accountDeletionContinueButton": "続ける",
+  "accountDeletionDeleting": "アカウントを削除しています...",
+  "accountDeletionSuccess": "アカウントを削除しました。",
+  "accountDeletionFailed": "アカウント削除に失敗しました",
+  "accountDeletionFailedMessage": "アカウント削除に失敗しました。もう一度お試しください。",
+  "accountDeletionReauthTitle": "本人確認",
+  "accountDeletionReauthenticating": "本人確認中...",
+  "accountDeletionPasswordMessage": "アカウント削除を続けるには、パスワードを入力してください。",
+  "accountDeletionPasswordLabel": "パスワード",
+  "accountDeletionGoogleReauthMessage": "アカウント削除を続けるには、Googleで再度認証してください。",
+  "accountDeletionAppleReauthMessage": "アカウント削除を続けるには、Appleアカウントで再度認証してください。",
+  "accountDeletionPhoneMessage": "{phoneNumber} にSMSコードを送信して、アカウント削除を続けます。",
+  "@accountDeletionPhoneMessage": {
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "accountDeletionPhoneUnavailable": "このアカウントの電話番号を確認できませんでした。",
+  "accountDeletionSmsCodeRequired": "SMSコードを入力してください。",
+  "accountDeletionReauthFailed": "本人確認に失敗しました",
+  "accountDeletionReauthInvalidCredential": "認証情報が正しくありません。もう一度お試しください。",
+  "accountDeletionNetworkError": "通信状態を確認して、もう一度お試しください。",
+  "auth_requiredForAccountDeletion": "アカウントを削除するには、もう一度ログインしてください。",
+  "auth_emailUnavailableForReauthentication": "このアカウントのメールアドレスを確認できませんでした。",
+  "auth_reauthenticationCancelled": "認証がキャンセルされました。",
   "details": "詳細",
   "aggregatedBy": "で集計",
   "achievedCount": "{achieved}問/{total}問 達成",
@@ -259,7 +301,15 @@
     }
   },
   "aiTutorPurchaseBenefitMonthlyLimit": "AIチャットを月500回まで利用可能",
-  "aiTutorPurchaseBenefitPlatformBilling": "App Store / Google Play の決済画面で安全に購入",
+  "aiTutorPurchaseBenefitPlatformBilling": "{store}の決済画面で購入",
+  "@aiTutorPurchaseBenefitPlatformBilling": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTutorPurchaseBenefitPlatformBillingAny": "App Store / Google Play の決済画面で購入",
   "aiTutorPurchaseSuccess": "AIチューター Plus が有効になりました",
   "aiTutorPurchaseRestore": "購入を復元",
   "aiTutorSignInRequiredTitle": "ログインが必要です",

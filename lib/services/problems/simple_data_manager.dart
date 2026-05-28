@@ -27,7 +27,8 @@ class SimpleDataManager {
   // ============================================================================
   // in-memory cache (hot paths: problem list filtering, slot rendering)
   // ============================================================================
-  static final Map<String, List<Map<String, dynamic>>> _learningHistoryCache = {};
+  static final Map<String, List<Map<String, dynamic>>> _learningHistoryCache =
+      {};
   static final Map<String, Map<String, dynamic>> _learningDataCache = {};
   static final Map<String, Map<String, dynamic>> _cloudLearningDataCache = {};
   static final Map<String, Map<String, dynamic>> _cloudGachaSettingsCache = {};
@@ -46,7 +47,8 @@ class SimpleDataManager {
   static const Duration _cloudSettingsCacheTtl = Duration(seconds: 5);
 
   static Future<bool> ensureWebCloudSyncReady({bool force = false}) async {
-    if (!FirebaseAuthService.isAuthenticated || FirebaseAuthService.userId == null) {
+    if (!FirebaseAuthService.isAuthenticated ||
+        FirebaseAuthService.userId == null) {
       _webCloudReadyUserId = null;
       _clearCloudLearningCache();
       _clearCloudSettingsCache();
@@ -54,7 +56,9 @@ class SimpleDataManager {
     }
 
     final userId = FirebaseAuthService.userId!;
-    if (!force && _webCloudReadyUserId == userId && _webCloudSyncFuture == null) {
+    if (!force &&
+        _webCloudReadyUserId == userId &&
+        _webCloudSyncFuture == null) {
       return true;
     }
 
@@ -67,8 +71,12 @@ class SimpleDataManager {
 
     _webCloudSyncFuture = () async {
       try {
-        final learningReady = await _ensureCloudLearningStateCurrent(force: force);
-        final settingsReady = await _ensureCloudSettingsStateCurrent(force: force);
+        final learningReady = await _ensureCloudLearningStateCurrent(
+          force: force,
+        );
+        final settingsReady = await _ensureCloudSettingsStateCurrent(
+          force: force,
+        );
         if (!learningReady || !settingsReady) {
           throw StateError('Cloud sync warm-up did not complete');
         }
@@ -154,14 +162,12 @@ class SimpleDataManager {
     Map<String, dynamic>? cloudData,
     Map<String, dynamic> defaults = const {},
   }) {
-    final normalizedLocal =
-        localData == null
-            ? null
-            : _normalizeTimestampedSettingsMap(localData, defaults: defaults);
-    final normalizedCloud =
-        cloudData == null
-            ? null
-            : _normalizeTimestampedSettingsMap(cloudData, defaults: defaults);
+    final normalizedLocal = localData == null
+        ? null
+        : _normalizeTimestampedSettingsMap(localData, defaults: defaults);
+    final normalizedCloud = cloudData == null
+        ? null
+        : _normalizeTimestampedSettingsMap(cloudData, defaults: defaults);
 
     if (normalizedLocal == null) {
       return normalizedCloud ?? _normalizeTimestampedSettingsMap(defaults);
@@ -170,13 +176,17 @@ class SimpleDataManager {
       return normalizedLocal;
     }
 
-    final localUpdated =
-        _parseTimestamp(normalizedLocal['lastUpdated'] as String?);
-    final cloudUpdated =
-        _parseTimestamp(normalizedCloud['lastUpdated'] as String?);
+    final localUpdated = _parseTimestamp(
+      normalizedLocal['lastUpdated'] as String?,
+    );
+    final cloudUpdated = _parseTimestamp(
+      normalizedCloud['lastUpdated'] as String?,
+    );
 
     if (localUpdated != null && cloudUpdated != null) {
-      return localUpdated.isAfter(cloudUpdated) ? normalizedLocal : normalizedCloud;
+      return localUpdated.isAfter(cloudUpdated)
+          ? normalizedLocal
+          : normalizedCloud;
     }
     if (localUpdated != null) {
       return normalizedLocal;
@@ -189,9 +199,14 @@ class SimpleDataManager {
     Map<String, dynamic>? right, {
     Map<String, dynamic> defaults = const {},
   }) {
-    final normalizedLeft = _normalizeTimestampedSettingsMap(left, defaults: defaults);
-    final normalizedRight =
-        _normalizeTimestampedSettingsMap(right, defaults: defaults);
+    final normalizedLeft = _normalizeTimestampedSettingsMap(
+      left,
+      defaults: defaults,
+    );
+    final normalizedRight = _normalizeTimestampedSettingsMap(
+      right,
+      defaults: defaults,
+    );
     return json.encode(normalizedLeft) == json.encode(normalizedRight);
   }
 
@@ -201,7 +216,10 @@ class SimpleDataManager {
     Map<String, dynamic> defaults = const {},
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    final normalized = _normalizeTimestampedSettingsMap(data, defaults: defaults);
+    final normalized = _normalizeTimestampedSettingsMap(
+      data,
+      defaults: defaults,
+    );
     await prefs.setString(key, json.encode(normalized));
   }
 
@@ -258,7 +276,9 @@ class SimpleDataManager {
     );
   }
 
-  static Future<Map<String, dynamic>?> _loadLocalOtherSettingEntry(String key) async {
+  static Future<Map<String, dynamic>?> _loadLocalOtherSettingEntry(
+    String key,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final value = prefs.get(key);
     if (value == null) {
@@ -275,18 +295,15 @@ class SimpleDataManager {
     }
 
     final lastUpdated = prefs.getString(_otherSettingMetaKey(key));
-    return {
-      'key': key,
-      'value': normalizedValue,
-      'lastUpdated': lastUpdated,
-    };
+    return {'key': key, 'value': normalizedValue, 'lastUpdated': lastUpdated};
   }
 
   static Map<String, dynamic>? _mergeLatestOtherSettingEntry({
     Map<String, dynamic>? localEntry,
     Map<String, dynamic>? cloudEntry,
   }) {
-    if (localEntry == null) return cloudEntry == null ? null : Map<String, dynamic>.from(cloudEntry);
+    if (localEntry == null)
+      return cloudEntry == null ? null : Map<String, dynamic>.from(cloudEntry);
     if (cloudEntry == null) {
       final normalized = Map<String, dynamic>.from(localEntry);
       normalized['lastUpdated'] =
@@ -304,10 +321,12 @@ class SimpleDataManager {
         _normalizeTimeString(normalizedCloud['lastUpdated']) ??
         DateTime.now().toIso8601String();
 
-    final localUpdated =
-        _parseTimestamp(normalizedLocal['lastUpdated'] as String?);
-    final cloudUpdated =
-        _parseTimestamp(normalizedCloud['lastUpdated'] as String?);
+    final localUpdated = _parseTimestamp(
+      normalizedLocal['lastUpdated'] as String?,
+    );
+    final cloudUpdated = _parseTimestamp(
+      normalizedCloud['lastUpdated'] as String?,
+    );
     if (localUpdated != null && cloudUpdated != null) {
       return localUpdated.isAfter(cloudUpdated)
           ? normalizedLocal
@@ -324,10 +343,10 @@ class SimpleDataManager {
     return {
       'problemId': problemId,
       'latestStatus': 'none',
-      'history': List.generate(_learningSlotCount, (_) => <String, dynamic>{
-        'status': 'none',
-        'time': null,
-      }),
+      'history': List.generate(
+        _learningSlotCount,
+        (_) => <String, dynamic>{'status': 'none', 'time': null},
+      ),
       'lastUpdated': now,
     };
   }
@@ -355,11 +374,14 @@ class SimpleDataManager {
     List? history,
   ) {
     final normalized = _normalizeLearningHistoryList(history);
-    final meaningful = normalized.where((item) {
-      final status = item['status'] as String? ?? 'none';
-      final time = item['time'] as String?;
-      return status != 'none' && time != null && time.isNotEmpty;
-    }).map((item) => Map<String, dynamic>.from(item)).toList();
+    final meaningful = normalized
+        .where((item) {
+          final status = item['status'] as String? ?? 'none';
+          final time = item['time'] as String?;
+          return status != 'none' && time != null && time.isNotEmpty;
+        })
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
 
     meaningful.sort((a, b) {
       final timeA = a['time'] as String? ?? '';
@@ -372,14 +394,13 @@ class SimpleDataManager {
   static List<Map<String, dynamic>> _buildLearningHistorySlots(
     List<Map<String, dynamic>> entries,
   ) {
-    final slots = List.generate(_learningSlotCount, (_) => <String, dynamic>{
-      'status': 'none',
-      'time': null,
-    });
-    final recentEntries =
-        entries.length <= _learningSlotCount
-            ? entries
-            : entries.sublist(entries.length - _learningSlotCount);
+    final slots = List.generate(
+      _learningSlotCount,
+      (_) => <String, dynamic>{'status': 'none', 'time': null},
+    );
+    final recentEntries = entries.length <= _learningSlotCount
+        ? entries
+        : entries.sublist(entries.length - _learningSlotCount);
 
     for (var i = 0; i < recentEntries.length; i++) {
       slots[i] = Map<String, dynamic>.from(recentEntries[i]);
@@ -447,14 +468,12 @@ class SimpleDataManager {
     Map<String, dynamic>? localData,
     Map<String, dynamic>? cloudData,
   }) {
-    final normalizedLocal =
-        localData == null
-            ? null
-            : _normalizeLearningData(problemId: problemId, raw: localData);
-    final normalizedCloud =
-        cloudData == null
-            ? null
-            : _normalizeLearningData(problemId: problemId, raw: cloudData);
+    final normalizedLocal = localData == null
+        ? null
+        : _normalizeLearningData(problemId: problemId, raw: localData);
+    final normalizedCloud = cloudData == null
+        ? null
+        : _normalizeLearningData(problemId: problemId, raw: cloudData);
 
     if (normalizedLocal == null) {
       return normalizedCloud ?? _defaultLearningData(problemId);
@@ -463,10 +482,12 @@ class SimpleDataManager {
       return normalizedLocal;
     }
 
-    final localUpdated =
-        _parseTimestamp(normalizedLocal['lastUpdated'] as String?);
-    final cloudUpdated =
-        _parseTimestamp(normalizedCloud['lastUpdated'] as String?);
+    final localUpdated = _parseTimestamp(
+      normalizedLocal['lastUpdated'] as String?,
+    );
+    final cloudUpdated = _parseTimestamp(
+      normalizedCloud['lastUpdated'] as String?,
+    );
 
     if (_isClearedLearningData(normalizedLocal) &&
         (cloudUpdated == null ||
@@ -513,10 +534,9 @@ class SimpleDataManager {
             DateTime.fromMillisecondsSinceEpoch(0),
     ];
     mergedUpdatedCandidates.sort();
-    final mergedLastUpdated =
-        mergedUpdatedCandidates.isNotEmpty
-            ? mergedUpdatedCandidates.last.toIso8601String()
-            : DateTime.now().toIso8601String();
+    final mergedLastUpdated = mergedUpdatedCandidates.isNotEmpty
+        ? mergedUpdatedCandidates.last.toIso8601String()
+        : DateTime.now().toIso8601String();
 
     return {
       'problemId': problemId,
@@ -531,14 +551,12 @@ class SimpleDataManager {
     Map<String, dynamic>? right,
     String problemId,
   ) {
-    final normalizedLeft =
-        left == null
-            ? _defaultLearningData(problemId)
-            : _normalizeLearningData(problemId: problemId, raw: left);
-    final normalizedRight =
-        right == null
-            ? _defaultLearningData(problemId)
-            : _normalizeLearningData(problemId: problemId, raw: right);
+    final normalizedLeft = left == null
+        ? _defaultLearningData(problemId)
+        : _normalizeLearningData(problemId: problemId, raw: left);
+    final normalizedRight = right == null
+        ? _defaultLearningData(problemId)
+        : _normalizeLearningData(problemId: problemId, raw: right);
     return json.encode(normalizedLeft) == json.encode(normalizedRight);
   }
 
@@ -553,8 +571,11 @@ class SimpleDataManager {
     _cacheLearningDataForProblem(problemId, normalized);
   }
 
-  static Future<bool> _ensureCloudLearningStateCurrent({bool force = false}) async {
-    if (!FirebaseAuthService.isAuthenticated || FirebaseAuthService.userId == null) {
+  static Future<bool> _ensureCloudLearningStateCurrent({
+    bool force = false,
+  }) async {
+    if (!FirebaseAuthService.isAuthenticated ||
+        FirebaseAuthService.userId == null) {
       _clearCloudLearningCache();
       return false;
     }
@@ -656,7 +677,9 @@ class SimpleDataManager {
         );
       }
       if (userSettings != null) {
-        _cloudUserSettingsCache = _normalizeTimestampedSettingsMap(userSettings);
+        _cloudUserSettingsCache = _normalizeTimestampedSettingsMap(
+          userSettings,
+        );
       }
       for (final entry in otherSettings.entries) {
         final normalized = _normalizeOtherSettingEntry(entry.value);
@@ -674,8 +697,11 @@ class SimpleDataManager {
     }
   }
 
-  static Future<bool> _ensureCloudSettingsStateCurrent({bool force = false}) async {
-    if (!FirebaseAuthService.isAuthenticated || FirebaseAuthService.userId == null) {
+  static Future<bool> _ensureCloudSettingsStateCurrent({
+    bool force = false,
+  }) async {
+    if (!FirebaseAuthService.isAuthenticated ||
+        FirebaseAuthService.userId == null) {
       _clearCloudSettingsCache();
       return false;
     }
@@ -692,53 +718,49 @@ class SimpleDataManager {
     return await _syncSettingsFromFirestore(force: force || shouldPushLocal);
   }
 
-  static List<Map<String, dynamic>> _normalizeLearningHistoryList(List? history) {
-    return (history ?? const [])
-        .whereType<Map>()
-        .map((item) {
-          final status = item['status'];
-          final time = item['time'];
-          String normalizedStatus;
-          switch (status) {
-            case 'solved':
-              normalizedStatus = 'solved';
-              break;
-            case 'understood':
-              normalizedStatus = 'understood';
-              break;
-            case 'failed':
-              normalizedStatus = 'failed';
-              break;
-            default:
-              normalizedStatus = 'none';
-          }
-          return {
-            'status': normalizedStatus,
-            'time': time is String ? time : null,
-          };
-        })
-        .toList();
+  static List<Map<String, dynamic>> _normalizeLearningHistoryList(
+    List? history,
+  ) {
+    return (history ?? const []).whereType<Map>().map((item) {
+      final status = item['status'];
+      final time = item['time'];
+      String normalizedStatus;
+      switch (status) {
+        case 'solved':
+          normalizedStatus = 'solved';
+          break;
+        case 'understood':
+          normalizedStatus = 'understood';
+          break;
+        case 'failed':
+          normalizedStatus = 'failed';
+          break;
+        default:
+          normalizedStatus = 'none';
+      }
+      return {'status': normalizedStatus, 'time': time is String ? time : null};
+    }).toList();
   }
 
   // ============================================================================
   // 初期化とバージョン管理
   // ============================================================================
-  
+
   /// システムの初期化
   static Future<bool> initialize() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final currentVersion = prefs.getString(_versionKey);
-      
+
       if (currentVersion != _version) {
         AppLogger.info('SimpleDataManagerを初期化中', details: 'バージョン: $_version');
-        
+
         // バージョンを更新
         await prefs.setString(_versionKey, _version);
-        
+
         AppLogger.success('SimpleDataManagerの初期化が完了しました');
       }
-      
+
       if (!FirebaseAuthService.isAuthenticated) {
         _clearCloudLearningCache();
         _clearCloudSettingsCache();
@@ -762,14 +784,14 @@ class SimpleDataManager {
       await _ensureCloudLearningStateCurrent(force: true);
       await _ensureCloudSettingsStateCurrent(force: true);
       await setLastUserId(userId);
-      
+
       return true;
     } catch (e) {
       AppLogger.error('SimpleDataManagerの初期化に失敗しました', error: e);
       return false;
     }
   }
-  
+
   /// Firestoreから学習データを取得してメモリキャッシュを更新
   static Future<bool> _syncFromFirestore({bool force = false}) async {
     try {
@@ -786,9 +808,10 @@ class SimpleDataManager {
         return true;
       }
 
-      final firestoreRecords = await FirestoreLearningService.getAllLearningRecords(
-        userId: userId,
-      ).timeout(const Duration(seconds: 10));
+      final firestoreRecords =
+          await FirestoreLearningService.getAllLearningRecords(
+            userId: userId,
+          ).timeout(const Duration(seconds: 10));
 
       _clearCloudLearningCache();
       for (final entry in firestoreRecords.entries) {
@@ -900,7 +923,10 @@ class SimpleDataManager {
               cloudData: cloudSettings,
             );
 
-            if (!_areTimestampedSettingsEquivalent(cloudSettings, mergedSettings)) {
+            if (!_areTimestampedSettingsEquivalent(
+              cloudSettings,
+              mergedSettings,
+            )) {
               final success = await FirestoreSettingsService.saveUserSettings(
                 userId: userId,
                 settings: mergedSettings,
@@ -1077,11 +1103,11 @@ class SimpleDataManager {
     await setLastUserId(userId);
     return learningReady && settingsReady;
   }
-  
+
   // ============================================================================
   // 学習記録管理（シンプル版）
   // ============================================================================
-  
+
   static String _statusKeyFromValue(dynamic status) {
     if (status is LearningStatus) {
       return status.key;
@@ -1096,7 +1122,10 @@ class SimpleDataManager {
   }
 
   /// 学習記録を保存
-  static Future<bool> saveLearningRecord(MathProblem problem, dynamic status) async {
+  static Future<bool> saveLearningRecord(
+    MathProblem problem,
+    dynamic status,
+  ) async {
     try {
       final existingData = await _getLearningData(problem);
       final entries = _extractMeaningfulLearningHistory(
@@ -1136,7 +1165,7 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// 学習記録を取得
   static Future<LearningStatus> getLearningRecord(MathProblem problem) async {
     try {
@@ -1144,7 +1173,8 @@ class SimpleDataManager {
         final cloudReady = await _ensureCloudLearningStateCurrent();
         if (cloudReady) {
           final cloudData =
-              _cloudLearningDataCache[problem.id] ?? _defaultLearningData(problem.id);
+              _cloudLearningDataCache[problem.id] ??
+              _defaultLearningData(problem.id);
           final statusKey = cloudData['latestStatus'] as String?;
           return statusKey != null
               ? LearningStatusExtension.fromKey(statusKey)
@@ -1162,15 +1192,18 @@ class SimpleDataManager {
       return LearningStatus.none;
     }
   }
-  
+
   /// 学習記録の履歴を取得
-  static Future<List<Map<String, dynamic>>> getLearningHistory(MathProblem problem) async {
+  static Future<List<Map<String, dynamic>>> getLearningHistory(
+    MathProblem problem,
+  ) async {
     try {
       if (FirebaseAuthService.isAuthenticated) {
         final cloudReady = await _ensureCloudLearningStateCurrent();
         if (cloudReady) {
           final cloudData =
-              _cloudLearningDataCache[problem.id] ?? _defaultLearningData(problem.id);
+              _cloudLearningDataCache[problem.id] ??
+              _defaultLearningData(problem.id);
           return _normalizeLearningHistoryList(cloudData['history'] as List?);
         }
       }
@@ -1181,7 +1214,9 @@ class SimpleDataManager {
       }
 
       final localData = await _getLearningData(problem);
-      final history = _normalizeLearningHistoryList(localData['history'] as List?);
+      final history = _normalizeLearningHistoryList(
+        localData['history'] as List?,
+      );
       _learningHistoryCache[problem.id] = history;
       return history;
     } catch (e) {
@@ -1202,8 +1237,11 @@ class SimpleDataManager {
       if (cloudReady) {
         final out = <String, List<Map<String, dynamic>>>{};
         for (final id in ids) {
-          final cloudData = _cloudLearningDataCache[id] ?? _defaultLearningData(id);
-          out[id] = _normalizeLearningHistoryList(cloudData['history'] as List?);
+          final cloudData =
+              _cloudLearningDataCache[id] ?? _defaultLearningData(id);
+          out[id] = _normalizeLearningHistoryList(
+            cloudData['history'] as List?,
+          );
         }
         return out;
       }
@@ -1231,8 +1269,13 @@ class SimpleDataManager {
       try {
         final decoded = json.decode(dataString);
         if (decoded is Map<String, dynamic>) {
-          final normalized = _normalizeLearningData(problemId: id, raw: decoded);
-          final history = _normalizeLearningHistoryList(normalized['history'] as List?);
+          final normalized = _normalizeLearningData(
+            problemId: id,
+            raw: decoded,
+          );
+          final history = _normalizeLearningHistoryList(
+            normalized['history'] as List?,
+          );
           _learningHistoryCache[id] = history;
           out[id] = history;
         } else {
@@ -1247,7 +1290,7 @@ class SimpleDataManager {
 
     return out;
   }
-  
+
   /// 学習記録の履歴を保存
   static Future<bool> saveLearningHistory(
     MathProblem problem,
@@ -1287,7 +1330,7 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// 学習記録をクリア（全スロットをnoneにする）
   /// 完全に削除するのではなく、全てnoneの状態で保存する
   /// これにより、次回ログイン時にFirestoreからデータが復活することを防ぐ
@@ -1295,30 +1338,36 @@ class SimpleDataManager {
     try {
       // 全てnoneのスロットを作成
       const slotCount = 3;
-      final emptyHistory = List.generate(slotCount, (i) => <String, dynamic>{
-        'status': 'none',
-        'time': null,
-      });
-      
+      final emptyHistory = List.generate(
+        slotCount,
+        (i) => <String, dynamic>{'status': 'none', 'time': null},
+      );
+
       // saveLearningHistoryを使って全てnoneの状態で保存
       // これにより、ローカルとFirestoreの両方にnoneの状態が保存される
       final success = await saveLearningHistory(problem, emptyHistory);
-      
+
       if (success) {
-        print('Successfully cleared learning history (set all slots to none) for problem ${problem.id}');
+        print(
+          'Successfully cleared learning history (set all slots to none) for problem ${problem.id}',
+        );
       } else {
-        print('Warning: Failed to clear learning history for problem ${problem.id}');
+        print(
+          'Warning: Failed to clear learning history for problem ${problem.id}',
+        );
       }
-      
+
       return success;
     } catch (e) {
       print('Error clearing learning history: $e');
       return false;
     }
   }
-  
+
   /// 学習データを取得（内部メソッド）
-  static Future<Map<String, dynamic>> _getLearningData(MathProblem problem) async {
+  static Future<Map<String, dynamic>> _getLearningData(
+    MathProblem problem,
+  ) async {
     try {
       final cached = _learningDataCache[problem.id];
       if (cached != null) {
@@ -1328,7 +1377,7 @@ class SimpleDataManager {
       final prefs = await SharedPreferences.getInstance();
       final key = '$_namespace/learning/${problem.id}';
       final dataString = prefs.getString(key);
-      
+
       if (dataString != null) {
         final decoded = json.decode(dataString);
         if (decoded is Map<String, dynamic>) {
@@ -1340,7 +1389,7 @@ class SimpleDataManager {
           return Map<String, dynamic>.from(m);
         }
       }
-      
+
       final d = _defaultLearningData(problem.id);
       _learningDataCache[problem.id] = d;
       return Map<String, dynamic>.from(d);
@@ -1351,15 +1400,18 @@ class SimpleDataManager {
       return Map<String, dynamic>.from(d);
     }
   }
-  
+
   // ============================================================================
   // ガチャ管理（シンプル版）
   // ============================================================================
-  
+
   /// ガチャ設定を保存
   /// 注意: ログイン前の場合はローカルのみに保存される
   /// ログイン後は syncLocalSettingsToFirestore() で同期される
-  static Future<bool> saveGachaSettings(String gachaType, Map<String, dynamic> settings) async {
+  static Future<bool> saveGachaSettings(
+    String gachaType,
+    Map<String, dynamic> settings,
+  ) async {
     try {
       final key = '$_namespace/gacha/$gachaType';
       final defaultSettings = _getDefaultGachaSettings();
@@ -1391,7 +1443,7 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// ガチャ設定を取得
   /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<Map<String, dynamic>> getGachaSettings(String gachaType) async {
@@ -1417,7 +1469,7 @@ class SimpleDataManager {
       return _getDefaultGachaSettings();
     }
   }
-  
+
   /// デフォルトガチャ設定
   static Map<String, dynamic> _getDefaultGachaSettings() {
     return {
@@ -1430,22 +1482,24 @@ class SimpleDataManager {
       'updatedAt': DateTime.now().toIso8601String(),
     };
   }
-  
+
   // ============================================================================
   // データ移行管理
   // ============================================================================
-  
-  
+
   // ============================================================================
   // 将来の拡張用メソッド（プレースホルダー）
   // ============================================================================
-  
+
   /// 新しいガチャタイプの設定を保存
-  static Future<bool> saveNewGachaType(String gachaType, Map<String, dynamic> settings) async {
+  static Future<bool> saveNewGachaType(
+    String gachaType,
+    Map<String, dynamic> settings,
+  ) async {
     // 将来の拡張用
     return await saveGachaSettings(gachaType, settings);
   }
-  
+
   /// ユーザー設定を保存（将来の拡張用）
   static Future<bool> saveUserSettings(Map<String, dynamic> settings) async {
     try {
@@ -1469,7 +1523,7 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// ユーザー設定を取得（将来の拡張用）
   /// ローカルデータを優先して即座に返し、バックグラウンドでFirestoreと同期
   static Future<Map<String, dynamic>> getUserSettings() async {
@@ -1501,11 +1555,13 @@ class SimpleDataManager {
     try {
       // まずローカルデータを即座に取得（遅延なし）
       final prefs = await SharedPreferences.getInstance();
-      bool localPurchased = prefs.getBool('$_namespace/premium_purchased') ?? false;
-      
+      bool localPurchased =
+          prefs.getBool('$_namespace/premium_purchased') ?? false;
+
       // RevenueCatから購入状態を確認（信頼できるソース）
       try {
-        final isPurchased = await RevenueCatService.isFactorizationOptionPurchased();
+        final isPurchased =
+            await RevenueCatService.isFactorizationOptionPurchased();
         // RevenueCatの状態をSharedPreferencesにも保存（冗長性）
         await prefs.setBool('$_namespace/premium_purchased', isPurchased);
         localPurchased = isPurchased;
@@ -1514,9 +1570,9 @@ class SimpleDataManager {
         print('Error checking RevenueCat purchase status: $e');
         // RevenueCatの確認に失敗した場合、ローカルデータを使用
       }
-      
+
       // 注意: Pro購入情報はFirebaseから取得しない（RevenueCatで管理）
-      
+
       return localPurchased;
     } catch (e) {
       print('Error checking premium purchase: $e');
@@ -1531,13 +1587,13 @@ class SimpleDataManager {
     try {
       final prefs = await SharedPreferences.getInstance();
       final now = DateTime.now().toIso8601String();
-      
+
       // ローカルに即座に保存（UXを下げない）
       await prefs.setBool('$_namespace/premium_purchased', purchased);
       await prefs.setString('$_namespace/premium_purchased_last_updated', now);
-      
+
       // 注意: Pro購入情報はFirebaseにバックアップしない（RevenueCatで管理）
-      
+
       return true;
     } catch (e) {
       print('Error setting premium purchase: $e');
@@ -1548,14 +1604,16 @@ class SimpleDataManager {
   // ============================================================================
   // データの一括操作
   // ============================================================================
-  
+
   /// 全データをエクスポート
   static Future<Map<String, dynamic>> exportAllData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final allKeys = prefs.getKeys();
-      final appKeys = allKeys.where((key) => key.startsWith(_namespace)).toList();
-      
+      final appKeys = allKeys
+          .where((key) => key.startsWith(_namespace))
+          .toList();
+
       final Map<String, dynamic> exportData = {};
       for (final key in appKeys) {
         final value = prefs.getString(key);
@@ -1563,21 +1621,28 @@ class SimpleDataManager {
           exportData[key] = value;
         }
       }
-      
+
       return exportData;
     } catch (e) {
       print('Error exporting data: $e');
       return {};
     }
   }
-  
+
   /// 全データをクリア
   static Future<bool> clearAllData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final allKeys = prefs.getKeys();
-      final appKeys = allKeys.where((key) => key.startsWith(_namespace)).toList();
-      
+      final appKeys = allKeys
+          .where(
+            (key) =>
+                key.startsWith(_namespace) ||
+                key.startsWith('joymath_gacha_state') ||
+                key == 'history_map',
+          )
+          .toList();
+
       for (final key in appKeys) {
         await prefs.remove(key);
       }
@@ -1594,14 +1659,16 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// デバッグ用：全キーを表示
   static Future<void> debugPrintAllKeys() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final allKeys = prefs.getKeys();
-      final appKeys = allKeys.where((key) => key.startsWith(_namespace)).toList();
-      
+      final appKeys = allKeys
+          .where((key) => key.startsWith(_namespace))
+          .toList();
+
       print('=== SimpleDataManager Keys ===');
       for (final key in appKeys) {
         print('  $key');
@@ -1611,11 +1678,11 @@ class SimpleDataManager {
       print('Error printing keys: $e');
     }
   }
-  
+
   // ============================================================================
   // アカウント切り替え管理
   // ============================================================================
-  
+
   /// 最後にログインしたユーザーIDを取得
   static Future<String?> getLastUserId() async {
     try {
@@ -1626,7 +1693,7 @@ class SimpleDataManager {
       return null;
     }
   }
-  
+
   /// 最後にログインしたユーザーIDを保存
   static Future<void> setLastUserId(String userId) async {
     try {
@@ -1636,55 +1703,54 @@ class SimpleDataManager {
       print('Error setting last user ID: $e');
     }
   }
-  
+
   /// アカウント切り替えを検知（前のユーザーIDと現在のユーザーIDを比較）
   static Future<bool> isAccountSwitched() async {
     try {
       final lastUserId = await getLastUserId();
       final currentUserId = FirebaseAuthService.userId;
-      
+
       // 前のユーザーIDが存在し、現在のユーザーIDと異なる場合はアカウント切り替え
-      if (lastUserId != null && currentUserId != null && lastUserId != currentUserId) {
+      if (lastUserId != null &&
+          currentUserId != null &&
+          lastUserId != currentUserId) {
         print('Account switched detected: $lastUserId -> $currentUserId');
         return true;
       }
-      
+
       return false;
     } catch (e) {
       print('Error checking account switch: $e');
       return false;
     }
   }
-  
+
   /// アカウント固有のローカルデータをクリア（学習記録、設定など）
   /// バージョン情報や移行フラグは保持
   static Future<bool> clearAccountSpecificData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final allKeys = prefs.getKeys();
-      
+
       // クリアするキーのパターン
       final patternsToClear = [
-        '$_namespace/learning/',  // 学習記録
-        '$_namespace/gacha/',     // ガチャ設定
-        '$_namespace/user_settings',  // ユーザー設定
-        '$_namespace/firestore_sync_completed_',  // 同期完了フラグ
+        '$_namespace/learning/', // 学習記録
+        '$_namespace/gacha/', // ガチャ設定
+        '$_namespace/user_settings', // ユーザー設定
+        '$_namespace/firestore_sync_completed_', // 同期完了フラグ
       ];
-      
+
       // 保持するキー（バージョン情報、最後のユーザーID）
-      final keysToKeep = [
-        _versionKey,
-        _lastUserIdKey,
-      ];
-      
+      final keysToKeep = [_versionKey, _lastUserIdKey];
+
       int clearedCount = 0;
-      
+
       for (final key in allKeys) {
         // 保持するキーはスキップ
         if (keysToKeep.contains(key)) {
           continue;
         }
-        
+
         // クリア対象のパターンに一致するキーを削除
         bool shouldClear = false;
         for (final pattern in patternsToClear) {
@@ -1693,7 +1759,7 @@ class SimpleDataManager {
             break;
           }
         }
-        
+
         // その他の設定キーもクリア（integral_gacha_exclusion_modeなど）
         if (!shouldClear && key.startsWith(_namespace)) {
           // 名前空間内のその他のキーもクリア（ただし、保持するキーは除く）
@@ -1701,13 +1767,13 @@ class SimpleDataManager {
             shouldClear = true;
           }
         }
-        
+
         if (shouldClear) {
           await prefs.remove(key);
           clearedCount++;
         }
       }
-      
+
       print('Cleared $clearedCount account-specific data keys');
       _clearLearningCaches();
       _clearCloudSettingsCache();
@@ -1720,7 +1786,7 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// アカウント切り替え時のデータ同期処理
   /// 前のアカウントのローカルデータをクリアし、新しいアカウントのFirestoreデータを取得
   static Future<void> syncOnAccountSwitch() async {
@@ -1730,12 +1796,12 @@ class SimpleDataManager {
         print('No current user, skipping account switch sync');
         return;
       }
-      
+
       await clearAccountSpecificData();
       await _syncFromFirestore(force: true);
       await _syncSettingsFromFirestore(force: true);
       await setLastUserId(currentUserId);
-      
+
       print('Account switch sync completed');
     } catch (e) {
       print('Error in account switch sync: $e');
@@ -1782,13 +1848,14 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   // ============================================================================
   // 無料で履歴管理可能なガチャ選択機能
   // ============================================================================
-  
-  static const String _selectedFreeGachasKey = '$_namespace/selected_free_gachas';
-  
+
+  static const String _selectedFreeGachasKey =
+      '$_namespace/selected_free_gachas';
+
   /// 選択された無料ガチャのリストを取得
   static Future<List<String>> getSelectedFreeGachas() async {
     try {
@@ -1802,7 +1869,7 @@ class SimpleDataManager {
       return [];
     }
   }
-  
+
   /// 選択された無料ガチャを保存
   /// 注意: 全てのガチャが無料で利用可能なため、この関数は互換性のために残されています
   /// ログイン後は syncLocalSettingsToFirestore() で同期される
@@ -1816,7 +1883,7 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// 既に無料ガチャが選択済みかどうかを確認
   static Future<bool> hasSelectedFreeGachas() async {
     try {
@@ -1827,14 +1894,14 @@ class SimpleDataManager {
       return false;
     }
   }
-  
+
   /// 指定されたガチャが無料で履歴管理可能かどうかを確認
   /// 全てのガチャが無料で履歴管理可能
   static Future<bool> isFreeGachaEnabled(String prefsPrefix) async {
     // 全てのガチャが無料で履歴管理可能
     return true;
   }
-  
+
   /// 学習履歴オプションの購入状態を確認（RevenueCatServiceのラッパー）
   static Future<bool> isLearningHistoryOptionPurchased() async {
     if (!kEnableLearningHistoryAndStoreKitDiagnostics) {
@@ -1851,7 +1918,7 @@ class SimpleDataManager {
   // ============================================================================
   // 計算用紙データ
   // ============================================================================
-  
+
   /// 計算用紙データを保存（メモリのみ）
   static void saveScratchData(String key, List<dynamic> data) {
     _scratchPaperMemory[key] = data;

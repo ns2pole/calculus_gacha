@@ -593,7 +593,7 @@ abstract class AppLocalizations {
   /// No description provided for @registrationGuidePart2.
   ///
   /// In ja, this message translates to:
-  /// **'をつけた問題をガチャから除外できます。'**
+  /// **'の問題をガチャから除外できます。'**
   String get registrationGuidePart2;
 
   /// No description provided for @proVersion.
@@ -686,11 +686,77 @@ abstract class AppLocalizations {
   /// **'プライバシーポリシー'**
   String get privacyPolicy;
 
+  /// No description provided for @termsOfUse.
+  ///
+  /// In ja, this message translates to:
+  /// **'利用規約'**
+  String get termsOfUse;
+
+  /// No description provided for @legalNoticePrivacyPrefix.
+  ///
+  /// In ja, this message translates to:
+  /// **'当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は'**
+  String get legalNoticePrivacyPrefix;
+
+  /// No description provided for @legalNoticePrivacySuffix.
+  ///
+  /// In ja, this message translates to:
+  /// **'をご確認ください。'**
+  String get legalNoticePrivacySuffix;
+
+  /// No description provided for @legalNoticeTermsPrefix.
+  ///
+  /// In ja, this message translates to:
+  /// **'利用規約は'**
+  String get legalNoticeTermsPrefix;
+
+  /// No description provided for @legalNoticeTermsLink.
+  ///
+  /// In ja, this message translates to:
+  /// **'こちら'**
+  String get legalNoticeTermsLink;
+
+  /// No description provided for @legalNoticeTermsSuffix.
+  ///
+  /// In ja, this message translates to:
+  /// **'。'**
+  String get legalNoticeTermsSuffix;
+
   /// No description provided for @privacyPolicyDescription.
   ///
   /// In ja, this message translates to:
   /// **'当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は{link}をご確認ください。'**
   String privacyPolicyDescription(String link);
+
+  /// No description provided for @iapInfoLabelName.
+  ///
+  /// In ja, this message translates to:
+  /// **'名称'**
+  String get iapInfoLabelName;
+
+  /// No description provided for @iapInfoLabelPrice.
+  ///
+  /// In ja, this message translates to:
+  /// **'価格'**
+  String get iapInfoLabelPrice;
+
+  /// No description provided for @iapInfoLabelDuration.
+  ///
+  /// In ja, this message translates to:
+  /// **'有効期間'**
+  String get iapInfoLabelDuration;
+
+  /// No description provided for @aiTutorPurchaseProductName.
+  ///
+  /// In ja, this message translates to:
+  /// **'AIチューター Plus(500)'**
+  String get aiTutorPurchaseProductName;
+
+  /// No description provided for @aiTutorPurchaseDurationValue.
+  ///
+  /// In ja, this message translates to:
+  /// **'1か月（非自動更新）'**
+  String get aiTutorPurchaseDurationValue;
 
   /// No description provided for @purchaseTitle.
   ///
@@ -745,6 +811,150 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @accountDeletionMenu.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウントを削除'**
+  String get accountDeletionMenu;
+
+  /// No description provided for @accountDeletionDialogTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウントを削除'**
+  String get accountDeletionDialogTitle;
+
+  /// No description provided for @accountDeletionDialogMessage.
+  ///
+  /// In ja, this message translates to:
+  /// **'以下のデータを完全に削除します。\n\n・本アプリへのログイン情報\n・学習記録、問題ごとの進捗と履歴\n・ガチャ設定、表示設定、除外設定\n・クラウドに保存したアプリデータ\n・この端末に保存されたユーザーデータ\n\nこの操作は取り消せません。\n\nApp Store のサブスクリプションと購入履歴は削除されません。サブスクリプションの解約は Apple ID のサブスクリプション設定から行ってください。'**
+  String get accountDeletionDialogMessage;
+
+  /// No description provided for @accountDeletionConfirmButton.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除する'**
+  String get accountDeletionConfirmButton;
+
+  /// No description provided for @accountDeletionContinueButton.
+  ///
+  /// In ja, this message translates to:
+  /// **'続ける'**
+  String get accountDeletionContinueButton;
+
+  /// No description provided for @accountDeletionDeleting.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウントを削除しています...'**
+  String get accountDeletionDeleting;
+
+  /// No description provided for @accountDeletionSuccess.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウントを削除しました。'**
+  String get accountDeletionSuccess;
+
+  /// No description provided for @accountDeletionFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウント削除に失敗しました'**
+  String get accountDeletionFailed;
+
+  /// No description provided for @accountDeletionFailedMessage.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウント削除に失敗しました。もう一度お試しください。'**
+  String get accountDeletionFailedMessage;
+
+  /// No description provided for @accountDeletionReauthTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'本人確認'**
+  String get accountDeletionReauthTitle;
+
+  /// No description provided for @accountDeletionReauthenticating.
+  ///
+  /// In ja, this message translates to:
+  /// **'本人確認中...'**
+  String get accountDeletionReauthenticating;
+
+  /// No description provided for @accountDeletionPasswordMessage.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウント削除を続けるには、パスワードを入力してください。'**
+  String get accountDeletionPasswordMessage;
+
+  /// No description provided for @accountDeletionPasswordLabel.
+  ///
+  /// In ja, this message translates to:
+  /// **'パスワード'**
+  String get accountDeletionPasswordLabel;
+
+  /// No description provided for @accountDeletionGoogleReauthMessage.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウント削除を続けるには、Googleで再度認証してください。'**
+  String get accountDeletionGoogleReauthMessage;
+
+  /// No description provided for @accountDeletionAppleReauthMessage.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウント削除を続けるには、Appleアカウントで再度認証してください。'**
+  String get accountDeletionAppleReauthMessage;
+
+  /// No description provided for @accountDeletionPhoneMessage.
+  ///
+  /// In ja, this message translates to:
+  /// **'{phoneNumber} にSMSコードを送信して、アカウント削除を続けます。'**
+  String accountDeletionPhoneMessage(String phoneNumber);
+
+  /// No description provided for @accountDeletionPhoneUnavailable.
+  ///
+  /// In ja, this message translates to:
+  /// **'このアカウントの電話番号を確認できませんでした。'**
+  String get accountDeletionPhoneUnavailable;
+
+  /// No description provided for @accountDeletionSmsCodeRequired.
+  ///
+  /// In ja, this message translates to:
+  /// **'SMSコードを入力してください。'**
+  String get accountDeletionSmsCodeRequired;
+
+  /// No description provided for @accountDeletionReauthFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'本人確認に失敗しました'**
+  String get accountDeletionReauthFailed;
+
+  /// No description provided for @accountDeletionReauthInvalidCredential.
+  ///
+  /// In ja, this message translates to:
+  /// **'認証情報が正しくありません。もう一度お試しください。'**
+  String get accountDeletionReauthInvalidCredential;
+
+  /// No description provided for @accountDeletionNetworkError.
+  ///
+  /// In ja, this message translates to:
+  /// **'通信状態を確認して、もう一度お試しください。'**
+  String get accountDeletionNetworkError;
+
+  /// No description provided for @auth_requiredForAccountDeletion.
+  ///
+  /// In ja, this message translates to:
+  /// **'アカウントを削除するには、もう一度ログインしてください。'**
+  String get auth_requiredForAccountDeletion;
+
+  /// No description provided for @auth_emailUnavailableForReauthentication.
+  ///
+  /// In ja, this message translates to:
+  /// **'このアカウントのメールアドレスを確認できませんでした。'**
+  String get auth_emailUnavailableForReauthentication;
+
+  /// No description provided for @auth_reauthenticationCancelled.
+  ///
+  /// In ja, this message translates to:
+  /// **'認証がキャンセルされました。'**
+  String get auth_reauthenticationCancelled;
 
   /// No description provided for @details.
   ///
@@ -941,8 +1151,14 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorPurchaseBenefitPlatformBilling.
   ///
   /// In ja, this message translates to:
-  /// **'App Store / Google Play の決済画面で安全に購入'**
-  String get aiTutorPurchaseBenefitPlatformBilling;
+  /// **'{store}の決済画面で購入'**
+  String aiTutorPurchaseBenefitPlatformBilling(String store);
+
+  /// No description provided for @aiTutorPurchaseBenefitPlatformBillingAny.
+  ///
+  /// In ja, this message translates to:
+  /// **'App Store / Google Play の決済画面で購入'**
+  String get aiTutorPurchaseBenefitPlatformBillingAny;
 
   /// No description provided for @aiTutorPurchaseSuccess.
   ///

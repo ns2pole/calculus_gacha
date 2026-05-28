@@ -739,51 +739,7 @@ class _AuthPageState extends State<AuthPage> {
               
               // 認証方法選択画面
               if (_selectedAuthMethod == AuthMethod.none) ...[
-                // 1. 電話番号でクラウドに保存
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: (_isLoading || !isFirebaseAvailable)
-                        ? null
-                        : () {
-                            setState(() {
-                              _selectedAuthMethod = AuthMethod.phone;
-                              _errorMessage = null;
-                            });
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text(l10n.auth_phoneSignInButton),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                // 2. メールアドレスでクラウドに保存
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: (_isLoading || !isFirebaseAvailable)
-                        ? null
-                        : () {
-                            setState(() {
-                              _selectedAuthMethod = AuthMethod.email;
-                              _errorMessage = null;
-                            });
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text(l10n.auth_emailSignInButton),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                // 3. Googleでクラウドに保存（iOSはAppleのみ）
+                // Googleでクラウドに保存（iOSはAppleのみ）
                 if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) ...[
                   SizedBox(
                     width: double.infinity,
@@ -807,7 +763,7 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                 ],
                 
-                // 4. iOSのみAppleアカウントでクラウドに保存
+                // iOSのみAppleアカウントでクラウドに保存
                 if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) ...[
                   SizedBox(
                     width: double.infinity,

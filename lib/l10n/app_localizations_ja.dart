@@ -263,7 +263,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get registrationGuidePart1 => 'のように登録してご活用下さい。\n設定により';
 
   @override
-  String get registrationGuidePart2 => 'をつけた問題をガチャから除外できます。';
+  String get registrationGuidePart2 => 'の問題をガチャから除外できます。';
 
   @override
   String get proVersion => 'Pro版';
@@ -319,9 +319,43 @@ class AppLocalizationsJa extends AppLocalizations {
   String get privacyPolicy => 'プライバシーポリシー';
 
   @override
+  String get termsOfUse => '利用規約';
+
+  @override
+  String get legalNoticePrivacyPrefix =>
+      '当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は';
+
+  @override
+  String get legalNoticePrivacySuffix => 'をご確認ください。';
+
+  @override
+  String get legalNoticeTermsPrefix => '利用規約は';
+
+  @override
+  String get legalNoticeTermsLink => 'こちら';
+
+  @override
+  String get legalNoticeTermsSuffix => '。';
+
+  @override
   String privacyPolicyDescription(String link) {
     return '当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は$linkをご確認ください。';
   }
+
+  @override
+  String get iapInfoLabelName => '名称';
+
+  @override
+  String get iapInfoLabelPrice => '価格';
+
+  @override
+  String get iapInfoLabelDuration => '有効期間';
+
+  @override
+  String get aiTutorPurchaseProductName => 'AIチューター Plus(500)';
+
+  @override
+  String get aiTutorPurchaseDurationValue => '1か月（非自動更新）';
 
   @override
   String get purchaseTitle => 'Pro版 - 学習履歴機能';
@@ -355,6 +389,85 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get accountDeletionMenu => 'アカウントを削除';
+
+  @override
+  String get accountDeletionDialogTitle => 'アカウントを削除';
+
+  @override
+  String get accountDeletionDialogMessage =>
+      '以下のデータを完全に削除します。\n\n・本アプリへのログイン情報\n・学習記録、問題ごとの進捗と履歴\n・ガチャ設定、表示設定、除外設定\n・クラウドに保存したアプリデータ\n・この端末に保存されたユーザーデータ\n\nこの操作は取り消せません。\n\nApp Store のサブスクリプションと購入履歴は削除されません。サブスクリプションの解約は Apple ID のサブスクリプション設定から行ってください。';
+
+  @override
+  String get accountDeletionConfirmButton => '削除する';
+
+  @override
+  String get accountDeletionContinueButton => '続ける';
+
+  @override
+  String get accountDeletionDeleting => 'アカウントを削除しています...';
+
+  @override
+  String get accountDeletionSuccess => 'アカウントを削除しました。';
+
+  @override
+  String get accountDeletionFailed => 'アカウント削除に失敗しました';
+
+  @override
+  String get accountDeletionFailedMessage => 'アカウント削除に失敗しました。もう一度お試しください。';
+
+  @override
+  String get accountDeletionReauthTitle => '本人確認';
+
+  @override
+  String get accountDeletionReauthenticating => '本人確認中...';
+
+  @override
+  String get accountDeletionPasswordMessage => 'アカウント削除を続けるには、パスワードを入力してください。';
+
+  @override
+  String get accountDeletionPasswordLabel => 'パスワード';
+
+  @override
+  String get accountDeletionGoogleReauthMessage =>
+      'アカウント削除を続けるには、Googleで再度認証してください。';
+
+  @override
+  String get accountDeletionAppleReauthMessage =>
+      'アカウント削除を続けるには、Appleアカウントで再度認証してください。';
+
+  @override
+  String accountDeletionPhoneMessage(String phoneNumber) {
+    return '$phoneNumber にSMSコードを送信して、アカウント削除を続けます。';
+  }
+
+  @override
+  String get accountDeletionPhoneUnavailable => 'このアカウントの電話番号を確認できませんでした。';
+
+  @override
+  String get accountDeletionSmsCodeRequired => 'SMSコードを入力してください。';
+
+  @override
+  String get accountDeletionReauthFailed => '本人確認に失敗しました';
+
+  @override
+  String get accountDeletionReauthInvalidCredential =>
+      '認証情報が正しくありません。もう一度お試しください。';
+
+  @override
+  String get accountDeletionNetworkError => '通信状態を確認して、もう一度お試しください。';
+
+  @override
+  String get auth_requiredForAccountDeletion => 'アカウントを削除するには、もう一度ログインしてください。';
+
+  @override
+  String get auth_emailUnavailableForReauthentication =>
+      'このアカウントのメールアドレスを確認できませんでした。';
+
+  @override
+  String get auth_reauthenticationCancelled => '認証がキャンセルされました。';
 
   @override
   String get details => '詳細';
@@ -465,8 +578,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aiTutorPurchaseBenefitMonthlyLimit => 'AIチャットを月500回まで利用可能';
 
   @override
-  String get aiTutorPurchaseBenefitPlatformBilling =>
-      'App Store / Google Play の決済画面で安全に購入';
+  String aiTutorPurchaseBenefitPlatformBilling(String store) {
+    return '$storeの決済画面で購入';
+  }
+
+  @override
+  String get aiTutorPurchaseBenefitPlatformBillingAny =>
+      'App Store / Google Play の決済画面で購入';
 
   @override
   String get aiTutorPurchaseSuccess => 'AIチューター Plus が有効になりました';

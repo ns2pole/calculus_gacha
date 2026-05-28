@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 import {defineSecret} from "firebase-functions/params";
 import {onRequest, Request} from "firebase-functions/v2/https";
+import {deleteFirebaseUserAccount} from "./accountDeletion";
 import {resolveUsageIdentity} from "./auth";
 import {
   applyRevenueCatWebhook,
@@ -157,6 +158,39 @@ export const syncAiTutorEntitlement = onRequest({
       error: {
         code: "internal",
         message: "Entitlement sync failed.",
+      },
+    });
+  }
+});
+
+export const deleteMyAccount = onRequest({
+  cors: true,
+  region: "asia-northeast1",
+}, async (request, response) => {
+  try {
+    assertPost(request);
+    await assertAppCheckAuthorized(request);
+
+    const uid = await requireFirebaseUid(request);
+    await deleteFirebaseUserAccount(admin.firestore(), uid);
+
+    sendJson(response, 200, {ok: true});
+  } catch (error) {
+    if (error instanceof HttpError) {
+      sendJson(response, error.status, {
+        error: {
+          code: error.code,
+          message: error.message,
+        },
+      });
+      return;
+    }
+
+    console.error(error);
+    sendJson(response, 500, {
+      error: {
+        code: "internal",
+        message: "Account deletion failed.",
       },
     });
   }

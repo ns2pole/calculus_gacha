@@ -9,6 +9,8 @@ import '../../services/ai/ai_chat_client_factory.dart';
 import '../../services/auth/firebase_auth_service.dart';
 import '../../services/payment/ai_tutor_entitlement_sync_service.dart';
 import '../../services/payment/revenuecat_service.dart';
+import '../legal/iap_product_info_section.dart';
+import '../legal/legal_notice_footer.dart';
 
 typedef MathTextBuilder = Widget Function(String text);
 
@@ -761,6 +763,21 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
   bool get _usesAppleSignIn =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
+  String _platformBillingBenefitText(AppLocalizations l10n) {
+    if (!kIsWeb) {
+      switch (defaultTargetPlatform) {
+        case TargetPlatform.android:
+          return l10n.aiTutorPurchaseBenefitPlatformBilling('Google Play');
+        case TargetPlatform.iOS:
+        case TargetPlatform.macOS:
+          return l10n.aiTutorPurchaseBenefitPlatformBilling('App Store');
+        default:
+          break;
+      }
+    }
+    return l10n.aiTutorPurchaseBenefitPlatformBillingAny;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -770,20 +787,22 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         : l10n.aiTutorSignInWithGoogleToPurchase;
 
     return AlertDialog(
-      title: Text(l10n.aiTutorPurchaseTitle),
+      contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.aiTutorPurchaseDescription(widget.price)),
+          IapProductInfoSection(
+            productName: l10n.aiTutorPurchaseProductName,
+            price: widget.price,
+            duration: l10n.aiTutorPurchaseDurationValue,
+          ),
           const SizedBox(height: 14),
           _BenefitRow(text: l10n.aiTutorPurchaseBenefitMonthlyLimit),
           const SizedBox(height: 8),
-          _BenefitRow(text: l10n.aiTutorPurchaseBenefitPlatformBilling),
-          if (!isAuthenticated) ...[
-            const SizedBox(height: 16),
-            _SignInNotice(usesAppleSignIn: _usesAppleSignIn),
-          ],
+          _BenefitRow(text: _platformBillingBenefitText(l10n)),
+          const SizedBox(height: 14),
+          const LegalNoticeFooter(),
           if (_isProcessing) ...[
             const SizedBox(height: 16),
             Row(
@@ -800,28 +819,20 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
           ],
         ],
       ),
+      actionsAlignment: MainAxisAlignment.center,
       actions: [
+        FilledButton(
+          onPressed: _isProcessing
+              ? null
+              : (isAuthenticated ? _purchase : _signInAndPurchase),
+          child: Text(isAuthenticated ? l10n.purchase : signInButtonText),
+        ),
         TextButton(
           onPressed: _isProcessing
               ? null
               : () => Navigator.of(context).pop(false),
           child: Text(l10n.cancel),
         ),
-        if (!isAuthenticated)
-          FilledButton(
-            onPressed: _isProcessing ? null : _signInAndPurchase,
-            child: Text(signInButtonText),
-          )
-        else ...[
-          TextButton(
-            onPressed: _isProcessing ? null : _restorePurchases,
-            child: Text(l10n.aiTutorPurchaseRestore),
-          ),
-          FilledButton(
-            onPressed: _isProcessing ? null : _purchase,
-            child: Text(l10n.purchase),
-          ),
-        ],
       ],
     );
   }
@@ -874,46 +885,6 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
         success: false,
         message:
             '${_usesAppleSignIn ? l10n.auth_appleSignInFailed : l10n.auth_googleSignInFailed}: $e',
-      );
-    }
-  }
-
-  Future<void> _restorePurchases() async {
-    debugPrint('[AiTutorPurchase] Restore button tapped');
-    setState(() {
-      _isProcessing = true;
-    });
-    try {
-      final result = await _runAiTutorRestoreWithAccountSwitch(
-        usesAppleSignIn: _usesAppleSignIn,
-      );
-      if (!mounted) return;
-      setState(() {
-        _isProcessing = false;
-      });
-      if (result.cancelled) return;
-      if (result.success) {
-        Navigator.of(context).pop(true);
-        return;
-      }
-      final l10n = AppLocalizations.of(context)!;
-      _showAiTutorResultSnackBar(
-        context,
-        success: false,
-        message: result.restored
-            ? _restoreSyncFailureMessage(l10n, result.syncResult!)
-            : l10n.aiTutorRestoreFailureNoPurchase,
-      );
-    } catch (e) {
-      debugPrint('[AiTutorPurchase] Restore failed: $e');
-      if (!mounted) return;
-      setState(() {
-        _isProcessing = false;
-      });
-      _showAiTutorResultSnackBar(
-        context,
-        success: false,
-        message: AppLocalizations.of(context)!.restoreFailed(e.toString()),
       );
     }
   }
@@ -1000,56 +971,15 @@ class _BenefitRow extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
         ),
         const SizedBox(width: 8),
-        Expanded(child: Text(text)),
-      ],
-    );
-  }
-}
-
-class _SignInNotice extends StatelessWidget {
-  final bool usesAppleSignIn;
-
-  const _SignInNotice({required this.usesAppleSignIn});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.info_outline, color: colorScheme.onErrorContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.aiTutorSignInRequiredTitle,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onErrorContainer,
-                  ),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  usesAppleSignIn
-                      ? l10n.aiTutorSignInRequiredAppleBody
-                      : l10n.aiTutorSignInRequiredGoogleBody,
-                  style: TextStyle(color: colorScheme.onErrorContainer),
-                ),
-              ],
-            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
