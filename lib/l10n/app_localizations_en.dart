@@ -341,10 +341,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legalNoticePrivacySuffix => ' for details.';
 
   @override
-  String get legalNoticeTermsPrefix => 'For Terms of Use, see ';
+  String get legalNoticeTermsPrefix => '';
 
   @override
-  String get legalNoticeTermsLink => 'here';
+  String get legalNoticeTermsLink => 'Terms of Use (EULA)';
 
   @override
   String get legalNoticeTermsSuffix => '.';

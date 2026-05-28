@@ -329,10 +329,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get legalNoticePrivacySuffix => 'をご確認ください。';
 
   @override
-  String get legalNoticeTermsPrefix => '利用規約は';
+  String get legalNoticeTermsPrefix => '';
 
   @override
-  String get legalNoticeTermsLink => 'こちら';
+  String get legalNoticeTermsLink => '利用規約（EULA）はこちら';
 
   @override
   String get legalNoticeTermsSuffix => '。';

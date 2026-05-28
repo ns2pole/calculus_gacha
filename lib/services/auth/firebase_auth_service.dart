@@ -648,10 +648,13 @@ class FirebaseAuthService {
       print('Apple Sign-In: Email: ${appleCredential.email ?? "not provided"}');
 
       // Firebaseに認証情報を送信
-      // iOSではauthorizationCodeが空の場合も、idTokenを使ってクレデンシャルを作成する
-      final oauthCredential = OAuthProvider(
-        "apple.com",
-      ).credential(idToken: identityToken, accessToken: authorizationCode);
+      // iOS では authorizationCode を accessToken として渡さない。
+      // （不整合で invalid-credential になり、サインインを繰り返しやすくなる）
+      final oauthCredential = _isIosPlatform
+          ? OAuthProvider("apple.com").credential(idToken: identityToken)
+          : OAuthProvider(
+              "apple.com",
+            ).credential(idToken: identityToken, accessToken: authorizationCode);
 
       print('Apple Sign-In: Attempting to sign in with Firebase...');
       print('Apple Sign-In: Using idToken (length: ${identityToken.length})');
@@ -927,6 +930,10 @@ class FirebaseAuthService {
         code: 'invalid-id-token',
         message: 'Apple Sign-In identity token is empty.',
       );
+    }
+
+    if (_isIosPlatform) {
+      return OAuthProvider("apple.com").credential(idToken: identityToken);
     }
 
     return OAuthProvider("apple.com").credential(

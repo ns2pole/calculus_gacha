@@ -707,13 +707,13 @@ abstract class AppLocalizations {
   /// No description provided for @legalNoticeTermsPrefix.
   ///
   /// In ja, this message translates to:
-  /// **'利用規約は'**
+  /// **''**
   String get legalNoticeTermsPrefix;
 
   /// No description provided for @legalNoticeTermsLink.
   ///
   /// In ja, this message translates to:
-  /// **'こちら'**
+  /// **'利用規約（EULA）はこちら'**
   String get legalNoticeTermsLink;
 
   /// No description provided for @legalNoticeTermsSuffix.

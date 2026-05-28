@@ -165,8 +165,8 @@
   "termsOfUse": "Terms of Use",
   "legalNoticePrivacyPrefix": "This app uses Google Firebase for account and data sync, and RevenueCat for purchase management. See ",
   "legalNoticePrivacySuffix": " for details.",
-  "legalNoticeTermsPrefix": "For Terms of Use, see ",
-  "legalNoticeTermsLink": "here",
+  "legalNoticeTermsPrefix": "",
+  "legalNoticeTermsLink": "Terms of Use (EULA)",
   "legalNoticeTermsSuffix": ".",
   "privacyPolicyDescription": "This app uses Google Firebase for account and data sync, and RevenueCat for purchase management. See {link} for details.",
   "@privacyPolicyDescription": {

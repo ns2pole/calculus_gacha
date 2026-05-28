@@ -157,8 +157,8 @@
   "termsOfUse": "利用規約",
   "legalNoticePrivacyPrefix": "当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は",
   "legalNoticePrivacySuffix": "をご確認ください。",
-  "legalNoticeTermsPrefix": "利用規約は",
-  "legalNoticeTermsLink": "こちら",
+  "legalNoticeTermsPrefix": "",
+  "legalNoticeTermsLink": "利用規約（EULA）はこちら",
   "legalNoticeTermsSuffix": "。",
   "privacyPolicyDescription": "当アプリはアカウント管理とデータ同期のために Google Firebase 、および課金管理に RevenueCat を利用しています。詳細は{link}をご確認ください。",
   "@privacyPolicyDescription": {
