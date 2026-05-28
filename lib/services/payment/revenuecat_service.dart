@@ -13,11 +13,11 @@ class RevenueCatService {
   // product IDs（実際の App Store Connect に合わせてください）
   /// 因数分解オプション（常時有効なメイン IAP）。デバッグ用 StoreKit 診断などから参照。
   static const String factorizationOptionProductId = 'factorization_double_option_80yen';
-  static const String aiTutorSubscriptionProductId = 'ai_tutor_subscription_500yen';
+  static const String aiTutorSubscriptionProductId = 'ai_tutor_subsc_500yen';
 
   // entitlement IDs（RevenueCat ダッシュボードの entitlement 名）
   static const String _factorizationEntitlementId = 'factorization_option';
-  static const String _aiTutorEntitlementId = 'ai_tutor_subscription';
+  static const String _aiTutorEntitlementId = 'ai_tutor_subsc';
 
   // RevenueCat の「public」APIキー（SDK key）。--dart-define で渡す（リポジトリに実値を置かない）。
   // 例: flutter run --dart-define=REVENUECAT_IOS_API_KEY=appl_xxx
@@ -100,6 +100,24 @@ class RevenueCatService {
   /// 現在の Firebase ユーザーを RevenueCat の App User ID に明示的に同期する。
   static Future<void> syncCurrentFirebaseUser() async {
     await _syncFirebaseUserId(FirebaseAuth.instance.currentUser);
+  }
+
+  /// 購入復元前にアカウント切り替えできるよう、RevenueCat からログアウトする。
+  static Future<void> logOutCurrentUser() async {
+    if (kIsWeb || !_isInitialized) {
+      _identifiedFirebaseUserId = null;
+      return;
+    }
+
+    try {
+      if (_identifiedFirebaseUserId != null) {
+        await Purchases.logOut();
+      }
+    } catch (e) {
+      debugPrint('RevenueCat: logOut failed: $e');
+    } finally {
+      _identifiedFirebaseUserId = null;
+    }
   }
 
   static Future<void> _syncFirebaseUserId(User? user) async {

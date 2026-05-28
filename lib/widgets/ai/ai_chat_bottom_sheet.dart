@@ -107,6 +107,62 @@ String _restoreSyncFailureMessage(
   };
 }
 
+class _AiTutorRestoreFlowResult {
+  const _AiTutorRestoreFlowResult._({
+    this.cancelled = false,
+    this.restored = false,
+    this.syncResult,
+  });
+
+  const _AiTutorRestoreFlowResult.cancelled() : this._(cancelled: true);
+
+  const _AiTutorRestoreFlowResult.noPurchase() : this._(restored: false);
+
+  const _AiTutorRestoreFlowResult.completed({
+    required this.syncResult,
+  }) : cancelled = false,
+       restored = true;
+
+  final bool cancelled;
+  final bool restored;
+  final AiTutorEntitlementSyncResult? syncResult;
+
+  bool get success => restored && (syncResult?.active ?? false);
+}
+
+/// 復元の前にログアウトし、購入時のアカウントで再ログインしてから復元する。
+Future<_AiTutorRestoreFlowResult> _runAiTutorRestoreWithAccountSwitch({
+  required bool usesAppleSignIn,
+}) async {
+  debugPrint('[AiTutorRestore] Signing out before account selection');
+  await FirebaseAuthService.signOut();
+  await RevenueCatService.logOutCurrentUser();
+
+  final providerLabel = usesAppleSignIn ? 'Apple' : 'Google';
+  debugPrint('[AiTutorRestore] $providerLabel sign-in for restore started');
+  final credential = usesAppleSignIn
+      ? await FirebaseAuthService.signInWithApple()
+      : await FirebaseAuthService.signInWithGoogle();
+  if (credential == null) {
+    debugPrint('[AiTutorRestore] $providerLabel sign-in cancelled');
+    return const _AiTutorRestoreFlowResult.cancelled();
+  }
+
+  await RevenueCatService.syncCurrentFirebaseUser();
+  final restored = await RevenueCatService.restoreAiTutorSubscription();
+  debugPrint('[AiTutorRestore] Restore result: $restored');
+  if (!restored) {
+    return const _AiTutorRestoreFlowResult.noPurchase();
+  }
+
+  final syncResult =
+      await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed();
+  debugPrint(
+    '[AiTutorRestore] Server entitlement synced: ${syncResult.active}',
+  );
+  return _AiTutorRestoreFlowResult.completed(syncResult: syncResult);
+}
+
 class AiChatBottomSheet extends StatefulWidget {
   final AiChatContext chatContext;
   final AiChatClient client;
@@ -275,43 +331,24 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     if (_isRestoringPurchase) return;
 
     final l10n = AppLocalizations.of(context)!;
-    final providerLabel = _usesAppleSignIn ? 'Apple' : 'Google';
     debugPrint('[AiTutorRestore] Restore from upgrade card started');
     setState(() {
       _isRestoringPurchase = true;
     });
 
     try {
-      if (!FirebaseAuthService.isAuthenticated) {
-        debugPrint(
-          '[AiTutorRestore] $providerLabel sign-in before restore started',
-        );
-        final credential = _usesAppleSignIn
-            ? await FirebaseAuthService.signInWithApple()
-            : await FirebaseAuthService.signInWithGoogle();
-        if (!mounted) return;
-        if (credential == null) {
-          debugPrint('[AiTutorRestore] $providerLabel sign-in cancelled');
-          setState(() {
-            _isRestoringPurchase = false;
-          });
-          return;
-        }
-      }
-
-      await RevenueCatService.syncCurrentFirebaseUser();
-      final restored = await RevenueCatService.restoreAiTutorSubscription();
-      debugPrint('[AiTutorRestore] Restore result: $restored');
-      final syncResult = restored
-          ? await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed()
-          : const AiTutorEntitlementSyncResult.failed(
-              AiTutorEntitlementSyncFailureReason.inactive,
-            );
-      debugPrint(
-        '[AiTutorRestore] Server entitlement synced: ${syncResult.active}',
+      final result = await _runAiTutorRestoreWithAccountSwitch(
+        usesAppleSignIn: _usesAppleSignIn,
       );
       if (!mounted) return;
-      final restoreSucceeded = restored && syncResult.active;
+      if (result.cancelled) {
+        setState(() {
+          _isRestoringPurchase = false;
+        });
+        return;
+      }
+
+      final restoreSucceeded = result.success;
       setState(() {
         _isRestoringPurchase = false;
         if (restoreSucceeded) {
@@ -325,8 +362,8 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         success: restoreSucceeded,
         message: restoreSucceeded
             ? l10n.aiTutorRestoreSuccessVerified
-            : restored
-            ? _restoreSyncFailureMessage(l10n, syncResult)
+            : result.restored
+            ? _restoreSyncFailureMessage(l10n, result.syncResult!)
             : l10n.aiTutorRestoreFailureNoPurchase,
       );
     } catch (e) {
@@ -847,22 +884,15 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       _isProcessing = true;
     });
     try {
-      await RevenueCatService.syncCurrentFirebaseUser();
-      final restored = await RevenueCatService.restoreAiTutorSubscription();
-      debugPrint('[AiTutorPurchase] Restore result: $restored');
-      final syncResult = restored
-          ? await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed()
-          : const AiTutorEntitlementSyncResult.failed(
-              AiTutorEntitlementSyncFailureReason.inactive,
-            );
-      debugPrint(
-        '[AiTutorPurchase] Server entitlement synced: ${syncResult.active}',
+      final result = await _runAiTutorRestoreWithAccountSwitch(
+        usesAppleSignIn: _usesAppleSignIn,
       );
       if (!mounted) return;
       setState(() {
         _isProcessing = false;
       });
-      if (restored && syncResult.active) {
+      if (result.cancelled) return;
+      if (result.success) {
         Navigator.of(context).pop(true);
         return;
       }
@@ -870,8 +900,8 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
       _showAiTutorResultSnackBar(
         context,
         success: false,
-        message: restored
-            ? _restoreSyncFailureMessage(l10n, syncResult)
+        message: result.restored
+            ? _restoreSyncFailureMessage(l10n, result.syncResult!)
             : l10n.aiTutorRestoreFailureNoPurchase,
       );
     } catch (e) {

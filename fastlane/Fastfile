@@ -567,7 +567,7 @@ platform :android do
       metadata_path: FASTLANE_DIR.join('metadata/android').to_s,
       skip_upload_images: true,
       skip_upload_screenshots: true,
-      timeout: 3600
+      timeout: 6000 # 100分（通信が遅い環境向け）
     )
 
     UI.success("✅ Android: production upload & sent for review")

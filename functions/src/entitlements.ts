@@ -3,8 +3,8 @@ import {Request} from "firebase-functions/v2/https";
 import {HttpError, readBearerToken} from "./http";
 import {UsageIdentity} from "./types";
 
-const aiTutorEntitlementId = "ai_tutor_subscription";
-const aiTutorProductId = "ai_tutor_subscription_500yen";
+const aiTutorEntitlementId = "ai_tutor_subsc";
+const aiTutorProductId = "ai_tutor_subsc_500yen";
 const revenueCatSubscriberBaseUrl = "https://api.revenuecat.com/v1/subscribers";
 const inactiveEventTypes = new Set([
   "EXPIRATION",
