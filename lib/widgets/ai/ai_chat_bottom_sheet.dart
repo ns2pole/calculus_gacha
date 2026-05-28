@@ -133,6 +133,56 @@ class _AiTutorRestoreFlowResult {
   bool get success => restored && (syncResult?.active ?? false);
 }
 
+class _AiTutorPurchaseFlowResult {
+  const _AiTutorPurchaseFlowResult._({
+    required this.success,
+    this.cancelled = false,
+    this.purchaseError,
+    this.syncResult,
+  });
+
+  const _AiTutorPurchaseFlowResult.success({
+    required AiTutorEntitlementSyncResult syncResult,
+  }) : this._(success: true, syncResult: syncResult);
+
+  const _AiTutorPurchaseFlowResult.cancelled()
+    : this._(success: false, cancelled: true);
+
+  const _AiTutorPurchaseFlowResult.purchaseFailed(String? error)
+    : this._(success: false, purchaseError: error);
+
+  const _AiTutorPurchaseFlowResult.syncFailed({
+    required AiTutorEntitlementSyncResult syncResult,
+  }) : this._(success: false, syncResult: syncResult);
+
+  final bool success;
+  final bool cancelled;
+  final String? purchaseError;
+  final AiTutorEntitlementSyncResult? syncResult;
+}
+
+Future<_AiTutorPurchaseFlowResult> _purchaseAiTutorWithSync() async {
+  await RevenueCatService.syncCurrentFirebaseUser();
+  debugPrint('[AiTutorPurchase] RevenueCat purchase started');
+  final result = await RevenueCatService.purchaseAiTutorSubscription();
+  debugPrint(
+    '[AiTutorPurchase] RevenueCat purchase result: '
+    'success=${result.success}, cancelled=${result.cancelled}, error=${result.error}',
+  );
+  if (!result.success) {
+    if (result.cancelled) return const _AiTutorPurchaseFlowResult.cancelled();
+    return _AiTutorPurchaseFlowResult.purchaseFailed(result.error);
+  }
+
+  final syncResult =
+      await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed();
+  debugPrint('[AiTutorPurchase] Server entitlement synced: ${syncResult.active}');
+  if (syncResult.active) {
+    return _AiTutorPurchaseFlowResult.success(syncResult: syncResult);
+  }
+  return _AiTutorPurchaseFlowResult.syncFailed(syncResult: syncResult);
+}
+
 /// 復元の前にログアウトし、購入時のアカウントで再ログインしてから復元する。
 Future<_AiTutorRestoreFlowResult> _runAiTutorRestoreWithAccountSwitch({
   required bool usesAppleSignIn,
@@ -311,6 +361,11 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   }
 
   Future<void> _showAiTutorPurchaseDialog() async {
+    if (FirebaseAuthService.isAuthenticated) {
+      await _purchaseAiTutorDirectly();
+      return;
+    }
+
     final purchased = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -329,6 +384,43 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       context,
       success: true,
       message: AppLocalizations.of(context)!.aiTutorPurchaseSuccess,
+    );
+  }
+
+  Future<void> _purchaseAiTutorDirectly() async {
+    final l10n = AppLocalizations.of(context)!;
+    debugPrint('[AiTutorPurchase] Direct purchase started (authenticated user)');
+
+    final result = await _purchaseAiTutorWithSync();
+    if (!mounted) return;
+
+    if (result.success) {
+      setState(() {
+        _showUpgradeOffer = false;
+        _errorText = null;
+      });
+      _showAiTutorResultSnackBar(
+        context,
+        success: true,
+        message: l10n.aiTutorPurchaseSuccess,
+      );
+      return;
+    }
+
+    if (result.cancelled) return;
+    if (result.syncResult != null) {
+      _showAiTutorResultSnackBar(
+        context,
+        success: false,
+        message: _restoreSyncFailureMessage(l10n, result.syncResult!),
+      );
+      return;
+    }
+
+    _showAiTutorResultSnackBar(
+      context,
+      success: false,
+      message: l10n.purchaseFailed(result.purchaseError ?? l10n.unknownError),
     );
   }
 
@@ -852,7 +944,7 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
 
   Future<void> _purchase() async {
     debugPrint('[AiTutorPurchase] Purchase button tapped');
-    await _runPurchaseAction(RevenueCatService.purchaseAiTutorSubscription);
+    await _runPurchaseAction();
   }
 
   Future<void> _signInAndPurchase() async {
@@ -911,58 +1003,40 @@ class _AiTutorPurchaseDialogState extends State<_AiTutorPurchaseDialog> {
     }
   }
 
-  Future<void> _runPurchaseAction(
-    Future<PurchaseResult> Function() action,
-  ) async {
+  Future<void> _runPurchaseAction() async {
     setState(() {
       _isProcessing = true;
       _isSigningInBeforePurchase = false;
     });
     try {
-      await RevenueCatService.syncCurrentFirebaseUser();
-      debugPrint('[AiTutorPurchase] RevenueCat purchase started');
-      final result = await action();
-      debugPrint(
-        '[AiTutorPurchase] RevenueCat purchase result: '
-        'success=${result.success}, cancelled=${result.cancelled}, error=${result.error}',
-      );
+      final flowResult = await _purchaseAiTutorWithSync();
       if (!mounted) return;
-      if (result.success) {
-        final syncResult =
-            await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed();
-        debugPrint(
-          '[AiTutorPurchase] Server entitlement synced: ${syncResult.active}',
-        );
-        if (!mounted) return;
-        setState(() {
-          _isProcessing = false;
-          _isSigningInBeforePurchase = false;
-        });
-        if (syncResult.active) {
-          Navigator.of(context).pop(true);
-          return;
-        }
+      setState(() {
+        _isProcessing = false;
+        _isSigningInBeforePurchase = false;
+      });
+      if (flowResult.success) {
+        Navigator.of(context).pop(true);
+        return;
+      }
+      if (flowResult.cancelled) return;
+      if (flowResult.syncResult != null) {
         _showAiTutorResultSnackBar(
           context,
           success: false,
           message: _restoreSyncFailureMessage(
             AppLocalizations.of(context)!,
-            syncResult,
+            flowResult.syncResult!,
           ),
         );
         return;
       }
-      setState(() {
-        _isProcessing = false;
-        _isSigningInBeforePurchase = false;
-      });
-      if (result.cancelled) return;
 
       _showAiTutorResultSnackBar(
         context,
         success: false,
         message: AppLocalizations.of(context)!.purchaseFailed(
-          result.error ?? AppLocalizations.of(context)!.unknownError,
+          flowResult.purchaseError ?? AppLocalizations.of(context)!.unknownError,
         ),
       );
     } catch (e) {
