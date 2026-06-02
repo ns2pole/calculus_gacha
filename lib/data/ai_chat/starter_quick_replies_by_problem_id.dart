@@ -20,6 +20,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "035BEF48-5556-4099-9AD4-1FBE772833CE": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "これはどのような種類の微分方程式ですか？", actionId: "equation_type"),
     AiChatQuickReply(label: "解き始めるための方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "f'(t)は何を表していますか？", actionId: "term_meaning"),
@@ -29,9 +30,9 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "07FC023A-DAD9-432A-BCD7-B90E3C25404F": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "特解の求め方の方針を教えてください", actionId: "particular_solution_approach"),
-    AiChatQuickReply(label: "RLC回路との関連について教えてください", actionId: "rlc_connection"),
   ],
 //x^3 + y^3 + z^3 - 3xyz : 因数分解ガチャ
   "09338EE1-388B-4048-ABC3-CD11A1297220": [
@@ -117,14 +118,15 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "1D342CB8-24CD-40BB-A3EA-06BB6AFC1845": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の基本方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "初期条件 f(0)=1, f'(0)=2 をどのように使いますか？", actionId: "initial_conditions"),
-    AiChatQuickReply(label: "減衰振動とはどういう意味ですか？", actionId: "damped_oscillation_meaning"),
   ],
 //f'(t)+a f(t)=F\cos(\omega t) : 微分方程式ガチャ
   "1DAE0FE3-E342-4547-956C-6CD1EA31EAD3": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "初期条件f(0)=f_0はどのように使いますか？", actionId: "initial_condition_usage"),
     AiChatQuickReply(label: "定常解と過渡解について教えてください。", actionId: "steady_transient_solution"),
@@ -206,6 +208,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "2C1016F1-C7DD-4BE8-8BC8-0C5AA7F05FB5": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の基本方針を教えてください。", actionId: "approach_only"),
   ],
 //\lim_{x\to 0}\frac{1-\cos x}{x^{2}} : 極限ガチャ
@@ -334,6 +337,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "448E166D-FEF8-4A70-8541-FCA04C82C7F8": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の方針を教えて", actionId: "approach_only"),
     AiChatQuickReply(label: "f'(t)は何を表していますか？", actionId: "terminology"),
     AiChatQuickReply(label: "f(0)=0という条件をどう使いますか？", actionId: "initial_condition"),
@@ -407,6 +411,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "4F674DAB-329F-45CC-9417-94C45BE5B203": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の基本方針は？", actionId: "approach_only"),
     AiChatQuickReply(label: "二階同次・定数係数微分方程式とは？", actionId: "definition_homogeneous_ode"),
     AiChatQuickReply(label: "初期条件 f(0)=0, f'(0)=2 はどう使う？", actionId: "how_to_use_initial_conditions"),
@@ -444,6 +449,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "574DF54B-E141-4B50-944D-F38724F1ADC3": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この方程式の種類は何ですか？", actionId: "equation_type"),
     AiChatQuickReply(label: "解法の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "初期条件 f(0)=F/b はどう使いますか？", actionId: "initial_condition_usage"),
@@ -493,6 +499,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "5FDE5472-2F31-46C7-89A5-F564360CD6C5": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "f'(t)は何を表していますか？", actionId: "term_meaning"),
     AiChatQuickReply(label: "積分を使って解くにはどうすればいいですか？", actionId: "hint_integration"),
@@ -501,6 +508,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "5FFA2B66-BA71-44F4-9834-EF997E17081D": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "f'(t) = u(t) と置換するのはなぜですか？", actionId: "why_substitution"),
     AiChatQuickReply(label: "初期条件をどのように使いますか？", actionId: "how_to_use_initial_conditions"),
@@ -523,6 +531,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "666687A5-6EF8-434E-9209-818CE7092863": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "この微分方程式の種類は何ですか？", actionId: "equation_type"),
     AiChatQuickReply(label: "非斉次微分方程式の解き方を教えてください。", actionId: "approach_nonhomogeneous"),
@@ -553,6 +562,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "6B6506AA-7296-4C18-9A00-44CAF515FDD4": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "初期条件をどのように使いますか？", actionId: "initial_conditions_usage"),
   ],
@@ -690,6 +700,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "7E10C37B-AB59-4B49-8037-D1D34D1B3055": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "式をf(t)について解く方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "積分の式を微分するとどうなりますか？", actionId: "hint_differentiation"),
     AiChatQuickReply(label: "f(0)=0の条件はどのように使いますか？", actionId: "hint_initial_condition"),
@@ -806,6 +817,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "9B75DE01-6B72-487F-B653-EE769057E58B": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "f'(t)=2は何を意味していますか？", actionId: "meaning_of_notation"),
     AiChatQuickReply(label: "f'(t)からf(t)を求めるにはどうすればいいですか？", actionId: "approach_only"),
     AiChatQuickReply(label: "f(0)=1という条件をどう使いますか？", actionId: "initial_condition_usage"),
@@ -905,6 +917,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "A3ECB1EE-67C3-4B41-B8ED-13669F16A63D": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "積分の記号を消すにはどうすればいい？", actionId: "hint_integral_removal"),
     AiChatQuickReply(label: "両辺を微分する方針で合ってる？", actionId: "approach_confirmation"),
@@ -958,6 +971,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "A6304C30-50F4-40E4-A056-A57A60548064": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "積分を含む方程式の解き方について教えてください。", actionId: "hint_integral_equation"),
     AiChatQuickReply(label: "微分方程式に変換できますか？", actionId: "hint_convert_to_ode"),
@@ -1030,10 +1044,10 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "ADC1559C-5A8D-490C-9D10-8722FECF3115": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の基本方針を教えて", actionId: "approach_only"),
     AiChatQuickReply(label: "変数変換で1階微分を消すとはどういうこと？", actionId: "variable_substitution"),
     AiChatQuickReply(label: "初期条件の扱い方について教えて", actionId: "initial_conditions"),
-    AiChatQuickReply(label: "物理的な意味合いについて教えて", actionId: "physical_meaning"),
   ],
 //\lim_{n\to\infty}\sum_{k=1}^{n}\frac{(-1)^{k+1}}{k} : 極限ガチャ
   "AF028FDC-E4ED-4B5D-907A-FD053AA682F0": [
@@ -1085,6 +1099,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "B2C3D4E5-F6G7-8901-BCDE-F2345678901": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "「定常状態」とはどういう意味ですか？", actionId: "meaning_steady_state"),
     AiChatQuickReply(label: "この微分方程式の解き方の全体像を教えてください。", actionId: "approach_only"),
   ],
@@ -1105,6 +1120,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "B4FDC2FF-78D4-5C52-C9FE-2477A027B74E": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "sin(ωt)の積分はどうなりますか？", actionId: "integration_hint"),
     AiChatQuickReply(label: "初期条件f(0)=0はどう使いますか？", actionId: "initial_condition"),
@@ -1179,6 +1195,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "BEB5E18C-4AF5-4411-8578-2CE052A3CDE8": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の基本方針は？", actionId: "approach_only"),
     AiChatQuickReply(label: "二階同次・定数係数微分方程式とは？", actionId: "definition_ode"),
     AiChatQuickReply(label: "初期条件はどのように使うの？", actionId: "initial_conditions"),
@@ -1254,6 +1271,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "C5C2514A-CF06-4F19-BE62-4F99731FA905": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の基本方針を教えて", actionId: "approach_only"),
     AiChatQuickReply(label: "f''(t) = g は何を意味するの？", actionId: "meaning_of_equation"),
     AiChatQuickReply(label: "初期条件 f(0) と f'(0) はどう使うの？", actionId: "how_to_use_initial_conditions"),
@@ -1331,6 +1349,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "D2706488-8F89-46F4-8636-834028B00CFC": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の種類は何ですか？", actionId: "equation_type"),
     AiChatQuickReply(label: "解き方の基本的な方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "定数変化法について教えてください。", actionId: "variation_of_parameters"),
@@ -1383,6 +1402,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "D87D022C-7BED-4C0D-BC95-8A74C64BCD86": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の解き方の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "f'(t)で置き換えるのはなぜですか？", actionId: "why_substitution"),
     AiChatQuickReply(label: "積分因子法について教えてください。", actionId: "integrating_factor_method"),
@@ -1454,6 +1474,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "E32CEEE3-F0E5-44C6-838C-7BEF0531E460": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "「定常状態」とはどういう意味ですか？", actionId: "steady_state_meaning"),
     AiChatQuickReply(label: "この微分方程式の解き方の方針を教えてください。", actionId: "approach_only"),
   ],
@@ -1489,6 +1510,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "E5E4228F-7819-4063-A4DB-9F1DB3D27225": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の一般的な解き方は？", actionId: "approach_only"),
     AiChatQuickReply(label: "「一階非斉次」とはどういう意味ですか？", actionId: "term_meaning"),
     AiChatQuickReply(label: "この方程式はどんな現象を表しますか？", actionId: "application_context"),
@@ -1570,6 +1592,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "F2C5AEF4-1FD1-4BD6-A7FE-D0E65756456A": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この微分方程式の種類は何ですか？", actionId: "equation_type"),
     AiChatQuickReply(label: "解き方の基本的な方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "定数Gがある場合の解き方が知りたいです。", actionId: "how_to_handle_G"),
@@ -1587,6 +1610,7 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "F744D6AB-A8EB-42F0-9740-0FD4DC4EA29D": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
+    AiChatQuickReply(label: "この微分方程式が出てくる物理現象を知りたい", actionId: "physics_phenomenon"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "この微分方程式の種類は何ですか？", actionId: "equation_type"),
     AiChatQuickReply(label: "この方程式はどんな現象を表しますか？", actionId: "context_application"),
