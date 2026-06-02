@@ -9,11 +9,6 @@ abstract class AiChatClient {
     required AiChatMessage userMessage,
     String? locale,
   });
-
-  Future<List<AiChatQuickReply>> fetchStarterQuickReplies({
-    required AiChatContext context,
-    String? locale,
-  });
 }
 
 class AiChatClientException implements Exception {
@@ -62,28 +57,6 @@ class StubAiChatClient implements AiChatClient {
       ],
       createdAt: DateTime.now(),
     );
-  }
-
-  @override
-  Future<List<AiChatQuickReply>> fetchStarterQuickReplies({
-    required AiChatContext context,
-    String? locale,
-  }) async {
-    await Future<void>.delayed(const Duration(milliseconds: 200));
-    return const [
-      AiChatQuickReply(
-        label: 'ヒントを教えて',
-        actionId: 'hint',
-      ),
-      AiChatQuickReply(
-        label: '方針だけ教えて',
-        actionId: 'approach_only',
-      ),
-      AiChatQuickReply(
-        label: '最初の一手だけ教えて',
-        actionId: 'first_step',
-      ),
-    ];
   }
 
   String _buildResponse(String? choiceId) {

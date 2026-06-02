@@ -4,18 +4,6 @@ import '../../models/ai_chat_message.dart';
 class AiChatRequestCodec {
   const AiChatRequestCodec();
 
-  Map<String, dynamic> encodeStarter({
-    required AiChatContext context,
-    required String clientInstallationId,
-    required String locale,
-  }) {
-    return {
-      'context': _encodeContext(context),
-      'clientInstallationId': clientInstallationId,
-      'locale': locale,
-    };
-  }
-
   Map<String, dynamic> encode({
     required AiChatContext context,
     required List<AiChatMessage> history,

@@ -9,10 +9,9 @@ import {
   syncAiTutorEntitlementFromRevenueCat,
 } from "./entitlements";
 import {generateAiChatReply} from "./geminiClient";
-import {generateStarterQuickReplies} from "./starterQuickReplies";
 import {assertPost, HttpError, readBearerToken, sendJson} from "./http";
 import {consumeUsage, RateLimitExceededError, resolveUsageLimit} from "./rateLimiter";
-import {parseAiChatRequest, parseAiChatStarterRequest} from "./requestValidator";
+import {parseAiChatRequest} from "./requestValidator";
 
 admin.initializeApp();
 
@@ -75,68 +74,6 @@ export const aiChat = onRequest({
       error: {
         code: "internal",
         message: "AIチャットの処理中にエラーが発生しました。",
-      },
-    });
-  }
-});
-
-export const aiChatStarterReplies = onRequest({
-  cors: true,
-  region: "asia-northeast1",
-  secrets: [geminiApiKey],
-}, async (request, response) => {
-  try {
-    assertPost(request);
-    await assertAppCheckAuthorized(request);
-
-    const starterRequest = parseAiChatStarterRequest(request.body);
-    const identity = await resolveUsageIdentity(request, starterRequest);
-    const isPremiumUser = await hasAiTutorEntitlement(admin.firestore(), identity);
-    const limit = resolveUsageLimit(isPremiumUser);
-    const usageCount = await consumeUsage(admin.firestore(), identity, limit);
-    const quickReplies = await generateStarterQuickReplies(
-      geminiApiKey.value(),
-      starterRequest,
-    );
-
-    sendJson(response, 200, {
-      quickReplies,
-      usage: {
-        count: usageCount,
-        limit: limit.limit,
-        tier: limit.tier,
-        period: limit.period,
-        periodKey: limit.periodKey,
-      },
-    });
-  } catch (error) {
-    if (error instanceof RateLimitExceededError) {
-      sendJson(response, 429, {
-        error: {
-          code: "rate_limited",
-          message: error.message,
-          tier: error.limit.tier,
-          limit: error.limit.limit,
-        },
-      });
-      return;
-    }
-
-    if (error instanceof HttpError) {
-      sendJson(response, error.status, {
-        error: {
-          code: error.code,
-          message: error.message,
-        },
-      });
-      return;
-    }
-
-    console.error(error);
-    sendJson(response, 500, {
-      error: {
-        code: "internal",
-        message: "初回の選択肢の生成中にエラーが発生しました。",
       },
     });
   }

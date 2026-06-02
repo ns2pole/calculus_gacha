@@ -1,7 +1,5 @@
-## Codegen (AI starter quick replies)
-tool/starter_replies_progress.json
-tool/.gemini_api_key
-tool/generate_starter_replies.log
+## Codegen (AI starter quick replies) — local only, not committed
+tool/local/ai_starter_codegen/
 
 ## Flutter/Dart
 .dart_tool/
