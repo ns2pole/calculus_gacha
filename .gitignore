@@ -1,6 +1,3 @@
-## Codegen (AI starter quick replies) — local only, not committed
-tool/local/ai_starter_codegen/
-
 ## Flutter/Dart
 .dart_tool/
 .packages
@@ -116,6 +113,8 @@ __pycache__/
 !analysis_options.json
 !devtools_options.yaml
 !web/manifest.json
+!tool/local/ai_starter_codegen/starter_problems_manifest.json
+!tool/local/ai_starter_codegen/starter_replies_progress.json
 # Xcode asset catalogs require Contents.json in the repo; *.json above would omit it and break iOS IPA builds.
 !**/Assets.xcassets/**/Contents.json
 

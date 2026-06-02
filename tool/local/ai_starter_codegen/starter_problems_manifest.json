@@ -1,0 +1,2272 @@
+[
+  {
+    "id": "00E2A046-7CC1-48D5-ADCB-A48C3F5A250B",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 + xy + 2y^2 = 11",
+    "referenceAnswer": "{(x,y)=(1,2),(-3,2),(3,-2),(-1,-2)}",
+    "referenceSolution": "\\text{分数を避けて平方完成する。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "01AB7A0C-4FD8-4E11-B537-50DFBEF48965",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{\\pi} x\\cos x \\,dx",
+    "referenceAnswer": "\\  -2",
+    "referenceSolution": "\\textbf{【解法】}\n\\text{部分積分を用いる。}\n\\begin{aligned}\n\\int_0^{\\pi} x \\cos x \\, dx &= \\int_0^{\\pi} x \\cdot (\\sin x)' \\, dx \\\\\n&= \\left[x \\sin x\\right]_0^{\\pi} - \\int_0^{\\pi} \\sin x \\, dx \\\\\n&= \\pi \\cdot 0 - 0 - \\left[-\\cos x\\right]_0^{\\pi} \\\\\n&= 0 - (-\\cos \\pi + \\cos 0) \\\\\n&= -(1 + 1) \\\\\n&= -2\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "035BEF48-5556-4099-9AD4-1FBE772833CE",
+    "category": "",
+    "level": "",
+    "questionText": "f'(t)=-2\\,f(t)\nf(0)=f_0",
+    "referenceAnswer": "f(t)=f_0 e^{-2 t}",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学の空気抵抗を受ける質点の速度減衰は} v'(t) + \\displaystyle \\frac{k}{m}v(t) = 0 \\text{ でモデル化される。速度は指数関数的に減少する。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "07FC023A-DAD9-432A-BCD7-B90E3C25404F",
+    "category": "",
+    "level": "",
+    "questionText": "\\alpha f''(t)+2\\beta\\,f'(t)+\\gamma f(t)=F\\sin(\\omega t) \\ \\ \\text{の定常状態の }f'(t)\nf(0)=0,\\ f'(0)=0",
+    "referenceAnswer": "f'(t) = \\frac{F}{\\sqrt{\\left(\\frac{\\gamma}{\\omega} -\\alpha\\omega\\right)^2+4\\beta^2}}\\sin(\\omega t + \\phi),\\quad \\textcolor{green}{ただし、}\\textcolor{green}{\\phi は} \\textcolor{green}{\\tan \\phi = \\dfrac{\\alpha\\omega^2-\\gamma}{2\\beta\\omega}} \\textcolor{green}{を満たす角。}",
+    "referenceSolution": "\\text{未定係数法で特解を求めて、それを引いた関数を新たに定義し、下記の右辺0(同次方程式)の場合の公式を適用して解く。}\n\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• RLC直列交流回路について、キルヒホッフの第二法則を用いると }\n  LQ''(t) + RQ'(t) + \\displaystyle \\frac{Q(t)}{C} = V_0\\sin(\\omega t) \\text{が成り立つ。}\n\\textcolor{brown}{\\large{【問題の記号と電磁気学における記号の対応】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "09338EE1-388B-4048-ABC3-CD11A1297220",
+    "category": "",
+    "level": "",
+    "questionText": "x^3 + y^3 + z^3 - 3xyz",
+    "referenceAnswer": "(x + y + z)(x^2 + y^2 + z^2 - xy - yz - zx)",
+    "referenceSolution": "\\text{恒等式 } a^3 + b^3 = (a+b)^3 - 3ab(a+b) \\text{ を2回使う。}\n\\textbf{【方針】}\n\\text{恒等式 } a^3 + b^3 = (a+b)^3 - 3ab(a+b) \\text{ を2回使う。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "0DDAAC08-A9CF-4240-9166-64922F384992",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{1}{n^{3}}\\displaystyle \\sum_{k=1}^{n}k^{2}",
+    "referenceAnswer": "\\displaystyle \\frac{1}{3}",
+    "referenceSolution": "\\textbf{【方針】 } \\displaystyle \\sum_{k=1}^{n}k^{2}=\\dfrac{n(n+1)(2n+1)}{6}\\ を用いる\n\\textbf{【方針】 } \\displaystyle \\sum_{k=1}^{n}k^{2}=\\dfrac{n(n+1)(2n+1)}{6}\\ を用いる\n\\begin{aligned}\n        \\frac{1}{n^{3}}\\displaystyle \\sum_{k=1}^{n}k^{2}\n        &= \\frac{1}{n^{3}}\\cdot \\frac{n(n+1)(2n+1)}{6} \\\\[6pt]\n        &= \\frac{1}{6}\\cdot \\frac{(n+1)(2n+1)}{n^{2}} \\\\[6pt]\n        &= \\frac{1}{6}\\cdot \\frac{2n^{2}+3n+1}{n^{2}} \\\\[6pt]\n        &= \\frac{1}{6}\\left(2+\\frac{3}{n}+\\frac{1}{n^{2}}\\right) \\\\[6pt]\n        &\\underset{n\\to\\infty}{\\longrightarrow}\\  \\displaystyle \\frac{1}{6} \\cdot 2 = \\frac{1}{3}\n      \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "0E10892B-45E0-4994-9281-EDB35CE38498",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = 2a_n + n + 1\na_1 = 1",
+    "referenceAnswer": "a_n = 2^{n+1} - n - 2",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{右辺が1次式なので解の一つを1次関数}  An + B \\text{ の形で求め、これを使ってただの等比数列の式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "14D0F717-BEC3-49D9-98CF-F56C33CB6B3B",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{2} \\frac{dx}{(4+x^2)^{\\frac{3}{2}}}",
+    "referenceAnswer": "\\displaystyle \\frac{\\sqrt{2}}{8}",
+    "referenceSolution": "\\text{三角置換 } x = 2\\tan\\theta \\text{ を用いる。}\n\\textbf{【方針】}\n\\text{三角置換 } x = 2\\tan\\theta \\text{ を用いて、被積分関数を簡略化する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "14E178D7-FC09-4439-B145-92688182FC44",
+    "category": "",
+    "level": "",
+    "questionText": "9x^2 - 24xy + 16y^2",
+    "referenceAnswer": "(3x - 4y)^2",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n 9x^2 - 24xy + 16y^2 &= (3x)^2 - 2(3x)(4y) + (4y)^2 \\\\\n &= (3x - 4y)^2\n \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "15CEC271-B2C8-40A9-9B84-C64590472E61",
+    "category": "",
+    "level": "",
+    "questionText": "4x^2 - 20xy + 25y^2",
+    "referenceAnswer": "(2x - 5y)^2",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n4x^2 - 20xy + 25y^2 &= (2x)^2 - 2(2x)(5y) + (5y)^2 \\\\\n&= (2x - 5y)^2\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "16F18597-C6FC-4AE9-B600-B230BB5F5405",
+    "category": "",
+    "level": "",
+    "questionText": "842x + 495y = 1",
+    "referenceAnswer": "x = -97 + 495k,\\ y = 165 - 842k \\quad (tは整数)",
+    "referenceSolution": "\\text{互除法を用いて } 842x + 495y = 1 \\text{ を満たす解を1つ求める。}\n\\textbf{【方針】}\n\\text{互除法を用いて } 842x + 495y = 1 \\text{ を満たす解を1つ求める。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "17D1526C-1324-4C82-8D05-59B9308E14D2",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{\\frac{1}{4}}^{\\frac{3}{4}} \\displaystyle \\frac{dx}{\\sqrt{x(1-x)}}",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{3}",
+    "referenceSolution": "\\; x=\\sin^{2}\\theta \\,\\textbf{と置換する。}\n\\textbf{【方針】}\n\\; x=\\sin^{2}\\theta \\,\\textbf{と置換する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "180399F4-71C4-4CAE-8392-D57061DDCBA6",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{1}^{e} \\log  x \\, dx",
+    "referenceAnswer": "1",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\log x = (x)'\\log {x} \\text{とみなして、部分積分の公式を用いる。}\n\\begin{aligned}\n&\\displaystyle \\int \\log x\\,dx = \\displaystyle \\int (x)' \\log x\\,dx \n&= x\\log x - \\displaystyle \\int x\\cdot\\displaystyle \\frac{1}{x}\\,dx \\\\\n&\\phantom{\\displaystyle \\int \\log x\\,dx } = x\\log x - \\displaystyle \\int 1\\,dx \\\\\n&\\phantom{\\displaystyle \\int \\log x\\,dx } = x\\log x - x + C\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "183166B0-C425-4604-B488-2D51C73267D5",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\sqrt{3}} \\displaystyle \\frac{x}{\\sqrt{1+x^{2}}}\\,dx",
+    "referenceAnswer": "1",
+    "referenceSolution": "\\; u=1+x^{2} \\,\\textbf{と置く。}\n\\textbf{【方針】}\n\\; u=1+x^{2} \\,\\textbf{と置く。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "18A36D0E-7123-4A0D-8AE6-E8453099D9A9",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{-1}^{1}(1-x^{2})^{3}\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{32}{35}",
+    "referenceSolution": "\\; \\textbf{被積分関数は偶関数なので }\\left[-1,1\\right] を \\left[0,1\\right] の2倍にし、(1-x^2)^3 を展開して項別に積分する。\n\\textbf{【方針】}\n\\; \\textbf{被積分関数は偶関数なので }\\left[-1,1\\right] を \\left[0,1\\right] の2倍にし、(1-x^2)^3 を展開して項別に積分する。\n\\textbf{【展開】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "1BD1750A-06EA-42B5-81DB-57091773730C",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + 9x^3 + 16x^2 - x - 3",
+    "referenceAnswer": "(x^2 + 2x - 1)(x^2 + 7x + 3)",
+    "referenceSolution": "\\textbf{【方針】}\nf(x) = x^4 + 9x^3 + 16x^2 - x - 3\\text{とおいて、まずは、因数定理を用い、候補（±1, ±3）を代入して、1次式の因数を持たないことを認識したら、その後、2次式×2次式の形で係数比較を行うのが自然。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "1D342CB8-24CD-40BB-A3EA-06BB6AFC1845",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t) + 6\\,f'(t) + 10\\,f(t) = 0\nf(0)=1,\\ f'(0)=2",
+    "referenceAnswer": "\\displaystyle f(t)=e^{-3t}\\left(\\cos(t)+5\\sin(t)\\right)",
+    "referenceSolution": "\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• RLC直列回路について、キルヒホッフの第二法則を用いると }\n  LQ''(t) + RQ'(t) + \\displaystyle \\frac{Q(t)}{C} = 0 \\text{が成り立つ。}\n\\textcolor{brown}{\\large{【問題の記号と電磁気学における記号の対応】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "1DAE0FE3-E342-4547-956C-6CD1EA31EAD3",
+    "category": "",
+    "level": "",
+    "questionText": "f'(t)+a\\,f(t)=F\\cos(\\omega t)\nf(0)=f_0",
+    "referenceAnswer": "f(t)=\\dfrac{F}{\\sqrt{a^2+\\omega^2}}\\cos(\\omega t-\\alpha)+\\left(f_0-\\dfrac{F a}{a^2+\\omega^2}\\right)e^{-a t},\\quad \\alpha=\\arctan\\left(\\dfrac{\\omega}{a}\\right)",
+    "referenceSolution": "\\text{【力学】}\n\\text{• 力学の空気抵抗下での強制振動は} mv'(t) + kv(t) = F_0\\cos(\\omega t) \\text{ でモデル化される。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "1E209006-69B2-4DAE-8B9D-036D1800D855",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{h\\to 0}(1+2h)^{\\frac{1}{h}}",
+    "referenceAnswer": "\\displaystyle e^{2}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{ } (1+2h)^{\\frac{1}{h}} = \\left((1+2h)^{\\frac{1}{2h}}\\right)^{2} \\text{ と変形し、中身の部分が定義より } e \\text{ になることを用いる。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "1EC3C384-44E0-4C3B-8FE4-2E3814FD7CB3",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + 4",
+    "referenceAnswer": "(x^2 - 2x + 2)(x^2 + 2x + 2)",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\nx^4 + 4 &= (x^2 + 2)^2 - 4x^2 \\\\\n&= (x^2 + 2)^2 - (2x)^2 \\\\\n&= (x^2 + 2 - 2x)(x^2 + 2 + 2x) \\\\\n&= (x^2 - 2x + 2)(x^2 + 2x + 2)\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "1ECE1CDE-BFDC-4524-B8B5-6501A91BD8BE",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{n^{2}}{2^{n}}",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{比の評価により、}\\displaystyle \\lim_{n \\to \\infty} \\frac {a_{n+1}} {a_n} = \\frac 1 2 \\text{を示す。この事実から、} N < n \\text{ならば、} \\displaystyle a_{n+1} \\leq \\frac{3}{4}a_n  \\text{となるような}N \\text{を導けることが予測できるので、これを使ってはさみうちを行う。（ここでは} \\displaystyle \\frac  3 4 \\text{という値を用いたが、}1\\text{未満で取ってこれればとくに何でも良い。）}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "1F0413C9-47F5-44A8-A3C3-519334677C68",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + x^2 - 2",
+    "referenceAnswer": "(x^2 + 2)(x - 1)(x + 1)",
+    "referenceSolution": "\\text{ } x^2 = t \\text{ と置いて、2次式として因数分解して、それから} x \\text{ の式に戻す。 }\n\\textbf{【方針】}\n\\text{ } x^2 = t \\text{ と置いて、2次式として因数分解して、それから} x \\text{ の式に戻す。 }\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "205667D9-8B8F-43B6-A590-037AAE61339F",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle\\frac{3^x - 3^{-x}}{2} = 5",
+    "referenceAnswer": "x = \\log_3(5 + \\sqrt{26})",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{両辺に } 2 \\cdot 3^x \\text{ をかけて整理し、} 3^x = t \\text{ とおいて2次方程式に帰着させる。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "227D1ED5-9BAE-49E1-BD62-02531FB8ADF1",
+    "category": "",
+    "level": "",
+    "questionText": "x^5 - x^4 - 1",
+    "referenceAnswer": "(x^2 - x + 1)(x^3 - x - 1)",
+    "referenceSolution": "\\textbf{【方針】}\nf(x) = x^5 - x^4 - 1\\text{とおいて、まずは、因数定理を用い、候補（±1）を代入して、1次式の因数を持たないことを認識したら、その後、2次式×3次式の形で係数比較を行うのが自然。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "24D47C58-831B-4D01-A30E-3BD84A0D741E",
+    "category": "",
+    "level": "",
+    "questionText": "x^3 - 9xy + 27y^3 + 1",
+    "referenceAnswer": "(x + 3y + 1)(x^2 + 9y^2 + 1  - 3xy - 3y - x)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{恒等式 } a^3 + b^3 = (a+b)^3 - 3ab(a+b) \\text{ を2回使う。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "26D1B6CC-77F8-4522-88A0-0A06A41D8D67",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle\n\\displaystyle \\int_{ {0}}^{\\log 2} \\displaystyle \\frac{x+1}{e^{x}}\\,dx",
+    "referenceAnswer": "\\displaystyle -\\frac{\\log 2}{2} + 1",
+    "referenceSolution": "\\displaystyle \\frac{1}{e^x} = e^{-x} \\text{ と見て、部分積分を実行する。}\n\\textbf{【方針】}\n\\displaystyle \\frac{1}{e^x} = e^{-x} \\text{ と見て、部分積分を実行する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "26E37810-7237-4FC5-8876-910F55F7133E",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{|\\sin x|}{x}",
+    "referenceAnswer": "\\textbf{極限は存在しない}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{右極限と左極限を比較する。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "2BC52EFA-C75B-4E77-B1E5-E7ECCA113394",
+    "category": "",
+    "level": "",
+    "questionText": "x^3 + 125",
+    "referenceAnswer": "(x + 5)(x^2 - 5x + 25)",
+    "referenceSolution": "\\text{立方和の公式 } a^3 + b^3 = (a+b)(a^2 - ab + b^2) \\text{ を用いる。}\n\\textbf{【方針】}\n\\text{立方和の公式 } a^3 + b^3 = (a+b)(a^2 - ab + b^2) \\text{ を用いる。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "2C1016F1-C7DD-4BE8-8BC8-0C5AA7F05FB5",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t) = -4\\,f(t) + 2\nf(0) = 0,\\ f'(0) = 0",
+    "referenceAnswer": "\\displaystyle f(t)=\\displaystyle \\frac{1}{2}\\big(1-\\cos(2t)\\big)",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学においては、} mx''(t) + kx(t) = F \\text{ の形でよく登場する。}F=mg\\text{の場合は、重力下のばね-質量系の運動を表す。重力による平衡位置シフトが起きる。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "2D7ED2C9-2759-46FC-B597-619EB2FA6A3B",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{1-\\cos x}{x^{2}}",
+    "referenceAnswer": "\\displaystyle \\frac{1}{2}",
+    "referenceSolution": "\\displaystyle 1-\\cos x=2\\sin^{2}\\!\\left(\\frac{x}{2}\\right)\\text{ を用いる}\n\\textbf{【方針】}\n\\displaystyle 1-\\cos x=2\\sin^{2}\\!\\left(\\frac{x}{2}\\right)\\text{ を用いる}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "2E68B281-EA4E-4B67-879E-59A9AE7EC762",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{2\\pi}\\sin(2x)\\cos(3x)\\,dx",
+    "referenceAnswer": "0",
+    "referenceSolution": "\\text{積和公式を用いて、三角関数の1次式に帰着する。}\n\\textbf{【方針】}\n\\text{積和公式を用いて、三角関数の1次式に帰着する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "3444E69A-5FCB-43A5-8C70-54616A1226D6",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{h\\to 0}(1+h)^{\\frac{1}{h}}",
+    "referenceAnswer": "\\displaystyle e",
+    "referenceSolution": "\\textbf{【定義】}\n\\boxed{e = \\lim_{h\\to 0}(1+h)^{\\frac{1}{h}}}\n\\text{上記は自然対数の底(ネイピア数) } e \\text{の定義そのもの。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "34A820FC-E504-47F2-BBF4-741670A417AE",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + 3x^2 - 4",
+    "referenceAnswer": "(x^2 + 4)(x - 1)(x + 1)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{ } x^2 = t \\text{ と置いて、2次式として因数分解して、それから} x \\text{ の式に戻す。 }\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "369BD639-C54E-4847-93A1-3B56E19006A2",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to \\infty}\\left(1+\\frac{1}{x}\\right)^{x}",
+    "referenceAnswer": "\\displaystyle e",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{変数変換 } h = \\displaystyle\\frac{1}{x} \\text{ を用いて、} e = \\lim_{h\\to 0}(1+h)^{\\frac{1}{h}} \\text{ の定義に帰着させる。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "37B80E92-3E58-4BAF-A56B-7425004B28E0",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = 4a_n + b_n\\\\[4pt]\nb_{n+1} = -2a_n + b_n\na_1 = 2,\\ b_1 = 1",
+    "referenceAnswer": "\\begin{cases}\n  a_n = -3\\cdot 2^{\\,n-1} + 5\\cdot 3^{\\,n-1}\\\\[5pt]\n  b_n = 6\\cdot 2^{\\,n-1} - 5\\cdot 3^{\\,n-1}\\end{cases}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{連立漸化式から } b_n \\text{ を消去して３項間漸化式に帰着させ、特性方程式を解いて、根 } r_1,r_2 \\text{ に対して } a_n=A r_1^{n-1}+B r_2^{n-1}\\text{ と置く。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "383DCCBD-6B56-4171-856E-F14225EC83D8",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{1}{2}} \\sqrt{1 - 2x}\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{3}",
+    "referenceSolution": "u=1-2x, \\ du=-2\\,dx, \\ dx=-\\displaystyle \\frac{1}{2}\\,du \\text{ と置換する。}\n\\textbf{【置換】}\nu=1-2x \\text{ を用いて積分区間を変換し、冪関数の定積分として評価する。}\n\\textbf{【計算】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "38DF36DC-0268-4E1D-A341-14A39DDE8543",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to -\\infty}\\left(1+\\frac{1}{x}\\right)^{x}",
+    "referenceAnswer": "\\displaystyle e",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{変数変換を用いて、} e = \\lim_{h\\to 0}(1+h)^{\\frac{1}{h}} \\text{ の定義に帰着させる。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "3A11C85E-F61C-49FA-BAA5-2BD036093B07",
+    "category": "",
+    "level": "",
+    "questionText": "\\sin x + \\sin 2x + \\sin 3x = 0\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = 0, \\displaystyle\\frac{\\pi}{2}, \\displaystyle\\frac{2\\pi}{3}, \\pi, \\displaystyle\\frac{4\\pi}{3}, \\displaystyle\\frac{3\\pi}{2}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{まず、} \\sin x + \\sin 3x \\text{ に和積の公式を適用し、その後 } \\sin 2x \\text{ と組み合わせる。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "3A5214AB-C386-4C28-AA01-886809BDE55A",
+    "category": "",
+    "level": "",
+    "questionText": "x^5 + x^4 + x^3 + x^2 + x + 1",
+    "referenceAnswer": "(x + 1)(x^2 + x + 1)(x^2 - x + 1)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{因数定理を用いる。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "3B2F6F76-9E2E-4C3A-A0C7-6E3C6E8B9B21",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\sqrt{n}\\,\\int_{0}^{\\frac{\\pi}{2}}\\sin^n x\\,dx",
+    "referenceAnswer": "\\displaystyle \\sqrt{\\frac{\\pi}{2}}",
+    "referenceSolution": "\\text{漸化式を立て、不変量 }(n+1)I_{n+1}I_n=\\frac{\\pi}{2}\\text{ を作ってはさみうち}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "3CEFDD7D-4880-48DF-ABD8-7779C2D0F2C5",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 - 7x - 18",
+    "referenceAnswer": "(x - 9)(x + 2)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{たすきがけを用いて、積が } -18 \\text{、和が } -7 \\text{ となる2数を探す。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "3F26B444-EA86-4FF8-830B-2AC464BDE3E6",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = 3a_n - 4\na_1 = 1",
+    "referenceAnswer": "a_n = - 3^{n-1} + 2",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{右辺が定数なので解の一つを定数列} A \\text{ の形で求め、これを使ってただの等比数列の式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "3F983683-4841-44A5-8A49-2AADB866B6D9",
+    "category": "",
+    "level": "",
+    "questionText": "x^3 + (3y - 5)x^2 - 7yx - 2 = 0",
+    "referenceAnswer": "{(x,y)=(2,-7)}\\textcolor{green}{　1つ}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{定数分離と因数分解を用いて整数解を探索する。定数項 } -2 \\text{ に注目し、} x \\text{ の候補を絞り込む。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "417F69AB-5A9E-4488-9692-AA67DE3BCFF2",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+2} + 3 a_{n+1} - 4 a_n = 0\na_1 = 1,\\ a_2 = 2",
+    "referenceAnswer": "a_n = \\displaystyle \\frac{6}{5} - \\displaystyle \\frac{1}{5}(-4)^{\\,n-1}",
+    "referenceSolution": "\\textbf{【方針】} \n      \\text{特性方程式} x^2+ 3x - 4 = 0 \\text{を解き、解}r_1,r_2\\text{を求めて、}a_n = A r_1^{n-1} + B r_2^{n-1} \\text{と置き、初期条件を代入して実数} A,B\\text{を求める。(なぜこう置く事ができるかは解説の命題1を参照。)}\n\\textbf{【解法】}\n\\text{特性方程式 }",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "422D4451-7399-4187-863C-165C15969BB4",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{  \\frac{\\pi}{2}} \\sin^4 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{3}{16}\\pi",
+    "referenceSolution": "\\text{半角 } \\sin^2 x=\\displaystyle\\frac{1-\\cos 2x}{2} \\text{ と } \\cos^2 2x=\\displaystyle\\frac{1+\\cos 4x}{2} \\text{ を用いて三角関数の次数を下げる。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "43D15683-AB09-49EE-8412-0CCB4D260EAF",
+    "category": "",
+    "level": "",
+    "questionText": "(n+2)a_n = n a_{n-1} + 4\na_1 = 1",
+    "referenceAnswer": "a_n = \\displaystyle -\\frac{6}{(n+1)(n+2)} + 2",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{右辺が定数なので解の一つを定数列} A \\text{ の形で求め、これを使って変数係数の漸化式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "448E166D-FEF8-4A70-8541-FCA04C82C7F8",
+    "category": "",
+    "level": "",
+    "questionText": "2f'(t)=12\\sin(4t)\nf(0)=0",
+    "referenceAnswer": "f(t)=-\\displaystyle \\frac{3}{2}\\cos(4t)+\\displaystyle \\frac{3}{2}",
+    "referenceSolution": "\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• コイルのみの回路に交流をかけた時、キルヒホッフ第二法則を適用すると、} LI'(t) = V_0\\sin(\\omega t) \\text{という微分方程式が出てくる。}\n\\text{• 電圧 }V_0\\sin(\\omega t)\\text{ の位相}\\omega t \\text{よりも、電流 }I(t)\\text{ の位相は}\\displaystyle \\frac{\\pi}{2}\\text{遅れる。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "479E7E6E-ED63-4F1A-BB39-42C4C598782D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\frac{1}{x} + \\frac{1}{y} + \\frac{1}{z} = 1 \\qquad (0\\le x \\le y \\le z)",
+    "referenceAnswer": "{(x,y,z)=(2,3,6), (2,4,4), (3,3,3)}\\textcolor{green}{　3つ}",
+    "referenceSolution": "x \\text{ の範囲を制限する。}\n\\textbf{【方針】}\nx \\text{ の範囲を制限する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "48615294-8E6C-4EFB-B9F9-5A08205FFF69",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{2} \\displaystyle \\frac{dx}{\\sqrt{2x + 5}}",
+    "referenceAnswer": "3 - \\sqrt{5}",
+    "referenceSolution": "u=2x+5, \\ \\ du=2\\,dx \\ \\ dx=\\displaystyle \\frac{1}{2}\\,du \\text{と置換する。}\n\\textbf{【方針】}\nu=2x+5, \\ \\ du=2\\,dx \\ \\ dx=\\displaystyle \\frac{1}{2}\\,du \\text{と置換する。}\n\\textbf{【計算】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "48677C5D-732B-4C47-B4AA-645616D8C392",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{n!}{n^{n}}",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\textbf{【方針】}\n\\displaystyle \\frac{n!}{n^n}=\\prod_{k=1}^{n}\\frac{k}{n} \\text{ と書き、 } \\displaystyle k \\le \\frac{n}{2} \\text{ では } \\displaystyle \\frac{k}{n} \\le \\frac{1}{2} \\text{ が成り立つ事を用いて、はさみうちにする。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "487CBF1E-4AAB-490D-BFF5-86DF2F9F075C",
+    "category": "",
+    "level": "",
+    "questionText": "\\sqrt{3}\\sin x + \\cos x = 1\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = 0, \\displaystyle\\frac{2\\pi}{3}",
+    "referenceSolution": "\\textbf{【解説】}\n\\text{三角関数の合成により、}\n\\begin{aligned}\n&\\sqrt{3}\\sin x + \\cos x \\\\\n= &2\\left(\\displaystyle\\frac{\\sqrt{3}}{2}\\sin x + \\displaystyle\\frac{1}{2}\\cos x\\right) \\\\\n= &2\\sin\\left(x + \\displaystyle\\frac{\\pi}{6}\\right)\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "48B05BE5-7632-4228-BF46-F8476E23E0CF",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{2}^{5}(x-2)^2(5-x)^2\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{81}{10}",
+    "referenceSolution": "\\text{「 } \\displaystyle \\frac 1 {30} \\text{ 公式」} \\displaystyle \\int_{\\alpha}^{\\beta}(x-\\alpha)^2(\\beta-x)^2\\,dx  = \\displaystyle \\frac{(\\beta-\\alpha)^5}{30} \\text{を使う。}\n\\textbf{【方針】}\n\\text{「 } \\displaystyle \\frac 1 {30} \\text{ 公式」} \\displaystyle \\int_{\\alpha}^{\\beta}(x-\\alpha)^2(\\beta-x)^2\\,dx  = \\displaystyle \\frac{(\\beta-\\alpha)^5}{30} \\text{を使う。}\n\\textbf{【公式による計算】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "48F0A009-A401-42C4-9AC5-E84555D43257",
+    "category": "",
+    "level": "",
+    "questionText": "(n+1)a_n = (n-1)a_{n-1}, \\quad a_1 = 2 \\quad (n\\ge2)",
+    "referenceAnswer": "",
+    "referenceSolution": null,
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "4E839CEA-B995-4D8D-812D-C23546487B0E",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\displaystyle \\sum_{k=1}^{n}\\frac{1}{k}",
+    "referenceAnswer": "\\displaystyle \\infty \\text{（発散）}",
+    "referenceSolution": "\\textbf{【証明1：積分判定法】}\n\\textcolor{blue}{青い部分の面積} < \\textcolor{red}{赤い部分の面積} \\text{なので、}\n\\begin{aligned}\n      \\displaystyle \\sum_{k=1}^{n}\\frac{1}{k} &\\geq \\int_1^{n+1}\\frac{1}{x}dx \\\\[6pt]\n      &= [\\log x]_1^{n+1} \\\\[6pt]\n      &= \\log(n+1) - \\log 1 \\\\[6pt]\n      &= \\log(n+1)\n      \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "4E93591C-AFE6-41F0-A2E9-4A32C796D02B",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{1}^{\\sqrt{3}}\\displaystyle \\frac{1}{x^{2}+3}\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{12\\sqrt{3}}",
+    "referenceSolution": "x=\\sqrt{3}\\tan\\theta \\left(\\theta\\in(0,\\displaystyle \\frac{\\pi}{2})\\right) \\text{を用いて置換積分する。}\n\\textbf{【方針】}\nx=\\sqrt{3}\\tan\\theta \\left(\\theta\\in(0,\\displaystyle \\frac{\\pi}{2})\\right) \\text{を用いて置換積分する。}\n\\textbf{【置換と範囲変換】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "4F6568BE-B67F-46E7-859C-F22766018567",
+    "category": "",
+    "level": "",
+    "questionText": "391x + 287y = 1",
+    "referenceAnswer": "x = 69 + 287k,\\ y = -94 - 391k \\quad (kは整数)",
+    "referenceSolution": "\\text{互除法を用いて } 391x + 287y = 1 \\text{ を満たす解を1つ求める。}\n\\textbf{【方針】}\n\\text{互除法を用いて } 391x + 287y = 1 \\text{ を満たす解を1つ求める。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "4F674DAB-329F-45CC-9417-94C45BE5B203",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t) = -4\\,f(t)\nf(0)=0,\\ f'(0)=2",
+    "referenceAnswer": "\\displaystyle f(t)=\\sin(2t)",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学においては、} mx''(t) + kx(t) = 0 \\text{ の形でよく登場する。これはばね-質量系の単振動の運動方程式。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "51B65EA2-37AB-48F9-ACBE-2482B9740A10",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 + 8xy + 16y^2",
+    "referenceAnswer": "(x + 4y)^2",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n x^2 + 8xy + 16y^2 &= x^2 + (2\\cdot 4y)x + (4y)^2 \\\\\n &= (x + 4y)^2\n \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "53BC96C5-2D01-45FE-9A39-F369BA9E2097",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to \\infty}\\left(1+\\frac{1}{x}\\right)^{2x}",
+    "referenceAnswer": "\\displaystyle e^{2}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{変数変換 } h = \\displaystyle\\frac{1}{x} \\text{ を用いて、} e = \\lim_{h\\to 0}(1+h)^{\\frac{1}{h}} \\text{ の定義に帰着させる。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "546F77A4-9EED-4FED-92F4-8E22927D77C8",
+    "category": "",
+    "level": "",
+    "questionText": "9x^3y - 16xy^3",
+    "referenceAnswer": "xy(3x-4y)(3x+4y)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{共通因数 } xy \\text{ をくくり出す。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "54B8A495-B84C-4CFE-8B99-9C45B22E2CE0",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle\\frac{3^x - 3^{-x}}{3^x + 3^{-x}} = \\displaystyle\\frac{1}{5}",
+    "referenceAnswer": "x = \\displaystyle\\frac{1}{2}\\log_3\\displaystyle\\frac{3}{2} \\text{ または } \\displaystyle\\frac{1}{2}\\left(1-\\log_3 2\\right)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{分母分子に } 3^x \\text{ をかけて整理し、方程式を解く。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "574DF54B-E141-4B50-944D-F38724F1ADC3",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\frac{\\int_0^t f(s) \\, ds}{a}+bf(t)=F\\cos(\\omega t)\n\\text{（初期条件）方程式の t=0 評価より } f(0)=\\dfrac{F}{b}",
+    "referenceAnswer": "f(t)=\\displaystyle \\frac{F}{\\sqrt{b^2+\\left(\\displaystyle \\frac{1}{a \\omega}\\right)^2}}\\cos(\\omega t + \\alpha)\n  +\\displaystyle \\frac{F}{b a^2\\omega^2\\left(b^2 + \\left(\\displaystyle\\frac{1}{a \\omega}\\right)^2\\right)}\\,e^{- \\frac{t}{ab}},\\quad \\alpha=\\arctan\\left(\\dfrac{1}{ab\\omega}\\right)",
+    "referenceSolution": "\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• RC交流回路について、コンデンサ初期電荷0のとき、キルヒホッフの第二法則を用いると }\n    RI(t) + \\displaystyle \\frac{1}{C}\\int_0^t I(s)\\,ds = V_0\\cos(\\omega t) \\text{が成り立つ。}\n\\text{• 定常状態では、電流 }I(t) \\text{ は電圧と同じ角周波数 } \\omega \\text{ で振動し、振幅は } \\displaystyle \\frac{V_0}{\\sqrt{R^2+\\left(\\displaystyle \\frac{1}{\\omega C}\\right)^2}} \\text{ となる}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "595AEE6D-B85D-45AE-AB48-641EC064B6EB",
+    "category": "",
+    "level": "",
+    "questionText": "3x^2−2xy+2y^2−2x+4y−1=0",
+    "referenceAnswer": "{(x,y)=(-1,-2),(-1,-1),(1,-1),(1,0)}\\textcolor{green}{　4つ}",
+    "referenceSolution": "\\text{方程式を x の二次方程式と見て、判別式が平方数となる y を探索する。}\n\\textbf{【方針】}\n\\text{方程式を x の二次方程式と見て、判別式が平方数となる y を探索する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "5AE63216-BADE-46E5-A90B-18933C16F2FE",
+    "category": "",
+    "level": "",
+    "questionText": "a_n = 4\\sqrt{a_{n-1}}\na_1 = 8",
+    "referenceAnswer": "a_n = 16 \\cdot 2^{-(\\frac{1}{2})^{n-1}}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{対数を取る。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "5B9CCE39-6329-4F9D-8E86-20D97B7760A2",
+    "category": "",
+    "level": "",
+    "questionText": "4x^2 - y^2 = 32",
+    "referenceAnswer": "(3,2),(3,-2),(-3,2),(-3,-2)\\textcolor{green}{　4つ}",
+    "referenceSolution": "\\text{左辺を因数分解する。}\n\\textbf{【方針】}\n\\text{左辺を因数分解する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "5F7F2DCD-4A6E-4BA1-B97A-1F9B7B6809A4",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 + 6xy + 9y^2",
+    "referenceAnswer": "(x + 3y)^2",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\nx^2 + 6xy + 9y^2 &= x^2 + (2\\cdot 3y)x + (3y)^2 \\\\\n&= (x + 3y)^2\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "5F800251-23AC-4487-8BD4-3BC209617EF6",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{4}} \\tan^6 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{13}{15}-\\displaystyle\\frac{\\pi}{4}",
+    "referenceSolution": "I_n=\\displaystyle \\int_{0}^{\\frac{\\pi}{4}} \\tan^n x\\,dx \\text{ とおき、漸化式を導出して、定積分の状態で } I_6 \\text{ を } I_4, I_2, I_0 \\text{ に順次変形する。}\n\\textbf{【方針】}\nI_n=\\displaystyle \\int_{0}^{\\frac{\\pi}{4}} \\tan^n x\\,dx \\text{とおき、漸化式を導出して使う。}\n\\textcolor{green}{【命題】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "5FDE5472-2F31-46C7-89A5-F564360CD6C5",
+    "category": "",
+    "level": "",
+    "questionText": "f'(t)=g\nf(0)=f_0",
+    "referenceAnswer": "f(t)=g t + f_0",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 自由落下運動の速度変化についての微分方程式。}\n\\text{• 力学においては、} v'(t) = g \\text{の形でよく登場する。これは重力を受ける質点の速度変化を表す。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "5FFA2B66-BA71-44F4-9834-EF997E17081D",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t)+3\\,f'(t)=2\nf(0)=1,\\ f'(0)=5",
+    "referenceAnswer": "f(t)=\\dfrac{22}{9} + \\dfrac{2}{3}t-\\dfrac{13}{9}e^{-3 t}",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学の空気抵抗下での一定外力運動は} mx'' + kx' = mg \\text{ でモデル化される。}\n\\text{• 速度は指数関数的に終端速度} \\displaystyle \\frac{mg}{k} \\text{ に収束する。終端速度に近くになると、外力と抵抗力がつり合った、等速直線運動に近似できる。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "630FBD47-A86B-4108-8F90-86F202047B8D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n \\to \\infty} \\displaystyle \\sum_{k=1}^{n} \\frac{1}{n+k}",
+    "referenceAnswer": "\\displaystyle \\log 2",
+    "referenceSolution": "\\text{区分求積法で定積分に帰着させる}\n\\textbf{【方針】}\n\\text{区分求積法で定積分に帰着させる}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "656CDF93-3968-4527-81AE-9376B3E5B66B",
+    "category": "",
+    "level": "",
+    "questionText": "3x^2 + 8xy + 4y^2 - 11x - 6y - 4",
+    "referenceAnswer": "(3x + 2y + 1)(x + 2y - 4)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{ } x \\text{ について整理し、たすきがけを用いて因数分解する。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "666687A5-6EF8-434E-9209-818CE7092863",
+    "category": "",
+    "level": "",
+    "questionText": "\\sqrt{3}f'(t)+2f(t)=3\\sqrt{3}\\cos(2t)\nf(0)=0",
+    "referenceAnswer": "f(t)=\\displaystyle \\frac{3\\sqrt{3}}{4}\\cos \\left( 2t- \\displaystyle \\frac{\\pi}{3} \\right)-\\displaystyle \\frac{3\\sqrt{3}}{8}e^{- \\frac{2}{\\sqrt{3}}t}",
+    "referenceSolution": "\\text{【力学】}\n\\text{• 力学の空気抵抗下での強制振動は} mv'(t) + kv(t) = F_0\\cos(\\omega t) \\text{ でモデル化される。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "66847D9E-40D3-437C-9499-BF4A62B783B7",
+    "category": "",
+    "level": "",
+    "questionText": "\\cos 5x = 0\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = \\displaystyle\\frac{\\pi}{10}, \\displaystyle\\frac{3\\pi}{10}, \\displaystyle\\frac{\\pi}{2}, \\displaystyle\\frac{7\\pi}{10}, \\displaystyle\\frac{9\\pi}{10}, \\displaystyle\\frac{11\\pi}{10}, \\displaystyle\\frac{13\\pi}{10}, \\displaystyle\\frac{3\\pi}{2}, \\displaystyle\\frac{17\\pi}{10}, \\displaystyle\\frac{19\\pi}{10}",
+    "referenceSolution": "\\textbf{【解説】}\n\\cos 5x = 0 \\text{ より、}\n\\begin{aligned}\n&\\ \\ \\ \\ \\ \\cos 5x = 0 \\\\\n&\\Leftrightarrow 5x = \\displaystyle\\frac{\\pi}{2} + n\\pi \\quad (n \\text{ は整数}) \\\\\n&\\Leftrightarrow x = \\displaystyle\\frac{\\pi}{10} + \\displaystyle\\frac{n\\pi}{5}\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "6705BE2F-10DF-484F-8E32-768EE0F07E15",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{ \\frac12}^{ \\frac32}\\left(x-\\displaystyle \\frac12\\right)\\left(\\displaystyle \\frac32-x\\right)^2\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{12}",
+    "referenceSolution": "\\text{「 }\\displaystyle \\frac 1 {12} \\text{ 公式」} \\displaystyle \\int_{\\alpha}^{\\beta}(x-\\alpha)(\\beta-x)^2\\,dx  = \\displaystyle \\frac{(\\beta-\\alpha)^4}{12} \\text{を使う。}\n\\textbf{【方針】}\n\\text{「 }\\displaystyle \\frac 1 {12} \\text{ 公式」} \\displaystyle \\int_{\\alpha}^{\\beta}(x-\\alpha)(\\beta-x)^2\\,dx  = \\displaystyle \\frac{(\\beta-\\alpha)^4}{12} \\text{を使う。}\n【公式による計算】",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "680C8A2D-4E18-4E76-97F7-5F59531CD4DD",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{4}} \\sin x \\cos x \\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{4}",
+    "referenceSolution": "\\; u=\\sin x \\,\\textbf{ と置く。}\n\\textbf{【方針】}\n\\; u=\\sin x \\,\\textbf{ と置く。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "6B6506AA-7296-4C18-9A00-44CAF515FDD4",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t)=2\nf(0)=-1,\\ f'(0)=3",
+    "referenceAnswer": "f(t)=t^2+3t-1",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 初期位置 }x_0=-1\\text{、初期速度 }v_0=3\\text{、加速度 }a=2\\text{ の等加速度直線運動の位置についての微分方程式。}\n\\text{• 力学においては、} x''(t) = a \\text{の形でよく登場する。これは一定の力を受ける質点の位置変化を表す。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "6C4F2FA4-742F-474E-8103-E3BA3E979350",
+    "category": "",
+    "level": "",
+    "questionText": "a^3 + 18ab - 8b^3 + 27",
+    "referenceAnswer": "(a - 2b + 3)(a^2 + 4b^2 + 9 + 2ab - 3a + 6b)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{恒等式 } a^3 + b^3 = (a+b)^3 - 3ab(a+b) \\text{ を2回使う。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "6C703101-29A6-4005-87D6-594F60194AFC",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{1}{n}\\displaystyle \\sum_{k=0}^{2n}\\cos\\!\\left(\\frac{\\pi k}{n}\\right)",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\textbf{【方針】 }\n\\text{区分求積法を使う。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "6D0B855E-7E52-4C1B-8A44-AA9FF0FB03B3",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{\\log(1+2x)}{x}",
+    "referenceAnswer": "\\displaystyle 2",
+    "referenceSolution": "\\textbf{【ポイント】( [1] とする)}\n\\begin{aligned}\n      \\lim_{x\\to 0}\\frac{\\log(1+x)}{x} =& \\lim_{x\\to 0}\\frac{\\log(1+x) - \\log 1}{x - 0} \\\\[6pt]\n      =& \\log(x+1)' \\Big|_{x=0}\\\\[6pt]\n      =& \\frac{1}{x+1} \\Big|_{x=0}\\\\[6pt]\n      =& 1 \n      \\end{aligned}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "6ED3659C-A465-4E25-A2B2-4CAF4FEAEDA5",
+    "category": "",
+    "level": "",
+    "questionText": "5x^2 + 2xy + y^2 - 12x + 4y + 11 = 0",
+    "referenceAnswer": "{(x,y)=(2,-1),(2,-7)}\\textcolor{green}{　2つ}",
+    "referenceSolution": "\\text{方程式を y の二次方程式と見て，判別式が平方数になる整数 x を探索する。}\n\\textbf{【方針】}\n\\text{方程式を y の二次方程式と見て，判別式が平方数になる整数 x を探索する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "6FD0F698-5284-4008-A239-84083F7520B2",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\log 2} \\displaystyle \\frac{e^{2x}}{(1+e^x)^2}\\,dx",
+    "referenceAnswer": "\\log\\!\\displaystyle \\frac{3}{2} - \\displaystyle \\frac{1}{6}",
+    "referenceSolution": "\\text{置換 } u=e^x \\text{ により有理式(多項式の分数関数)に帰着させ，さらに } 1+u=w \\text{ とおいて積分を評価する．}\n\\textbf{【方針】}\n\\text{置換 } u=e^x \\text{ により有理式(多項式の分数関数)に帰着させ，さらに } 1+u=w \\text{ とおいて積分を評価する．}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "701CF34C-DB84-4CD4-BD3B-0DDE311D6A0F",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{\\sin(3x)}{x}",
+    "referenceAnswer": "\\displaystyle 3",
+    "referenceSolution": "$\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}=1$ \\text{ を使う}\n\\textbf{【方針】}\n$\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}=1$ \\text{ を使う}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "703AE189-789C-4F2D-83A4-55C68DD65991",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + x^2 + 1",
+    "referenceAnswer": "(x^2 + x + 1)(x^2 - x + 1)",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\nx^4 + x^2 + 1 &= (x^2 + 1)^2 - x^2 \\\\\n&= (x^2 + 1 + x)(x^2 + 1 - x)\\\\\n&= (x^2 + x + 1)(x^2 - x + 1)\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "70FFD2EF-5335-4593-86B4-0060A4295D31",
+    "category": "",
+    "level": "",
+    "questionText": "\\frac{1}{x} + \\frac{1}{y} = \\frac{1}{7}",
+    "referenceAnswer": "(8,56),(14,14),(56,8),\n        (6,-42),(-42,6)\\textcolor{green}{　5つ}",
+    "referenceSolution": "\\text{通分して1次式への因数分解を利用する。ただし、}x\\neq0,\\ y\\neq0\\text{ に注意する。}\n\\textbf{【方針】}\n\\text{通分して1次式への因数分解を利用する。ただし、}x\\neq0,\\ y\\neq0\\text{ に注意する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "71ECF2CF-206F-43FF-BA35-F097D1FEB231",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{1-e^{-x}}{x}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\textbf{【解答】}\n\\begin{aligned}\n  \\lim_{x\\to 0}\\frac{1-e^{-x}}{x}&= \\lim_{x\\to 0}\\frac{e^{x}-1}{x\\,e^{x}} \\\\[6pt]\n  &= \\lim_{x\\to 0}\\frac{e^{x}-e^0}{x - 0}  \\lim_{x\\to 0}\\frac{1} {e^{x}} \\\\[6pt]\n  &= (e^x)' |_{x=0} \\cdot \\frac{1}{1} \\\\[4pt]\n  &= e^x |_{x=0} \\cdot \\frac{1}{1} \\\\[4pt]\n  &= \\frac{1}{1} \\\\[4pt]\n  &= 1\n  \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "73D06F52-2C0D-4118-84C6-662FAA49A553",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+2} - 4a_{n+1} + 4a_n = 0\na_1 = 1,\\ a_2 = 6",
+    "referenceAnswer": "a_n = (-1 + 2n)2^{\\,n-1}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{特性方程式 } r^2 - 4r + 4 = 0 \\text{ の重根 } r \\text{ を用い，} a_n = (A+Bn)r^{n-1} \\text{ と書いて係数を決定する。(なぜこう置く事ができるかは解説の命題（重解版）を参照。)}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "73F50D01-0B10-4D81-A565-163E48987C2E",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 + 13y^2 = 413",
+    "referenceAnswer": "(x,y)=(20,1),(20,-1),(-20,1),(-20,-1),(19,2),(19,-2),(-19,2),(-19,-2)\\textcolor{green}{　8つ}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{13で割った余り(mod 13)を使う。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "7474E9C1-6272-4491-8807-C095BDE7AD6F",
+    "category": "",
+    "level": "",
+    "questionText": "a^3 - a b^2 - b^2 c + a^2 c",
+    "referenceAnswer": "(a+c)(a-b)(a+b)",
+    "referenceSolution": "\\text{最低次の変数 } c \\text{ について整理する。(aについては3次,bについては2次,cについては1次)}\n\\textbf{【方針】}\n\\text{最低次の変数 } c \\text{ について整理する。(aについては3次,bについては2次,cについては1次)}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "76E997DF-6492-444C-91C9-F3EC13EB7F41",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{1} \\displaystyle \\frac{dx}{1 + x^{2}}",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{4}",
+    "referenceSolution": "\\; x=\\tan\\theta \\,\\textbf{ と置換する。}\n\\textbf{【方針】}\n\\; x=\\tan\\theta \\,\\textbf{ と置換する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "774E49FD-A51A-4756-916A-52C94A3810BA",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{\\sqrt{1+x}-1}{x}",
+    "referenceAnswer": "\\displaystyle \\frac{1}{2}",
+    "referenceSolution": "\\textbf{【解答】}\n\\begin{aligned}\n      \\displaystyle \\lim_{x\\to 0}\\frac{\\sqrt{1+x}-1}{x}\n      =&\\displaystyle \\lim_{x\\to 0}\\frac{x}{x\\bigl(\\sqrt{1+x}+1\\bigr)} \\\\[6pt]\n      =&\\displaystyle \\lim_{x\\to 0}\\frac{1}{\\sqrt{1+x}+1} \\\\[6pt]\n      =&\\displaystyle \\frac{1}{2}\n    \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "79E62DF5-7FEB-4D58-A989-DF5110913E3C",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + 2x^3 + 2x^2 + 2x + 1",
+    "referenceAnswer": "(x + 1)^2(x^2 + 1)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{因数定理を使う。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "7A1F3B90-6E2C-4D8A-9B4F-1C2D3E4F5A33",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to\\infty}\\int_{0}^{x}t^{5}e^{-t}\\,dt",
+    "referenceAnswer": "\\displaystyle 120",
+    "referenceSolution": "\\color{black}\\textbf{【解答】}\n\\color{black}\\displaystyle \\int_{0}^{x}t^{5}e^{-t}\\,dt =\\Bigl[-t^{5}e^{-t}\\Bigr]_{0}^{x}+5\\int_{0}^{x}t^{4}e^{-t}\\,dt\n\\color{black}\\text{ここで }t=0\\text{ のとき }t^{5}e^{-t}=0\\text{ なので}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "7AF1A86F-615F-4E44-AEE8-F3BA22B7E6CC",
+    "category": "",
+    "level": "",
+    "questionText": "64x^3 - 27y^3",
+    "referenceAnswer": "(4x - 3y)(16x^2 + 12xy + 9y^2)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{立方差の公式 } a^3 - b^3 = (a-b)(a^2 + ab + b^2) \\text{ を用いる。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "7D0760FF-946D-469A-842D-60D426A01724",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = 2a_n + 3\na_1 = 1",
+    "referenceAnswer": "a_n = 2^{n+1} - 3",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{右辺が定数なので解の一つを定数列} A \\text{ の形で求め、これを使ってただの等比数列の式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "7D86EF83-52D7-4F6D-9A35-E085E17DA59C",
+    "category": "",
+    "level": "",
+    "questionText": "49x^2 - 36y^2",
+    "referenceAnswer": "(7x - 6y)(7x + 6y)",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n 49x^2 - 36y^2 &= (7x)^2 - (6y)^2 \\\\\n &= (7x - 6y)(7x + 6y)\n \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "7E10C37B-AB59-4B49-8037-D1D34D1B3055",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\frac{\\int_0^t f(s) \\, ds}{0.2}=8\\sin(10t)\nf(0)=0",
+    "referenceAnswer": "f(t)=16\\sin\\left(10t+\\displaystyle \\frac{\\pi}{2}\\right)",
+    "referenceSolution": "\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• コンデンサのみの回路に交流をかけた時、キルヒホッフ第二法則を適用すると、} \\displaystyle \\frac{Q(t)}{C} = V_0\\sin(\\omega t) \\text{という微分方程式が出てくる。}\n\\text{• 電圧 }V_0\\sin(\\omega t)\\text{ の位相}\\omega t \\text{よりも、電流 }I(t)\\text{ の位相は}\\displaystyle \\frac{\\pi}{2}\\text{進む。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "7FF2277B-44DC-480A-B1BF-7D1990121B24",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{e}^{e^{2}} \\displaystyle \\frac{dx}{x\\log x}",
+    "referenceAnswer": "\\log 2",
+    "referenceSolution": "\\; u=\\log x \\,\\textbf{ と置くと、}\\; du= \\frac{dx}{x} \\textbf{を用いる。}\n\\textbf{【方針】}\n\\; u=\\log x \\,\\textbf{ と置くと、}\\,\ndu= \\frac{dx}{x} \\textbf{を用いる。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "81279279-68BC-46E4-96E8-C6188AD7617D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 1}\\frac{x^{5}-1}{x-1}",
+    "referenceAnswer": "\\displaystyle 5",
+    "referenceSolution": "x^{5}-1=(x-1)\\bigl(x^{4}+x^{3}+x^{2}+x+1\\bigr)\n\\textbf{【方針】 }\nx^{5}-1=(x-1)\\bigl(x^{4}+x^{3}+x^{2}+x+1\\bigr)\nと因数分解してから、x\\to 1 の極限をとる。",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "8207893B-5988-4EF1-80C7-74D75FECFE3E",
+    "category": "",
+    "level": "",
+    "questionText": "x^5 + x^4 + 1",
+    "referenceAnswer": "(x^2 + x + 1)(x^3 - x + 1)",
+    "referenceSolution": "\\textbf{【方針】}\nf(x) = x^5+x^4 +1\\text{とおいて、まずは、因数定理を用い、候補（±1）を代入して、1次式の因数を持たないことを認識したら、その後、2次式×3次式の形で係数比較を行うのが自然。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "863C1DB8-6D69-4926-93D3-24FE77194C4D",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = 6a_n + b_n\\\\[4pt]\nb_{n+1} = -a_n + 4b_n\na_1 = 1,\\ b_1 = 2",
+    "referenceAnswer": "\\begin{cases}\n  a_n = (2 + 3n)5^{\\,n-2}\\\\[5pt]\n  b_n = (13 - 3n)5^{\\,n-2}\\end{cases}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{連立漸化式の一方を用いて他方を消去し，}a_n\\text{ のみの３項間漸化式に帰着させる。得られた漸化式の特性方程式が重根 } r=5 \\text{ になるので，重解版の命題を適用して一般項を求める。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "897713C5-D885-4103-937C-62F11F4E5C18",
+    "category": "",
+    "level": "",
+    "questionText": "36x^2 - 25y^2",
+    "referenceAnswer": "(6x - 5y)(6x + 5y)",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n36x^2 - 25y^2 &= (6x)^2 - (5y)^2 \\\\\n&= (6x - 5y)(6x + 5y)\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "8B1C27DD-2BAC-41F5-8D5B-2B1F58AB12ED",
+    "category": "",
+    "level": "",
+    "questionText": "x^3 + 2x^2 - 5x - 6",
+    "referenceAnswer": "(x+1)(x+3)(x-2)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{因数定理を用いる。定数項が } -6 \\text{ なので、} \\pm 1, \\pm 2, \\pm 3, \\pm 6 \\text{が候補。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "8BB1FDF5-A692-41E5-9B88-E62F9E4B96BA",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{e^{x}-e^{-x}}{2x}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\textbf{【解答】}\n\\text{分母分子に } $e^{x}$ \\text{ を掛け、} $\\displaystyle \\lim_{u\\to 0}\\frac{e^{u}-1}{u}=1$ \\text{ を用いる}\n\\begin{aligned}\n  \\lim_{x\\to 0}\\frac{e^{x}-e^{-x}}{2x} &= \\lim_{x\\to 0}\\frac{e^{x}-e^{-x}}{2x}\\cdot\\frac{e^{x}}{e^{x}} \\\\[6pt]\n  &= \\lim_{x\\to 0}\\frac{e^{2x}-1}{2x}\\cdot\\frac{1}{e^{x}} \\\\[6pt]\n  &= \\left(\\lim_{x\\to 0}\\frac{e^{2x}-1}{2x}\\right)\\cdot\\left(\\lim_{x\\to 0}\\frac{1}{e^{x}}\\right) \\\\[6pt]\n  &= 1 \\cdot \\frac{1}{1} \\\\[6pt]\n  &= 1 \\cdot 1 \\\\[6pt]\n  &= 1\n  \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "8C5A89E9-86F8-4300-9179-3C9CF22FDF90",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 - 3x^3 + 3x^2 - 3x + 2",
+    "referenceAnswer": "(x - 1)(x - 2)(x^2 + 1)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{因数定理を使う。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "8CF61D01-3229-4ABF-BC3F-46A7681BBFEF",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = \\displaystyle \\frac{4a_n + 3}{a_n + 2}\na_1 = 2",
+    "referenceAnswer": "a_n = 3 - \\displaystyle \\frac{4}{3 \\cdot 5^{n-1} + 1}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{定数解を } A \\text{ の形で求め、これを使ってただの等比数列の式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "8FB8536A-3433-4F7A-8B29-B44DC4186F09",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{3}^{6}\\displaystyle \\frac{1}{x^{2}-4}\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{4}\\log\\displaystyle \\frac{5}{2}",
+    "referenceSolution": "x^2-4=(x-2)(x+2) \\text{に因数分解して部分分数分解を行う。}\n\\textbf{【方針】}\nx^2-4=(x-2)(x+2) \\text{に因数分解して部分分数分解を行う。}\n\\textbf{【部分分数分解】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9161EDD7-12DE-4729-A2A7-9A55E060C466",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{h\\to \\infty}(1+h)^{\\frac{1}{h}}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{対数を取って } \\displaystyle\\frac{\\log(1+h)}{h}\\text{ の極限を調べ、指数関数の連続性で元に戻す。}\n\\textbf{【計算】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "93BDE66A-D463-457F-A1C0-249A521A0B81",
+    "category": "",
+    "level": "",
+    "questionText": "4x^3y - 9xy^3",
+    "referenceAnswer": "xy(2x-3y)(2x+3y)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{共通因数 } xy \\text{ をくくり出す。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9477B6DC-F0A3-4B53-8891-212FED0C5886",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{-1}^{1}\\left|x^2-\\displaystyle \\frac{1}{4}\\right|\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{2}",
+    "referenceSolution": "\\text{零点} x=\\pm \\displaystyle \\frac{1}{2}\\text{ で区間を}\n        \\left[-1,-\\displaystyle \\frac{1}{2}\\right],\\left[-\\displaystyle \\frac{1}{2},\\displaystyle \\frac{1}{2}\\right],\\left[\\displaystyle \\frac{1}{2},1\\right]\\text{ に分割して計算する。}\n\\textbf{【方針】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "98C763E5-86DB-47A3-B2EF-D070244EC978",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = 2a_n + n^2 + 1\na_1 = 1",
+    "referenceAnswer": "a_n = 2^{n+2} - n^2 - 2n - 4",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{右辺が2次式なので解の一つを} An^2 + Bn + C \\text{ の形で求め、これを使ってただの等比数列の式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9A2E7C44-1B3A-4D7B-9E7F-2E3C1F6B8C10",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\sum_{k=1}^{\\infty}\\frac{1}{2^{k}}\\sin\\!\\left(\\frac{2k\\pi}{3}\\right)",
+    "referenceAnswer": "\\displaystyle \\frac{\\sqrt{3}}{7}",
+    "referenceSolution": "\\sin\\!\\left(\\frac{2k\\pi}{3}\\right)\\text{ は周期 }3\\text{（}\\frac{\\sqrt3}{2},-\\frac{\\sqrt3}{2},0\\text{）なので }S_{3M},S_{3M+1},S_{3M+2}\\text{ を比較する}\n\\textbf{【方針】}\n\\text{部分和 }\\displaystyle S_N=\\displaystyle \\sum_{k=1}^{N}\\frac{1}{2^{k}}\\sin\\!\\left(\\frac{2k\\pi}{3}\\right)\\text{ を考え、}\nN=3M,3M+1,3M+2\\text{ の3通りで同じ極限に収束することを示す。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9B75DE01-6B72-487F-B653-EE769057E58B",
+    "category": "",
+    "level": "",
+    "questionText": "f'(t)=2\nf(0)=1",
+    "referenceAnswer": "f(t)=2t + 1",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 一定加速度運動の速度変化についての微分方程式。}\n\\text{• 力学においては、} v'(t) = a \\text{の形でよく登場する。これは一定の力を受ける質点の速度変化を表す。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9BC1C756-BFC5-41C7-8751-D78DF6430084",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{ \\frac {\\pi} {2}}^{ \\frac {5} {2}\\pi}\\sqrt{1+\\sin x}\\ dx",
+    "referenceAnswer": "\\begin{aligned}\n4\\sqrt{2}\n\\end{aligned}",
+    "referenceSolution": "\\text{半角公式を用いて }\\sqrt{1+\\sin x}\\text{ を }\\cos\\text{ の形に変形し，} \\text{絶対値の符号で区間分割して原始関数で評価する。}\n\\textbf{【方針】}\n\\text{半角公式を用いて }\\sqrt{1+\\sin x}\\text{ を }\\cos\\text{ の形に変形し，} \\text{絶対値の符号で区間分割して原始関数で評価する。}\n\\begin{aligned}\n1+\\sin x &= 1 + \\cos\\left(\\displaystyle\\frac{\\pi}{2} - x\\right)\\\\[5pt]\n&= 2\\cos^2\\displaystyle\\frac{\\frac{\\pi}{2} - x}{2}\\\\[5pt]\n&= 2\\cos^2\\left(\\displaystyle\\frac{\\pi}{4} - \\displaystyle\\frac{x}{2}\\right)\\\\[5pt]\n&= 2\\cos^2\\left(\\displaystyle\\frac{x}{2} - \\displaystyle\\frac{\\pi}{4}\\right)\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9D8F2E21-0F37-4C8B-A5B4-7A4F2B3A0C11",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{\\cos x-\\cos x^2}{x-x^2}",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\color{black}\\textbf{【方針】}\n\\color{black}\\cos\\text{ に平均値の定理を使う。}\n\\color{black}\\textbf{【平均値の定理】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9E0F1A2B-3C4D-5E6F-7A8B-9C0D1E2F3C4D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{2\\pi} \\sqrt{2 - 2\\cos x} \\, dx",
+    "referenceAnswer": "8",
+    "referenceSolution": "\\textbf{【背景】}\n\\text{この積分は、サイクロイドの弧長を求める過程で現れる。}\n\\text{サイクロイド } x = t - \\sin t, \\; y = 1 - \\cos t \\text{ の弧長は、}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "9F9BF526-C923-4508-A690-C5E04D27A79E",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = 2a_n + 3^n\na_1 = 1",
+    "referenceAnswer": "a_n = 3^n - 2^n",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{右辺が指数関数なので解の一つを指数関数} A \\cdot 3^{n} \\text{ の形で求め、これを使ってただの等比数列の式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A029A6D1-EB0C-4D46-9DDE-51ED580623C7",
+    "category": "",
+    "level": "",
+    "questionText": "3^x + 3^{x+1} = 9^x",
+    "referenceAnswer": "x = \\log_3 4 \\text{ または } 2\\log_3 2",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{すべての項を } 3^x \\text{ で表し、} 3^x = t \\text{ とおいて2次方程式に帰着させる。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A056E0E4-7F5B-4EC7-ACC2-F91C38585F7E",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{2}^{5}(x-2)(5-x)\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{9}{2}",
+    "referenceSolution": "\\text{「 } \\displaystyle \\frac 1 {6} \\text{ 公式」} \\displaystyle \\int_{\\alpha}^{\\beta}(x-\\alpha)(\\beta-x)\\,dx  = \\displaystyle \\frac{(\\beta-\\alpha)^3}{6} \\text{を使う。}\n\\textbf{【方針】}\n\\text{「 } \\displaystyle \\frac 1 {6} \\text{ 公式」} \\displaystyle \\int_{\\alpha}^{\\beta}(x-\\alpha)(\\beta-x)\\,dx  = \\displaystyle \\frac{(\\beta-\\alpha)^3}{6} \\text{を使う。}\n\\textbf{【公式による計算】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A191EF43-6467-4047-8FE9-BFEE5B89D08E",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{ \\frac {\\pi} {4}}^{\\frac{\\pi}{3}}\\tan^{2}x\\left(\\tan^{2}x+1\\right)\\,dx",
+    "referenceAnswer": "\\displaystyle \\sqrt{3} -\\displaystyle \\frac{1}{3}",
+    "referenceSolution": "\\; u=\\tan x \\,\\textbf{と置換する。}\n\\textbf{【方針】}\n\\; u=\\tan x \\,\\textbf{と置換する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A1B2C3D4-E5F6-7890-ABCD-EF1234567890",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^1 \\sqrt{1 + 4x^2} \\, dx",
+    "referenceAnswer": "\\dfrac{\\sqrt{5}}{2} + \\dfrac{1}{4} \\log(2+\\sqrt{5})",
+    "referenceSolution": "\\textbf{【背景】}\n\\text{この積分は、放物線の弧長を求める過程で現れる。}\n\\text{放物線 } y = 1 + x^2 \\text{ の弧長は、}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A1B2C3D4-E5F6-A7B8-C9D0-E1F2A3B4C5D6",
+    "category": "",
+    "level": "",
+    "questionText": "3^x + 3^{-x} + 9^x + 9^{-x} = 4",
+    "referenceAnswer": "x = 0",
+    "referenceSolution": "\\textbf{【方針】}\n3^x + 3^{-x} = t \\text{ とおいて、} 9^x + 9^{-x} \\text{ を } t \\text{ で表し、2次方程式に帰着させる。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A1B2C3D4-E5F6-G7H8-I9J0-K1L2M3N4O5",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{\\frac{\\pi}{6}}^{\\frac{\\pi}{2}} \\frac{dx}{\\sin x}",
+    "referenceAnswer": "\\log(2+\\sqrt{3})",
+    "referenceSolution": "\\text{分母分子に } \\sin x \\text{ をかけて、} u = \\cos x \\text{ と置換する。}\n\\textbf{【方針】}\n\\text{分母分子に } \\sin x \\text{ をかけて、} u = \\cos x \\text{ と置換する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A36F411F-99B5-40E0-8BE1-F9126992BA14",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{1}\\displaystyle \\frac{1}{1+x^{3}}\\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{3}\\log 2+\\displaystyle \\frac{\\pi}{3\\sqrt{3}}",
+    "referenceSolution": "1+x^3=(1+x)(1-x+x^2) \\text{ に因数分解して部分分数分解を行い，原始関数を求めてから定積分を評価する。}\n\\textbf{【方針】}\n1+x^3=(1+x)(1-x+x^2) \\text{ に因数分解して部分分数分解を行い，原始関数を求めてから定積分を評価する。}\n\\textbf{【部分分数分解】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A370BF54-FFB7-4B23-BFA7-522C277250B8",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{ \\frac{\\log 3}{2}} \\displaystyle \\frac{2}{e^x+e^{-x}}dx",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{6}",
+    "referenceSolution": "\\text{分母分子に}e^x\\text{を掛けて} \\dfrac{e^x}{1+e^{2x}} \\text{とし，置換}u=e^x \\text{を行う。}\n\\textbf{【方針】}\n\\text{分母分子に}e^x\\text{を掛けて} \\dfrac{e^x}{1+e^{2x}} \\text{とし，置換}u=e^x \\text{を行う。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A39DF72B-47BA-473A-83D4-5D35E8ADD533",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\sqrt[n]{n}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\textbf{【解答】}\n\\text{対数を取ると、}\\log\\sqrt[n]{n} = \\displaystyle \\frac{\\log n}{n} \\ \\underset{n\\to\\infty}{\\longrightarrow} \\ 0 \\cdots (1)\n\\text{よって、}\\log \\text{の中身は} 1 \\text{に収束する。ゆえに、}\\lim_{n\\to\\infty} \\sqrt[n]{n} = 1",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A3ECB1EE-67C3-4B41-B8ED-13669F16A63D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\frac{\\int_0^t f(s) \\, ds}{C}=A\\sin(\\omega t)\nC:正の定数",
+    "referenceAnswer": "f(t)=\\omega CA\\sin\\left(\\omega t+\\displaystyle \\frac{\\pi}{2}\\right)",
+    "referenceSolution": "\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• コンデンサのみの回路に交流をかけた時、キルヒホッフ第二法則を適用すると、} \\displaystyle \\frac{Q(t)}{C} = V_0\\sin(\\omega t) \\text{という微分方程式になる。}\n\\text{• 電圧 }V_0\\sin(\\omega t)\\text{ の位相}\\omega t \\text{よりも、電流 }I(t)\\text{ の位相は}\\displaystyle \\frac{\\pi}{2}\\text{進む。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A4F3C2D1-7B6E-4C2A-9E3B-1D8C0E7F5A12",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{\\log(n!)}{n\\log n-n}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\text{和 }\\log(n!)=\\displaystyle \\sum_{k=1}^n\\log k\\text{ を }\\int\\log x\\,dx\\text{ ではさみうち}\n\\textbf{【方針】}\n\\text{(1) }\\log(n!)=\\displaystyle \\sum_{k=1}^n\\log k\\text{ とおく。}\n\\text{(2) 単調増加関数 }\\log x\\text{ に対する積分評価で }\\sum\\log k\\text{ をはさみうちする。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A5B6C7D8-E9F0-1234-5678-9ABCDEF01234",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{-\\frac{\\pi}{4}}^{\\frac{\\pi}{4}} \\cos^3 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{5\\sqrt{2}}{6}",
+    "referenceSolution": "\\text{被積分関数は偶関数なので、} 2\\int_{0}^{\\pi/4} \\cos^3 x \\, dx \\text{ として計算する。}\n\\textbf{【方針】}\n\\text{被積分関数 } \\cos^3 x \\text{ は偶関数なので、}\n\\displaystyle \\int_{-\\frac \\pi 4}^{\\frac \\pi 4} \\cos^3 x \\, dx = \\displaystyle 2\\int_{0}^{\\frac \\pi 4} \\cos^3 x \\, dx \\text{ として計算する。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A5BA5B5C-1557-48C1-B4D3-7C57FC5E3A41",
+    "category": "",
+    "level": "",
+    "questionText": "a^3 - 4a b^2 - 4b^2 c + a^2 c",
+    "referenceAnswer": "(a-2b)(a+2b)(a+c)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{最低次の変数 } c \\text{ について整理する。(aについては3次,bについては2次,cについては1次)}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A5E3309B-0558-4CCE-8B01-62E93D2FC90E",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n \\to \\infty} \\frac{1}{n} \\displaystyle \\sum_{k=1}^{n} \\frac{1}{n+k}",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\text{区分求積法で定積分に帰着させる}\n\\textbf{【方針】}\n\\text{区分求積法で定積分に帰着させる}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A60C22EA-24D4-4C3B-A60A-90996784D9C5",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{2^{n}}{n!}",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\frac{2^{n}}{n!}=\\prod_{k=1}^{n}\\frac{2}{k} と書き，3 \\le k \\text{ では } \\displaystyle \\frac{2}{k} \\le \\frac{2}{3} \\text{ が成り立つ事を用いて、はさみうちにする。}\n\\textbf{【方針】}\n\\frac{2^{n}}{n!}=\\prod_{k=1}^{n}\\frac{2}{k} と書き，\n3 \\le k \\text{ では } \\displaystyle \\frac{2}{k} \\le \\frac{2}{3} \\text{ が成り立つ事を用いて、はさみうちにする。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A60F2EC9-A23B-420B-89BE-6D8708B0DFA8",
+    "category": "",
+    "level": "",
+    "questionText": "x^3 + 64",
+    "referenceAnswer": "(x + 4)(x^2 - 4x + 16)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{立方和の公式 } a^3 + b^3 = (a+b)(a^2 - ab + b^2) \\text{ を用いる。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A6304C30-50F4-40E4-A056-A57A60548064",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\frac{\\int_0^t f(s) \\, ds}{2}+\\sqrt{3}f(t)=4\\cos\\left(\\displaystyle \\frac{t}{2}\\right)\nf(0)=0",
+    "referenceAnswer": "f(t)=2\\cos\\left(\\displaystyle \\frac{t}{2} + \\displaystyle \\frac{\\pi}{6}\\right)-\\sqrt{3}e^{- \\frac{t}{2\\sqrt{3}}}",
+    "referenceSolution": "\\text{【力学】}\n\\text{• 力学の空気抵抗と復元力を受ける質点の強制振動は} mv'(t) + kv(t) + k\\int_0^t v(s)ds = F_0\\cos(\\omega t) \\text{ でモデル化される。}\n\\text{• 定常状態では、速度 }v(t) \\text{ は外力と同じ角周波数 } \\omega \\text{ で振動し、振幅は } \\displaystyle \\frac{F_0}{\\sqrt{\\left(\\frac{k}{m}\\right)^2+\\left(\\displaystyle \\frac{1}{\\frac{\\omega m}{k}}\\right)^2}} \\text{ となる}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A73464B2-66D9-47E5-8069-94AC68CDB90F",
+    "category": "",
+    "level": "",
+    "questionText": "ab - bc + cd - da",
+    "referenceAnswer": "(a-c)(b-d)",
+    "referenceSolution": "\\text{ } a \\text{ と } c \\text{ について整理する。}\n\\textbf{【方針】}\n\\text{ } a \\text{ と } c \\text{ について整理する。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A8B9C0D1-2E3F-4A5B-6C7D-8E9F0A1B2C3",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = \\displaystyle \\frac{a_n - 9}{a_n - 5}\na_1 = 2",
+    "referenceAnswer": "a_n = \\displaystyle \\frac{3n + 1}{n+1}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{定数解を } A \\text{ の形で求め、これを使ってただの等比数列の式に帰着させる。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 + 6y^2 = 223",
+    "referenceAnswer": "(x,y)=(13,3),(13,-3),(-13,3),(-13,-3)\\textcolor{green}{　4つ}",
+    "referenceSolution": "\\text{mod 6で考える。}\n\\textbf{【方針】}\n\\text{mod 6で考える。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to\\frac{\\pi}{2}}\\cos(3x)\\tan(5x)",
+    "referenceAnswer": "\\displaystyle -\\frac{3}{5}",
+    "referenceSolution": "\\text{平行移動の考え方で } t = x - \\displaystyle\\frac{\\pi}{2} \\text{ と置き、} t \\to 0 \\text{ として扱う}\n\\textbf{【方針】}\n\\text{極限点 } x = \\displaystyle\\frac{\\pi}{2} \\text{ を原点に平行移動する。すなわち、} t = x - \\displaystyle\\frac{\\pi}{2} \\text{ と置換することで、} x \\to \\displaystyle\\frac{\\pi}{2} \\text{ を } t \\to 0 \\text{ に変換する。}\n\\text{この置換により、既知の極限公式 } \\displaystyle \\lim_{t\\to 0}\\frac{\\sin t}{t} = 1 \\text{ を直接適用できるようになる。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "AA271833-9840-40EE-924F-1D94AD63FEB6",
+    "category": "",
+    "level": "",
+    "questionText": "xy - 2x - y = 5",
+    "referenceAnswer": "{(x,y)=(2,9),(8,3),(0,-5),(-6,1)}\\textcolor{green}{　4つ}",
+    "referenceSolution": "\\text{1次式への因数分解を利用する。}\n\\textbf{【方針】}\n\\text{1次式への因数分解を利用する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "AB08A968-36A0-40E9-B392-651BAE535DA9",
+    "category": "",
+    "level": "",
+    "questionText": "a_n = \\frac{1}{2}(a_{n-1})^2\na_1 = 5",
+    "referenceAnswer": "a_n = 2 \\cdot \\left(\\dfrac{5}{2}\\right)^{2^{\\,n-1}}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{対数を取る。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "ABE37AA2-9FEC-4ADD-9022-1A38340249F1",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle (2-2)+(2-2)+(2-2)+\\cdots",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\textbf{【解説】}\n\\text{無限級数} \\displaystyle \\sum_{k=1}^{\\infty} a_k= (2-2)+(2-2)+(2-2)+\\cdots \\text{ の収束の定義より、まず部分和} S_n \\text{を考えると、}\n\\text{ここで、} a_1 = 2-2 = 0, \\ a_2 = 2-2 = 0, \\ a_3 = 2-2 = 0, \\ \\ldots \\text{ である。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "AC0C8F06-65FE-4FDD-8DB8-04252764D3CB",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{-2}^{2} x^4 \\sin^5 x \\, dx",
+    "referenceAnswer": "0",
+    "referenceSolution": "\\textbf{【解説】}\nx^4 \\text{ は偶関数，} \\sin^5 x \\text{ は奇関数。また、偶} \\times \\text{奇} = \\text{奇関数なので、} x^4 \\sin^5 x \\text{ は奇関数。}\n\\text{したがって、対称区間 }[-2,2] \\text{ での積分は、奇関数が原点対称なグラフであることから、}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "ADC1559C-5A8D-490C-9D10-8722FECF3115",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t) + 2\\beta\\,f'(t) + \\omega_0^2 f(t) = 0\nf(0)=f_0,\\ f'(0)=v_0",
+    "referenceAnswer": "\\displaystyle f(t)=e^{-\\beta t}\\left( f_0\\cos\\left(\\sqrt{\\omega_0^2-\\beta^2}\\ \\,t\\right)+\\displaystyle \\frac{v_0+\\beta f_0}{\\sqrt{\\omega_0^2-\\beta^2}}\\,\\sin\\left(\\sqrt{\\omega_0^2-\\beta^2}\\ \\,t\\right)\\right)",
+    "referenceSolution": "\\text{【力学(※大学レベル)】}\n\\text{• 減衰振動}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "AF028FDC-E4ED-4B5D-907A-FD053AA682F0",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\displaystyle \\sum_{k=1}^{n}\\frac{(-1)^{k+1}}{k}",
+    "referenceAnswer": "\\displaystyle \\log 2",
+    "referenceSolution": "\\text{解答1：偶数部分和を変形して区分求積}\\quad/\\quad\\text{解答2：積分表示と等比和で評価}\n\\textbf{【命題】}\n\\displaystyle \\sum_{k=1}^{\\infty}\\frac{(-1)^{k+1}}{k}=\\log 2\n\\textbf{【解答1】（偶数部分和→区分求積）}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "AF7A04F4-3FFC-435D-ACF7-C0741E7B23F8",
+    "category": "",
+    "level": "",
+    "questionText": "2x^2 + 11xy + 12y^2 - 5y - 5 = 0",
+    "referenceAnswer": "{(x,y)=(4,-1)}\\textcolor{green}{　1つ}",
+    "referenceSolution": "\\text{二次・一次項に注目し、二つの一次式の積に分解する。定数は後で調整する。}\n\\textbf{【方針】}\n\\text{二次・一次項に注目し、二つの一次式の積に分解する。定数は後で調整する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B1C2D3E4-F5G6-7890-HIJK-LM1234567890",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{2}} \\sin^7 x \\cos^9 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{1}{560}",
+    "referenceSolution": "I_{m,n}=\\displaystyle \\int_{0}^{\\frac{\\pi}{2}} \\sin^{2m-1} x \\cos^{2n-1} x\\,dx \\text{ とおき、} u=\\sin^2 x \\text{ とおく置換積分により、階乗を使った形に帰着させる。}\n\\textbf{【方針】}\nI_{m,n}=\\displaystyle \\int_{0}^{\\frac{\\pi}{2}} \\sin^{2m-1} x \\cos^{2n-1} x\\,dx \\text{ とおき、} u=\\sin^2 x \\text{ とおく置換積分により、階乗を使った形に帰着させる。}\n\\textcolor{green}{【命題】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B1D8559E-D3F4-45DA-A889-8056A50EE5A8",
+    "category": "",
+    "level": "",
+    "questionText": "7x - 3y + 13z = 2",
+    "referenceAnswer": "\\begin{aligned}\n  x &= 3k + 2 - 13\\ell,\\\\\n  y &= 7k + 4 - 26\\ell,\\\\\n  z &= \\ell \n  \\end{aligned}\n  \\quad (k, \\ellは整数)",
+    "referenceSolution": "\\text{係数 }3,7\\text{ の最大公約数は }1\\text{ であり、このことにより任意の }z\\text{ に対して，方程式 }7x-3y+13z=2\\text{ の整数解 }x,y\\text{ が存在する。よって適当に }z\\text{ を定め、その値に対する全ての} (x,y) \\text{を求めることで一般解を求める。}\n\\textbf{【方針】}\n\\text{係数 }3,7\\text{ の最大公約数は }1\\text{ であり、このことにより任意の }z\\text{ に対して，方程式 }7x-3y+13z=2\\text{ の整数解 }x,y\\text{ が存在する。よって適当に }z\\text{ を定め、その値に対する全ての} (x,y) \\text{を求めることで一般解を求める。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B2198AC3-050B-4F1D-B584-A2C5DC3CA60F",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to \\infty} x \\sin\\!\\left(\\frac{1}{x}\\right)",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\textbf{【解答】}\n\\begin{aligned}\n      \\lim_{x\\to \\infty} x \\sin\\!\\left(\\frac{1}{x}\\right) &= \\lim_{x\\to \\infty} \\frac{\\sin\\!\\left(\\frac{1}{x}\\right)}{\\frac{1}{x}} \\\\[6pt]\n      &= \\displaystyle 1\n      \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B2C3D4E5-F6A7-B8C9-D0E1-F2A3B4C5D6E7",
+    "category": "",
+    "level": "",
+    "questionText": "\\begin{cases}\n\\sin x + \\cos y = 1 \\\\[8pt]\n\\cos x + \\sin y = \\sqrt{3}\n\\end{cases}\n0 \\leq x < 2\\pi, \\quad 0 \\leq y < 2\\pi",
+    "referenceAnswer": "x = \\displaystyle\\frac{\\pi}{6}, \\quad y = \\displaystyle\\frac{\\pi}{3}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{2つの方程式を加減して、} \\sin(x + y) \\text{ や } \\cos(x - y) \\text{ の形を作る。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B2C3D4E5-F6G7-8901-BCDE-F2345678901",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t)+2\\,f'(t)+3\\,f(t)=12\\cos(3t) \\ \\ \\text{の定常状態の }f'(t)\nf(0)=0,\\ f'(0)=0",
+    "referenceAnswer": "3\\sqrt{2}\\cos\\left(3t - \\dfrac{\\pi}{4}\\right)",
+    "referenceSolution": "\\text{未定係数法で特解を求めて、それを引いた関数を新たに定義し、下記の右辺0(同次方程式)の場合の公式を適用して解く。}\n\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• RLC直列交流回路について、キルヒホッフの第二法則を用いると }\n  LQ''(t) + RQ'(t) + \\displaystyle \\frac{Q(t)}{C} = V_0\\cos(\\omega t) \\text{が成り立つ。}\n\\textcolor{brown}{\\large{【問題の記号と電磁気学における記号の対応】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B2C3D4E5-F6G7-H8I9-J0K1-L2M3N4O5P6",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{4}} \\frac{dx}{\\cos x}",
+    "referenceAnswer": "\\log(1+\\sqrt{2})",
+    "referenceSolution": "\\text{分母分子に } \\cos x \\text{ をかけて、} u = \\sin x \\text{ と置換する。}\n\\textbf{【方針】}\n\\text{分母分子に } \\cos x \\text{ をかけて、} u = \\sin x \\text{ と置換する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B38E9107-4CB3-4966-AAA8-6966FC3F8B17",
+    "category": "",
+    "level": "",
+    "questionText": "x^7 + x^6 + x^5 + x^4 + x^3 + x^2 + x + 1",
+    "referenceAnswer": "(x + 1)(x^4 + 1)(x^2 + 1)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{因数定理を用いる。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B4FDC2FF-78D4-5C52-C9FE-2477A027B74E",
+    "category": "",
+    "level": "",
+    "questionText": "Lf'(t)=A\\sin(\\omega t)\nf(0)=0",
+    "referenceAnswer": "f(t)=-\\displaystyle \\frac{A}{L\\omega}\\cos(\\omega t)+\\displaystyle \\frac{A}{L\\omega}",
+    "referenceSolution": "\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• 電磁気学においては、} LI'(t) = V_0\\sin(\\omega t) \\text{ の形で登場する。}\n\\text{• 電圧 }V_0\\sin(\\omega t)\\text{ の位相}\\omega t \\text{よりも、電流 }I(t)\\text{ の位相は}\\displaystyle \\frac{\\pi}{2}\\text{遅れる。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B8F9C5D2-4E6A-4F8B-9C1D-3A5B7C9D1E2F",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 - 2xy - 2x + 6y - 6 = 0",
+    "referenceAnswer": "{(x,y)=(4,1),(6,3),(2,3),(0,1)}\\textcolor{green}{　4つ}",
+    "referenceSolution": "\\text{二次・一次項に注目し、二つの一次式の積に分解する。定数は後で調整する。}\n\\textbf{【方針】}\n\\text{二次・一次項に注目し、二つの一次式の積に分解する。定数は後で調整する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B9B22B73-65CB-4AE7-A6BF-79E52EEDA3BC",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{-\\frac{\\pi}{6}}^{\\frac{\\pi}{6}} \\frac{dx}{\\cos^3 x}",
+    "referenceAnswer": "\\displaystyle \\frac{1}{2}\\log 3 + \\frac{2}{3}",
+    "referenceSolution": "\\text{被積分関数は偶関数なので、} 2\\int_{0}^{\\frac{\\pi}{6}} \\frac{dx}{\\cos^3 x} \\text{ として計算する。}\n\\textbf{【方針】}\n\\text{被積分関数 }\\displaystyle \\frac{1}{\\cos^3 x} \\text{ は偶関数なので、}\\displaystyle \\int_{-\\frac{\\pi}{6}}^{\\frac{\\pi}{6}} \\frac{dx}{\\cos^3 x} = 2\\int_{0}^{\\frac{\\pi}{6}} \\frac{dx}{\\cos^3 x} \\text{ として計算する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "B9C0D1E2-F3A4-5B6C-7D8E-9F0A1B2C3D4",
+    "category": "",
+    "level": "",
+    "questionText": "x^3 - 2x^2 - 5x + 6",
+    "referenceAnswer": "(x - 1)(x - 3)(x + 2)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{因数定理を用いる。定数項が } 6 \\text{ なので、} \\pm 1, \\pm 2, \\pm 3, \\pm 6 \\text{が候補。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BB41368E-ACE1-4D11-B8A8-CEB3918B6EE5",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{\\log(1+x)}{x}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\text{これは } f(x)=\\log(1+x) \\text{ の } x=0 \\text{ での微分係数である}\n\\textbf{【方針】}\n\\text{これは } f(x)=\\log(1+x) \\text{ の } x=0 \\text{ での微分係数である}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BCC5BF01-27BE-4D8C-8E40-8923C764BBEC",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty} n\\!\\left(\\sqrt{n+1}-\\sqrt{n}\\right)",
+    "referenceAnswer": "\\displaystyle \\infty",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{共役な数} \\sqrt{n+1}+\\sqrt{n} \\text{を分母分子に掛けて不定形を解消する。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BDCAAAB3-8109-4E6B-8A45-9EFD024A0B05",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{2}^{2\\sqrt{3}} \\displaystyle \\frac{dx}{\\sqrt{16 - x^{2}}}",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{6}",
+    "referenceSolution": "\\; x=4\\sin\\theta \\textbf{ と置く。}\n\\textbf{【方針】}\n\\; x=4\\sin\\theta \\textbf{ と置く。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BE1669B0-E7C4-4855-B98E-2F2AE53B7981",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = \\displaystyle \\frac{a_n}{a_n + 1}\na_1 = 1",
+    "referenceAnswer": "a_n = \\displaystyle \\frac{1}{n}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{逆数を取る。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BE3EC919-60B4-4334-BE8F-389731CF565D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\displaystyle \\sum_{k=1}^{n}\\frac{(-1)^{k-1}}{2k-1}",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{4}",
+    "referenceSolution": "\\text{部分和を積分で表し、等比数列の和の公式を用いて評価する}\n\\textbf{【方針】}\n\\text{部分和を積分で表し、等比数列の和の公式を用いて評価する}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BE5B4E1D-4297-4F80-98BC-F74655BF03F9",
+    "category": "",
+    "level": "",
+    "questionText": "2x^2 + 5xy + 2y^2 - 5x - y - 3",
+    "referenceAnswer": "(2x + y + 1)(x + 2y - 3)",
+    "referenceSolution": "\\text{ } x \\text{ について整理し、たすきがけを用いて因数分解する。}\n\\textbf{【方針】}\n\\text{ } x \\text{ について整理し、たすきがけを用いて因数分解する。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BEB5E18C-4AF5-4411-8578-2CE052A3CDE8",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t) = -\\omega_0^2\\,f(t)\nf(0)=A_0,\\ f'(0)=v_0",
+    "referenceAnswer": "\\displaystyle f(t)=A_0\\cos(\\omega_0 t)+\\displaystyle \\frac{v_0}{\\omega_0}\\sin(\\omega_0 t)",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学においては、} mx''(t) + kx(t) = 0 \\text{ の形でよく登場する。これはばね-質量系の単振動の運動方程式。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "BED49300-099F-4DD3-9DC6-1AB5635BEC1B",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{6}} \\sin^{2}x \\cos x \\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{24}",
+    "referenceSolution": "\\; u=\\sin x \\,\\textbf{と置く。}\n\\textbf{【方針】}\n\\; u=\\sin x \\,\\textbf{と置く。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C0367E7C-E68E-4377-B638-8C6EDB803AEB",
+    "category": "",
+    "level": "",
+    "questionText": "abcd = a + b + c + d \\qquad (0 < a, b, c, d)",
+    "referenceAnswer": "{(a,b,c,d)=(1,1,2,4)とその順列。すなわち、}\n  \\begin{aligned}\n    (a,b,c,d) = &(1,1,2,4), (1,1,4,2), (1,2,1,4), (1,2,4,1),\\\\\n    &(1,4,1,2), (1,4,2,1), (2,1,1,4), (2,1,4,1),\\\\\n    &(2,4,1,1), (4,1,1,2), (4,1,2,1), (4,2,1,1)\\textcolor{green}{　12つ}\n    \\end{aligned}",
+    "referenceSolution": "\\text{対称性から } a \\le b \\le c \\le d \\text{ と仮定し、範囲を絞り込む。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C07C6DF1-7283-4797-936F-1DFD8D597680",
+    "category": "",
+    "level": "",
+    "questionText": "\\log_3(x+1) - \\log_3(x-1) = 1",
+    "referenceAnswer": "x = 2",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{対数の性質 } \\log a - \\log b = \\log \\displaystyle\\frac{a}{b} \\text{ を用いて差を商に直し、その後1次分数関数の方程式に帰着させる。真数条件に注意する。}\n\\textbf{【真数条件】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C08EC860-F248-4E0A-90FD-F321E66616A4",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{-1}^{1}\\displaystyle \\frac{1}{x^{2}+2x+5}\\,dx",
+    "referenceAnswer": "\\displaystyle \\displaystyle \\frac{\\pi}{8}",
+    "referenceSolution": "\\textbf{【解説】}\n\\text{分母} = (x+1)^2+4\\text{より、置換} x+1=2\\tan\\theta\\text{を行う。}\n\\begin{aligned} dx &= \\displaystyle \\frac{dx}{d\\theta} d\\theta = 2\\displaystyle \\frac{1}{\\cos ^2 \\theta} d \\theta \\\\\n    &= 2\\left( 1 + \\tan ^2 \\theta \\right) d \\theta\n    \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C1D2E3F4-G5H6-I7J8-K9L0-M1N2O3P4Q5",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{-\\frac{\\pi}{12}}^{\\frac{\\pi}{12}} \\frac{dx}{\\cos^2(3x)}",
+    "referenceAnswer": "\\displaystyle \\frac{2}{3}",
+    "referenceSolution": "\\text{置換 } u = 3x \\text{ を用いて、基本積分 } \\int \\frac{1}{\\cos^2 u} \\, du = \\tan u + C \\text{ に帰着させる。}\n\\textbf{【方針】}\n\\text{置換 } u = 3x \\text{ を用いて、基本積分 } \\displaystyle \\int \\frac{1}{\\cos^2 u} \\, du = \\tan u + C \\text{ に帰着させる。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C1F3E989-594D-446A-8E94-FD7E70C7450F",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}x\\sin\\!\\left(\\frac{1}{x}\\right)",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "はさみうちの原理を用いる\n\\textbf{【方針】}\nはさみうちの原理を用いる\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C286F6A2-9859-42E0-9719-C29CE61F82AC",
+    "category": "",
+    "level": "",
+    "questionText": "2\\sin^2 x - \\sin x - 1 = 0\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = \\displaystyle\\frac{\\pi}{2}, \\displaystyle\\frac{7\\pi}{6}, \\displaystyle\\frac{11\\pi}{6}",
+    "referenceSolution": "\\textbf{【方針】}\n\\sin x = t \\text{ とおいて、2次方程式に帰着させる。ただし、} -1 \\leq t \\leq 1 \\text{ の範囲に注意する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C2A4D7E9-8C31-4B67-9D1C-7B1F9F4D2C22",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{1}{x}\\int_{0}^{x}\\sqrt{1+\\cos^{3}t}\\,dt",
+    "referenceAnswer": "\\displaystyle \\sqrt{2}",
+    "referenceSolution": "\\color{black}\\textbf{【解答（定理を使う）】}\n\\color{black}g(t)=\\sqrt{1+\\cos^{3}t}\\text{ とおく。}\n\\color{black}\\text{ }g\\text{ は }t=0\\text{ の近くで連続である。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C3D4E5F6-A7B8-C9D0-E1F2-A3B4C5D6E7F8",
+    "category": "",
+    "level": "",
+    "questionText": "\\cos 2x + \\cos 3x = 0\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = \\displaystyle\\frac{\\pi}{5}, \\displaystyle\\frac{3\\pi}{5}, \\pi, \\displaystyle\\frac{7\\pi}{5}, \\displaystyle\\frac{9\\pi}{5}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{和積の公式を用いて、} \\cos A + \\cos B \\text{ を積の形に変形する。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C5C2514A-CF06-4F19-BE62-4F99731FA905",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t)=g\nf(0)=f_0,\\ f'(0)=v_0",
+    "referenceAnswer": "f(t)=\\displaystyle \\frac{1}{2}g t^2 + v_0 t + f_0",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 初期位置 }x_0=f_0\\text{、初期速度 }v_0\\text{、重力加速度 }g\\text{ の自由落下運動の位置についての微分方程式。}\n\\text{• 力学においては、} x''(t) = g \\text{の形でよく登場する。これは重力を受ける質点の位置変化を表す。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C66CEC49-FCD7-42E2-9FF5-628A431A8550",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 - 4x^3 + 5x^2 - 4x + 1",
+    "referenceAnswer": "(x^2 - x + 1)(x^2 - 3x + 1)",
+    "referenceSolution": "\\textbf{【方針】}\nf(x) = x^4 - 4x^3 + 5x^2 - 4x + 1\\text{とおいて、まずは、因数定理を用い、候補（±1）を代入して、1次式の因数を持たないことを認識したら、その後、2次式×2次式の形で係数比較を行うのが自然。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C7312AD1-233C-42E9-94E7-BF9A59591EE1",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{ \\frac{\\pi}{2}} \\sin^9 x \\, dx",
+    "referenceAnswer": "\\frac{128}{315}",
+    "referenceSolution": "\\textbf{【解法】}\n\\text{部分積分を用いて、一般のnについての漸化式及び計算結果を導出する。 }\n\\textcolor{green}{一般に下記が成立する事を示す。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "C9E8A1B2-4D7F-4A91-9F5C-2B6E3A1D8C77",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{1}{n}\\sqrt[n]{{}_{2n}P_n}",
+    "referenceAnswer": "",
+    "referenceSolution": null,
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "CAF59AF0-A107-4D21-B0E3-2C3D888A83D2",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + 5x^2 + 9",
+    "referenceAnswer": "(x^2 + x + 3)(x^2 - x + 3)",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n x^4 + 5x^2 + 9 &= (x^2 + 3)^2 - x^2 \\\\\n &= (x^2 + 3 + x)(x^2 + 3 - x) \\\\\n &= (x^2 + x + 3)(x^2 - x + 3)\n \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "CC1A2E7C-04EF-4D32-BB13-907FBEC6515D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{\\frac{\\pi}{2}} x^2 \\cos x \\, dx",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi^2}{4} - 2",
+    "referenceSolution": "\\textbf{【背景】}\n\\text{この問題は、曲線 } y = \\sin x \\left( 0 \\leq x \\leq \\displaystyle \\frac{\\pi}{2} \\right) \\text{を } y \\text{ 軸の周りに回転させてできる回転体の体積を求める問題である。}\n\\text{実際、回転体の体積は }",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "CCD350BD-2E20-456F-80B5-5646A5070E7E",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{3^{x}-1}{x}",
+    "referenceAnswer": "\\displaystyle \\log 3",
+    "referenceSolution": "\\text{これは } f(x)=3^{x} \\text{ の } x=0 \\text{ での微分係数である}\n\\textbf{【方針】}\n\\text{これは } f(x)=3^{x} \\text{ の } x=0 \\text{ での微分係数である}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "CE7A2246-F134-4248-86EA-31A0502F58F1",
+    "category": "",
+    "level": "",
+    "questionText": "a^2(b-c) + b^2(c-a) + c^2(a-b)",
+    "referenceAnswer": "-(a-b)(b-c)(c-a)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{対称式で、どの文字についても次数は同じなので、任意の文字を選んで降べきに整理する。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "CECF170F-83C3-485D-B0F7-A73B2089A50B",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle 2+(-2+2)+(-2+2)+\\cdots",
+    "referenceAnswer": "\\displaystyle 2",
+    "referenceSolution": "\\textbf{【解説】}\n\\text{無限級数} \\displaystyle \\sum_{k=1}^{\\infty} a_k= 2+(-2+2)+(-2+2)+\\cdots \\text{ の収束の定義より、まず部分和} S_n \\text{を考えると、}\n\\text{ここで、} a_1 = 2, \\ a_2 = -2+2 = 0, \\ a_3 = -2+2 = 0, \\ \\ldots \\text{ である。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D04D1417-91C9-4E4F-8558-80C8FF96A50F",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{\\frac{\\pi}{2}} \\cos^2 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{\\pi}{4}",
+    "referenceSolution": "\\text{半角公式 } \\cos^2 x=\\displaystyle\\frac{1+\\cos 2x}{2} \\text{ を用いる。}\n\\textbf{【方針】}\n\\text{半角公式 } \\cos^2 x=\\displaystyle\\frac{1+\\cos 2x}{2} \\text{ を用いる。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D1528690-D756-47FC-8647-0A11E4E5AC4A",
+    "category": "",
+    "level": "",
+    "questionText": "\\sin 3x + \\sin x = 0\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = 0, \\displaystyle\\frac{\\pi}{2}, \\pi, \\displaystyle\\frac{3\\pi}{2}",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{和積の公式を用いて、} \\sin A + \\sin B \\text{ を積の形に変形する。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D2706488-8F89-46F4-8636-834028B00CFC",
+    "category": "",
+    "level": "",
+    "questionText": "f'(t)+3\\,f(t)=2\nf(0)=1",
+    "referenceAnswer": "f(t)=\\dfrac{2}{3}+\\dfrac{1}{3}e^{-3 t}",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学の空気抵抗を受ける質点の自由落下は} v'(t) = -\\displaystyle \\frac{k}{m}v(t) + g \\text{ でモデル化され、速度は指数関数的に}\\ \\displaystyle \\frac{mg}{k} \\text{に収束する。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D31DD01A-20D0-49DA-9EAD-E9571974B0DB",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+1} = a_n + 2n + 1\na_1 = 1",
+    "referenceAnswer": "a_n = n^2",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{階差数列 } b_n = a_{n+1} - a_n = 2n + 1 \\text{ を用いて一般項を求める。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D36E79F5-FF3C-442A-8A3A-DE453F25EA60",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{3} \\frac{dx}{\\sqrt{x^2+9}}",
+    "referenceAnswer": "\\log(1+\\sqrt{2})",
+    "referenceSolution": "\\text{三角置換 } x = 3\\tan\\theta \\text{ を用いる。}\n\\textbf{【方針】}\n\\text{三角置換 } x = 3\\tan\\theta \\text{ を用いて、被積分関数を簡略化する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D38E0151-81F6-4A38-A100-93A0C0E7A048",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\frac{1}{n}\\displaystyle \\sum_{k=-n}^{n}\\sqrt{1-\\left(\\frac{k}{n}\\right)^{2}}",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{2}",
+    "referenceSolution": "\\text{区分求積と円の一部である事を用いるとよい。}\n\\textbf{【方針】}\n\\text{区分求積と円の一部である事を用いるとよい。}\n\\begin{aligned}\n        &\\lim_{n\\to\\infty}\\frac{1}{n}\\displaystyle \\sum_{k=-n}^{n}\\sqrt{1-\\left(\\frac{k}{n}\\right)^{2}} \\\\[6pt]\n        =& \\int_{-1}^{1}\\sqrt{1-x^{2}}\\,dx \\\\[6pt]\n        =& \\text{円の面積の半分} \\\\[6pt]\n        =& \\displaystyle \\frac{\\pi}{2}\n      \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D7300A7C-4D0A-4F2D-B723-48757CD78ED0",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle\\frac{3^x + 3^{-x}}{2} = 5",
+    "referenceAnswer": "x = \\pm \\log_3(5 + 2\\sqrt{6})",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{両辺に } 2 \\cdot 3^x \\text{ をかけて整理し、} 3^x = t \\text{ とおいて2次方程式に帰着させる。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D7F8E9A0-B1C2-4D3E-8F5A-6B7C8D9E0F1A",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\displaystyle \\sum_{k=1}^{n}\\frac{1}{\\sqrt{k}}",
+    "referenceAnswer": "\\displaystyle \\infty \\text{（発散）}",
+    "referenceSolution": "\\text{関数 } \\frac{1}{\\sqrt{x}} \\text{ の積分を使って評価する}\n\\textbf{【方針】}\n\\text{関数 } \\displaystyle \\frac{1}{\\sqrt{x}} \\text{ の積分を使って級数を評価する。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D812B02C-7F6E-4FA4-BD61-A05CBAB6D525",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{\\pi} \\sin^2 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{\\pi}{2}",
+    "referenceSolution": "\\text{半角公式 } \\sin^2 x=\\displaystyle\\frac{1-\\cos 2x}{2} \\text{ を用いて、基本的な定積分に帰着する。}\n\\textbf{【方針】}\n\\text{半角公式 } \\sin^2 x=\\displaystyle\\frac{1-\\cos 2x}{2} \\text{ を用いて、基本的な定積分に帰着する。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D87D022C-7BED-4C0D-BC95-8A74C64BCD86",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t)+a\\,f'(t)=b\nf(0)=f_0,\\ f'(0)=v_0",
+    "referenceAnswer": "f(t)=f_0 +\\dfrac{v_0 - \\dfrac{b}{a}}{a} + \\dfrac{b}{a}t-\\dfrac{v_0-\\dfrac{b}{a}}{a}e^{-a t}",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学の空気抵抗下での一定外力運動は} mx'' + kx' = mg \\text{ でモデル化される。}\n\\text{• 速度は指数関数的に終端速度} \\displaystyle \\frac{mg}{k} \\text{ に収束する。終端速度に近くになると、外力と抵抗力がつり合った、等速直線運動に近似できる。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D8CA1CE8-6921-47E2-8A45-728DED579EB0",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\  \\displaystyle \\sum_{k=1}^{n} a_k = n^2 + 2n",
+    "referenceAnswer": "a_n  = 2n + 1",
+    "referenceSolution": "\\textbf{【解法】}\n\\text{ } \\textcolor{blue}{n \\ge 2} \\textcolor{blue}{ のとき}\na_n = S_n - S_{n-1} \\text{ なので、}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "D9E29F85-E082-42D3-A2E6-34D162864716",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{5}} e^{-2x}\\cos 5x \\,dx",
+    "referenceAnswer": "\\displaystyle \\frac{2(e^{\\frac{-2\\pi}{5}}+1)}{29}",
+    "referenceSolution": "\\text{部分積分を2回行い、元の積分を自分自身で表して解く。}\n\\textbf{【方針】}\n\\text{ } I = \\displaystyle \\int_{0}^{\\frac{\\pi}{5}} e^{-2x}\\cos 5x \\,dx \\text{ とおき、部分積分を2回行って } I \\text{ を自分自身の式で表し解く。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "DB124FEE-EBB5-4940-B445-2D08B1B87E9A",
+    "category": "",
+    "level": "",
+    "questionText": "27x^3 - 8y^3",
+    "referenceAnswer": "(3x - 2y)(9x^2 + 6xy + 4y^2)",
+    "referenceSolution": "\\text{立方差の公式 } a^3 - b^3 = (a-b)(a^2 + ab + b^2) \\text{ を用いる。}\n\\textbf{【方針】}\n\\text{立方差の公式 } a^3 - b^3 = (a-b)(a^2 + ab + b^2) \\text{ を用いる。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "DB513B4F-55DC-4AB9-87B7-1BCF5F47DC6A",
+    "category": "",
+    "level": "",
+    "questionText": "3x + 5y = 2",
+    "referenceAnswer": "x = 5k + 4,\\ y = -3k - 2 \\quad (kは整数)",
+    "referenceSolution": "\\textbf{【解法】}\n\\text{ } 3x + 5y = 2 \\text{ の解として } x = 4, y = -2 \\text{ が見つかる。}\n\\text{よって} 3\\cdot 4 + 5\\cdot (-2) = 2",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E03C5F81-3445-4D78-8BC7-9BDD3EF528CD",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{h\\to +0}\\left(1+\\frac{1}{h}\\right)^{h}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{対数を取り、指数部の極限を評価する。対数の極限が }0\\text{ なら元の極限は }e^{0}=1\\text{ である。}\n\\textbf{【計算}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E0D650DF-7B76-4A37-A0FE-B18A8A041E0B",
+    "category": "",
+    "level": "",
+    "questionText": "x^2 - 9x - 22",
+    "referenceAnswer": "(x - 11)(x + 2)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{たすきがけを用いて、積が } -22 \\text{、和が } -9 \\text{ となる2数を探す。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E2B55755-0658-4FBE-911F-C18148799924",
+    "category": "",
+    "level": "",
+    "questionText": "4x - 7y = 1",
+    "referenceAnswer": "x = 7k + 2,\\ y = 4k + 1 \\quad (kは整数)",
+    "referenceSolution": "\\textbf{【解法】}\n\\text{ } 4x - 7y = 1 \\text{ の解として } x = 2, y = 1 \\text{ が見つかる。}\n\\text{よって} 4\\cdot 2 - 7\\cdot 1 = 1",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E3253228-3C96-488F-BD6E-A89DC18E84CA",
+    "category": "\\displaystyle \\sum_{k=1}^{n}\\frac{1}{k(k+2)}",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\displaystyle \\sum_{k=1}^{n}\\frac{1}{k(k+2)}",
+    "referenceAnswer": "\\displaystyle \\frac{3}{4}",
+    "referenceSolution": "\\dfrac{1}{k(k+2)}=\\dfrac{1}{2}\\!\\left(\\dfrac{1}{k}-\\dfrac{1}{k+2}\\right)\n\\textbf{【方針】 }\n\\dfrac{1}{k(k+2)}=\\dfrac{1}{2}\\!\\left(\\dfrac{1}{k}-\\dfrac{1}{k+2}\\right)\n\\begin{aligned}\n    \\displaystyle \\sum_{k=1}^{n}\\frac{1}{k(k+2)}\n    &= \\frac{1}{2}\\displaystyle \\sum_{k=1}^{n}\\left(\\frac{1}{k}-\\frac{1}{k+2}\\right) \\\\[6pt]\n    &= \\frac{1}{2}\\left(1+\\frac{1}{2}-\\frac{1}{n+1}-\\frac{1}{n+2}\\right) \\\\[6pt]\n    &\\underset{n\\to\\infty}{\\longrightarrow} \\ \\displaystyle\\  \\frac{3}{4}\n    \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E32CEEE3-F0E5-44C6-838C-7BEF0531E460",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t)+2f'(t)+4f(t)=20\\cos(2t) \\ \\ \\text{の定常状態の }f'(t)\nf(0)=0,\\ f'(0)=0",
+    "referenceAnswer": "10\\cos(2t)",
+    "referenceSolution": "\\text{未定係数法で特解を求めて、それを引いた関数を新たに定義し、右辺0(同次方程式)の場合の公式（問題12）を適用して解く。ちなみにこの問題では共振条件 }\\omega = \\sqrt{\\frac{\\gamma}{\\alpha}} = 2\\text{ が成立している。}\n\\textcolor{brown}{\\large{【電磁気学】}}\n\\text{• RLC直列交流回路について、キルヒホッフの第二法則を用いると }\n  LQ''(t) + RQ'(t) + \\displaystyle \\frac{Q(t)}{C} = V_0\\cos(\\omega_0 t) \\text{が成り立つ。}\\textcolor{purple}{この問題では、共振条件 }\n\\textcolor{purple} {\\omega = \\omega_0 = \\sqrt{\\frac{1}{LC}}}\\textcolor{purple}{ が成立している。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E356DB2A-1686-4B3F-8F5C-77FBE782E17F",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{6}} \\sin^3 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{16-9\\sqrt{3}}{24}",
+    "referenceSolution": "\\sin^3 x=\\sin x(1-\\cos^2 x)\\text{ として } u=\\cos x \\text{ に置換し、多項式の原始関数に帰着する。}\n\\textbf{【方針】}\n\\sin^3 x=\\sin x(1-\\cos^2 x)\\text{ として } u=\\cos x \\text{ に置換し、多項式の原始関数に帰着する。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E406BD56-74DE-4603-9695-AE08B0757BE7",
+    "category": "",
+    "level": "",
+    "questionText": "x^4 + 4y^4",
+    "referenceAnswer": "(x^2 - 2xy + 2y^2)(x^2 + 2xy + 2y^2)",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n x^4 + 4y^4 &= (x^2 + 2y^2)^2 - 4x^2y^2 \\\\\n &= (x^2 + 2y^2)^2 - (2xy)^2 \\\\\n &= (x^2 + 2y^2 - 2xy)(x^2 + 2y^2 + 2xy) \\\\\n &= (x^2 - 2xy + 2y^2)(x^2 + 2xy + 2y^2)\n \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E460F72E-E848-4B8F-B481-9D3E820FEBAE",
+    "category": "",
+    "level": "",
+    "questionText": "a_{n+2} - a_{n+1} - 6 a_n = 0\na_1 = 1,\\ a_2 = 2",
+    "referenceAnswer": "a_n = \\displaystyle \\frac{4}{5} 3^{\\,n-1} + \\displaystyle \\frac{1}{5}(-2)^{\\,n-1}",
+    "referenceSolution": "\\textbf{【方針】} \n      \\text{特性方程式} x^2 - x - 6 = 0 \\text{を解き、解}r_1,r_2\\text{を求めて、}a_n = A r_1^{n-1} + B r_2^{n-1} \\text{と置き、初期条件を代入して実数} A,B\\text{を求める。(なぜこう置く事ができるかは解説の命題1を参照。)}\n\\textbf{【解法】}\n\\text{特性方程式 }",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E5CDA38B-2CD3-4F62-AB20-2F4ECDB14681",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to 0}\\frac{\\tan x}{x}",
+    "referenceAnswer": "\\displaystyle 1",
+    "referenceSolution": "\\textbf{【解答】}\n\\begin{aligned}\n      \\lim_{x\\to 0}\\frac{\\tan x}{x}&=\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}\\cdot \\frac{1}{\\cos x} \\\\[6pt]\n      &= \\displaystyle 1\\cdot 1 \\\\[6pt]\n      &= \\displaystyle 1\n      \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E5E4228F-7819-4063-A4DB-9F1DB3D27225",
+    "category": "",
+    "level": "",
+    "questionText": "f'(t)+a\\,f(t)=b\nf(0)=f_0",
+    "referenceAnswer": "f(t)=\\dfrac{b}{a}+\\Big(f_0-\\dfrac{b}{a}\\Big)e^{-a t}",
+    "referenceSolution": "\\text{【力学】}\n\\text{• 力学の空気抵抗を受ける質点の自由落下は} v'(t) = -\\displaystyle \\frac{k}{m}v(t) + g \\text{ でモデル化され、速度は指数関数的に}\\ \\displaystyle \\frac{mg}{k} \\text{に収束する。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E8EA2D7A-4614-47AB-8934-8C7BCF3568C1",
+    "category": "",
+    "level": "",
+    "questionText": "xyz = x + y + z \\qquad (0< x \\le y \\le z)",
+    "referenceAnswer": "(1,2,3)\\textcolor{green}{　1つ}",
+    "referenceSolution": "\\text{ }x \\le y \\le z \\text{ の条件を使って } x+y+z \\le 3z \\text{として、} x,y \\text{を有限個の候補に落とし込む。}\n\\textbf{【方針】}\n\\text{ }x \\le y \\le z \\text{ の条件を使って } x+y+z \\le 3z \\text{として、} x,y \\text{を有限個の候補に落とし込む。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E8F3C9A2-7D6A-4E4E-9B6E-XLNXLOGX001",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{x\\to +0} x\\log x",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\text{ } x = \\dfrac{1}{t} \\ (t\\to\\infty) \\text{ と置く}\n\\textbf{【方針】}\n\\text{ } x\\to 0^+ \\text{ のとき } x=\\dfrac{1}{t} \\ (t\\to\\infty) \\text{ とおく}\n\\textbf{【変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "E9F0A1B2-C3D4-5E6F-7A8B-9C0D1E2F3A4B",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\int_{0}^{\\frac{\\pi}{4}}\\tan^{2n}x\\,dx",
+    "referenceAnswer": "\\displaystyle 0",
+    "referenceSolution": "\\text{はさみうちの原理を用いて評価する（直線 } y=\\frac{4x}{\\pi} \\text{ と比較）}\n\\textbf{【方針】}\n\\text{直線 } y=\\displaystyle\\frac{4x}{\\pi} \\text{ と比較し、はさみうちの原理を用いて評価する。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "EBA0562C-23C6-4DE1-95C1-94FB618E1073",
+    "category": "",
+    "level": "",
+    "questionText": "xy + 3x - 8y = 33",
+    "referenceAnswer": "{(x,y)=(9,6), (17,-2), (7,-12), (-1,-4), (11, 0), (5,-6)}\\textcolor{green}{　6つ}",
+    "referenceSolution": "\\text{1次式への因数分解を利用する。}\n\\textbf{【方針】}\n\\text{1次式への因数分解を利用する。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "EBEA916F-13BA-4F47-8827-8D2546F80AA0",
+    "category": "",
+    "level": "",
+    "questionText": "2^{2x+1} - 2^{x+2} = 2^x - 2",
+    "referenceAnswer": "x = -1, 1",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{すべての項を } 2^x \\text{ で表し、} 2^x = t \\text{ とおいて2次方程式に帰着させる。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "ECB70663-7BFE-4801-8F92-21A71BF20AD3",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{ \\frac {1} {4}}^{ \\frac {1} {2}} 2^{x} \\, dx",
+    "referenceAnswer": "\\displaystyle \\frac{\\sqrt{2}-2^{ \\frac{1}{4}}}{\\log 2}",
+    "referenceSolution": "\\displaystyle \\int a^x\\,dx = \\dfrac{a^x}{\\log a} + C\\ (a>0, a\\neq 1) \\text{の公式を用いる。}\n\\textbf{【方針】}\n\\displaystyle \\int a^x\\,dx = \\dfrac{a^x}{\\log a} + C\\ (a>0, a\\neq 1) \\text{の公式を用いる。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "EE0E5F29-6071-4A82-BBA0-6D3DAAD6BB0C",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{1}^{e}\\displaystyle \\frac{\\log  x}{x^{2}}\\,dx",
+    "referenceAnswer": "\\displaystyle 1 - \\displaystyle \\frac{2}{e}",
+    "referenceSolution": "t=\\log x \\,\\textbf{ と置き、} x=e^{t},\\,dx=e^{t}dt \\textbf{で指数関数に直したのち、部分積分を行う。}\n\\textbf{【方針】}\nt=\\log x \\,\\textbf{ と置き、}\n        x=e^{t},\\,dx=e^{t}dt\n\\textbf{で指数関数に直したのち、部分積分を行う。}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F14C7A82-9E10-4B3D-9C2A-1D8E7F6A5B4C",
+    "category": "",
+    "level": "",
+    "questionText": "xy-yz+zu-ux",
+    "referenceAnswer": "(x-z)(y-u)",
+    "referenceSolution": "\\text{ } x \\text{ と } z \\text{ について整理する。}\n\\textbf{【方針】}\n\\text{ } x \\text{ と } z \\text{ について整理する。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F1A2B3C4-D5E6-F7A8-B9C0-D1E2F3A4B5C6",
+    "category": "",
+    "level": "",
+    "questionText": "(y-z)^3+(z-x)^3+(x-y)^3",
+    "referenceAnswer": "3(y-z)(z-x)(x-y)",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{恒等式 } a^3 + b^3 + c^3 - 3abc = (a+b+c)(a^2+b^2+c^2-ab-bc-ca) \\text{ を用いる。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F1G2H3I4-J5K6-L7M8-N9O0-P1Q2R3S4T5U6",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{4}} \\frac{dx}{\\cos^2 x}",
+    "referenceAnswer": "1",
+    "referenceSolution": "\\text{ } (\\tan x)' = \\displaystyle\\frac{1}{\\cos^2 x} \\text{ であることを用いる。}\n\\textbf{【方針】}\n\\text{ } (\\tan x)' = \\displaystyle\\frac{1}{\\cos^2 x} \\text{ の関係を用いる。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F2C5AEF4-1FD1-4BD6-A7FE-D0E65756456A",
+    "category": "",
+    "level": "",
+    "questionText": "f''(t) = -\\omega_0^2\\,f(t) + G\nf(0) = f_0,\\ f'(0) = v_0",
+    "referenceAnswer": "\\displaystyle f(t)=\\displaystyle \\frac{G}{\\omega_0^2}+\\Big(f_0-\\displaystyle \\frac{G}{\\omega_0^2}\\Big)\\cos(\\omega_0 t)+\\displaystyle \\frac{v_0}{\\omega_0}\\sin(\\omega_0 t)",
+    "referenceSolution": "\\text{定数解を求めて平行移動し、外力がない場合の微分方程式の解の式を利用する。}\n\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学においては、} mx''(t) + kx(t) = mg \\text{ の形でよく登場する。これは重力下のばね-質量系の運動を表す。重力による平衡位置シフトが起きる。}\n\\text{【電磁気学】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F41A1522-30A9-4428-AB89-02F6A0650991",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{ \\frac {\\pi} {6}}^{ \\frac {\\pi} {4}} \\tan x \\, dx",
+    "referenceAnswer": "\\displaystyle \\frac{1}{2}\\,\\log \\left(\\displaystyle \\frac{3}{2}\\right)",
+    "referenceSolution": "\\begin{aligned}\n&\\tan x=\\dfrac{\\sin x}{\\cos x} \\text{ と書き，} u=\\cos x \\text{ の置換で } \\displaystyle \\int \\tan x\\,dx \\text{ を求める。}\\\\\n&\\text{得られた原始関数に } x=\\displaystyle \\frac{\\pi}{6},\\displaystyle \\frac{\\pi}{4} \\text{ を代入して定積分を評価する。}\n\\end{aligned}\n\\textbf{【方針】}\n\\begin{aligned}\n&\\tan x=\\dfrac{\\sin x}{\\cos x} \\text{ と書き，} u=\\cos x \\text{ の置換で } \\displaystyle \\int \\tan x\\,dx \\text{ を求める。}\\\\\n&\\text{得られた原始関数に } x=\\displaystyle \\frac{\\pi}{6},\\displaystyle \\frac{\\pi}{4} \\text{ を代入して定積分を評価する。}\n\\end{aligned}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F744D6AB-A8EB-42F0-9740-0FD4DC4EA29D",
+    "category": "",
+    "level": "",
+    "questionText": "f'(t)+a\\,f(t)=0\nf(0)=f_0",
+    "referenceAnswer": "f(t)=f_0 e^{-a t}",
+    "referenceSolution": "\\textcolor{brown}{\\large{【力学】}}\n\\text{• 力学の空気抵抗のみを受ける質点の速度減衰は} v'(t) + \\displaystyle \\frac{k}{m}v(t) = 0 \\text{ でモデル化される。速度は指数関数的に減少する。}\n\\textcolor{brown}{\\large{【電磁気学】}}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F7C0451B-E946-4AB6-90C4-A3B539CE4A1D",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\lim_{n\\to\\infty}\\sqrt{n^{2}+n}-n",
+    "referenceAnswer": "\\displaystyle \\frac{1}{2}",
+    "referenceSolution": "\\text{共役な数} \\sqrt{n^{2}+n}+n \\text{を分母分子に掛けて不定形を解消する。}\n\\textbf{【方針】}\n\\text{共役な数} \\sqrt{n^{2}+n}+n \\text{を分母分子に掛けて不定形を解消する。}\n\\textbf{【解答】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F8A3B2C1-9D4E-5F6A-7B8C-9D0E1F2A3B4C",
+    "category": "",
+    "level": "",
+    "questionText": "\\sin x \\cos x + \\sqrt{2}(\\sin x + \\cos x) = \\displaystyle\\frac{1}{2}\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = \\arcsin(\\sqrt{2} - 1) - \\displaystyle\\frac{\\pi}{4} + 2n\\pi, \\pi - \\arcsin(\\sqrt{2} - 1) - \\displaystyle\\frac{\\pi}{4} + 2n\\pi \\quad (n \\text{ は整数})",
+    "referenceSolution": "\\textbf{【方針】}\n\\sin x + \\cos x = t \\text{ とおいて、} \\sin x \\cos x \\text{ を } t \\text{ で表し、2次方程式に帰着させる。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "F92FA824-A0AC-486A-95B7-C731A52DEEC9-variant",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_{0}^{\\frac{\\pi}{2}} \\frac{dx}{2 + \\sin x}",
+    "referenceAnswer": "\\displaystyle \\frac{\\pi}{3\\sqrt{3}}",
+    "referenceSolution": "\\text{半角置換 } t = \\tan\\left(\\frac{x}{2}\\right) \\text{ を用いる。}\n\\textbf{【方針】}\n\\text{半角置換 } \\displaystyle t = \\tan\\left(\\frac{x}{2}\\right) \\text{ を用いて三角関数を多項式の分数関数にする。}\n\\textbf{【ポイント】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "FAA00A56-4049-4921-A9C8-93B3F420DA1C",
+    "category": "",
+    "level": "",
+    "questionText": "a(b^2+c^2) + b(c^2+a^2) + c(a^2+b^2) + 2abc",
+    "referenceAnswer": "(a+b)(b+c)(c+a)",
+    "referenceSolution": "\\textbf{【ポイント】}\n\\text{対称式で、どの文字についても次数は同じなので、任意の文字を選んで降べきに整理する。}\n\\textbf{【途中式変形】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "FAF62CC1-1FE8-41FC-B1B6-5151D088742A",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle 2-2+2-2+2-2+\\cdots",
+    "referenceAnswer": "\\textcolor{green}{発散（振動）}",
+    "referenceSolution": "\\textbf{【解説】}\n\\text{無限級数} \\displaystyle \\sum_{k=1}^{\\infty} a_k= 2-2+2-2+2-2+\\cdots \\text{ の収束の定義より、まず部分和} S_n \\text{を考えると、}\n\\begin{aligned}\n        S_{2n} &= (2-2)+(2-2)+\\cdots+(2-2) = 0 \\\\[6pt]\n        S_{2n+1} &= (2-2)+(2-2)+\\cdots+(2-2)+2 = 2\n      \\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "FBFAA113-A701-4D94-9421-3AEF3FA2A96E",
+    "category": "",
+    "level": "",
+    "questionText": "17x + 29y + 61z = 3",
+    "referenceAnswer": "\\begin{aligned}\n  &\\begin{cases}\n  x = 29k + 36 - 732\\ell\\\\\n  y = -17k - 21 + 427\\ell\\\\\n  z = \\ell\n  \\end{cases}\n  \\end{aligned}\n  \\quad (k, \\ellは整数)",
+    "referenceSolution": "\\text{係数 }17,29\\text{ の最大公約数は }1\\text{ であり、このことにより任意の }z\\text{ に対して，方程式 }17x+29y+61z=3\\text{ の整数解 }x,y\\text{ が存在する。よって適当に }z\\text{ を定め、その値に対する全ての} (x,y) \\text{を求めることで一般解を求める。}\n\\textbf{【方針】}\n\\text{係数 }17,29\\text{ の最大公約数は }1\\text{ であり、このことにより任意の }z\\text{ に対して，方程式 }17x+29y+61z=3\\text{ の整数解 }x,y\\text{ が存在する。よって適当に }z\\text{ を定め、その値に対する全ての} (x,y) \\text{を求めることで一般解を求める。}\n\\textbf{【解法】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "FEE633FE-DE9A-4BF9-8E42-52FD6CA67E3A",
+    "category": "",
+    "level": "",
+    "questionText": "\\displaystyle \\int_0^{\\frac{\\pi}{3}} \\sin^2 x \\cos^2 x \\, dx",
+    "referenceAnswer": "\\displaystyle\\frac{\\pi}{24}+\\displaystyle\\frac{\\sqrt{3}}{64}",
+    "referenceSolution": "\\sin 2x=2\\sin x\\cos x \\text{より、} \\sin^2 x\\cos^2 x=\\left(\\displaystyle\\frac{\\sin 2x}{2}\\right)^2 \\text{を使い、2乗の形にしたら半角の公式}\\sin^2 2x=\\displaystyle\\frac{1-\\cos 4x}{2}\\text{を使う。}\n\\textbf{【方針】}\n\\sin 2x=2\\sin x\\cos x \\text{より、} \\sin^2 x\\cos^2 x=\\left(\\displaystyle\\frac{\\sin 2x}{2}\\right)^2 \\text{を使い、2乗の形にしたら半角の公式}\\sin^2 2x=\\displaystyle\\frac{1-\\cos 4x}{2}\\text{を使う。}\n\\textbf{【解説】}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "TRIG-EXP-LOG-001",
+    "category": "",
+    "level": "",
+    "questionText": "\\sin x = \\displaystyle\\frac{1}{2}\n0 \\leq x < 2\\pi",
+    "referenceAnswer": "x = \\displaystyle\\frac{\\pi}{6}, \\displaystyle\\frac{5\\pi}{6}",
+    "referenceSolution": "\\textbf{【解説】}\n\\sin x = \\displaystyle\\frac{1}{2} \\text{ より、}\n\\begin{aligned}\n\\begin{cases}\nx = \\displaystyle\\frac{\\pi}{6} + 2n\\pi \\quad (n \\text{ は整数}) \\\\[8pt]\nx = \\displaystyle\\frac{5\\pi}{6} + 2n\\pi \\quad (n \\text{ は整数})\n\\end{cases}\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "TRIG-EXP-LOG-002",
+    "category": "",
+    "level": "",
+    "questionText": "2^{x+1} - 2^{x-1} = 3",
+    "referenceAnswer": "x = 1",
+    "referenceSolution": "\\textbf{【途中式変形】}\n\\begin{aligned}\n&\\ \\ \\ \\ \\ 2^{x+1} - 2^{x-1} = 3 \\\\\n&\\Leftrightarrow 2 \\cdot 2^x - \\displaystyle\\frac{1}{2} \\cdot 2^x = 3 \\\\\n&\\Leftrightarrow \\displaystyle\\frac{3}{2} \\cdot 2^x = 3 \\\\\n&\\Leftrightarrow 2^x = 2 \\\\\n&\\Leftrightarrow x = 1\n\\end{aligned}",
+    "hintShown": false,
+    "answerShown": false
+  },
+  {
+    "id": "TRIG-EXP-LOG-003",
+    "category": "",
+    "level": "",
+    "questionText": "\\log_2(x+1) + \\log_2(x-1) = 3",
+    "referenceAnswer": "x = 3",
+    "referenceSolution": "\\textbf{【方針】}\n\\text{対数の性質 } \\log a + \\log b = \\log ab \\text{ を用いて左辺を1つの対数にまとめる。真数条件に注意する。}\n\\textbf{【真数条件】}",
+    "hintShown": false,
+    "answerShown": false
+  }
+]
