@@ -21,7 +21,9 @@ SPOILER_ACTION_IDS = frozenset(
         "characteristic_equation_meaning",
         "check_even_odd",
         "confirm_technique",
+        "confirm_method",
         "confirm_type",
+        "show_formula",
         "definition_of_e",
         "euclidean_algorithm_meaning",
         "explain_concept",
@@ -57,6 +59,10 @@ SPOILER_ACTION_IDS = frozenset(
         "undetermined_coefficients_method",
         "undetermined_coefficients_start",
         "formula_hint",
+        "specific_formula_hint",
+        "synthesis_angle_method",
+        "alternative_method",
+        "problem_feature",
     }
 )
 
@@ -74,6 +80,8 @@ SPOILER_TEXT_PATTERNS = [
     r"公式について教え",
     r"公式を使う",
     r"公式を教えて",
+    r"公式を確認",
+    r"の公式を確認",
     r"とは何ですか",
     r"とはなんですか",
     r"って何だっけ",
@@ -142,6 +150,10 @@ SPOILER_TEXT_PATTERNS = [
     r"よく使う極限の公式",
     r"公式が使え",
     r"公式を使え",
+    r"合成を",
+    r"合成と",
+    r"合成の",
+    r"を使わずに解",
 ]
 
 REPLY_LINE = re.compile(
@@ -218,16 +230,29 @@ def main() -> None:
                     reply_count += 1
                 fixed_lines.append(out[i])
                 i += 1
+            indent = re.match(r"^(\s*)", line).group(1) + "  "
+            defaults = [
+                (r'actionId: "approach_only"', 'label: "この問題の方針を教えてください。"'),
+                (r'actionId: "first_step"', 'label: "最初の一歩は何をすればいいですか？"'),
+            ]
+            block_text = "".join(fixed_lines[block_start + 1 :])
+            inserts: list[str] = []
             if reply_count == 0:
-                indent = re.match(r"^(\s*)", line).group(1) + "  "
-                fixed_lines.insert(
-                    block_start + 1,
+                inserts = [
                     f'{indent}AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),\n',
-                )
-                fixed_lines.insert(
-                    block_start + 2,
                     f'{indent}AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),\n',
-                )
+                ]
+            else:
+                if 'actionId: "approach_only"' not in block_text:
+                    inserts.append(
+                        f'{indent}AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),\n',
+                    )
+                if 'actionId: "first_step"' not in block_text:
+                    inserts.append(
+                        f'{indent}AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),\n',
+                    )
+            for offset, insert_line in enumerate(inserts):
+                fixed_lines.insert(block_start + 1 + offset, insert_line)
             if i < len(out):
                 fixed_lines.append(out[i])
                 i += 1

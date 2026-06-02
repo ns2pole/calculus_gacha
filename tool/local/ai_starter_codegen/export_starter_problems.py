@@ -74,6 +74,25 @@ PROBLEM_FILES: list[tuple[str, str]] = [
 ]
 
 
+_MAX_REFERENCE_SOLUTION_LENGTH = 6000
+_ASK_AI_TITLE_PREFIX = "AIに聞く"
+
+
+def _normalize_prime_notation(tex: str) -> str:
+    def repl(match: re.Match[str]) -> str:
+        symbol = match.group(1)
+        primes = len(match.group(2))
+        prime_tex = "".join(r"\prime" for _ in range(primes))
+        return f"{symbol}^{{{prime_tex}}}"
+
+    return re.sub(r"([A-Za-z])('{1,3})(?=\s*\()", repl, tex)
+
+
+def _join_ai_chat_parts(parts: list[str]) -> str:
+    cleaned = [_normalize_prime_notation(part.strip()) for part in parts if part.strip()]
+    return r",\quad ".join(cleaned)
+
+
 def _read_field(block: str, name: str) -> str | None:
     triple = re.search(rf"{name}:\s*r?\"\"\"(.*?)\"\"\"", block, re.DOTALL)
     if triple:
@@ -81,7 +100,60 @@ def _read_field(block: str, name: str) -> str | None:
     single = re.search(rf'{name}:\s*r?"([^"]*)"', block, re.DOTALL)
     if single:
         return single.group(1).strip()
+    single_quoted = re.search(rf"{name}:\s*r?'([^']*)'", block, re.DOTALL)
+    if single_quoted:
+        return single_quoted.group(1).strip()
     return None
+
+
+def _read_no(block: str) -> str | int | None:
+    match = re.search(r'no:\s*(\d+|"[^"]+")', block)
+    if not match:
+        return None
+    value = match.group(1)
+    if value.startswith('"'):
+        return value.strip('"')
+    return int(value)
+
+
+def _extract_steps_tex(block: str) -> list[str]:
+    marker = re.search(r"steps:\s*\[", block)
+    if not marker:
+        return []
+
+    start = marker.end()
+    depth = 1
+    index = start
+    while index < len(block) and depth > 0:
+        char = block[index]
+        if char == "[":
+            depth += 1
+        elif char == "]":
+            depth -= 1
+        index += 1
+
+    steps_body = block[start : index - 1]
+    step_texts = re.findall(r'tex:\s*r?"""(.*?)"""', steps_body, re.DOTALL)
+    if not step_texts:
+        step_texts = re.findall(r'tex:\s*r?"([^"]*)"', steps_body, re.DOTALL)
+    return [text.strip() for text in step_texts if text.strip()]
+
+
+def _build_reference_solution(block: str) -> str | None:
+    steps = [_normalize_prime_notation(tex) for tex in _extract_steps_tex(block)]
+    if not steps:
+        return None
+
+    solution = "\n".join(steps)
+    if len(solution) <= _MAX_REFERENCE_SOLUTION_LENGTH:
+        return solution
+    return f"{solution[:_MAX_REFERENCE_SOLUTION_LENGTH]}\n（以降省略）"
+
+
+def _build_title(problem_no: str | int | None) -> str:
+    if problem_no is None:
+        return _ASK_AI_TITLE_PREFIX
+    return f"{_ASK_AI_TITLE_PREFIX} - 第{problem_no}問"
 
 
 def _extract_rich_problem(file_path: Path, raw: dict) -> dict | None:
@@ -117,45 +189,39 @@ def _extract_rich_problem(file_path: Path, raw: dict) -> dict | None:
     level = _read_field(block, "level") or ""
     question = _read_field(block, "question") or raw.get("question", "")
     answer = _read_field(block, "answer") or ""
-    hint = _read_field(block, "hint")
     equation = _read_field(block, "equation")
     conditions = _read_field(block, "conditions")
 
     question_parts: list[str] = []
-    if equation:
-        question_parts.append(equation)
-    if conditions:
-        question_parts.append(conditions)
-    if not question_parts and question:
+    if equation and conditions:
+        question_parts = [equation, conditions]
+    elif question:
         question_parts = [
             part.strip()
             for part in re.split(r"\s*\n+\s*", question)
             if part.strip()
         ]
+    elif equation:
+        question_parts = [equation]
+    elif conditions:
+        question_parts = [conditions]
 
-    reference_solution = hint or ""
-    steps_match = re.search(r"steps:\s*\[(.*?)\]\s*,", block, re.DOTALL)
-    if steps_match:
-        step_texts = re.findall(r'tex:\s*r?"""(.*?)"""', steps_match.group(1), re.DOTALL)
-        if not step_texts:
-            step_texts = re.findall(r'tex:\s*r?"([^"]*)"', steps_match.group(1), re.DOTALL)
-        for tex in step_texts[:3]:
-            text = tex.strip()
-            if text:
-                reference_solution += ("\n" if reference_solution else "") + text
-
-    if len(reference_solution) > 6000:
-        reference_solution = reference_solution[:6000]
+    problem_no = _read_no(block)
+    reference_solution = _build_reference_solution(block)
 
     return {
         "id": problem_id,
-        "category": category,
-        "level": level,
-        "questionText": "\n".join(question_parts),
-        "referenceAnswer": answer,
-        "referenceSolution": reference_solution or None,
+        "title": _build_title(problem_no),
+        "category": category or None,
+        "level": level or None,
+        "questionText": _join_ai_chat_parts(question_parts),
+        "referenceAnswer": _join_ai_chat_parts(
+            [part.strip() for part in re.split(r"\s*\n+\s*", answer) if part.strip()]
+        ),
+        "referenceSolution": reference_solution,
         "hintShown": False,
         "answerShown": False,
+        "attachmentsEnabled": False,
     }
 
 

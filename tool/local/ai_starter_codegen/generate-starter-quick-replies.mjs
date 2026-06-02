@@ -12,8 +12,12 @@
  *   --resume     skip IDs already in starter_replies_progress.json (same dir)
  *   --limit N    process at most N new problems
  *   --id UUID    process a single problem id
+ *   --ids-file PATH   only process IDs listed in the file (one per line)
+ *   --force      regenerate even if already in progress
+ *   --merge-dart merge into dart after each success (use with --ids-file)
  */
 
+import {execFileSync} from "node:child_process";
 import {existsSync, readFileSync, writeFileSync, mkdirSync} from "node:fs";
 import {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
@@ -43,15 +47,38 @@ if (!apiKey) {
 
 const args = process.argv.slice(2);
 const resume = args.includes("--resume");
+const force = args.includes("--force");
+const mergeDart = args.includes("--merge-dart");
 const limitIndex = args.indexOf("--limit");
 const limit = limitIndex >= 0 ? Number(args[limitIndex + 1]) : Infinity;
 const idIndex = args.indexOf("--id");
 const singleId = idIndex >= 0 ? args[idIndex + 1] : null;
+const idsFileIndex = args.indexOf("--ids-file");
+const idsFile = idsFileIndex >= 0 ? args[idsFileIndex + 1] : null;
+
+/** Matches CloudAiChatClient installation id format (fixed for reproducible codegen). */
+const CODEGEN_INSTALLATION_ID = "starterCodegenInstallId0";
 
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+const manifestById = new Map(manifest.map((problem) => [problem.id, problem]));
+
+let targetIdList = null;
+if (idsFile != null) {
+  targetIdList = readFileSync(idsFile, "utf8")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("#"));
+}
+const targetIds = targetIdList != null ? new Set(targetIdList) : null;
+
 let progress = {};
-if (resume && existsSync(progressPath)) {
+if (existsSync(progressPath)) {
   progress = JSON.parse(readFileSync(progressPath, "utf8"));
+}
+if (force && targetIds != null) {
+  for (const id of targetIds) {
+    delete progress[id];
+  }
 }
 
 function sleep(ms) {
@@ -102,27 +129,52 @@ function emitDart(map) {
   writeFileSync(dartOutPath, `${lines.join("\n")}\n`, "utf8");
 }
 
-let processed = 0;
-for (const problem of manifest) {
-  if (singleId != null && problem.id !== singleId) continue;
-  if (progress[problem.id]) continue;
-  if (processed >= limit) break;
-
-  const request = {
+function buildStarterRequest(problem) {
+  return {
     context: {
-      title: problem.id,
+      title: problem.title ?? problem.id,
       questionText: problem.questionText,
-      category: problem.category,
-      level: problem.level,
-      referenceAnswer: problem.referenceAnswer,
+      category: problem.category ?? null,
+      level: problem.level ?? null,
+      referenceAnswer: problem.referenceAnswer ?? null,
       referenceSolution: problem.referenceSolution ?? null,
-      hintShown: false,
-      answerShown: false,
-      attachmentsEnabled: false,
+      hintShown: problem.hintShown === true,
+      answerShown: problem.answerShown === true,
+      attachmentsEnabled: problem.attachmentsEnabled === true,
     },
-    clientInstallationId: "starter-codegen",
+    clientInstallationId: CODEGEN_INSTALLATION_ID,
     locale: "ja",
   };
+}
+
+function runMergeDart() {
+  const mergeScript = join(__dirname, "merge_starter_replies_into_dart.py");
+  if (!existsSync(mergeScript)) return;
+  const mergeArgs = idsFile != null ? [mergeScript, idsFile] : [mergeScript];
+  execFileSync("python3", mergeArgs, {stdio: "inherit", cwd: root});
+}
+
+let processed = 0;
+const problemsToRun =
+  targetIdList != null
+    ? targetIdList
+        .map((id) => {
+          const entry = manifestById.get(id);
+          if (entry == null) {
+            process.stderr.write(`Warning: no manifest entry for ${id}\n`);
+          }
+          return entry;
+        })
+        .filter(Boolean)
+    : manifest;
+
+for (const problem of problemsToRun) {
+  if (singleId != null && problem.id !== singleId) continue;
+  if (targetIds != null && !targetIds.has(problem.id)) continue;
+  if (resume && progress[problem.id] && !force) continue;
+  if (processed >= limit) break;
+
+  const request = buildStarterRequest(problem);
 
   process.stderr.write(`[${Object.keys(progress).length + 1}/${manifest.length}] ${problem.id} ... `);
   try {
@@ -138,9 +190,17 @@ for (const problem of manifest) {
   }
 
   processed += 1;
-  emitDart(progress);
+  if (!mergeDart) {
+    emitDart(progress);
+  }
   await sleep(2000);
 }
 
-emitDart(progress);
-process.stderr.write(`Done. ${Object.keys(progress).length} problems in ${dartOutPath}\n`);
+if (mergeDart) {
+  runMergeDart();
+} else {
+  emitDart(progress);
+}
+process.stderr.write(
+  `Done. ${processed} processed; progress has ${Object.keys(progress).length} problem(s).\n`,
+);

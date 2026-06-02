@@ -19,9 +19,14 @@ cd functions && npm run build && cd ..
 export GEMINI_API_KEY="$(cd functions && firebase functions:secrets:access GEMINI_API_KEY 2>/dev/null | head -1)"
 ./tool/local/ai_starter_codegen/run_all_starter_generation.sh
 
-# または一部だけ
+# または一部だけ（アプリと同じ context で生成 → dart にマージ）
 node tool/local/ai_starter_codegen/generate-starter-quick-replies.mjs --resume --limit 10
 node tool/local/ai_starter_codegen/generate-starter-quick-replies.mjs --id "YOUR-PROBLEM-UUID"
+node tool/local/ai_starter_codegen/generate-starter-quick-replies.mjs \
+  --ids-file tool/local/ai_starter_codegen/regenerate_first_50_ids.txt \
+  --force --merge-dart
+python3 tool/local/ai_starter_codegen/filter_spoiler_starter_replies.py --apply
+python3 tool/local/ai_starter_codegen/insert_starter_quick_reply_comments.py
 ```
 
 アプリは `AiChatContext.problemId` で `lookupStarterQuickReplies` を参照し、**初回 API は呼びません**。

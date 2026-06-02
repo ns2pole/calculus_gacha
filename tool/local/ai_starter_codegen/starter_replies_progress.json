@@ -1,92 +1,15 @@
 {
   "00E2A046-7CC1-48D5-ADCB-A48C3F5A250B": [
     {
-      "label": "この問題の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "整数問題でよく使う考え方はありますか？",
-      "actionId": "general_strategy"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "式を変形する方法を教えてください。",
-      "actionId": "transform_equation"
-    }
-  ],
-  "01AB7A0C-4FD8-4E11-B537-50DFBEF48965": [
-    {
-      "label": "この積分の解き方の方針を教えてください",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "部分積分を使う問題ですか？",
-      "actionId": "confirm_technique"
-    },
-    {
-      "label": "部分積分の公式を教えてください",
-      "actionId": "integration_by_parts_formula"
-    },
-    {
-      "label": "f(x)とg'(x)をどう設定すればいいですか？",
-      "actionId": "integration_by_parts_setup"
-    }
-  ],
-  "035BEF48-5556-4099-9AD4-1FBE772833CE": [
-    {
-      "label": "この微分方程式の種類は何ですか？",
+      "label": "この方程式のタイプは何ですか？",
       "actionId": "equation_type"
     },
     {
-      "label": "どうやって解き始めればいいですか？",
+      "label": "どういう方針で解き進めれば良いですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "変数分離形とは何ですか？",
-      "sendText": "変数分離形とは何ですか？この問題は変数分離形にできますか？",
-      "actionId": "term_definition"
-    },
-    {
-      "label": "f(t)の一般解の形を教えてください。",
-      "actionId": "general_solution_form"
-    }
-  ],
-  "07FC023A-DAD9-432A-BCD7-B90E3C25404F": [
-    {
-      "label": "「定常状態」とはどういう意味ですか？",
-      "actionId": "meaning_steady_state"
-    },
-    {
-      "label": "解法の指針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "どのような形の特解を仮定すればよいですか？",
-      "actionId": "assume_particular_solution"
-    },
-    {
-      "label": "RLC回路との関連について教えてください。",
-      "actionId": "rlc_connection"
-    }
-  ],
-  "09338EE1-388B-4048-ABC3-CD11A1297220": [
-    {
-      "label": "この式の形は何を表していますか？",
-      "actionId": "meaning_of_expression"
-    },
-    {
-      "label": "因数分解の問題ですか？",
-      "actionId": "problem_type"
-    },
-    {
-      "label": "どこから手をつければいいですか？",
+      "label": "最初の一歩は何をすれば良いですか？",
       "actionId": "first_step"
     },
     {
@@ -94,101 +17,169 @@
       "actionId": "hint"
     }
   ],
-  "0DDAAC08-A9CF-4240-9166-64922F384992": [
+  "01AB7A0C-4FD8-4E11-B537-50DFBEF48965": [
     {
-      "label": "Σk² の公式って何だっけ？",
-      "actionId": "sum_formula_hint"
-    },
-    {
-      "label": "極限を求める方針を教えて",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいい？",
+      "label": "部分積分を使う問題ですか？",
+      "actionId": "confirm_method"
+    },
+    {
+      "label": "部分積分の公式を確認したい",
+      "actionId": "show_formula"
+    },
+    {
+      "label": "最初の一歩はどうすればいいですか？",
+      "actionId": "first_step"
+    }
+  ],
+  "035BEF48-5556-4099-9AD4-1FBE772833CE": [
+    {
+      "label": "これはどのような種類の微分方程式ですか？",
+      "actionId": "equation_type"
+    },
+    {
+      "label": "解き始めるための方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "f'(t)は何を表していますか？",
+      "actionId": "term_meaning"
+    },
+    {
+      "label": "初期条件f(0)=f_0はどのように使いますか？",
+      "actionId": "initial_condition_use"
+    }
+  ],
+  "07FC023A-DAD9-432A-BCD7-B90E3C25404F": [
+    {
+      "label": "定常状態とは何ですか？",
+      "actionId": "steady_state_meaning"
+    },
+    {
+      "label": "未定係数法について教えてください",
+      "actionId": "undetermined_coefficients_method"
+    },
+    {
+      "label": "特解の求め方の方針を教えてください",
+      "actionId": "particular_solution_approach"
+    },
+    {
+      "label": "RLC回路との関連について教えてください",
+      "actionId": "rlc_connection"
+    }
+  ],
+  "09338EE1-388B-4048-ABC3-CD11A1297220": [
+    {
+      "label": "この式の因数分解の考え方を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "どこから手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "この問題のポイントは何？",
-      "actionId": "key_point"
+      "label": "何か有名な公式を使いますか？",
+      "actionId": "formula_check"
+    },
+    {
+      "label": "3乗の和の公式をどう使えばいいですか？",
+      "actionId": "specific_formula_hint"
+    }
+  ],
+  "0DDAAC08-A9CF-4240-9166-64922F384992": [
+    {
+      "label": "最初の一歩は何ですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "Σk² の公式を教えてください。",
+      "actionId": "formula_sum_k_squared"
+    },
+    {
+      "label": "極限の計算のポイントは何ですか？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "ヒントをください。",
+      "actionId": "hint"
     }
   ],
   "0E10892B-45E0-4994-9281-EDB35CE38498": [
     {
-      "label": "漸化式のタイプは何ですか？",
-      "actionId": "recurrence_type"
+      "label": "この漸化式のタイプは何ですか？",
+      "actionId": "identify_type"
     },
     {
-      "label": "どういう方針で解き進めますか？",
-      "actionId": "approach_only"
+      "label": "解き方のヒントをください",
+      "actionId": "hint"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "n+1 の項がなければどうなりますか？",
-      "actionId": "consider_homogeneous"
+      "label": "特性方程式は使えますか？",
+      "actionId": "characteristic_equation_query"
     }
   ],
   "14D0F717-BEC3-49D9-98CF-F56C33CB6B3B": [
     {
-      "label": "この積分を解くための一般的な方針は？",
+      "label": "この積分、どう解けばいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "分母の形を見て、どんな置換が考えられますか？",
-      "actionId": "hint_substitution"
+      "label": "分母の (4+x^2) の形が気になります",
+      "sendText": "分母の (4+x^2) の形は、どんな置換積分をすると解きやすくなりますか？"
     },
     {
-      "label": "三角関数を使った置換について教えてください。",
+      "label": "三角関数を使った置換を検討すべきですか？",
       "actionId": "hint_trig_sub"
     },
     {
-      "label": "積分の最初の一歩は何ですか？",
+      "label": "置換積分の方法を教えてください",
       "actionId": "first_step"
     }
   ],
   "14E178D7-FC09-4439-B145-92688182FC44": [
     {
-      "label": "この式は何の形に似ていますか？",
-      "sendText": "この式は何の形に似ていますか？",
+      "label": "この式はどんな因数分解の形ですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の公式を使いますか？",
-      "sendText": "因数分解の公式を使いますか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "最初の一歩はどうすればいいですか？",
-      "sendText": "最初の一歩はどうすればいいですか？",
+      "label": "最初は何から考えればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "24xyの部分はどう考えればいいですか？",
-      "sendText": "24xyの部分はどう考えればいいですか？",
-      "actionId": "specific_term_hint"
+      "label": "ヒントをください",
+      "actionId": "hint"
+    },
+    {
+      "label": "二乗の形にまとめるにはどうすればいいですか？",
+      "actionId": "specific_approach"
     }
   ],
   "15CEC271-B2C8-40A9-9B84-C64590472E61": [
     {
-      "label": "この式は何をすればいいですか？",
-      "sendText": "この式は何をすればいいですか？",
+      "label": "因数分解の基本方針を教えて",
+      "sendText": "この式の因数分解の基本的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の公式を使いますか？",
-      "sendText": "因数分解の公式を使いますか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "最初の一歩を教えてください。",
-      "sendText": "最初の一歩を教えてください。",
+      "label": "最初の一歩は何をすればいい？",
+      "sendText": "因数分解を始めるにあたって、最初の一歩として何を考えればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "完全平方式の形ですか？",
-      "sendText": "これは完全平方式の形ですか？",
+      "label": "この式はどんな形に見える？",
+      "sendText": "この式は、何か特定の因数分解の公式に当てはまりそうな形に見えますか？",
+      "actionId": "hint"
+    },
+    {
+      "label": "平方の公式が使える？",
+      "sendText": "二乗の形（平方の公式）が使えるかどうかのヒントをください。",
       "actionId": "hint"
     }
   ],
@@ -199,165 +190,163 @@
       "actionId": "approach_only"
     },
     {
-      "label": "互除法とは何ですか？",
-      "sendText": "互除法とは何ですか？"
+      "label": "不定方程式の解き方について教えてください",
+      "sendText": "不定方程式の解き方について教えてください。",
+      "actionId": "how_to_solve_diophantine"
     },
     {
-      "label": "最初は何から手をつければ良いですか？",
-      "sendText": "最初は何から手をつければ良いですか？",
+      "label": "ユークリッドの互除法を使いますか？",
+      "sendText": "ユークリッドの互除法を使いますか？",
+      "actionId": "confirm_euclidean_algorithm"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "sendText": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
-    },
-    {
-      "label": "特殊解を見つけるにはどうすればいいですか？",
-      "sendText": "特殊解を見つけるにはどうすればいいですか？"
     }
   ],
   "17D1526C-1324-4C82-8D05-59B9308E14D2": [
     {
-      "label": "この積分の形を見て、何か気づくことはありますか？",
-      "actionId": "hint"
+      "label": "積分の形を見て、どんな置換が考えられますか？",
+      "actionId": "approach_only"
     },
     {
-      "label": "分母のルートの中をどう処理すればいいですか？",
+      "label": "分母の根号の中の式を簡単にするにはどうすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "三角関数を使った置換は有効ですか？",
-      "actionId": "approach_only"
+      "label": "三角関数の置換を試すとしたら、何が良さそうですか？",
+      "actionId": "hint_substitution"
     },
     {
-      "label": "置換積分の方針を教えてください。",
-      "actionId": "approach_only"
+      "label": "置換積分の手順を教えてください。",
+      "actionId": "integration_steps"
     }
   ],
   "180399F4-71C4-4CAE-8392-D57061DDCBA6": [
     {
       "label": "log x の積分はどうすればいいですか？",
-      "actionId": "how_to_integrate_logx"
-    },
-    {
-      "label": "部分積分の公式を教えてください",
-      "actionId": "integration_by_parts_formula"
-    },
-    {
-      "label": "定積分の計算手順を確認したいです",
-      "actionId": "definite_integral_steps"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
+      "sendText": "log x の積分はどうすればいいですか？",
       "actionId": "first_step"
-    }
-  ],
-  "183166B0-C425-4604-B488-2D51C73267D5": [
+    },
     {
-      "label": "この積分の解き方を教えてください。",
-      "sendText": "この積分の解き方を教えてください。",
+      "label": "部分積分を使う問題ですか？",
+      "sendText": "部分積分を使う問題ですか？",
       "actionId": "approach_only"
-    },
-    {
-      "label": "置換積分を使うのでしょうか？",
-      "sendText": "置換積分を使うのでしょうか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "どの部分をuと置けば良いですか？",
-      "sendText": "どの部分をuと置けば良いですか？",
-      "actionId": "first_step"
     },
     {
       "label": "定積分の計算で注意することはありますか？",
       "sendText": "定積分の計算で注意することはありますか？",
+      "actionId": "definite_integral_tip"
+    },
+    {
+      "label": "ヒントをください",
+      "sendText": "ヒントをください",
+      "actionId": "hint"
+    }
+  ],
+  "183166B0-C425-4604-B488-2D51C73267D5": [
+    {
+      "label": "置換積分の基本を教えて",
+      "actionId": "substitution_basics"
+    },
+    {
+      "label": "何から手をつければいい？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "どの部分を置換すればいい？",
+      "actionId": "substitution_target"
+    },
+    {
+      "label": "ヒントをください",
       "actionId": "hint"
     }
   ],
   "18A36D0E-7123-4A0D-8AE6-E8453099D9A9": [
     {
-      "label": "この定積分の解き方のヒントをください",
-      "actionId": "hint"
+      "label": "この定積分のポイントは何ですか？",
+      "actionId": "approach_only"
     },
     {
-      "label": "偶関数・奇関数の性質は使えますか？",
-      "actionId": "check_even_odd"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "被積分関数は偶関数ですか？奇関数ですか？",
       "actionId": "first_step"
     },
     {
-      "label": "被積分関数を展開するべきですか？",
-      "actionId": "expand_integrand"
+      "label": "積分の計算手順を教えてください。",
+      "actionId": "calculation_steps"
+    },
+    {
+      "label": "(1-x^2)^3 の展開方法を教えてください。",
+      "actionId": "expansion_help"
     }
   ],
   "1BD1750A-06EA-42B5-81DB-57091773730C": [
     {
-      "label": "この多項式の因数分解の方針を教えてください。",
+      "label": "この多項式の因数分解の方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "因数定理は使えますか？",
+      "label": "因数定理は使える？",
       "actionId": "factor_theorem"
     },
     {
-      "label": "2次式×2次式の形に因数分解できますか？",
+      "label": "1次式の因数がない場合、どうすればいい？",
+      "actionId": "no_linear_factors"
+    },
+    {
+      "label": "2次式×2次式の形に因数分解するとは？",
       "actionId": "quadratic_factorization"
     }
   ],
   "1D342CB8-24CD-40BB-A3EA-06BB6AFC1845": [
     {
-      "label": "この微分方程式の種類は何ですか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "解き方の基本的な方針を教えてください。",
+      "label": "この微分方程式の解き方の基本方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
+      "label": "特性方程式とは何ですか？",
+      "actionId": "characteristic_equation"
     },
     {
-      "label": "特性方程式について教えてください。",
-      "actionId": "characteristic_equation_info"
+      "label": "初期条件 f(0)=1, f'(0)=2 をどのように使いますか？",
+      "actionId": "initial_conditions"
+    },
+    {
+      "label": "減衰振動とはどういう意味ですか？",
+      "actionId": "damped_oscillation_meaning"
     }
   ],
   "1DAE0FE3-E342-4547-956C-6CD1EA31EAD3": [
     {
-      "label": "この微分方程式の種類は何ですか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "解法の一般的な方針を教えてください。",
+      "label": "この微分方程式の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
+      "label": "非斉次微分方程式の一般解の形について教えてください。",
+      "actionId": "general_solution_form"
     },
     {
-      "label": "非同次項の特殊解はどうやって求めますか？",
-      "actionId": "particular_solution"
+      "label": "初期条件f(0)=f_0はどのように使いますか？",
+      "actionId": "initial_condition_usage"
     },
     {
-      "label": "初期条件f(0)=f_0はどう使いますか？",
-      "actionId": "initial_condition"
+      "label": "定常解と過渡解について教えてください。",
+      "actionId": "steady_transient_solution"
     }
   ],
   "1E209006-69B2-4DAE-8B9D-036D1800D855": [
     {
-      "label": "この極限の形は何を表していますか？",
-      "actionId": "limit_form_meaning"
+      "label": "この問題の方針を教えてください",
+      "actionId": "approach_only"
     },
     {
-      "label": "eの定義を使う問題ですか？",
-      "actionId": "is_it_e_definition"
+      "label": "eの定義の極限を使う問題ですか？",
+      "actionId": "confirm_concept"
     },
     {
-      "label": "式をどのように変形すればよいですか？",
-      "actionId": "how_to_transform"
+      "label": "式変形のヒントが欲しいです",
+      "actionId": "transformation_hint"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
@@ -366,56 +355,64 @@
   ],
   "1EC3C384-44E0-4C3B-8FE4-2E3814FD7CB3": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "因数分解の基本的な方針を教えて",
+      "sendText": "この式の因数分解の基本的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の基本的な考え方を確認したい",
-      "actionId": "review_factoring_basics"
-    },
-    {
-      "label": "この式をどう変形すればいいですか？",
+      "label": "x^4 + 4 の形を見て、何を考えればいい？",
+      "sendText": "x^4 + 4 という形を見たときに、最初に何を考えればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "「2乗の差」の形にするには？",
-      "actionId": "hint_difference_of_squares"
+      "label": "平方の差の公式は使える？",
+      "sendText": "この問題で、平方の差の公式 (a^2 - b^2) = (a - b)(a + b) は使えますか？",
+      "actionId": "hint"
+    },
+    {
+      "label": "「たすき掛け」は使えますか？",
+      "sendText": "この因数分解で「たすき掛け」は使えますか？",
+      "actionId": "hint"
     }
   ],
   "1ECE1CDE-BFDC-4524-B8B5-6501A91BD8BE": [
     {
-      "label": "この問題の方針を教えてください",
-      "actionId": "approach_only"
+      "label": "この極限の形は何ですか？",
+      "actionId": "limit_form"
     },
     {
-      "label": "分母と分子、どちらが速く増加しますか？",
-      "actionId": "compare_growth"
+      "label": "指数関数と多項式、どちらが速く増加しますか？",
+      "actionId": "growth_comparison"
     },
     {
-      "label": "比の判定法は使えますか？",
+      "label": "比の判定法（ダランベールの判定法）は使えますか？",
       "actionId": "ratio_test_hint"
     },
     {
-      "label": "はさみうちの原理は使えますか？",
+      "label": "はさみうちの原理を使うにはどうすればいいですか？",
       "actionId": "squeeze_theorem_hint"
     }
   ],
   "1F0413C9-47F5-44A8-A3C3-519334677C68": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "この問題の解き方を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の最初のステップは何ですか？",
+      "label": "まずは何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "x^4 の項がある式の因数分解のコツは？",
+      "label": "因数分解のヒントが欲しいです。",
       "actionId": "hint"
     },
     {
-      "label": "何か置き換えをすると解きやすくなりますか？",
-      "actionId": "substitution_hint"
+      "label": "x^4 の項がある式の因数分解は初めてです。",
+      "sendText": "x^4 の項がある式の因数分解は初めてです。どのように考えたらいいですか？"
+    },
+    {
+      "label": "置き換えを使う問題ですか？",
+      "sendText": "この問題は、何かを別の文字に置き換えて解くタイプですか？"
     }
   ],
   "205667D9-8B8F-43B6-A590-037AAE61339F": [
@@ -424,120 +421,115 @@
       "actionId": "first_step"
     },
     {
-      "label": "3のマイナスx乗はどう扱えばいいですか？",
-      "sendText": "3のマイナスx乗はどのように変形できますか？",
-      "actionId": "term_explanation"
+      "label": "3の-x乗はどう扱えばいいですか？",
+      "actionId": "term_meaning"
     },
     {
-      "label": "この式を解くための方針を教えてください。",
+      "label": "指数方程式の一般的な解き方を知りたい",
       "actionId": "approach_only"
     },
     {
-      "label": "何か文字で置き換えることはできますか？",
-      "actionId": "substitution_hint"
+      "label": "3のx乗をtと置くのはどうですか？",
+      "actionId": "specific_approach"
     }
   ],
   "227D1ED5-9BAE-49E1-BD62-02531FB8ADF1": [
-    {
-      "label": "因数分解の一般的な方針を教えて",
-      "sendText": "この式の因数分解の一般的な方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "因数定理は使える？",
-      "sendText": "因数定理を使って因数を見つけることはできますか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "5次式の因数分解はどうすればいい？",
-      "sendText": "5次式の因数分解は、どのように進めれば良いですか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "他に試せる方法は？",
-      "sendText": "因数定理以外に、他に試せる因数分解の方法はありますか？",
-      "actionId": "hint"
-    }
-  ],
-  "24D47C58-831B-4D01-A30E-3BD84A0D741E": [
     {
       "label": "因数分解の一般的な方針は何ですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "3乗の項が複数ありますが、どう考えれば良いですか？",
-      "actionId": "hint_cubic_terms"
-    },
-    {
-      "label": "この式を見て、何か気づくことはありますか？",
+      "label": "因数定理を使ってみるべきですか？",
       "actionId": "first_step"
     },
     {
-      "label": "どの項から手をつければ良いですか？",
-      "actionId": "hint_starting_point"
+      "label": "1次式の因数がない場合、どうすればいいですか？",
+      "actionId": "next_step"
+    },
+    {
+      "label": "係数比較とはどういう方法ですか？",
+      "actionId": "method_explanation"
+    }
+  ],
+  "24D47C58-831B-4D01-A30E-3BD84A0D741E": [
+    {
+      "label": "因数分解の一般的な方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "この式を見て、最初に何を試すべきですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "3乗の項が3つあるのが気になります。",
+      "sendText": "3乗の項が3つあるのが気になります。何か特別な公式を使いますか？"
+    },
+    {
+      "label": "x^3 + 27y^3 の部分から始めますか？",
+      "actionId": "hint_specific_part"
+    },
+    {
+      "label": "a^3+b^3+c^3-3abc の公式は使えますか？",
+      "actionId": "hint_formula_check"
     }
   ],
   "26D1B6CC-77F8-4522-88A0-0A06A41D8D67": [
     {
-      "label": "この積分の解き方の方針を教えて",
+      "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "部分積分を使うのかな？",
-      "actionId": "confirm_technique"
+      "label": "部分積分の公式を確認したいです。",
+      "actionId": "review_formula"
     },
     {
-      "label": "最初の一歩は何から始める？",
+      "label": "最初の計算ステップを教えてください。",
       "actionId": "first_step"
     },
     {
-      "label": "e^x分の1はどう扱えばいい？",
-      "actionId": "term_clarification"
+      "label": "e^(-x) の積分はどうなりますか？",
+      "actionId": "specific_calculation"
     }
   ],
   "26E37810-7237-4FC5-8876-910F55F7133E": [
     {
-      "label": "絶対値記号の外し方を教えて",
-      "actionId": "absolute_value_hint"
-    },
-    {
-      "label": "極限の計算方針を教えてください",
+      "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "右側極限と左側極限について教えて",
-      "actionId": "right_left_limit_hint"
+      "label": "絶対値記号の外し方がわかりません。",
+      "actionId": "absolute_value_hint"
     },
     {
-      "label": "sin x / x の極限は使えますか？",
-      "actionId": "related_limit_question"
+      "label": "左右極限を考えるのはなぜですか？",
+      "actionId": "why_left_right_limit"
+    },
+    {
+      "label": "右側極限から計算を始めたいです。",
+      "actionId": "first_step_right_limit"
     }
   ],
   "2BC52EFA-C75B-4E77-B1E5-E7ECCA113394": [
     {
-      "label": "どんな公式を使えばいいですか？",
-      "actionId": "hint_formula"
+      "label": "どういう方針で解けばいいですか？",
+      "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩はどうすればいいですか？",
+      "label": "因数分解の公式を使いますか？",
+      "actionId": "formula_check"
+    },
+    {
+      "label": "125はどんな数ですか？",
       "actionId": "first_step"
     },
     {
-      "label": "125ってどんな数ですか？",
-      "actionId": "identify_term"
-    },
-    {
-      "label": "この式は何を求められているのですか？",
-      "actionId": "understand_goal"
+      "label": "ヒントをください",
+      "actionId": "hint"
     }
   ],
   "2C1016F1-C7DD-4BE8-8BC8-0C5AA7F05FB5": [
     {
-      "label": "この微分方程式の種類は何ですか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "解き方の一般的な方針を教えてください。",
+      "label": "この微分方程式の解き方の基本方針を教えてください。",
       "actionId": "approach_only"
     },
     {
@@ -545,90 +537,102 @@
       "actionId": "first_step"
     },
     {
-      "label": "特殊解の求め方について教えてください。",
-      "actionId": "particular_solution_hint"
+      "label": "定数解とは何ですか？",
+      "actionId": "term_definition"
     },
     {
-      "label": "初期条件の使い方は？",
-      "actionId": "initial_conditions_usage"
+      "label": "同次化とはどういうことですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "初期条件をどのように使いますか？",
+      "actionId": "hint"
     }
   ],
   "2D7ED2C9-2759-46FC-B597-619EB2FA6A3B": [
     {
-      "label": "この問題の方針を教えてください。",
+      "label": "この問題の方針を教えてください",
+      "sendText": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
       "label": "1-cos x の部分をどう変形すればいいですか？",
+      "sendText": "1-cos x の部分をどう変形すればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "三角関数の極限の公式は使えますか？",
-      "actionId": "hint_formula"
+      "label": "三角関数の極限の公式は何を使いますか？",
+      "sendText": "三角関数の極限の公式は何を使いますか？",
+      "actionId": "relevant_formula"
     },
     {
-      "label": "ロピタルの定理は使えますか？",
-      "actionId": "hint_lhopital"
+      "label": "ヒントをください",
+      "sendText": "ヒントをください。",
+      "actionId": "hint"
     }
   ],
   "2E68B281-EA4E-4B67-879E-59A9AE7EC762": [
     {
-      "label": "この積分の解き方の方針を教えてください",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "sin(2x)cos(3x) の部分はどう処理すればいいですか？",
+      "label": "積和公式って何でしたっけ？",
+      "actionId": "formula_recall"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "積和公式について教えてください",
-      "actionId": "hint_product_to_sum"
-    },
-    {
-      "label": "三角関数の積分のポイントは何ですか？",
-      "actionId": "hint_general_integration"
+      "label": "sin(2x)cos(3x)をどう変形しますか？",
+      "actionId": "specific_transformation"
     }
   ],
   "3444E69A-5FCB-43A5-8C70-54616A1226D6": [
     {
-      "label": "この極限は何を表していますか？",
-      "actionId": "what_is_this_limit"
+      "label": "この極限の形は何を表していますか？",
+      "actionId": "meaning_of_form"
     },
     {
-      "label": "ネイピア数eの定義を教えてください。",
+      "label": "eの定義について教えてください",
       "actionId": "definition_of_e"
     },
     {
-      "label": "このような形の極限を解く方針は？",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "この問題のポイントは何ですか？",
-      "actionId": "key_point"
+      "label": "なぜこの極限がeになるのですか？",
+      "actionId": "why_e"
     }
   ],
   "34A820FC-E504-47F2-BBF4-741670A417AE": [
     {
-      "label": "この式の形を見て、何か気づくことはありますか？",
+      "label": "どういう方針で解けばいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の最初の一歩は何ですか？",
+      "label": "まず何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "x^2 を別の文字に置き換えて考えてみましょうか？",
-      "actionId": "hint"
+      "label": "x^2を別の文字に置き換えてもいいですか？",
+      "actionId": "hint_substitution"
     },
     {
-      "label": "因数分解の一般的な方法を教えてください",
-      "actionId": "general_factoring_methods"
+      "label": "因数分解の公式を使えますか？",
+      "actionId": "hint_formula"
     }
   ],
   "369BD639-C54E-4847-93A1-3B56E19006A2": [
     {
-      "label": "この極限の形は何を表していますか？",
-      "actionId": "identify_form"
+      "label": "この極限の形は何を意味しますか？",
+      "actionId": "meaning_of_form"
+    },
+    {
+      "label": "eの定義式を思い出したい",
+      "actionId": "recall_e_definition"
     },
     {
       "label": "どういう方針で解き進めればいいですか？",
@@ -639,8 +643,8 @@
       "actionId": "first_step"
     },
     {
-      "label": "ヒントをください",
-      "actionId": "hint"
+      "label": "変数変換は有効ですか？",
+      "actionId": "variable_substitution_hint"
     }
   ],
   "37B80E92-3E58-4BAF-A56B-7425004B28E0": [
@@ -649,52 +653,52 @@
       "actionId": "first_step"
     },
     {
-      "label": "連立漸化式の解き方について教えてください。",
+      "label": "連立漸化式の解き方の方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "b_nを消去するにはどうすればいいですか？",
-      "actionId": "hint_eliminate_bn"
+      "label": "b_nを消去するにはどうすればいい？",
+      "actionId": "eliminate_variable"
     },
     {
-      "label": "特性方程式とは何ですか？",
-      "actionId": "what_is_characteristic_equation"
+      "label": "3項間漸化式の一般項の求め方を確認したい",
+      "actionId": "three_term_recurrence_hint"
     }
   ],
   "383DCCBD-6B56-4171-856E-F14225EC83D8": [
     {
-      "label": "この積分の解き方の方針を教えてください",
+      "label": "この積分はどう解けばいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "√の中が複雑なときの積分はどうすればいいですか？",
-      "actionId": "hint_substitution"
+      "label": "√の中が1次式の場合の積分について教えて",
+      "actionId": "concept_irrational_integral"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
+      "label": "置換積分を使うとしたら、何を置換すればいいですか？",
+      "actionId": "first_step_substitution"
     },
     {
-      "label": "置換積分について教えてください",
-      "actionId": "explain_concept"
+      "label": "定積分の計算で気をつけることは？",
+      "actionId": "concept_definite_integral"
     }
   ],
   "38DF36DC-0268-4E1D-A341-14A39DDE8543": [
     {
-      "label": "この極限の形に見覚えはありますか？",
-      "actionId": "recognize_form"
+      "label": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "eの定義を思い出せますか？",
-      "actionId": "recall_e_definition"
+      "label": "x → -∞ の極限はどう考えればいいですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "x → -∞ の場合、どう考えれば良いですか？",
-      "actionId": "handle_negative_infinity"
+      "label": "eの定義の極限の形にどうやって変形しますか？",
+      "actionId": "transformation_hint"
     },
     {
-      "label": "変数変換は有効ですか？",
-      "actionId": "consider_substitution"
+      "label": "変数変換について教えてください。",
+      "actionId": "variable_substitution_hint"
     }
   ],
   "3A11C85E-F61C-49FA-BAA5-2BD036093B07": [
@@ -703,73 +707,76 @@
       "actionId": "approach_only"
     },
     {
-      "label": "和積の公式を使うのはどこですか？",
-      "actionId": "hint_sum_to_product"
-    },
-    {
-      "label": "最初は何から手をつければいいですか？",
+      "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "sin2xをどう扱えばいいですか？"
+      "label": "和積の公式は使えますか？",
+      "actionId": "formula_hint"
+    },
+    {
+      "label": "sin x + sin 3x の部分をどう処理しますか？",
+      "actionId": "specific_hint"
     }
   ],
   "3A5214AB-C386-4C28-AA01-886809BDE55A": [
     {
-      "label": "因数分解の基本的な方針を教えてください",
-      "sendText": "この多項式の因数分解について、基本的な方針を教えてください。",
+      "label": "因数分解の一般的な方針を教えてください",
+      "sendText": "この式の因数分解の一般的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
-      "sendText": "この問題を解くために、まず最初の一歩として何をすればいいですか？",
+      "sendText": "この問題を解くための最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
       "label": "因数定理は使えますか？",
-      "sendText": "因数定理を使って解くことはできますか？",
-      "actionId": "hint"
+      "sendText": "因数定理を使うことはできますか？",
+      "actionId": "hint_factor_theorem"
     },
     {
-      "label": "何か特別な形をしていますか？",
-      "sendText": "この多項式は何か特別な形をしていますか？",
-      "actionId": "hint"
+      "label": "この式に何か特徴はありますか？",
+      "sendText": "この式に何か特徴的なパターンや性質はありますか？",
+      "actionId": "hint_pattern"
     }
   ],
   "3B2F6F76-9E2E-4C3A-A0C7-6E3C6E8B9B21": [
     {
-      "label": "この極限を求めるための方針を教えてください。",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "sin^n x の積分はどう扱えばいいですか？",
+      "label": "まずは何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "ウォリス積分の知識は使えますか？",
-      "actionId": "hint"
+      "label": "漸化式を作るにはどうすればいいですか？",
+      "actionId": "recurrence_relation"
     },
     {
-      "label": "漸化式を立てるのが良いと聞きましたが、どうすればいいですか？",
-      "actionId": "hint"
+      "label": "ウォリス積分の知識は必要ですか？",
+      "actionId": "wallis_integral"
     }
   ],
   "3CEFDD7D-4880-48DF-ABD8-7779C2D0F2C5": [
     {
-      "label": "この式は何をすればいいですか？",
-      "actionId": "what_to_do"
+      "label": "因数分解の基本的な考え方を知りたい",
+      "sendText": "この式の因数分解の基本的な考え方を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "因数分解のやり方を教えてください。",
-      "actionId": "how_to_factor"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
+      "label": "最初の一歩は何から始めるべき？",
+      "sendText": "この問題を解くための最初の一歩は何から始めるべきですか？",
       "actionId": "first_step"
     },
     {
-      "label": "たすきがけについて教えてください。",
-      "actionId": "about_cross_multiplication"
+      "label": "「たすきがけ」って何？",
+      "sendText": "因数分解でよく聞く「たすきがけ」とは何ですか？"
+    },
+    {
+      "label": "どんな公式を使えばいい？",
+      "sendText": "この因数分解で使える公式はありますか？"
     }
   ],
   "3F26B444-EA86-4FF8-830B-2AC464BDE3E6": [
@@ -778,34 +785,34 @@
       "actionId": "identify_type"
     },
     {
-      "label": "まず何をすればいいですか？",
+      "label": "解き方のヒントをください",
+      "actionId": "hint"
+    },
+    {
+      "label": "最初は何から手をつければ良いですか？",
       "actionId": "first_step"
     },
     {
-      "label": "特性方程式を使うのはどうですか？",
-      "actionId": "approach_characteristic_equation"
-    },
-    {
-      "label": "ヒントをください",
-      "actionId": "hint"
+      "label": "定数項がある漸化式の解き方を知りたい",
+      "actionId": "approach_constant_term"
     }
   ],
   "3F983683-4841-44A5-8A49-2AADB866B6D9": [
     {
-      "label": "この問題の方針を教えてください。",
+      "label": "不定方程式を解く方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "xの候補をどうやって絞り込むのですか？",
+      "label": "まず何から手をつければいい？",
       "actionId": "first_step"
     },
     {
-      "label": "定数分離とは何ですか？",
-      "actionId": "term_definition"
+      "label": "定数項「-2」に注目するのはなぜ？",
+      "actionId": "why_constant_term"
     },
     {
-      "label": "ヒントをください。",
-      "actionId": "hint"
+      "label": "xの候補をどうやって絞り込むの？",
+      "actionId": "how_to_narrow_x"
     }
   ],
   "417F69AB-5A9E-4488-9692-AA67DE3BCFF2": [
@@ -815,33 +822,33 @@
     },
     {
       "label": "特性方程式とは何ですか？",
-      "actionId": "what_is_characteristic_equation"
+      "actionId": "definition_characteristic_equation"
     },
     {
-      "label": "まず何から手をつければいいですか？",
+      "label": "最初は何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "特性方程式の立て方を教えてください",
-      "actionId": "how_to_form_characteristic_equation"
+      "label": "ヒントをください",
+      "actionId": "hint"
     }
   ],
   "422D4451-7399-4187-863C-165C15969BB4": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "この積分の基本的な方針を教えてください",
       "actionId": "approach_only"
     },
     {
       "label": "sin^4 x の積分はどうすればいいですか？",
-      "actionId": "how_to_integrate_sin4x"
+      "actionId": "first_step"
     },
     {
-      "label": "半角の公式を使うのはどうですか？",
+      "label": "半角の公式を使うのは有効ですか？",
       "actionId": "hint_half_angle"
     },
     {
-      "label": "三角関数の次数を下げるには？",
-      "actionId": "reduce_power_trig"
+      "label": "三角関数の次数を下げるにはどうしますか？",
+      "actionId": "hint_power_reduction"
     }
   ],
   "43D15683-AB09-49EE-8412-0CCB4D260EAF": [
@@ -850,38 +857,38 @@
       "actionId": "identify_type"
     },
     {
-      "label": "まずは何から手をつければいいですか？",
+      "label": "まず何から手をつければ良いですか？",
       "actionId": "first_step"
     },
     {
-      "label": "ヒントをください",
+      "label": "ヒントをください。",
       "actionId": "hint"
     },
     {
-      "label": "定数項「4」の扱い方が分かりません",
-      "actionId": "handle_constant_term"
+      "label": "定数解を仮定するとはどういうことですか？",
+      "actionId": "explain_constant_solution"
     },
     {
-      "label": "両辺を何かで割ってみるのはどうですか？",
-      "actionId": "manipulation_idea"
+      "label": "変数係数の漸化式を解く方針を教えてください。",
+      "actionId": "approach_only"
     }
   ],
   "448E166D-FEF8-4A70-8541-FCA04C82C7F8": [
     {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "f(t)を求めるにはどうすればいいですか？",
+      "label": "この微分方程式の解き方の方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "sin(at)の積分を教えてください。",
-      "actionId": "hint_integration"
+      "label": "f'(t)は何を表していますか？",
+      "actionId": "terminology"
     },
     {
-      "label": "f(0)=0は何に使いますか？",
-      "actionId": "hint_initial_condition"
+      "label": "最初のステップは何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "f(0)=0という条件をどう使いますか？",
+      "actionId": "initial_condition"
     }
   ],
   "479E7E6E-ED63-4F1A-BB39-42C4C598782D": [
@@ -890,21 +897,83 @@
       "actionId": "approach_only"
     },
     {
-      "label": "x, y, z はどんな数ですか？",
-      "sendText": "x, y, z はどんな数ですか？正の整数ですか？"
-    },
-    {
-      "label": "x の範囲を絞るにはどうすればいいですか？",
+      "label": "x, y, z の範囲をどう絞り込みますか？",
       "actionId": "first_step"
     },
     {
-      "label": "最初のステップは何ですか？",
-      "actionId": "first_step"
+      "label": "x=1 の場合、なぜ解がないのですか？",
+      "actionId": "specific_case_x1"
+    },
+    {
+      "label": "x=2 の場合の計算過程を詳しく教えてください",
+      "actionId": "specific_case_x2_details"
+    },
+    {
+      "label": "恒等式 (y-2)(z-2)-4 の使い方が分かりません",
+      "actionId": "algebraic_manipulation"
     }
   ],
   "48615294-8E6C-4EFB-B9F9-5A08205FFF69": [
     {
-      "label": "この積分の解き方のヒントをください",
+      "label": "この問題の方針を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "置換積分を使いますか？",
+      "actionId": "hint_substitution"
+    },
+    {
+      "label": "不定積分を求めるにはどうすればいいですか？",
+      "actionId": "hint_indefinite_integral"
+    }
+  ],
+  "48677C5D-732B-4C47-B4AA-645616D8C392": [
+    {
+      "label": "この極限の基本的な考え方は？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "n! と n^n のどちらが速く増加しますか？",
+      "actionId": "comparison_hint"
+    },
+    {
+      "label": "分数を積の形に書き換える方法は？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "はさみうちの原理は使えますか？",
+      "actionId": "squeeze_theorem_hint"
+    }
+  ],
+  "487CBF1E-4AAB-490D-BFF5-86DF2F9F075C": [
+    {
+      "label": "この式はどうやって解けばいいですか？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "三角関数の合成について教えてください",
+      "actionId": "explain_synthesis"
+    },
+    {
+      "label": "合成を使わずに解く方法はありますか？",
+      "actionId": "alternative_method"
+    },
+    {
+      "label": "合成するときの角度はどうやって決めますか？",
+      "actionId": "synthesis_angle_method"
+    }
+  ],
+  "48B05BE5-7632-4228-BF46-F8476E23E0CF": [
+    {
+      "label": "この積分の形に特徴はありますか？",
+      "actionId": "problem_feature"
+    },
+    {
+      "label": "解き方のヒントを教えてください",
       "actionId": "hint"
     },
     {
@@ -912,298 +981,240 @@
       "actionId": "first_step"
     },
     {
-      "label": "置換積分を使う問題ですか？",
-      "actionId": "approach_check"
-    },
-    {
-      "label": "定積分の計算で気をつけることはありますか？",
-      "actionId": "definite_integral_tips"
+      "label": "定積分を計算する一般的な方法を教えて",
+      "actionId": "general_approach"
     }
   ],
-  "48677C5D-732B-4C47-B4AA-645616D8C392": [
+  "48F0A009-A401-42C4-9AC5-E84555D43257": [
     {
-      "label": "この極限の問題、どう考えたらいい？",
-      "actionId": "approach_only"
+      "label": "この漸化式のタイプは何ですか？",
+      "actionId": "problem_type"
     },
     {
-      "label": "n!/n^n の式をどう変形する？",
+      "label": "まず何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "はさみうちの原理は使えるかな？",
-      "actionId": "hint_squeeze"
+      "label": "ヒントをください",
+      "actionId": "hint"
     },
     {
-      "label": "n!とn^nの成長速度について教えて",
-      "actionId": "growth_rate"
+      "label": "a_nを求める方針を教えてください",
+      "actionId": "approach_only"
     }
   ],
-  "487CBF1E-4AAB-490D-BFF5-86DF2F9F075C": [
+  "4E839CEA-B995-4D8D-812D-C23546487B0E": [
+    {
+      "label": "この級数の名前は何ですか？",
+      "sendText": "この級数（無限和）は数学で何と呼ばれていますか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "発散しそうに見えますが、どう証明しますか？",
+      "sendText": "この級数が発散するという直感がありますが、それを数学的にどう証明すれば良いでしょうか？",
+      "actionId": "approach_divergence"
+    },
+    {
+      "label": "最初の一歩として何を考えればいいですか？",
+      "sendText": "この極限を求めるために、最初の一歩として何を考えれば良いですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "積分を使って考えることはできますか？",
+      "sendText": "このタイプの級数の極限を考える際に、積分を使う方法は有効ですか？",
+      "actionId": "hint_integral"
+    }
+  ],
+  "4E93591C-AFE6-41F0-A2E9-4A32C796D02B": [
+    {
+      "label": "この積分の解き方を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "どんな置換をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "逆三角関数の公式を使えますか？",
+      "actionId": "formula_check"
+    },
+    {
+      "label": "積分範囲の変換について教えてください",
+      "actionId": "range_conversion"
+    }
+  ],
+  "4F6568BE-B67F-46E7-859C-F22766018567": [
     {
       "label": "この問題の方針を教えてください",
       "sendText": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "三角関数の合成について教えてください",
-      "sendText": "三角関数の合成について教えてください。",
-      "actionId": "trig_synthesis_explanation"
+      "label": "不定方程式の解き方について教えてください",
+      "sendText": "不定方程式の解き方について教えてください。",
+      "actionId": "how_to_solve_diophantine"
     },
     {
-      "label": "最初は何から手をつければいいですか？",
-      "sendText": "最初は何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "三角関数の合成を使うのはなぜですか？",
-      "sendText": "三角関数の合成を使うのはなぜですか？",
-      "actionId": "why_trig_synthesis"
-    }
-  ],
-  "48B05BE5-7632-4228-BF46-F8476E23E0CF": [
-    {
-      "label": "この積分の形に特徴はありますか？",
-      "actionId": "hint_form"
-    },
-    {
-      "label": "解き方のヒントをください",
-      "actionId": "hint"
+      "label": "ユークリッドの互除法を使うのはなぜですか？",
+      "sendText": "ユークリッドの互除法を使うのはなぜですか？",
+      "actionId": "why_euclidean_algorithm"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
+      "sendText": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
-    },
-    {
-      "label": "展開して計算する以外の方法はありますか？",
-      "actionId": "hint_alternative_method"
-    }
-  ],
-  "48F0A009-A401-42C4-9AC5-E84555D43257": [
-    {
-      "label": "漸化式の解き方の方針が知りたい",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "まずは何をすればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "この漸化式の特徴は？",
-      "actionId": "hint_feature"
-    },
-    {
-      "label": "a_2, a_3 を計算してみよう",
-      "actionId": "calculate_terms"
-    }
-  ],
-  "4E839CEA-B995-4D8D-812D-C23546487B0E": [
-    {
-      "label": "この極限の求め方の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "Σの計算から始めればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "この数列の極限は収束しますか？発散しますか？",
-      "actionId": "general_question"
-    },
-    {
-      "label": "ヒントをください。",
-      "actionId": "hint"
-    }
-  ],
-  "4E93591C-AFE6-41F0-A2E9-4A32C796D02B": [
-    {
-      "label": "この積分の解き方を教えてください。",
-      "sendText": "この積分の解き方を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "どんな置換をすればいいですか？",
-      "sendText": "どんな置換をすればいいですか？",
-      "actionId": "substitution_hint"
-    },
-    {
-      "label": "定積分で注意すべき点は何ですか？",
-      "sendText": "定積分で注意すべき点は何ですか？",
-      "actionId": "definite_integral_tips"
-    },
-    {
-      "label": "この形の積分はどのように計算しますか？",
-      "sendText": "この形の積分はどのように計算しますか？",
-      "actionId": "integral_form_hint"
-    }
-  ],
-  "4F6568BE-B67F-46E7-859C-F22766018567": [
-    {
-      "label": "この方程式は何を表していますか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "解き方のヒントをください",
-      "actionId": "hint"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "互除法とは何ですか？",
-      "actionId": "euclidean_algorithm_meaning"
     }
   ],
   "4F674DAB-329F-45CC-9417-94C45BE5B203": [
     {
-      "label": "この微分方程式の解き方の基本方針を教えてください。",
+      "label": "この微分方程式の解き方の基本方針は？",
       "actionId": "approach_only"
     },
     {
-      "label": "f''(t) = -4f(t) の形から何がわかりますか？",
-      "actionId": "equation_analysis"
+      "label": "二階同次・定数係数微分方程式とは？",
+      "actionId": "definition_homogeneous_ode"
     },
     {
-      "label": "初期条件 f(0)=0, f'(0)=2 はどのように使いますか？",
-      "actionId": "initial_conditions"
+      "label": "初期条件 f(0)=0, f'(0)=2 はどう使う？",
+      "actionId": "how_to_use_initial_conditions"
     },
     {
-      "label": "このタイプの方程式は、どのような関数を仮定して解き始めますか？",
-      "actionId": "first_step"
+      "label": "特性方程式を使う方法は有効？",
+      "actionId": "characteristic_equation_method"
+    },
+    {
+      "label": "ヒントをください",
+      "actionId": "hint"
     }
   ],
   "51B65EA2-37AB-48F9-ACBE-2482B9740A10": [
     {
-      "label": "この式を因数分解するにはどうすればいいですか？",
+      "label": "因数分解の公式を教えて",
+      "actionId": "formula_reminder"
+    },
+    {
+      "label": "どういう方針で解けばいい？",
       "actionId": "approach_only"
     },
     {
-      "label": "どんな公式を使えばいいですか？",
-      "actionId": "formula_hint"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
+      "label": "最初の一歩は何から始める？",
       "actionId": "first_step"
     },
     {
-      "label": "完全平方式の形ですか？",
-      "actionId": "perfect_square_check"
+      "label": "ヒントをください",
+      "actionId": "hint"
     }
   ],
   "53BC96C5-2D01-45FE-9A39-F369BA9E2097": [
     {
-      "label": "この極限の形は何を表していますか？",
-      "actionId": "limit_form"
+      "label": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "eの定義と関係がありますか？",
-      "actionId": "relate_to_e"
+      "label": "eの定義の極限について教えてください。",
+      "actionId": "concept_e_limit"
     },
     {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "最初に何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "ヒントをください",
-      "actionId": "hint"
+      "label": "変数変換は必要ですか？",
+      "actionId": "hint_variable_substitution"
     }
   ],
   "546F77A4-9EED-4FED-92F4-8E22927D77C8": [
     {
-      "label": "因数分解の最初のステップは何ですか？",
-      "sendText": "因数分解の最初のステップは何ですか？",
+      "label": "因数分解の基本は何ですか？",
+      "actionId": "factoring_basics"
+    },
+    {
+      "label": "まず何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "共通因数を見つけるにはどうすればいいですか？",
-      "sendText": "共通因数を見つけるにはどうすればいいですか？",
+      "label": "共通因数を見つけるには？",
       "actionId": "find_common_factor"
     },
     {
-      "label": "ヒントをください",
-      "sendText": "この問題のヒントをください。",
-      "actionId": "hint"
-    },
-    {
-      "label": "因数分解の方針を教えてください",
-      "sendText": "この問題の因数分解の方針を教えてください。",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
-    },
-    {
-      "label": "「因数分解」とはどういう意味ですか？",
-      "sendText": "「因数分解」とはどういう意味ですか？",
-      "actionId": "term_definition"
     }
   ],
   "54B8A495-B84C-4CFE-8B99-9C45B22E2CE0": [
-    {
-      "label": "この問題の方針を教えてください",
-      "actionId": "approach_only"
-    },
     {
       "label": "まずは何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "3の-x乗はどう扱えばいいですか？",
-      "sendText": "3の-x乗はどのように考えれば良いですか？"
+      "label": "分母分子に何かをかけると良さそうでしょうか？",
+      "actionId": "hint_manipulation"
     },
     {
-      "label": "分数を解消するにはどうすればいいですか？"
+      "label": "3^x を文字で置き換えるのはどうですか？",
+      "actionId": "hint_substitution"
+    },
+    {
+      "label": "指数法則について確認したいです",
+      "actionId": "review_exponent_rules"
     }
   ],
   "574DF54B-E141-4B50-944D-F38724F1ADC3": [
     {
-      "label": "この方程式は何を表していますか？",
-      "actionId": "what_is_this_equation"
+      "label": "この方程式の種類は何ですか？",
+      "actionId": "equation_type"
     },
     {
-      "label": "解き始めるための最初の一歩は何ですか？",
+      "label": "解法の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何をすれば良いですか？",
       "actionId": "first_step"
     },
     {
-      "label": "この積分を含む方程式をどう扱えばいいですか？",
-      "actionId": "handle_integral_equation"
+      "label": "初期条件 f(0)=F/b はどう使いますか？",
+      "actionId": "initial_condition_usage"
     },
     {
-      "label": "微分方程式に変換できますか？",
-      "actionId": "convert_to_ode"
+      "label": "積分を含む方程式の解き方について教えてください。",
+      "actionId": "integral_equation_hint"
     }
   ],
   "595AEE6D-B85D-45AE-AB48-641EC064B6EB": [
     {
-      "label": "この方程式は何を表していますか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "どういう方針で解き進めればいいですか？",
+      "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "判別式を使うとどうなりますか？",
-      "actionId": "discriminant_hint"
+      "label": "まず何から手をつければいいですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "xについて整理するとどうなりますか？",
-      "actionId": "first_step"
+      "label": "判別式を使うのはなぜですか？",
+      "actionId": "why_discriminant"
+    },
+    {
+      "label": "整数解を求めるにはどうすればいいですか？",
+      "actionId": "how_to_find_integer_solutions"
     }
   ],
   "5AE63216-BADE-46E5-A90B-18933C16F2FE": [
     {
-      "label": "漸化式の形から、どんな数列だと考えられますか？",
-      "actionId": "approach_type"
+      "label": "この漸化式のタイプは何ですか？",
+      "actionId": "identify_type"
     },
     {
-      "label": "√a_{n-1} の部分はどう処理すればいいですか？",
-      "actionId": "first_step_sqrt"
+      "label": "最初の一歩として何をすれば良いですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "両辺の対数をとるのはどうでしょうか？",
-      "actionId": "approach_log"
+      "label": "両辺を2乗してみるのはどうですか？",
+      "actionId": "try_squaring"
     },
     {
-      "label": "a_2, a_3 を計算してみると何か見えますか？",
-      "actionId": "first_step_calculate"
+      "label": "対数を取るのは有効ですか？",
+      "actionId": "consider_logarithm"
     }
   ],
   "5B9CCE39-6329-4F9D-8E86-20D97B7760A2": [
@@ -1212,70 +1223,78 @@
       "actionId": "first_step"
     },
     {
-      "label": "左辺を因数分解できますか？",
+      "label": "左辺の因数分解について教えてください。",
       "actionId": "factorization_hint"
     },
     {
-      "label": "この方程式をどう解けばいいですか？",
-      "actionId": "approach_only"
+      "label": "「差の平方」の公式を使いますか？",
+      "actionId": "formula_check"
     },
     {
-      "label": "xとyはどんな数ですか？",
-      "actionId": "variable_type"
+      "label": "32の約数をどう使えばいいですか？",
+      "actionId": "divisor_usage"
+    },
+    {
+      "label": "解き方のヒントをください。",
+      "actionId": "hint"
     }
   ],
   "5F7F2DCD-4A6E-4BA1-B97A-1F9B7B6809A4": [
     {
-      "label": "この式は何をすればいいですか？",
+      "label": "因数分解の公式を使いますか？",
+      "sendText": "この式の因数分解には、どのような公式を使うと良いですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の公式を使いますか？",
-      "actionId": "hint_formula"
-    },
-    {
-      "label": "最初の一歩を教えてください",
+      "label": "最初の一歩は何ですか？",
+      "sendText": "この問題を解くための最初の一歩は何ですか？",
       "actionId": "first_step"
     },
     {
-      "label": "真ん中の項に注目すると？",
-      "actionId": "hint_middle_term"
+      "label": "ヒントをください",
+      "sendText": "この問題のヒントをください。",
+      "actionId": "hint"
+    },
+    {
+      "label": "この式の特徴は何ですか？",
+      "sendText": "x^2 + 6xy + 9y^2 の式には、何か特徴がありますか？"
     }
   ],
   "5F800251-23AC-4487-8BD4-3BC209617EF6": [
     {
-      "label": "この積分の解き方のヒントがほしい",
-      "actionId": "hint"
-    },
-    {
-      "label": "tan^n x の積分はどのように考えればいい？",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "漸化式を使うのはなぜ？",
+      "label": "tan^n x の積分でよく使う変形はありますか？",
+      "actionId": "hint_tan_integral"
+    },
+    {
+      "label": "漸化式を使うのはなぜですか？",
       "actionId": "why_recurrence"
     },
     {
-      "label": "最初の一歩は何をすればいい？",
+      "label": "最初の一歩は何から始めればいいですか？",
       "actionId": "first_step"
     }
   ],
   "5FDE5472-2F31-46C7-89A5-F564360CD6C5": [
     {
-      "label": "この式は何を表していますか？",
-      "actionId": "what_is_this_equation"
+      "label": "この微分方程式の解き方を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "f'(t) の意味を教えてください。",
-      "actionId": "meaning_of_f_prime"
+      "label": "f'(t)は何を表していますか？",
+      "sendText": "f'(t)は何を表していますか？",
+      "actionId": "term_meaning"
     },
     {
-      "label": "f(t) を求めるにはどうすればいいですか？",
-      "actionId": "how_to_find_f_t"
+      "label": "初期条件f(0)=f_0はどう使いますか？",
+      "actionId": "first_step"
     },
     {
-      "label": "初期条件 f(0)=f_0 はどう使いますか？",
-      "actionId": "how_to_use_initial_condition"
+      "label": "積分を使って解くにはどうすればいいですか？",
+      "actionId": "hint_integration"
     }
   ],
   "5FFA2B66-BA71-44F4-9834-EF997E17081D": [
@@ -1284,329 +1303,94 @@
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
+      "label": "f'(t) = u(t) と置換するのはなぜですか？",
+      "actionId": "why_substitution"
     },
     {
-      "label": "特殊解の求め方について教えてください。",
-      "actionId": "particular_solution"
+      "label": "初期条件をどのように使いますか？",
+      "actionId": "how_to_use_initial_conditions"
     },
     {
-      "label": "初期条件の使い方は？",
-      "actionId": "initial_conditions"
+      "label": "非斉次微分方程式の一般解の形について教えてください。",
+      "actionId": "general_solution_form"
     }
   ],
   "630FBD47-A86B-4108-8F90-86F202047B8D": [
     {
-      "label": "この問題の方針を教えてください",
+      "label": "区分求積法について教えて",
+      "actionId": "explain_riemann_sum"
+    },
+    {
+      "label": "この問題の方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "区分求積法とは何ですか？",
-      "actionId": "what_is_riemann_sum"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "最初の一歩は何をすればいい？",
       "actionId": "first_step"
     },
     {
-      "label": "シグマの中の式をどう変形しますか？",
+      "label": "シグマの中の式を変形するには？",
       "actionId": "transform_expression"
     }
   ],
   "656CDF93-3968-4527-81AE-9376B3E5B66B": [
     {
-      "label": "この式をどう因数分解すればいいですか？",
+      "label": "どういう方針で解けばいいですか？",
+      "sendText": "この問題は、どういう方針で解けばいいですか？",
       "actionId": "approach_only"
     },
     {
       "label": "まずは何から手をつければいいですか？",
+      "sendText": "まずは何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "xについて整理するとはどういうことですか？",
-      "actionId": "term_definition"
+      "label": "因数分解のコツを教えてください",
+      "sendText": "因数分解のコツを教えてください",
+      "actionId": "hint"
     },
     {
-      "label": "たすきがけはどこで使えますか？",
-      "actionId": "hint_specific"
+      "label": "xについて整理するとはどういうことですか？",
+      "sendText": "xについて整理するとはどういうことですか？"
+    },
+    {
+      "label": "たすきがけについて教えてください",
+      "sendText": "たすきがけについて教えてください"
     }
   ],
   "666687A5-6EF8-434E-9209-818CE7092863": [
     {
       "label": "この微分方程式の種類は何ですか？",
-      "actionId": "identify_equation_type"
+      "actionId": "equation_type"
     },
     {
-      "label": "解き方の一般的な方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "まず何から手をつければいいですか？",
+      "label": "解き始めるための最初の一歩は何ですか？",
       "actionId": "first_step"
     },
     {
-      "label": "同次方程式の解き方について教えてください。",
-      "actionId": "homogeneous_solution_hint"
+      "label": "非斉次微分方程式の解き方を教えてください。",
+      "actionId": "approach_nonhomogeneous"
     },
     {
-      "label": "特殊解の求め方について教えてください。",
-      "actionId": "particular_solution_hint"
+      "label": "定数変化法は使えますか？",
+      "actionId": "method_variation_of_parameters"
+    },
+    {
+      "label": "初期条件f(0)=0はどのように使いますか？",
+      "actionId": "initial_condition_usage"
     }
   ],
   "66847D9E-40D3-437C-9499-BF4A62B783B7": [
     {
-      "label": "cosθ=0 の一般解は何ですか？",
-      "actionId": "general_solution_cos_zero"
+      "label": "cos A = 0 の一般解は何ですか？",
+      "actionId": "general_solution"
     },
     {
       "label": "5x の範囲はどうなりますか？",
-      "actionId": "range_of_5x"
-    },
-    {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "三角方程式の解き方について教えてください",
-      "actionId": "trig_equation_approach"
-    }
-  ],
-  "6705BE2F-10DF-484F-8E32-768EE0F07E15": [
-    {
-      "label": "この積分の形の特徴は？",
-      "actionId": "analyze_form"
-    },
-    {
-      "label": "「1/12公式」って何？",
-      "actionId": "explain_formula"
-    },
-    {
-      "label": "置換積分で解く方法は？",
-      "actionId": "substitution_approach"
-    },
-    {
-      "label": "最初の一歩は何をすればいい？",
-      "actionId": "first_step"
-    }
-  ],
-  "680C8A2D-4E18-4E76-97F7-5F59531CD4DD": [
-    {
-      "label": "この積分の解き方の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "置換積分で解けますか？",
-      "actionId": "hint_substitution"
-    },
-    {
-      "label": "sin x cos x の積分の形について教えてください。",
-      "actionId": "hint_form"
-    },
-    {
-      "label": "最初の一歩は何をすれば良いですか？",
-      "actionId": "first_step"
-    }
-  ],
-  "6B6506AA-7296-4C18-9A00-44CAF515FDD4": [
-    {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "f''(t)とは何を表していますか？",
-      "actionId": "meaning_of_notation"
-    },
-    {
-      "label": "f'(t)を求めるにはどうすればいいですか？",
-      "actionId": "hint_f_prime"
-    },
-    {
-      "label": "初期条件をどう使いますか？",
-      "actionId": "hint_initial_conditions"
-    }
-  ],
-  "6C4F2FA4-742F-474E-8103-E3BA3E979350": [
-    {
-      "label": "因数分解の方針を教えて",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "3乗の項に注目すると？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "何か公式を使えそう？",
-      "actionId": "hint_formula"
-    },
-    {
-      "label": "式の整理の仕方がわからない",
-      "actionId": "hint_rearrange"
-    }
-  ],
-  "6C703101-29A6-4005-87D6-594F60194AFC": [
-    {
-      "label": "この問題の方針を教えてください",
-      "sendText": "この問題の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "区分求積法について教えてください",
-      "sendText": "区分求積法とは何ですか？",
-      "actionId": "explain_riemann_sum"
-    },
-    {
-      "label": "和の範囲が0から2nなのが気になります",
-      "sendText": "和の範囲がk=0から2nまでなのが、区分求積法の公式と少し違うように見えます。どう考えれば良いですか？",
-      "actionId": "sum_range_question"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
-      "sendText": "この問題を解くための最初の一歩は何ですか？",
-      "actionId": "first_step"
-    }
-  ],
-  "6D0B855E-7E52-4C1B-8A44-AA9FF0FB03B3": [
-    {
-      "label": "この極限を解くための一般的なアプローチは？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "log(1+x)/x の極限の公式は使えますか？",
-      "actionId": "formula_check"
-    },
-    {
-      "label": "式の形をどのように変形すればいいですか？",
-      "actionId": "transformation_hint"
-    },
-    {
-      "label": "ロピタルの定理は使えますか？",
-      "actionId": "lhopital_check"
-    }
-  ],
-  "6ED3659C-A465-4E25-A2B2-4CAF4FEAEDA5": [
-    {
-      "label": "この方程式の形から何がわかりますか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "解法の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "yについての二次方程式と見るとはどういうことですか？",
-      "actionId": "quadratic_in_y"
-    },
-    {
-      "label": "判別式を使うのはなぜですか？",
-      "actionId": "why_discriminant"
+      "actionId": "range_of_argument"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
-    }
-  ],
-  "6FD0F698-5284-4008-A239-84083F7520B2": [
-    {
-      "label": "どういう方針で解けばいいですか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初のステップは何ですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "置換積分を使いますか？",
-      "actionId": "hint_substitution"
-    },
-    {
-      "label": "e^x をどう扱えばいいですか？",
-      "actionId": "hint_e_x"
-    }
-  ],
-  "701CF34C-DB84-4CD4-BD3B-0DDE311D6A0F": [
-    {
-      "label": "この問題の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "sin(x)/x の極限について教えてください。",
-      "actionId": "explain_sinx_over_x"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "sin(3x) の部分をどう扱えばいいですか？",
-      "actionId": "handle_sin3x"
-    }
-  ],
-  "703AE189-789C-4F2D-83A4-55C68DD65991": [
-    {
-      "label": "この式を因数分解する方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩として何をすればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "x^4 + x^2 + 1 のような式はどのように因数分解するのですか？",
-      "actionId": "hint_specific"
-    },
-    {
-      "label": "何か特別な公式を使いますか？",
-      "actionId": "hint_formula"
-    }
-  ],
-  "70FFD2EF-5335-4593-86B4-0060A4295D31": [
-    {
-      "label": "まずは何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "分母を払うにはどうすればいいですか？",
-      "actionId": "denominator_clear"
-    },
-    {
-      "label": "この問題の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "xとyはどんな数ですか？",
-      "actionId": "variable_type"
-    }
-  ],
-  "71ECF2CF-206F-43FF-BA35-F097D1FEB231": [
-    {
-      "label": "この極限の問題、どう考えたらいい？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩は何をすればいい？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "ロピタルの定理は使える？",
-      "actionId": "lhopital_rule"
-    },
-    {
-      "label": "ネイピア数の定義を使った極限の公式は使える？",
-      "actionId": "standard_limit_form"
-    }
-  ],
-  "73D06F52-2C0D-4118-84C6-662FAA49A553": [
-    {
-      "label": "この漸化式のタイプは何ですか？",
-      "actionId": "identify_type"
-    },
-    {
-      "label": "特性方程式とは何ですか？",
-      "actionId": "what_is_characteristic_equation"
-    },
-    {
-      "label": "最初は何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
@@ -1614,46 +1398,286 @@
       "actionId": "hint"
     }
   ],
-  "73F50D01-0B10-4D81-A565-163E48987C2E": [
+  "6705BE2F-10DF-484F-8E32-768EE0F07E15": [
     {
-      "label": "この方程式はどんな種類の問題ですか？",
-      "actionId": "problem_type"
-    },
-    {
-      "label": "整数解を求める問題ですか？",
-      "actionId": "confirm_integer_solutions"
-    },
-    {
-      "label": "どういう方針で解き進めれば良いですか？",
+      "label": "この積分の形に何か特徴はありますか？",
       "actionId": "approach_only"
     },
     {
-      "label": "まずは何から手をつければ良いですか？",
+      "label": "置換積分で解く方針を教えてください",
       "actionId": "first_step"
     },
     {
-      "label": "yの範囲を絞り込むにはどうすれば良いですか？",
-      "actionId": "range_y"
+      "label": "部分積分を使う方法を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "定積分の公式は使えますか？",
+      "actionId": "hint"
+    }
+  ],
+  "680C8A2D-4E18-4E76-97F7-5F59531CD4DD": [
+    {
+      "label": "置換積分とは何ですか？",
+      "actionId": "what_is_substitution"
+    },
+    {
+      "label": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "sin x cos x の積分はどうすればいいですか？",
+      "actionId": "specific_integral_hint"
+    }
+  ],
+  "6B6506AA-7296-4C18-9A00-44CAF515FDD4": [
+    {
+      "label": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "f''(t)とは何ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "最初は何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "初期条件をどのように使いますか？",
+      "actionId": "initial_conditions_usage"
+    }
+  ],
+  "6C4F2FA4-742F-474E-8103-E3BA3E979350": [
+    {
+      "label": "因数分解の一般的な方針は？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "3乗の項が3つあるように見えるけど？",
+      "actionId": "hint"
+    },
+    {
+      "label": "どの公式が使えそう？",
+      "actionId": "formula_hint"
+    },
+    {
+      "label": "最初の一歩は何をすればいい？",
+      "actionId": "first_step"
+    }
+  ],
+  "6C703101-29A6-4005-87D6-594F60194AFC": [
+    {
+      "label": "区分求積法について教えて",
+      "actionId": "explain_riemann_sum"
+    },
+    {
+      "label": "この問題の方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何から始める？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "積分区間はどうやって決めるの？",
+      "actionId": "integral_range"
+    },
+    {
+      "label": "cos(πk/n) をどう扱えばいい？",
+      "actionId": "handle_expression"
+    }
+  ],
+  "6D0B855E-7E52-4C1B-8A44-AA9FF0FB03B3": [
+    {
+      "label": "この極限の基本的な考え方を知りたい",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "どの公式を使えばいいですか？",
+      "actionId": "hint_formula"
+    },
+    {
+      "label": "log(1+x)/x の極限と関係ありますか？",
+      "actionId": "relate_to_standard_limit"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "actionId": "first_step"
+    }
+  ],
+  "6ED3659C-A465-4E25-A2B2-4CAF4FEAEDA5": [
+    {
+      "label": "この方程式の形から、どんな解法が考えられますか？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "判別式を使うとどうなりますか？",
+      "actionId": "discriminant_hint"
+    },
+    {
+      "label": "xとy、どちらの文字について整理するのが良いですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "整数解を求める問題で、他に確認すべきことはありますか？",
+      "actionId": "integer_solution_tip"
+    }
+  ],
+  "6FD0F698-5284-4008-A239-84083F7520B2": [
+    {
+      "label": "この積分の基本的な方針を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初に何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "e^x を含む積分の解き方のコツはありますか？",
+      "actionId": "hint_exponential_integral"
+    },
+    {
+      "label": "置換積分は使いますか？",
+      "actionId": "hint_substitution"
+    }
+  ],
+  "701CF34C-DB84-4CD4-BD3B-0DDE311D6A0F": [
+    {
+      "label": "この問題の解き方を教えてください",
+      "sendText": "この問題の解き方を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何ですか？",
+      "sendText": "最初の一歩は何ですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "どんな公式を使いますか？",
+      "sendText": "この問題ではどんな公式を使いますか？",
+      "actionId": "hint_formula"
+    },
+    {
+      "label": "sin(ax)/x の極限について教えてください",
+      "sendText": "sin(ax)/x の極限について教えてください。",
+      "actionId": "concept_explanation"
+    }
+  ],
+  "703AE189-789C-4F2D-83A4-55C68DD65991": [
+    {
+      "label": "因数分解の基本的な方針を教えて",
+      "sendText": "この式の因数分解について、基本的な方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何から考えればいい？",
+      "sendText": "この式を見て、最初の一歩として何から考えればいいでしょうか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "何か特別な公式を使いますか？",
+      "sendText": "この因数分解には、何か特別な公式や変形が必要ですか？",
+      "actionId": "hint"
+    },
+    {
+      "label": "x^4の項があるときの考え方は？",
+      "sendText": "x^4のような高い次数の項がある場合、どのように因数分解を考えれば良いですか？",
+      "actionId": "hint"
+    }
+  ],
+  "70FFD2EF-5335-4593-86B4-0060A4295D31": [
+    {
+      "label": "この問題の方針を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "まず何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "「不定方程式」とは何ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "分母に文字がある方程式はどう解きますか？",
+      "actionId": "hint"
+    }
+  ],
+  "71ECF2CF-206F-43FF-BA35-F097D1FEB231": [
+    {
+      "label": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "極限の公式は使えますか？",
+      "actionId": "formula_check"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "eのx乗の極限の性質について教えてください。",
+      "actionId": "e_limit_property"
+    }
+  ],
+  "73D06F52-2C0D-4118-84C6-662FAA49A553": [
+    {
+      "label": "この漸化式の解き方の基本方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "特性方程式とは何ですか？",
+      "actionId": "definition_characteristic_equation"
+    },
+    {
+      "label": "最初は何から手をつければいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "重根の場合の一般項の形を教えて",
+      "actionId": "general_term_form"
+    }
+  ],
+  "73F50D01-0B10-4D81-A565-163E48987C2E": [
+    {
+      "label": "不定方程式の解き方の基本は？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "mod 13で考えるのはなぜ？",
+      "actionId": "why_mod_13"
+    },
+    {
+      "label": "xの範囲を絞るには？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "ヒントをください",
+      "actionId": "hint"
     }
   ],
   "7474E9C1-6272-4491-8807-C095BDE7AD6F": [
     {
-      "label": "この式を因数分解する方針を教えてください",
-      "sendText": "この式を因数分解する方針を教えてください。",
+      "label": "因数分解の基本的な方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "どこから手をつければいいですか？",
-      "sendText": "どこから手をつければいいですか？",
+      "label": "まずは何から手をつければいい？",
       "actionId": "first_step"
     },
     {
-      "label": "最低次の変数で整理するとはどういうことですか？",
-      "sendText": "最低次の変数で整理するとはどういうことですか？"
+      "label": "この式をどう整理すればいい？",
+      "actionId": "how_to_organize"
     },
     {
-      "label": "共通因数でくくる方法は使えますか？",
-      "sendText": "共通因数でくくる方法は使えますか？"
+      "label": "共通因数を見つけるコツは？",
+      "actionId": "common_factor_tip"
     }
   ],
   "76E997DF-6492-444C-91C9-F3EC13EB7F41": [
@@ -1662,168 +1686,168 @@
       "actionId": "approach_only"
     },
     {
-      "label": "分母の1+x^2が気になります。",
-      "sendText": "分母の1+x^2はどのように処理すれば良いですか？"
+      "label": "どんな置換をすれば良いですか？",
+      "actionId": "substitution_hint"
     },
     {
-      "label": "置換積分を使いますか？",
-      "actionId": "hint"
+      "label": "1/(1+x^2) の積分はどのように考えますか？",
+      "actionId": "function_hint"
     },
     {
-      "label": "この形の積分は何か特別なものですか？",
-      "sendText": "この形の積分は何か特別な公式や性質がありますか？"
+      "label": "積分の範囲はどのように変わりますか？",
+      "actionId": "limits_hint"
     }
   ],
   "774E49FD-A51A-4756-916A-52C94A3810BA": [
     {
-      "label": "この極限の形は何を表していますか？",
-      "actionId": "limit_form"
+      "label": "この問題の方針を教えてください",
+      "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "分母が0になる形をどう処理すればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "分子に根号がある場合の極限の解き方は？",
-      "actionId": "radical_limit_strategy"
+      "label": "有理化とは何ですか？",
+      "actionId": "term_definition"
     },
     {
-      "label": "この問題の方針を教えてください",
-      "actionId": "approach_only"
+      "label": "なぜ有理化が必要なのですか？",
+      "actionId": "why_rationalize"
     }
   ],
   "79E62DF5-7FEB-4D58-A989-DF5110913E3C": [
     {
       "label": "因数分解の一般的な方針を教えて",
-      "sendText": "この式の因数分解について、一般的な方針を教えてください。",
+      "sendText": "この式の因数分解の一般的な方針を教えてください。",
       "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何から始めるべき？",
+      "sendText": "この問題を解くための最初の一歩は何から始めるべきですか？",
+      "actionId": "first_step"
     },
     {
       "label": "因数定理は使える？",
       "sendText": "因数定理を使って解くことはできますか？",
-      "actionId": "factor_theorem_check"
+      "actionId": "hint_factor_theorem"
     },
     {
-      "label": "何か特別な形に見える？",
+      "label": "何か特別な形に気づく？",
       "sendText": "この式は何か特別な形をしていますか？",
-      "actionId": "special_form_check"
-    },
-    {
-      "label": "最初の一歩は何をすればいい？",
-      "sendText": "この問題の最初の一歩として、何をすればいいですか？",
-      "actionId": "first_step"
+      "actionId": "hint_special_form"
     }
   ],
   "7A1F3B90-6E2C-4D8A-9B4F-1C2D3E4F5A33": [
+    {
+      "label": "この積分の計算方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "部分積分を使うのはどうかな？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "t^n e^{-t} の積分についてヒントがほしい",
+      "actionId": "hint"
+    },
+    {
+      "label": "ガンマ関数との関係は？",
+      "actionId": "gamma_function_relation"
+    }
+  ],
+  "7AF1A86F-615F-4E44-AEE8-F3BA22B7E6CC": [
     {
       "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "積分の計算から始めればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "部分積分を使うのはどうですか？",
-      "actionId": "hint_integration_by_parts"
-    },
-    {
-      "label": "無限区間の積分の計算方法を教えてください。",
-      "actionId": "improper_integral_help"
-    }
-  ],
-  "7AF1A86F-615F-4E44-AEE8-F3BA22B7E6CC": [
-    {
-      "label": "この式は何の公式を使いますか？",
-      "actionId": "formula_hint"
+      "label": "因数分解の公式を使いますか？",
+      "actionId": "hint_formula"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "64x^3と27y^3をそれぞれ別の形で表せますか？",
-      "actionId": "rewrite_terms"
-    },
-    {
-      "label": "因数分解の一般的な方針を教えてください。",
-      "actionId": "approach_only"
+      "label": "64x^3と27y^3をどう見ればいいですか？",
+      "actionId": "hint_rephrase"
     }
   ],
   "7D0760FF-946D-469A-842D-60D426A01724": [
     {
       "label": "この漸化式のタイプは何ですか？",
-      "actionId": "what_type_of_recurrence"
+      "actionId": "identify_type"
     },
     {
-      "label": "どういう方針で解けばいいですか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初は何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "特性方程式について教えてください",
-      "actionId": "explain_characteristic_equation"
-    }
-  ],
-  "7D86EF83-52D7-4F6D-9A35-E085E17DA59C": [
-    {
-      "label": "この式を因数分解するには？",
-      "sendText": "この式を因数分解するには、どのような公式や考え方を使えば良いですか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
-      "sendText": "この問題を解くための最初の一歩は何ですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "どんな公式が使えそう？",
-      "sendText": "この形を見て、どんな因数分解の公式が使えそうか教えてください。",
+      "label": "解き方のヒントをください",
       "actionId": "hint"
-    },
-    {
-      "label": "2乗の形にできますか？",
-      "sendText": "49x^2と36y^2はそれぞれ何かを2乗した形にできますか？",
-      "actionId": "hint"
-    }
-  ],
-  "7E10C37B-AB59-4B49-8037-D1D34D1B3055": [
-    {
-      "label": "この式をf(t)について解くにはどうすればいいですか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "積分の式を微分するとどうなりますか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "f(0)=0という条件は何に使いますか？",
-      "actionId": "condition_use"
-    },
-    {
-      "label": "微積分の基本定理について教えてください",
-      "actionId": "concept_review"
-    }
-  ],
-  "7FF2277B-44DC-480A-B1BF-7D1990121B24": [
-    {
-      "label": "この積分の解き方の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "置換積分を使う問題ですか？",
-      "actionId": "confirm_method"
-    },
-    {
-      "label": "log x の微分形がどこかに隠れていませんか？",
-      "actionId": "hint_derivative"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
+    },
+    {
+      "label": "特性方程式を使う問題ですか？",
+      "actionId": "ask_characteristic_equation"
+    }
+  ],
+  "7D86EF83-52D7-4F6D-9A35-E085E17DA59C": [
+    {
+      "label": "因数分解の基本方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "この式はどんな形に見える？",
+      "actionId": "hint"
+    },
+    {
+      "label": "「二乗の差」の公式って何だっけ？",
+      "actionId": "formula_reminder"
+    },
+    {
+      "label": "最初の一歩はどうすればいい？",
+      "actionId": "first_step"
+    }
+  ],
+  "7E10C37B-AB59-4B49-8037-D1D34D1B3055": [
+    {
+      "label": "まず何から手をつければいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "式をf(t)について解く方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "積分の式を微分するとどうなりますか？",
+      "actionId": "hint_differentiation"
+    },
+    {
+      "label": "f(0)=0の条件はどのように使いますか？",
+      "actionId": "hint_initial_condition"
+    }
+  ],
+  "7FF2277B-44DC-480A-B1BF-7D1990121B24": [
+    {
+      "label": "この問題の方針を教えてください",
+      "sendText": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "置換積分を使う問題ですか？",
+      "sendText": "置換積分を使う問題ですか？",
+      "actionId": "confirm_method"
+    },
+    {
+      "label": "最初に何をすればいいですか？",
+      "sendText": "最初に何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "どんな置換を試せばいいですか？",
+      "sendText": "どんな置換を試せばいいですか？",
+      "actionId": "substitution_hint"
     }
   ],
   "81279279-68BC-46E4-96E8-C6188AD7617D": [
@@ -1833,340 +1857,333 @@
       "actionId": "approach_only"
     },
     {
-      "label": "x^n - 1 の因数分解の公式は？",
-      "sendText": "x^n - 1 の因数分解の公式を教えてください。",
-      "actionId": "formula_reminder"
+      "label": "x^5-1 の因数分解について教えてください",
+      "sendText": "x^5-1 をどのように因数分解すればよいですか？",
+      "actionId": "factoring_hint"
     },
     {
-      "label": "0/0 の不定形とは何ですか？",
-      "sendText": "0/0 の不定形とは何ですか？",
-      "actionId": "term_definition"
+      "label": "極限の計算で注意すべき点はありますか？",
+      "sendText": "このタイプの極限を計算する上で、何か注意すべき点はありますか？",
+      "actionId": "limit_caution"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
-      "sendText": "最初の一歩は何をすればいいですか？",
+      "sendText": "この問題を解くための最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     }
   ],
   "8207893B-5988-4EF1-80C7-74D75FECFE3E": [
     {
-      "label": "この多項式の因数分解の方針を教えてください。",
-      "sendText": "この多項式の因数分解の方針を教えてください。",
+      "label": "因数分解の一般的な方針は何ですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の最初のステップは何ですか？",
-      "sendText": "因数分解の最初のステップは何ですか？",
+      "label": "因数定理は使えますか？",
       "actionId": "first_step"
     },
     {
-      "label": "因数定理は使えますか？",
-      "sendText": "因数定理は使えますか？",
-      "actionId": "factor_theorem_check"
+      "label": "他に試せる因数分解の方法はありますか？",
+      "actionId": "hint_method"
     },
     {
-      "label": "x^5 + x^4 + 1 の形から何かヒントはありますか？",
-      "sendText": "x^5 + x^4 + 1 の形から何かヒントはありますか？",
-      "actionId": "form_hint"
+      "label": "この式の特徴は何ですか？",
+      "actionId": "analyze_expression"
     }
   ],
   "863C1DB8-6D69-4926-93D3-24FE77194C4D": [
     {
-      "label": "この連立漸化式の方針を教えてください",
+      "label": "連立漸化式の解き方の基本方針は？",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
+      "label": "まずは何をすればいい？",
       "actionId": "first_step"
     },
     {
-      "label": "a_nとb_nを消去する方法はありますか？",
-      "actionId": "elimination_method"
+      "label": "3項間漸化式に帰着させるには？",
+      "actionId": "hint_three_term"
     },
     {
-      "label": "特性方程式を使う問題ですか？",
-      "actionId": "characteristic_equation_question"
+      "label": "特性方程式が重解を持つ場合の一般項の形は？",
+      "actionId": "hint_heavy_root"
     }
   ],
   "897713C5-D885-4103-937C-62F11F4E5C18": [
     {
-      "label": "この式はどんな形をしていますか？",
-      "sendText": "この式はどんな形をしていますか？何か公式が使えそうでしょうか？",
+      "label": "因数分解の基本方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の公式で使えるものはありますか？",
-      "actionId": "hint_formula"
-    },
-    {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "この式はどんな形に見える？",
       "actionId": "first_step"
     },
     {
-      "label": "36x^2と25y^2をそれぞれ別の形で表せますか？",
-      "actionId": "hint_rephrase"
+      "label": "「二乗の差」の公式って何だっけ？",
+      "actionId": "formula_reminder"
+    },
+    {
+      "label": "36x^2 や 25y^2 をどう変形すればいい？",
+      "actionId": "hint"
     }
   ],
   "8B1C27DD-2BAC-41F5-8D5B-2B1F58AB12ED": [
     {
-      "label": "この式を因数分解する方針を教えて",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "因数定理とは何ですか？",
-      "actionId": "explain_factor_theorem"
-    },
-    {
-      "label": "最初に何をすればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "因数定理を使うときの候補の見つけ方は？",
-      "actionId": "find_candidates"
-    }
-  ],
-  "8BB1FDF5-A692-41E5-9B88-E62F9E4B96BA": [
-    {
-      "label": "この極限の基本的な考え方を知りたい",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "e^x - e^-x の部分はどう扱えばいい？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "ロピタルの定理は使える？",
-      "actionId": "ask_about_lhopital"
-    },
-    {
-      "label": "e^u-1/u の公式を使うにはどう変形する？",
-      "actionId": "hint_specific_formula"
-    }
-  ],
-  "8C5A89E9-86F8-4300-9179-3C9CF22FDF90": [
-    {
-      "label": "この式を因数分解する方針を教えて",
+      "label": "因数分解の一般的な方針を教えて",
+      "sendText": "この式の因数分解の一般的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
       "label": "因数定理って何だっけ？",
-      "actionId": "recall_factor_theorem"
+      "sendText": "因数定理とは何ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "最初に何をすればいい？",
+      "sendText": "この問題を解くために、最初に何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "因数を見つけるヒントがほしい",
+      "sendText": "因数を見つけるためのヒントをください。",
+      "actionId": "hint"
+    }
+  ],
+  "8BB1FDF5-A692-41E5-9B88-E62F9E4B96BA": [
+    {
+      "label": "この問題の方針を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "どんな公式を使いますか？",
+      "actionId": "key_formula"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "e^x - e^-x の部分はどう変形しますか？",
+      "actionId": "specific_transformation"
+    }
+  ],
+  "8C5A89E9-86F8-4300-9179-3C9CF22FDF90": [
+    {
+      "label": "因数分解の一般的な方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "因数定理って何だっけ？",
+      "actionId": "factor_theorem_meaning"
     },
     {
       "label": "最初に何を試せばいい？",
       "actionId": "first_step"
     },
     {
-      "label": "xにどんな値を代入してみるべき？",
-      "actionId": "suggest_values"
+      "label": "ヒントを教えて",
+      "actionId": "hint"
     }
   ],
   "8CF61D01-3229-4ABF-BC3F-46A7681BBFEF": [
     {
-      "label": "漸化式のタイプは何ですか？",
-      "actionId": "identify_type"
+      "label": "この漸化式のタイプは何ですか？",
+      "actionId": "recurrence_type"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "特性方程式について教えてください",
-      "actionId": "characteristic_equation"
+      "label": "どういう方針で解き進めますか？",
+      "actionId": "approach_only"
     },
     {
       "label": "定数解とは何ですか？",
-      "actionId": "fixed_point_meaning"
+      "actionId": "term_definition"
     },
     {
-      "label": "方針を教えてください",
-      "actionId": "approach_only"
+      "label": "最初の一歩を教えてください。",
+      "actionId": "first_step"
+    },
+    {
+      "label": "ヒントをください。",
+      "actionId": "hint"
     }
   ],
   "8FB8536A-3433-4F7A-8B29-B44DC4186F09": [
     {
-      "label": "この積分の解き方の方針を教えてください。",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
       "label": "分母のx^2-4はどう処理すればいいですか？",
-      "actionId": "denominator_hint"
+      "actionId": "first_step"
     },
     {
-      "label": "部分分数分解について教えてください。",
+      "label": "部分分数分解のやり方を教えてください",
       "actionId": "partial_fraction_hint"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
+      "label": "定積分の計算で注意することはありますか？",
+      "actionId": "definite_integral_tip"
     }
   ],
   "9161EDD7-12DE-4729-A2A7-9A55E060C466": [
     {
-      "label": "この極限の形は何ですか？",
-      "actionId": "limit_form"
+      "label": "この極限の形は何を表していますか？",
+      "actionId": "limit_form_meaning"
     },
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "どういう方針で解き始めればいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "対数を使うのはどうですか？",
-      "actionId": "hint_logarithm"
+      "label": "指数に変数がある極限の一般的な解き方は？",
+      "actionId": "general_method_exponential_limit"
     },
     {
-      "label": "最初の一歩を教えてください",
-      "actionId": "first_step"
+      "label": "対数を使うのはなぜですか？",
+      "actionId": "why_logarithm"
     }
   ],
   "93BDE66A-D463-457F-A1C0-249A521A0B81": [
     {
-      "label": "因数分解の基本的な方針を教えて",
-      "actionId": "approach_only"
+      "label": "因数分解の基本は何ですか？",
+      "actionId": "factoring_basics"
     },
     {
-      "label": "共通因数を見つけるにはどうすればいい？",
+      "label": "まず何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "この式の因数分解のヒントが欲しい",
-      "actionId": "hint"
-    },
-    {
-      "label": "「因数分解」ってどういう意味？",
-      "actionId": "term_definition"
-    }
-  ],
-  "9477B6DC-F0A3-4B53-8891-212FED0C5886": [
-    {
-      "label": "絶対値の外し方を教えて",
-      "actionId": "absolute_value_approach"
-    },
-    {
-      "label": "積分の区間はどう分ければいい？",
-      "actionId": "split_interval_approach"
-    },
-    {
-      "label": "まずは何から手をつければいい？",
-      "actionId": "first_step"
+      "label": "共通因数を見つけるには？",
+      "actionId": "common_factor_hint"
     },
     {
       "label": "ヒントをください",
       "actionId": "hint"
     }
   ],
-  "98C763E5-86DB-47A3-B2EF-D070244EC978": [
+  "9477B6DC-F0A3-4B53-8891-212FED0C5886": [
     {
-      "label": "この漸化式のタイプは何ですか？",
-      "actionId": "identify_type"
+      "label": "絶対値の外し方を教えて",
+      "actionId": "remove_abs_value"
     },
     {
-      "label": "最初の一歩は何をすれば良いですか？",
+      "label": "積分の最初の一歩は何ですか？",
       "actionId": "first_step"
     },
     {
-      "label": "n^2+1 の部分が邪魔なのですが…",
-      "actionId": "handle_non_homogeneous"
+      "label": "偶関数を使うとどうなりますか？",
+      "actionId": "even_function_hint"
+    },
+    {
+      "label": "積分区間の分け方を教えてください",
+      "actionId": "split_interval"
+    }
+  ],
+  "98C763E5-86DB-47A3-B2EF-D070244EC978": [
+    {
+      "label": "この漸化式の解き方の基本方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "右辺にnの2次式がある場合、どう考えればいい？",
+      "actionId": "hint_specific_form"
+    },
+    {
+      "label": "最初は何から手をつければいいですか？",
+      "actionId": "first_step"
     },
     {
       "label": "特性方程式を使う問題ですか？",
-      "actionId": "ask_characteristic_equation"
+      "actionId": "question_about_method"
     }
   ],
   "9A2E7C44-1B3A-4D7B-9E7F-2E3C1F6B8C10": [
     {
-      "label": "この無限級数の和を求めるには、どのような方針で考えればよいですか？",
-      "sendText": "この無限級数の和を求めるには、どのような方針で考えればよいですか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "sin(2kπ/3) の値の周期性について教えてください。",
-      "sendText": "sin(2kπ/3) の値の周期性について教えてください。"
-    },
-    {
-      "label": "最初の一歩として、何を計算すればよいですか？",
-      "sendText": "最初の一歩として、何を計算すればよいですか？",
+      "label": "まずは何から考えればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "この級数は収束しますか？",
-      "sendText": "この級数は収束しますか？"
+      "label": "sin(2kπ/3) の値の周期性について教えてください",
+      "actionId": "term_meaning"
+    },
+    {
+      "label": "無限級数の和の求め方の方針を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "部分和を考えるのはどうですか？",
+      "actionId": "hint"
     }
   ],
   "9B75DE01-6B72-487F-B653-EE769057E58B": [
     {
-      "label": "f'(t)は何を表していますか？",
-      "actionId": "meaning_f_prime"
+      "label": "f'(t)=2は何を意味していますか？",
+      "actionId": "meaning_of_notation"
     },
     {
       "label": "f'(t)からf(t)を求めるにはどうすればいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "f(0)=1は何に使うのですか？",
-      "actionId": "role_initial_condition"
+      "label": "f(0)=1という条件をどう使いますか？",
+      "actionId": "initial_condition_usage"
     },
     {
-      "label": "最初の一歩を教えてください。",
+      "label": "まず何を計算すればいいですか？",
       "actionId": "first_step"
     }
   ],
   "9BC1C756-BFC5-41C7-8751-D78DF6430084": [
     {
-      "label": "この積分の解き方の方針を教えてください。",
+      "label": "まずは方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "√1+sinx の部分をどう変形すればいいですか？",
+      "label": "根号を外すにはどうすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "半角公式を使うとどうなりますか？",
-      "actionId": "hint_half_angle"
+      "label": "絶対値の処理について教えてください",
+      "actionId": "absolute_value_hint"
     },
     {
-      "label": "積分区間が広いですが、注意点はありますか？",
-      "actionId": "hint_interval_split"
+      "label": "積分区間の分割について教えてください",
+      "actionId": "integration_interval_hint"
     }
   ],
   "9D8F2E21-0F37-4C8B-A5B4-7A4F2B3A0C11": [
     {
-      "label": "この極限の形は何ですか？",
-      "actionId": "limit_form"
+      "label": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "ロピタルの定理は使えますか？",
-      "actionId": "lhopital_rule"
+      "label": "平均値の定理とは何ですか？",
+      "actionId": "definition_mvt"
     },
     {
-      "label": "何か特別な公式を使いますか？",
-      "actionId": "special_formula"
-    },
-    {
-      "label": "最初の一歩は何をすべきですか？",
+      "label": "分母が0に近づくので、どうすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "cos xの近似式は使えますか？",
-      "actionId": "taylor_expansion"
+      "label": "ロピタルの定理は使えますか？",
+      "actionId": "check_lhopital"
     }
   ],
   "9E0F1A2B-3C4D-5E6F-7A8B-9C0D1E2F3C4D": [
     {
-      "label": "ルートの中を簡単にするには？",
-      "actionId": "simplify_integrand"
+      "label": "どういう方針で解けばいいですか？",
+      "actionId": "approach_only"
     },
     {
-      "label": "どんな三角関数の公式が使えそう？",
-      "actionId": "trig_identity_hint"
+      "label": "ルートの中身を簡単にするには？",
+      "actionId": "simplify_radical"
     },
     {
-      "label": "積分範囲0から2πに注目すべきことは？",
-      "actionId": "integral_range_consideration"
+      "label": "半角の公式を使うとどうなりますか？",
+      "actionId": "half_angle_formula"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
+      "label": "絶対値の扱いについて教えてください",
+      "actionId": "absolute_value_handling"
     }
   ],
   "9F9BF526-C923-4508-A690-C5E04D27A79E": [
@@ -2175,21 +2192,21 @@
       "actionId": "identify_type"
     },
     {
-      "label": "解き方のヒントをください",
-      "actionId": "hint"
+      "label": "解き方の基本的な方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "右辺に3^nがあるのが特徴的ですね。",
+      "actionId": "focus_on_rhs"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
-    },
-    {
-      "label": "特性方程式を使えますか？",
-      "actionId": "characteristic_equation_q"
     }
   ],
   "A029A6D1-EB0C-4D46-9DDE-51ED580623C7": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
@@ -2197,75 +2214,66 @@
       "actionId": "first_step"
     },
     {
-      "label": "指数方程式の基本的な解き方を知りたい",
-      "actionId": "basic_strategy"
+      "label": "3の累乗で表すにはどうすればいいですか？",
+      "actionId": "simplify_terms"
     },
     {
-      "label": "左辺の3^{x+1}はどう変形できますか？",
-      "actionId": "specific_term_hint"
-    },
-    {
-      "label": "右辺の9^xはどう変形できますか？",
-      "actionId": "specific_term_hint"
+      "label": "指数方程式を解くときのポイントは？",
+      "actionId": "hint_strategy"
     }
   ],
   "A056E0E4-7F5B-4EC7-ACC2-F91C38585F7E": [
     {
-      "label": "この積分の計算方針を教えて",
+      "label": "この積分の計算方法を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "「1/6公式」って何？",
-      "sendText": "「1/6公式」とはどんな公式ですか？",
+      "label": "「1/6公式」とは何ですか？",
       "actionId": "explain_term"
     },
     {
-      "label": "展開して積分するのと、何か違いがあるの？",
-      "actionId": "compare_methods"
+      "label": "まずは何から手をつければいいですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "定積分の計算で気をつけることは？",
-      "actionId": "common_pitfalls"
+      "label": "ヒントをください",
+      "actionId": "hint"
     }
   ],
   "A191EF43-6467-4047-8FE9-BFEE5B89D08E": [
     {
-      "label": "この問題の方針を教えてください",
+      "label": "この積分の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何から始めればいいですか？",
+      "label": "tan x を含む積分のコツはありますか？",
+      "actionId": "hint_tan_integral"
+    },
+    {
+      "label": "最初に何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "tan^2x+1 の形を見て何か気づくことはありますか？",
-      "actionId": "hint_specific_identity"
-    },
-    {
-      "label": "置換積分は使いますか？",
-      "actionId": "hint_technique"
+      "label": "置換積分を使う問題ですか？",
+      "actionId": "hint_substitution"
     }
   ],
   "A1B2C3D4-E5F6-7890-ABCD-EF1234567890": [
     {
-      "label": "この積分の形を見て、何を考えますか？",
-      "sendText": "この積分の形を見て、どのような解法が考えられますか？",
+      "label": "この積分の形を見て、どのような置換を考えますか？",
       "actionId": "approach_only"
     },
     {
-      "label": "ルートの中身が1+f(x)^2の形ですね",
-      "sendText": "ルートの中身が1+f(x)^2の形になっていますね。このような形の積分では、どのような置換が有効でしょうか？",
+      "label": "双曲線関数を使った置換について教えてください。",
       "actionId": "hint"
     },
     {
-      "label": "三角関数置換は使えますか？",
-      "sendText": "三角関数置換は使えますか？もし使えるなら、どのように置換すれば良いでしょうか？",
+      "label": "この積分がどのような問題で現れるか教えてください。",
+      "actionId": "context"
+    },
+    {
+      "label": "積分の計算手順の最初の一歩は何ですか？",
       "actionId": "first_step"
-    },
-    {
-      "label": "双曲線関数置換について教えてください",
-      "sendText": "双曲線関数置換について教えてください。この問題に適用できますか？",
-      "actionId": "hint"
     }
   ],
   "A1B2C3D4-E5F6-A7B8-C9D0-E1F2A3B4C5D6": [
@@ -2274,300 +2282,302 @@
       "actionId": "approach_only"
     },
     {
-      "label": "指数方程式を解くときのポイントは？",
-      "actionId": "hint_exponential_equation"
-    },
-    {
-      "label": "3^xと9^xの関係に着目すると？",
+      "label": "3^xと9^xの関係は？",
       "actionId": "first_step"
     },
     {
-      "label": "何か文字で置き換えることはできますか？",
-      "actionId": "hint_substitution"
+      "label": "置き換えをするとしたら何がいいですか？",
+      "actionId": "hint"
+    },
+    {
+      "label": "指数方程式を解くときのポイントは？",
+      "actionId": "general_tip"
     }
   ],
   "A1B2C3D4-E5F6-G7H8-I9J0-K1L2M3N4O5": [
     {
-      "label": "この積分の解き方のヒントをください",
-      "actionId": "hint"
+      "label": "積分の基本的な方針を教えて",
+      "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "1/sin x の積分はどうすればいい？",
       "actionId": "first_step"
     },
     {
-      "label": "1/sin x の積分はどのように考えればいいですか？",
-      "sendText": "1/sin x の積分はどのように考えればいいですか？"
+      "label": "三角関数の分数式の積分でよく使うテクニックは？",
+      "actionId": "hint"
     },
     {
-      "label": "置換積分を使う問題ですか？",
-      "sendText": "置換積分を使う問題ですか？"
+      "label": "置換積分は使えそう？",
+      "actionId": "hint"
     }
   ],
   "A36F411F-99B5-40E0-8BE1-F9126992BA14": [
     {
-      "label": "この積分の解き方を教えてください。",
+      "label": "まずは方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "分母の1+x^3はどう処理すればいいですか？",
+      "label": "分母の因数分解から教えてください",
       "actionId": "first_step"
     },
     {
-      "label": "部分分数分解について教えてください。",
+      "label": "部分分数分解のやり方を教えてください",
       "actionId": "partial_fraction_hint"
     },
     {
-      "label": "定積分の計算で注意すべき点はありますか？",
-      "actionId": "definite_integral_tips"
+      "label": "定積分の計算で注意すべき点は？",
+      "actionId": "integral_tips"
     }
   ],
   "A370BF54-FFB7-4B23-BFA7-522C277250B8": [
     {
-      "label": "この積分の解き方の方針を教えてください。",
+      "label": "どういう方針で解き進めればいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "分母の式をどのように変形すればよいですか？",
+      "label": "分母の式をどう変形すればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "置換積分を使う問題ですか？",
+      "label": "置換積分は使えますか？",
       "actionId": "hint_substitution"
     },
     {
-      "label": "定積分の計算で注意すべき点はありますか？",
-      "actionId": "hint_definite_integral"
+      "label": "双曲線関数について教えてください",
+      "actionId": "explain_hyperbolic_functions"
     }
   ],
   "A39DF72B-47BA-473A-83D4-5D35E8ADD533": [
     {
-      "label": "この極限の基本的な考え方を教えてください。",
+      "label": "どういう方針で解けばいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "n乗根の極限を扱う一般的な方法はありますか？",
-      "actionId": "general_method"
+      "label": "n乗根の極限はどう考えますか？",
+      "actionId": "first_step"
     },
     {
-      "label": "対数を使うとどうなりますか？",
-      "actionId": "hint_log"
+      "label": "対数変換を使うのはなぜですか？",
+      "actionId": "why_log_transform"
     },
     {
-      "label": "ロピタルの定理は使えますか？",
-      "actionId": "hint_lhopital"
+      "label": "「対数変換」とは何ですか？",
+      "actionId": "term_definition"
     }
   ],
   "A3ECB1EE-67C3-4B41-B8ED-13669F16A63D": [
     {
-      "label": "この積分を含む式をどう扱えばいいですか？",
-      "actionId": "approach_integral"
-    },
-    {
-      "label": "f(t)を求めるにはどうすればいいですか？",
+      "label": "この式をどう変形すればf(t)が求まる？",
       "actionId": "first_step"
     },
     {
-      "label": "両辺を微分することを考えられますか？",
-      "actionId": "hint_differentiate"
+      "label": "積分の記号を消すにはどうすればいい？",
+      "actionId": "hint_integral_removal"
     },
     {
-      "label": "積分の微分について教えてください。",
-      "actionId": "concept_integral_derivative"
+      "label": "両辺を微分する方針で合ってる？",
+      "actionId": "approach_confirmation"
+    },
+    {
+      "label": "三角関数の変換について教えて",
+      "actionId": "hint_trigonometric_identity"
     }
   ],
   "A4F3C2D1-7B6E-4C2A-9E3B-1D8C0E7F5A12": [
+    {
+      "label": "問題の方針を教えてください",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "log(n!)をどう扱えばいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "積分ではさみうち、とは何ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "スターリングの近似を使えますか？",
+      "actionId": "related_concept"
+    },
+    {
+      "label": "計算で注意すべき点はありますか？",
+      "actionId": "calculation_tip"
+    }
+  ],
+  "A5B6C7D8-E9F0-1234-5678-9ABCDEF01234": [
+    {
+      "label": "この定積分の計算方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "cos^3 x の積分はどうすればいい？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "積分区間が対称なときに使える性質は？",
+      "actionId": "hint_symmetry"
+    },
+    {
+      "label": "三角関数の3乗の積分は、どう変形する？",
+      "actionId": "hint_transformation"
+    }
+  ],
+  "A5BA5B5C-1557-48C1-B4D3-7C57FC5E3A41": [
+    {
+      "label": "因数分解の基本的な方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "どこから手をつければいい？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "共通因数を見つけるにはどうすればいい？",
+      "actionId": "hint_common_factor"
+    },
+    {
+      "label": "文字が複数あるときの整理の仕方は？",
+      "actionId": "hint_organize_variables"
+    }
+  ],
+  "A5E3309B-0558-4CCE-8B01-62E93D2FC90E": [
+    {
+      "label": "区分求積法について教えて",
+      "actionId": "explain_riemann_sum"
+    },
+    {
+      "label": "どういう方針で解けばいい？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何から始める？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "シグマの中身をどう変形する？",
+      "actionId": "transform_sum_term"
+    }
+  ],
+  "A60C22EA-24D4-4C3B-A60A-90996784D9C5": [
+    {
+      "label": "この極限の考え方を教えてください",
+      "sendText": "この極限の問題をどのように考えれば良いですか？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "指数関数と階乗の成長速度について教えて",
+      "sendText": "指数関数と階乗の成長速度について教えてください。",
+      "actionId": "concept_comparison"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "sendText": "この問題を解くための最初の一歩は何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "はさみうちの原理は使えますか？",
+      "sendText": "はさみうちの原理を使うことはできますか？",
+      "actionId": "hint_squeeze_theorem"
+    }
+  ],
+  "A60F2EC9-A23B-420B-89BE-6D8708B0DFA8": [
     {
       "label": "この問題の方針を教えてください",
       "sendText": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "log(n!) をどう扱えばいいですか？",
-      "sendText": "log(n!) をどう扱えばいいですか？",
+      "label": "64をどう変形すればいいですか？",
+      "sendText": "64をどう変形すればいいですか？",
       "actionId": "first_step"
-    },
-    {
-      "label": "区分求積法を使いますか？",
-      "sendText": "区分求積法を使いますか？",
-      "actionId": "clarify_method"
-    },
-    {
-      "label": "極限の計算でよく使う手法はありますか？",
-      "sendText": "極限の計算でよく使う手法はありますか？",
-      "actionId": "general_tip"
-    }
-  ],
-  "A5B6C7D8-E9F0-1234-5678-9ABCDEF01234": [
-    {
-      "label": "最初の一歩は何ですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "cos^3 x の積分はどうすればいいですか？",
-      "actionId": "integration_method"
-    },
-    {
-      "label": "定積分の計算で注意すべき点はありますか？",
-      "actionId": "definite_integral_tips"
-    },
-    {
-      "label": "積分区間が対称なときに使える性質は？",
-      "actionId": "symmetric_interval_property"
-    }
-  ],
-  "A5BA5B5C-1557-48C1-B4D3-7C57FC5E3A41": [
-    {
-      "label": "因数分解の一般的な方針は？",
-      "sendText": "この式の因数分解の一般的な方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "何から手をつければいい？",
-      "sendText": "この問題、何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "どの文字に着目すればいい？",
-      "sendText": "因数分解するために、どの文字に着目すればいいですか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "共通因数はありますか？",
-      "sendText": "この式に共通因数はありますか？",
-      "actionId": "hint"
-    }
-  ],
-  "A5E3309B-0558-4CCE-8B01-62E93D2FC90E": [
-    {
-      "label": "この式の意味を教えてください",
-      "actionId": "meaning"
-    },
-    {
-      "label": "どんな公式を使えば解けますか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "区分求積法について教えてください",
-      "actionId": "explain_riemann_sum"
-    }
-  ],
-  "A60C22EA-24D4-4C3B-A60A-90996784D9C5": [
-    {
-      "label": "この極限の基本的な考え方を知りたい",
-      "sendText": "この極限の基本的な考え方や方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "2^n と n! の増加速度について教えて",
-      "sendText": "2^n と n! の増加速度について教えてください。",
-      "actionId": "compare_growth_rates"
-    },
-    {
-      "label": "はさみうちの原理は使えますか？",
-      "sendText": "この問題ではさみうちの原理は使えますか？",
-      "actionId": "squeeze_theorem_hint"
-    },
-    {
-      "label": "分数を積の形で表すとは？",
-      "sendText": "2^n/n! を積の形で表すとはどういうことですか？",
-      "actionId": "product_form_explanation"
-    }
-  ],
-  "A60F2EC9-A23B-420B-89BE-6D8708B0DFA8": [
-    {
-      "label": "この式はどのように変形できますか？",
-      "actionId": "approach_only"
     },
     {
       "label": "因数分解の公式を使いますか？",
-      "actionId": "formula_check"
+      "sendText": "因数分解の公式を使いますか？",
+      "actionId": "hint"
     },
     {
-      "label": "64は何か特別な数ですか？",
-      "actionId": "number_property"
-    },
-    {
-      "label": "最初の一歩は何ですか？",
-      "actionId": "first_step"
+      "label": "立方和の公式とは何ですか？",
+      "sendText": "立方和の公式とは何ですか？",
+      "actionId": "formula_definition"
     }
   ],
   "A6304C30-50F4-40E4-A056-A57A60548064": [
     {
-      "label": "この方程式は何を表していますか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "最初の一歩として何をすれば良いですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "積分を含む方程式を解く一般的な方針は？",
+      "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "f(0)=0 の条件をどう使いますか？",
-      "actionId": "initial_condition"
+      "label": "まず何から手をつければいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "積分を含む方程式の解き方について教えてください。",
+      "actionId": "hint_integral_equation"
+    },
+    {
+      "label": "微分方程式に変換できますか？",
+      "actionId": "hint_convert_to_ode"
+    },
+    {
+      "label": "f(0)=0という条件をどう使いますか？",
+      "actionId": "hint_initial_condition"
     }
   ],
   "A73464B2-66D9-47E5-8069-94AC68CDB90F": [
     {
-      "label": "この式は何をすればいいですか？",
-      "actionId": "what_to_do"
-    },
-    {
-      "label": "因数分解の基本的な方針を教えてください",
+      "label": "因数分解の基本的な方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "最初のステップは何ですか？",
+      "label": "どこから手をつければいい？",
       "actionId": "first_step"
     },
     {
-      "label": "項をどのように組み合わせればいいですか？",
-      "actionId": "grouping_terms"
+      "label": "共通因数を見つけるコツは？",
+      "actionId": "hint_common_factor"
+    },
+    {
+      "label": "項の並べ替え方について教えて",
+      "actionId": "hint_rearrange_terms"
     }
   ],
   "A8B9C0D1-2E3F-4A5B-6C7D-8E9F0A1B2C3": [
     {
-      "label": "漸化式のタイプは何ですか？",
+      "label": "この漸化式のタイプは何ですか？",
       "actionId": "identify_type"
     },
     {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "まずは何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "a_2, a_3 を計算してみてもいいですか？",
-      "actionId": "calculate_terms"
+      "label": "定数解を使う方法について教えてください。",
+      "actionId": "explain_fixed_point"
     },
     {
-      "label": "この形の漸化式を解く方針を教えてください。",
+      "label": "分数型の漸化式の解き方の基本方針を知りたい。",
       "actionId": "approach_only"
     }
   ],
   "A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3": [
     {
-      "label": "この問題の方針を教えてください",
-      "sendText": "この問題の方針を教えてください。",
+      "label": "不定方程式を解く方針を知りたい",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
-      "sendText": "まず何から手をつければいいですか？",
+      "label": "xとyの範囲をどう絞り込む？",
       "actionId": "first_step"
     },
     {
-      "label": "xとyはどんな数ですか？",
-      "sendText": "xとyはどんな数ですか？"
+      "label": "moduloを使うとどうなる？",
+      "actionId": "hint_modulo"
     },
     {
-      "label": "式の特徴から何か気づくことはありますか？",
-      "sendText": "式の特徴から何か気づくことはありますか？"
+      "label": "x^2 + 6y^2 = 223 の意味は？",
+      "actionId": "problem_meaning"
     }
   ],
   "A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3D": [
@@ -2577,221 +2587,227 @@
     },
     {
       "label": "xがπ/2に近づくとき、cos(3x)とtan(5x)はそれぞれどうなりますか？",
-      "actionId": "evaluate_terms"
-    },
-    {
-      "label": "三角関数の極限でよく使う公式はありますか？",
-      "actionId": "trig_limit_formulas"
-    },
-    {
-      "label": "xをπ/2に近づけるのが難しいです。何か工夫できますか？",
       "actionId": "first_step"
+    },
+    {
+      "label": "変数変換は何のために行いますか？",
+      "actionId": "why_substitution"
+    },
+    {
+      "label": "t=x-π/2と置換すると、式はどう変わりますか？",
+      "actionId": "substitution_details"
     }
   ],
   "AA271833-9840-40EE-924F-1D94AD63FEB6": [
     {
-      "label": "どういう方針で解けばいいですか？",
-      "actionId": "approach_only"
+      "label": "不定方程式とは何ですか？",
+      "actionId": "define_indeterminate_equation"
     },
     {
-      "label": "「1次式への因数分解」とはどういうことですか？",
-      "actionId": "term_definition"
-    },
-    {
-      "label": "最初は何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "この式を因数分解できますか？",
-      "actionId": "hint_factorization"
-    }
-  ],
-  "AB08A968-36A0-40E9-B392-651BAE535DA9": [
-    {
-      "label": "この漸化式のタイプは何ですか？",
-      "actionId": "recurrence_type"
-    },
-    {
-      "label": "どういう方針で解き進めれば良いですか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩は何をすれば良いですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "両辺の対数をとるのはどうですか？",
-      "actionId": "hint_log"
-    }
-  ],
-  "ABE37AA2-9FEC-4ADD-9022-1A38340249F1": [
-    {
-      "label": "無限級数って何ですか？",
-      "sendText": "無限級数とは何ですか？",
-      "actionId": "term_definition"
-    },
-    {
-      "label": "無限級数の問題はどう解けばいいですか？",
-      "sendText": "無限級数の問題に取り組むための一般的な方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "まずは何から計算すればいいですか？",
-      "sendText": "この問題で、最初に計算すべきことは何ですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "部分和S_nについて教えてください",
-      "sendText": "部分和S_nとは何ですか？また、この問題でS_nはどうなりますか？",
-      "actionId": "partial_sum_sn"
-    }
-  ],
-  "AC0C8F06-65FE-4FDD-8DB8-04252764D3CB": [
-    {
-      "label": "積分の区間について確認したい",
-      "actionId": "check_interval"
-    },
-    {
-      "label": "偶関数と奇関数について教えて",
-      "actionId": "explain_even_odd"
-    },
-    {
-      "label": "この問題の方針を教えてください",
+      "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
+    },
+    {
+      "label": "式を変形するヒントが欲しいです。",
+      "actionId": "hint_rearrange_equation"
+    }
+  ],
+  "AB08A968-36A0-40E9-B392-651BAE535DA9": [
+    {
+      "label": "この漸化式のタイプは何ですか？",
+      "actionId": "identify_type"
+    },
+    {
+      "label": "最初の一手として何を試すべきですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "非線形漸化式の一般的な解法は？",
+      "actionId": "general_approach"
+    },
+    {
+      "label": "対数を取るのはなぜ有効なのですか？",
+      "actionId": "why_logarithm"
+    }
+  ],
+  "ABE37AA2-9FEC-4ADD-9022-1A38340249F1": [
+    {
+      "label": "無限級数って何だっけ？",
+      "sendText": "無限級数とは何ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "まずは何から手をつければいい？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "部分和について教えて",
+      "sendText": "部分和とは何ですか？この問題でどう考えればいいですか？",
+      "actionId": "concept_partial_sum"
+    },
+    {
+      "label": "この式はどんな数列を表しているの？",
+      "sendText": "この無限級数の各項はどのような値になりますか？",
+      "actionId": "analyze_series_terms"
+    }
+  ],
+  "AC0C8F06-65FE-4FDD-8DB8-04252764D3CB": [
+    {
+      "label": "この積分を解くための方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "被積分関数が偶関数か奇関数か確認するには？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "偶関数と奇関数の性質について教えてください。",
+      "actionId": "hint_odd_even_properties"
+    },
+    {
+      "label": "sin^5 x は偶関数ですか、奇関数ですか？",
+      "actionId": "check_sin_power"
     }
   ],
   "ADC1559C-5A8D-490C-9D10-8722FECF3115": [
     {
-      "label": "この微分方程式の解き方を教えてください。",
+      "label": "この微分方程式の解き方の基本方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "特性方程式とは何ですか？",
-      "actionId": "characteristic_equation_meaning"
+      "label": "特性方程式を使う方法について教えて",
+      "actionId": "characteristic_equation"
     },
     {
-      "label": "初期条件をどのように使いますか？",
-      "actionId": "initial_conditions_usage"
+      "label": "変数変換で1階微分を消すとはどういうこと？",
+      "actionId": "variable_substitution"
     },
     {
-      "label": "減衰振動の式ですか？",
-      "actionId": "confirm_type"
+      "label": "初期条件の扱い方について教えて",
+      "actionId": "initial_conditions"
+    },
+    {
+      "label": "物理的な意味合いについて教えて",
+      "actionId": "physical_meaning"
     }
   ],
   "AF028FDC-E4ED-4B5D-907A-FD053AA682F0": [
     {
-      "label": "この無限級数の収束性について教えてください。",
-      "actionId": "convergence_check"
+      "label": "この級数の名前は何ですか？",
+      "actionId": "series_name"
     },
     {
-      "label": "この極限を求める一般的なアプローチは何ですか？",
+      "label": "極限の計算方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "区分求積法を使うにはどう考えればいいですか？",
-      "actionId": "approach_specific_riemann"
+      "label": "部分和 S_n をどう扱えばよいですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "部分和の形をどう変形すればいいですか？",
-      "actionId": "first_step_partial_sum"
+      "label": "区分求積法を使うにはどう変形しますか？",
+      "actionId": "riemann_sum_hint"
     },
     {
-      "label": "log 2 になるのはなぜですか？",
-      "actionId": "why_log2_hint"
+      "label": "積分を使って考える方法はありますか？",
+      "actionId": "integral_approach"
     }
   ],
   "AF7A04F4-3FFC-435D-ACF7-C0741E7B23F8": [
     {
-      "label": "この式はどういう形ですか？",
-      "actionId": "equation_type"
-    },
-    {
-      "label": "因数分解の方針を教えてください。",
+      "label": "この問題の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "最初は何から手をつければいいですか？",
+      "label": "まずは何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "xとyの二次式を因数分解するコツは？",
-      "actionId": "factoring_tip"
+      "label": "二変数二次方程式の解法について教えてください。",
+      "actionId": "method_explanation"
+    },
+    {
+      "label": "式を因数分解できますか？",
+      "actionId": "factorization_hint"
     }
   ],
   "B1C2D3E4-F5G6-7890-HIJK-LM1234567890": [
     {
-      "label": "この積分の解き方のヒントをください",
-      "actionId": "hint"
+      "label": "この積分の一般的な解法方針は？",
+      "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何から始めればいいですか？",
+      "label": "ウォリス積分の公式は使える？",
+      "actionId": "wallis_integral"
+    },
+    {
+      "label": "置換積分を試すとしたら何で置換する？",
       "actionId": "first_step"
     },
     {
-      "label": "sinとcosのべき乗の積分で使える公式はありますか？",
-      "actionId": "approach_formula"
-    },
-    {
-      "label": "置換積分は有効ですか？",
-      "actionId": "approach_substitution"
+      "label": "sinとcosの指数が両方奇数の場合、どうすればいい？",
+      "actionId": "strategy_odd_powers"
     }
   ],
   "B1D8559E-D3F4-45DA-A889-8056A50EE5A8": [
     {
-      "label": "この方程式は何を求める問題ですか？",
-      "actionId": "problem_type"
+      "label": "不定方程式の解き方の方針を知りたい",
+      "actionId": "approach_only"
     },
     {
-      "label": "どこから手をつければいいですか？",
+      "label": "3つの文字があるけど、どう考えればいい？",
+      "actionId": "how_to_handle_3_variables"
+    },
+    {
+      "label": "まずは何から手をつければいい？",
       "actionId": "first_step"
     },
     {
-      "label": "不定方程式の解き方について教えてください",
-      "actionId": "diophantine_equation_method"
-    },
-    {
-      "label": "zを固定して考えるのはなぜですか？",
-      "actionId": "why_fix_z"
+      "label": "係数の7, 3, 13に何か意味はある？",
+      "actionId": "meaning_of_coefficients"
     }
   ],
   "B2198AC3-050B-4F1D-B584-A2C5DC3CA60F": [
     {
-      "label": "この極限を解くための方針を教えてください。",
+      "label": "この問題の方針を教えてください",
+      "sendText": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "x → ∞ のとき、1/x はどうなりますか？",
+      "label": "最初の一歩は何をすればいいですか？",
+      "sendText": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "sin(t)/t の極限の公式は使えそうですか？",
-      "actionId": "hint_formula"
+      "label": "ヒントをください",
+      "sendText": "ヒントをください。",
+      "actionId": "hint"
     },
     {
-      "label": "置換積分は有効ですか？",
-      "actionId": "hint_substitution"
+      "label": "極限の公式で使えるものはありますか？",
+      "sendText": "この極限の問題を解く上で、使える公式はありますか？"
     }
   ],
   "B2C3D4E5-F6A7-B8C9-D0E1-F2A3B4C5D6E7": [
     {
-      "label": "どういう方針で解き進めればいいですか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "この連立方程式をどう解き始めればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "2つの式を足したり引いたりするとどうなりますか？",
-      "actionId": "hint_add_subtract"
+      "label": "2つの式を足したり引いたりするのは有効ですか？",
+      "actionId": "approach_add_subtract"
     },
     {
       "label": "三角関数の合成は使えますか？",
-      "actionId": "hint_synthesis"
+      "actionId": "approach_synthesis"
+    },
+    {
+      "label": "xとyの範囲はどのように考慮しますか？",
+      "actionId": "hint_range"
     }
   ],
   "B2C3D4E5-F6G7-8901-BCDE-F2345678901": [
@@ -2800,7 +2816,7 @@
       "actionId": "meaning_steady_state"
     },
     {
-      "label": "この微分方程式の解き方の方針を教えてください。",
+      "label": "この微分方程式の解き方の全体像を教えてください。",
       "actionId": "approach_only"
     },
     {
@@ -2808,288 +2824,293 @@
       "actionId": "first_step"
     },
     {
-      "label": "未定係数法について教えてください。",
-      "actionId": "undetermined_coefficients_method"
-    },
-    {
-      "label": "電磁気学との関連について教えてください。",
-      "actionId": "electromagnetism_connection"
+      "label": "特解の求め方について教えてください。",
+      "actionId": "particular_solution_hint"
     }
   ],
   "B2C3D4E5-F6G7-H8I9-J0K1-L2M3N4O5P6": [
     {
-      "label": "この積分の解き方の方針を教えてください",
-      "sendText": "この積分の解き方の方針を教えてください。",
+      "label": "この積分の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
-      "sendText": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "1/cos x の積分はどのように考えればいいですか？",
-      "sendText": "1/cos x の積分はどのように考えればいいですか？"
+      "label": "分母にcos xがあるのが難しいです。",
+      "sendText": "分母にcos xがあるのが難しいです。どうすればいいですか？"
     },
     {
-      "label": "三角関数の積分の一般的なアプローチは？",
-      "sendText": "三角関数の積分の一般的なアプローチは？"
+      "label": "置換積分は使えますか？",
+      "sendText": "この問題で置換積分は有効ですか？"
     }
   ],
   "B38E9107-4CB3-4966-AAA8-6966FC3F8B17": [
     {
-      "label": "この式の因数分解の一般的な方針は？",
-      "sendText": "この式の因数分解の一般的な方針は何ですか？",
+      "label": "因数分解の一般的な方針を教えて",
+      "sendText": "この式の因数分解の一般的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "最初は何から手をつければいい？",
-      "sendText": "この問題を解くために、最初は何から手をつければいいですか？",
+      "label": "最初の一歩は何をすればいい？",
+      "sendText": "この問題を解くための最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "何かヒントが欲しい",
-      "sendText": "この問題のヒントをください。",
-      "actionId": "hint"
+      "label": "因数定理って何だっけ？",
+      "sendText": "因数定理とは何ですか？",
+      "actionId": "what_is_factor_theorem"
     },
     {
-      "label": "因数分解の公式は使える？",
-      "sendText": "因数分解の公式は使えますか？"
-    },
-    {
-      "label": "共通因数でくくることはできる？",
-      "sendText": "共通因数でくくることはできますか？"
+      "label": "この式の特徴は？",
+      "sendText": "この式の形に何か特徴はありますか？",
+      "actionId": "problem_feature"
     }
   ],
   "B4FDC2FF-78D4-5C52-C9FE-2477A027B74E": [
     {
-      "label": "この問題の方針を教えてください",
+      "label": "この微分方程式の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "f'(t)は何を表していますか？",
-      "actionId": "meaning_of_term"
-    },
-    {
-      "label": "まず何をすればいいですか？",
+      "label": "f'(t)を求めるにはどうすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "sin(ωt)の積分について教えてください",
-      "actionId": "hint_integration"
+      "label": "sin(ωt)の積分はどうなりますか？",
+      "actionId": "integration_hint"
+    },
+    {
+      "label": "初期条件f(0)=0はどう使いますか？",
+      "actionId": "initial_condition"
     }
   ],
   "B8F9C5D2-4E6A-4F8B-9C1D-3A5B7C9D1E2F": [
     {
-      "label": "この問題の方針を教えてください",
-      "sendText": "この問題はどのような方針で解き進めればよいですか？",
+      "label": "この方程式をどう解けばいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "sendText": "この問題の最初の一歩として、何をすればいいですか？",
+      "label": "因数分解はできますか？",
+      "actionId": "hint_factorization"
+    },
+    {
+      "label": "xとyのどちらに注目すべきですか？",
       "actionId": "first_step"
     },
     {
-      "label": "式をどのように整理すればいいですか？",
-      "sendText": "与えられた方程式をどのように整理すれば解きやすくなりますか？"
-    },
-    {
-      "label": "因数分解は使いますか？",
-      "sendText": "この問題では因数分解を使いますか？"
+      "label": "二変数二次方程式の解き方を教えて",
+      "actionId": "approach_general"
     }
   ],
   "B9B22B73-65CB-4AE7-A6BF-79E52EEDA3BC": [
     {
-      "label": "どういう方針で解き進めますか？",
-      "actionId": "approach_only"
+      "label": "この定積分の問題、どう考え始めればいいですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "被積分関数はどんな関数ですか？",
-      "actionId": "check_function_type"
+      "label": "被積分関数が偶関数であることは利用できますか？",
+      "actionId": "approach_even_function"
     },
     {
-      "label": "三角関数の3乗の積分はどう計算しますか？",
-      "actionId": "integral_technique"
+      "label": "三角関数の分数式の積分でよく使う手法はありますか？",
+      "actionId": "approach_technique"
     },
     {
-      "label": "定積分の区間について何か気づきはありますか？",
-      "actionId": "check_interval"
+      "label": "置換積分は使えますか？",
+      "actionId": "approach_substitution"
     }
   ],
   "B9C0D1E2-F3A4-5B6C-7D8E-9F0A1B2C3D4": [
     {
-      "label": "この式の因数分解の方針を教えてください。",
+      "label": "この式の因数分解の基本的な方針を教えて",
+      "sendText": "この式の因数分解の基本的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の最初のステップは何ですか？",
+      "label": "因数定理って何だっけ？",
+      "sendText": "因数定理とは何ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "最初に何を試せばいい？",
+      "sendText": "因数分解を始めるにあたって、最初に何を試せば良いですか？",
       "actionId": "first_step"
     },
     {
-      "label": "因数定理とは何ですか？",
-      "actionId": "what_is_factor_theorem"
-    },
-    {
-      "label": "定数項から何がわかりますか？",
-      "actionId": "constant_term_info"
+      "label": "因数分解のヒントが欲しい",
+      "sendText": "因数分解のヒントをください。",
+      "actionId": "hint"
     }
   ],
   "BB41368E-ACE1-4D11-B8A8-CEB3918B6EE5": [
     {
-      "label": "この極限の求め方の方針を教えて",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "この式の形は何を表している？",
-      "sendText": "この式の形は何を表しているのでしょうか？"
-    },
-    {
-      "label": "微分係数の定義と関係ある？",
-      "sendText": "この極限は微分係数の定義と関係がありますか？"
-    },
-    {
-      "label": "ロピタルの定理は使える？",
-      "sendText": "この極限を求めるのにロピタルの定理は使えますか？"
-    }
-  ],
-  "BCC5BF01-27BE-4D8C-8E40-8923C764BBEC": [
-    {
-      "label": "この極限の形は何ですか？",
-      "actionId": "limit_form"
-    },
-    {
-      "label": "最初は何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "ルートの引き算はどう処理しますか？",
-      "actionId": "handle_sqrt_subtraction"
-    },
-    {
-      "label": "共役な数をかけるとはどういうことですか？",
-      "actionId": "what_is_conjugate"
-    }
-  ],
-  "BDCAAAB3-8109-4E6B-8A45-9EFD024A0B05": [
-    {
-      "label": "この積分の形は何を表していますか？",
-      "actionId": "form_meaning"
-    },
-    {
-      "label": "どんな置換積分が考えられますか？",
-      "actionId": "substitution_hint"
-    },
-    {
-      "label": "定積分の計算手順を教えてください。",
-      "actionId": "definite_integral_steps"
-    },
-    {
-      "label": "積分範囲の扱いはどうすればいいですか？",
-      "actionId": "bounds_handling"
-    }
-  ],
-  "BE1669B0-E7C4-4855-B98E-2F2AE53B7981": [
-    {
-      "label": "漸化式の解き方の基本方針は？",
-      "sendText": "この漸化式の解き方の基本方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "この形の漸化式はどう解く？",
-      "sendText": "a_{n+1} = a_n / (a_n + 1) のような形の漸化式は、どう解けばいいですか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "逆数をとるとどうなる？",
-      "sendText": "漸化式の両辺の逆数をとるとどうなりますか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "a_2, a_3 を計算してみる",
-      "sendText": "a_2, a_3 を計算して、数列の規則性を見てみましょう。",
-      "actionId": "calculate_terms"
-    }
-  ],
-  "BE3EC919-60B4-4334-BE8F-389731CF565D": [
-    {
-      "label": "この極限を求めるには、何から考えればいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "この級数は何を表していますか？",
-      "actionId": "meaning_of_series"
-    },
-    {
-      "label": "部分和を積分で表すとはどういうことですか？",
-      "actionId": "integral_representation_hint"
-    },
-    {
-      "label": "等比数列の和の公式をどう使いますか？",
-      "actionId": "geometric_series_hint"
-    }
-  ],
-  "BE5B4E1D-4297-4F80-98BC-F74655BF03F9": [
-    {
-      "label": "因数分解の一般的な方針を教えて",
-      "sendText": "この多項式の因数分解の一般的な方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "xについて整理するとはどういうこと？",
-      "sendText": "「xについて整理する」とは具体的にどういうことですか？",
-      "actionId": "term_definition"
-    },
-    {
-      "label": "最初の一歩は何をすればいい？",
-      "sendText": "この問題を解くための最初の一歩は何をすれば良いですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "たすきがけはどこで使うの？",
-      "sendText": "たすきがけは、この問題のどの部分でどのように使うのですか？",
-      "actionId": "hint"
-    }
-  ],
-  "BEB5E18C-4AF5-4411-8578-2CE052A3CDE8": [
-    {
-      "label": "この微分方程式は何を表していますか？",
-      "actionId": "what_is_this_eq"
-    },
-    {
-      "label": "解の形をどのように仮定すればよいですか？",
-      "actionId": "assume_solution_form"
-    },
-    {
-      "label": "初期条件をどう使いますか？",
-      "actionId": "use_initial_conditions"
+      "label": "この極限の形は何を表していますか？",
+      "actionId": "what_form"
     },
     {
       "label": "解き方のヒントをください",
       "actionId": "hint"
+    },
+    {
+      "label": "最初の一歩は何ですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "ロピタルの定理は使えますか？",
+      "actionId": "lhopital_question"
+    }
+  ],
+  "BCC5BF01-27BE-4D8C-8E40-8923C764BBEC": [
+    {
+      "label": "この問題の方針を教えて",
+      "sendText": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初の一歩は何をすればいい？",
+      "sendText": "この問題の最初の一歩は何をすればいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "不定形とはどういう意味？",
+      "sendText": "「不定形」とはどういう意味ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "ヒントが欲しい",
+      "sendText": "ヒントをください。",
+      "actionId": "hint"
+    }
+  ],
+  "BDCAAAB3-8109-4E6B-8A45-9EFD024A0B05": [
+    {
+      "label": "この積分の解き方の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "分母のルートの中身が気になります。どう変形しますか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "置換積分を使うとのことですが、何を置換すればよいですか？",
+      "actionId": "substitution_hint"
+    },
+    {
+      "label": "この形の積分で使える公式はありますか？",
+      "actionId": "formula_hint"
+    }
+  ],
+  "BE1669B0-E7C4-4855-B98E-2F2AE53B7981": [
+    {
+      "label": "この漸化式のタイプは何ですか？",
+      "actionId": "identify_type"
+    },
+    {
+      "label": "まずは何から手をつければいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "a_2, a_3 を計算してみましょう",
+      "actionId": "calculate_terms"
+    },
+    {
+      "label": "ヒントをください",
+      "actionId": "hint"
+    },
+    {
+      "label": "この分数式の形をどう扱えばいいですか？",
+      "actionId": "handle_fraction"
+    }
+  ],
+  "BE3EC919-60B4-4334-BE8F-389731CF565D": [
+    {
+      "label": "この級数の名前は何ですか？",
+      "actionId": "what_is_this_series"
+    },
+    {
+      "label": "問題の方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "最初のステップは何をすべきですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "各項を積分で表すとはどういうことですか？",
+      "actionId": "term_as_integral"
+    },
+    {
+      "label": "ライプニッツ級数について教えてください。",
+      "actionId": "about_leibniz_series"
+    }
+  ],
+  "BE5B4E1D-4297-4F80-98BC-F74655BF03F9": [
+    {
+      "label": "この式を因数分解する方針を教えて",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "まずは何から手をつければいい？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "たすきがけってどう使うんだっけ？",
+      "actionId": "how_to_cross_multiply"
+    },
+    {
+      "label": "xについて整理するとはどういうこと？",
+      "actionId": "meaning_of_organize_by_x"
+    }
+  ],
+  "BEB5E18C-4AF5-4411-8578-2CE052A3CDE8": [
+    {
+      "label": "この微分方程式の解き方の基本方針は？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "二階同次・定数係数微分方程式とは？",
+      "actionId": "definition_ode"
+    },
+    {
+      "label": "特性方程式を使って解くにはどうすればいい？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "初期条件はどのように使うの？",
+      "actionId": "initial_conditions"
+    },
+    {
+      "label": "ヒントを見せてください",
+      "actionId": "show_hint"
     }
   ],
   "BED49300-099F-4DD3-9DC6-1AB5635BEC1B": [
     {
-      "label": "この積分の解き方の方針を教えて",
+      "label": "置換積分の基本方針を教えて",
+      "sendText": "置換積分の基本方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "置換積分を使う問題ですか？",
-      "actionId": "hint_substitution"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "どの部分をuと置けばいい？",
+      "sendText": "この問題で、どの部分をuと置けばいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "sin^2x の扱い方が分かりません",
-      "actionId": "hint_sin_squared"
+      "label": "積分の計算手順を確認したい",
+      "sendText": "積分の計算手順を最初から確認したいです。",
+      "actionId": "calculation_steps"
+    },
+    {
+      "label": "三角関数の積分のコツは？",
+      "sendText": "三角関数の積分でよく使うコツはありますか？",
+      "actionId": "hint_trig_integral"
     }
   ],
   "C0367E7C-E68E-4377-B638-8C6EDB803AEB": [
     {
-      "label": "どういう方針で考えればいいですか？",
+      "label": "どういう方針で解けばいいですか？",
       "actionId": "approach_only"
     },
     {
@@ -3097,88 +3118,88 @@
       "actionId": "first_step"
     },
     {
-      "label": "文字が4つあって難しいです",
-      "sendText": "文字が4つある方程式を解くときの一般的な考え方について教えてください。"
+      "label": "0 < a, b, c, d という条件はどう使いますか？",
+      "actionId": "condition_usage"
     },
     {
-      "label": "不等式を使って範囲を絞り込むことはできますか？",
-      "sendText": "不等式を使ってa,b,c,dの範囲を絞り込むことはできますか？"
+      "label": "対称性とは何ですか？",
+      "actionId": "term_definition"
     }
   ],
   "C07C6DF1-7283-4797-936F-1DFD8D597680": [
     {
-      "label": "まずは何から手をつければいい？",
+      "label": "まずは何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "対数の性質って何だっけ？",
+      "label": "対数の性質について教えてください",
       "actionId": "log_properties"
     },
     {
-      "label": "真数条件って何？",
-      "actionId": "domain_condition"
+      "label": "真数条件とは何ですか？",
+      "actionId": "true_number_condition"
     },
     {
-      "label": "この問題の方針を教えて",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     }
   ],
   "C08EC860-F248-4E0A-90FD-F321E66616A4": [
     {
-      "label": "この積分の解き方の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "分母の式をどう変形すればいいですか？",
+      "label": "分母の式変形について教えて",
+      "sendText": "分母の式変形について教えてください。",
       "actionId": "first_step"
     },
     {
-      "label": "どんな置換をすればいいですか？",
-      "actionId": "substitution_hint"
+      "label": "どんな置換をすればいい？",
+      "sendText": "この積分を解くために、どんな置換をすれば良いですか？",
+      "actionId": "approach_only"
     },
     {
-      "label": "定積分で注意すべき点はありますか？",
-      "actionId": "definite_integral_tips"
+      "label": "定積分の計算方針が知りたい",
+      "sendText": "この定積分の計算方針について教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "この形の積分は初めてです",
+      "sendText": "この形の積分は初めてなのですが、どう考えれば良いですか？",
+      "actionId": "hint"
     }
   ],
   "C1D2E3F4-G5H6-I7J8-K9L0-M1N2O3P4Q5": [
     {
-      "label": "どういう方針で解き進めますか？",
+      "label": "この積分の基本的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "被積分関数をどう見ればいいですか？",
-      "actionId": "hint_integrand"
-    },
-    {
-      "label": "置換積分を使う問題ですか？",
+      "label": "置換積分を使うべきですか？",
       "actionId": "hint_substitution"
+    },
+    {
+      "label": "1/cos^2(x) の積分は何になりますか？",
+      "actionId": "hint_basic_integral"
+    },
+    {
+      "label": "最初の一歩は何をすれば良いですか？",
+      "actionId": "first_step"
     }
   ],
   "C1F3E989-594D-446A-8E94-FD7E70C7450F": [
     {
-      "label": "この極限をどう考えればいいですか？",
-      "sendText": "この極限をどう考えればいいですか？",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "はさみうちの原理は使えますか？",
-      "sendText": "はさみうちの原理は使えますか？",
-      "actionId": "hint"
+      "label": "はさみうちの原理とは何ですか？",
+      "actionId": "definition_squeeze_theorem"
     },
     {
-      "label": "sin(1/x) の範囲はどうなりますか？",
-      "sendText": "sin(1/x) の範囲はどうなりますか？",
+      "label": "sin(1/x) の範囲はどう考えればよいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "x→0 のとき、1/x はどうなりますか？",
-      "sendText": "x→0 のとき、1/x はどうなりますか？",
-      "actionId": "clarify_term"
+      "label": "xを掛けるときに注意することはありますか？",
+      "actionId": "caution_multiplication"
     }
   ],
   "C286F6A2-9859-42E0-9719-C29CE61F82AC": [
@@ -3187,246 +3208,241 @@
       "actionId": "approach_only"
     },
     {
-      "label": "まずは何から手をつければいいですか？",
+      "label": "sin x を別の文字に置き換えてもいいですか？",
+      "sendText": "sin x を別の文字に置き換えてもいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "sin x を別の文字で置き換えてもいいですか？",
-      "actionId": "substitution_hint"
+      "label": "二次方程式の解き方を教えてください。",
+      "actionId": "quadratic_solve"
     },
     {
-      "label": "三角方程式の解き方を確認したい",
-      "actionId": "review_topic"
+      "label": "sin x = t と置いたときの t の範囲は？",
+      "actionId": "range_check"
+    },
+    {
+      "label": "三角方程式の解き方が知りたいです。",
+      "actionId": "trig_equation_basics"
     }
   ],
   "C2A4D7E9-8C31-4B67-9D1C-7B1F9F4D2C22": [
     {
-      "label": "この極限の形は何を表していますか？",
-      "actionId": "identify_form"
-    },
-    {
-      "label": "微積分学の基本定理は使えますか？",
-      "actionId": "fundamental_theorem_of_calculus"
+      "label": "この式の形は何を表していますか？",
+      "actionId": "meaning_of_form"
     },
     {
       "label": "ロピタルの定理は使えますか？",
-      "actionId": "lhopitals_rule"
+      "actionId": "lhopital_rule"
     },
     {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "積分の平均値の定理について教えてください",
+      "actionId": "mean_value_theorem_integral"
+    },
+    {
+      "label": "最初の一歩として何を考えればいいですか？",
       "actionId": "first_step"
     }
   ],
   "C3D4E5F6-A7B8-C9D0-E1F2-A3B4C5D6E7F8": [
     {
-      "label": "この問題の方針を教えてください",
-      "sendText": "この問題の方針を教えてください。",
+      "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "和積の公式について教えてください",
-      "sendText": "和積の公式について教えてください。",
+      "label": "和積の公式について教えてください。",
       "actionId": "formula_sum_to_product"
     },
     {
-      "label": "最初のステップは何をすればいいですか？",
-      "sendText": "最初のステップは何をすればいいですか？",
+      "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "三角方程式を解くときの注意点は？",
-      "sendText": "三角方程式を解くときの注意点は何ですか？",
-      "actionId": "trig_equation_tips"
+      "label": "cos A + cos B の公式が思い出せません。",
+      "actionId": "formula_cos_sum"
     }
   ],
   "C5C2514A-CF06-4F19-BE62-4F99731FA905": [
     {
-      "label": "この問題は何を求めればいいですか？",
-      "actionId": "understand_goal"
-    },
-    {
-      "label": "f''(t)は何を表していますか？",
-      "actionId": "term_meaning_f_double_prime"
-    },
-    {
-      "label": "どういう方針で解き進めればいいですか？",
+      "label": "この微分方程式の解き方の基本方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "最初は何から手をつければいいですか？",
+      "label": "f''(t) = g は何を意味するの？",
+      "actionId": "meaning_of_equation"
+    },
+    {
+      "label": "f'(t) を求めるにはどうすればいい？",
       "actionId": "first_step"
     },
     {
-      "label": "微分方程式の解き方について教えてください",
-      "actionId": "solve_diff_eq_hint"
+      "label": "初期条件 f(0) と f'(0) はどう使うの？",
+      "actionId": "how_to_use_initial_conditions"
     }
   ],
   "C66CEC49-FCD7-42E2-9FF5-628A431A8550": [
     {
       "label": "この式の特徴は何ですか？",
-      "actionId": "identify_type"
+      "actionId": "identify_pattern"
     },
     {
-      "label": "因数分解の一般的なアプローチを教えてください。",
+      "label": "因数分解の一般的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "因数定理は使えますか？",
-      "actionId": "factor_theorem"
-    },
-    {
-      "label": "対称式に見えますが、何か関係ありますか？",
-      "actionId": "recognize_pattern"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "まず何から手をつければいいですか？",
       "actionId": "first_step"
+    },
+    {
+      "label": "因数定理は使えますか？",
+      "actionId": "check_factor_theorem"
+    },
+    {
+      "label": "2次式×2次式の形を想定する理由は何ですか？",
+      "actionId": "why_quadratic_factors"
     }
   ],
   "C7312AD1-233C-42E9-94E7-BF9A59591EE1": [
+    {
+      "label": "この積分はどう解けばいいですか？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "sinのn乗の積分は漸化式を使うのですか？",
+      "actionId": "hint_specific_method"
+    },
+    {
+      "label": "部分積分で解けますか？",
+      "actionId": "hint_specific_technique"
+    },
+    {
+      "label": "ウォリス積分の公式は使えますか？",
+      "actionId": "hint_specific_formula"
+    }
+  ],
+  "C9E8A1B2-4D7F-4A91-9F5C-2B6E3A1D8C77": [
+    {
+      "label": "この極限を解くための方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "P(n,k)の定義は何ですか？",
+      "sendText": "P(n,k)の定義は何ですか？この問題ではどう展開できますか？",
+      "actionId": "definition_permutation"
+    },
+    {
+      "label": "n乗根の極限を扱う一般的な方法は何ですか？",
+      "actionId": "general_method_nth_root"
+    },
+    {
+      "label": "まずはどこから手をつければ良いですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "スターリングの公式は使いますか？",
+      "actionId": "hint_stirling"
+    }
+  ],
+  "CAF59AF0-A107-4D21-B0E3-2C3D888A83D2": [
+    {
+      "label": "因数分解の基本的な方針を教えて",
+      "sendText": "この式の因数分解の基本的な方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "x^4 + 5x^2 + 9 をどう変形すればいい？",
+      "sendText": "この式を因数分解するために、まずどう変形すれば良いですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "置き換えは使えますか？",
+      "sendText": "x^2 を別の文字に置き換えて考えることはできますか？",
+      "actionId": "strategy_substitution"
+    },
+    {
+      "label": "二乗の差の形にできますか？",
+      "sendText": "A^2 - B^2 の形に持ち込むことはできますか？",
+      "actionId": "strategy_difference_of_squares"
+    }
+  ],
+  "CC1A2E7C-04EF-4D32-BB13-907FBEC6515D": [
     {
       "label": "この積分の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "sinの9乗の積分はどう計算しますか？",
+      "label": "部分積分を使うのはなぜですか？",
+      "actionId": "why_integration_by_parts"
+    },
+    {
+      "label": "最初の部分積分の式を立ててみましょう。",
       "actionId": "first_step"
     },
     {
-      "label": "ウォリスの公式は使えますか？",
-      "actionId": "wallis_formula"
-    },
-    {
-      "label": "部分積分を使うとどうなりますか？",
-      "actionId": "integration_by_parts"
-    }
-  ],
-  "C9E8A1B2-4D7F-4A91-9F5C-2B6E3A1D8C77": [
-    {
-      "label": "この極限の基本的な考え方を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "n乗根を含む極限の一般的な解法は？",
-      "actionId": "hint_nth_root"
-    },
-    {
-      "label": "P(n,k)の定義を確認したいです。",
-      "actionId": "definition_permutation"
-    },
-    {
-      "label": "まずは式をどのように変形すればよいですか？",
-      "actionId": "first_step_transformation"
-    }
-  ],
-  "CAF59AF0-A107-4D21-B0E3-2C3D888A83D2": [
-    {
-      "label": "この式を因数分解する方針を教えてください。",
-      "sendText": "この式を因数分解する方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩として何を考えればよいですか？",
-      "sendText": "最初の一歩として何を考えればよいですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "ヒントをください。",
-      "sendText": "ヒントをください。",
-      "actionId": "hint"
-    },
-    {
-      "label": "4次式を因数分解するときのポイントは？",
-      "sendText": "4次式を因数分解するときのポイントは？"
-    }
-  ],
-  "CC1A2E7C-04EF-4D32-BB13-907FBEC6515D": [
-    {
-      "label": "積分の種類と解き方の方針を教えて",
-      "sendText": "この積分はどのような種類の積分ですか？解き方の方針を教えてください。",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "部分積分を使うのかな？",
-      "sendText": "部分積分を使うのが良いのでしょうか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "部分積分を適用する際のf(x)とg'(x)の選び方は？",
-      "sendText": "部分積分を適用するとして、f(x)とg'(x)をどのように選べば良いですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "計算ミスが多いので、途中の注意点を教えて",
-      "sendText": "計算ミスが多いので、この問題を解く上での注意点や、よくある間違いがあれば教えてください。",
-      "actionId": "hint"
+      "label": "部分積分の公式を確認したいです。",
+      "actionId": "formula_check"
     }
   ],
   "CCD350BD-2E20-456F-80B5-5646A5070E7E": [
     {
       "label": "この極限の形は何を表していますか？",
-      "actionId": "limit_form_meaning"
+      "actionId": "meaning_of_form"
     },
     {
-      "label": "解き始めるためのヒントをください",
-      "actionId": "hint"
+      "label": "どんな公式や定理が使えそうですか？",
+      "actionId": "relevant_theorems"
+    },
+    {
+      "label": "最初の一歩として何を考えればいいですか？",
+      "actionId": "first_step"
     },
     {
       "label": "ロピタルの定理は使えますか？",
       "actionId": "lhopital_question"
-    },
-    {
-      "label": "微分係数の定義と関係ありますか？",
-      "actionId": "derivative_definition_relation"
     }
   ],
   "CE7A2246-F134-4248-86EA-31A0502F58F1": [
     {
-      "label": "この式をどう整理すればいいですか？",
-      "sendText": "この式をどう整理すればいいですか？",
+      "label": "因数分解の基本方針を教えて",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の一般的な方針を教えてください。",
-      "sendText": "このような複雑な式の因数分解の一般的な方針を教えてください。",
-      "actionId": "hint"
-    },
-    {
-      "label": "どの文字について整理するのが良いですか？",
-      "sendText": "この式はどの文字について整理するのが良いですか？",
+      "label": "どの文字について整理すればいい？",
       "actionId": "first_step"
     },
     {
-      "label": "対称式や交代式の特徴はありますか？",
-      "sendText": "この式は対称式や交代式の特徴を持っていますか？",
+      "label": "この式の対称性について教えて",
       "actionId": "hint"
+    },
+    {
+      "label": "まずは式を展開すればいい？",
+      "actionId": "first_step"
     }
   ],
   "CECF170F-83C3-485D-B0F7-A73B2089A50B": [
     {
-      "label": "この式は何を表していますか？",
-      "actionId": "what_is_this_expression"
+      "label": "無限級数の考え方について教えて",
+      "actionId": "approach_only"
     },
     {
-      "label": "無限級数の和を求めるには？",
-      "actionId": "approach_infinite_series"
+      "label": "まずは何から手をつければいい？",
+      "actionId": "first_step"
     },
     {
-      "label": "部分和を考えるとはどういうことですか？",
-      "actionId": "explain_partial_sum"
+      "label": "部分和って何だっけ？",
+      "actionId": "term_definition"
     },
     {
-      "label": "最初の数項を計算してみましょう",
-      "actionId": "calculate_first_terms"
+      "label": "この式はどんな数列を表しているの？",
+      "actionId": "clarify_problem"
     }
   ],
   "D04D1417-91C9-4E4F-8558-80C8FF96A50F": [
     {
-      "label": "どうやって積分すればいいですか？",
+      "label": "この積分の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "cos^2 x の積分はどうしますか？",
+      "label": "cos^2 x の積分はどうすればいいですか？",
       "actionId": "first_step"
     },
     {
@@ -3434,30 +3450,26 @@
       "actionId": "hint_half_angle"
     },
     {
-      "label": "定積分の計算で注意することはありますか？",
-      "actionId": "definite_integral_tips"
+      "label": "定積分の計算で注意すべき点はありますか？",
+      "actionId": "hint_definite_integral"
     }
   ],
   "D1528690-D756-47FC-8647-0A11E4E5AC4A": [
     {
       "label": "どういう方針で解けばいいですか？",
-      "sendText": "この問題は、どういう方針で解けばいいですか？",
       "actionId": "approach_only"
     },
     {
       "label": "和積の公式って何でしたっけ？",
-      "sendText": "和積の公式って何でしたっけ？",
-      "actionId": "formula_recall"
+      "actionId": "formula_sum_to_product"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "sendText": "最初の一歩は何をすればいいですか？",
+      "label": "最初は何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "三角方程式の解き方の基本を教えて",
-      "sendText": "三角方程式の解き方の基本を教えてください。",
-      "actionId": "basic_strategy"
+      "label": "三角方程式の解き方を確認したい",
+      "actionId": "review_trig_eq"
     }
   ],
   "D2706488-8F89-46F4-8636-834028B00CFC": [
@@ -3466,7 +3478,7 @@
       "actionId": "equation_type"
     },
     {
-      "label": "解き方の方針を教えてください",
+      "label": "解き方の基本的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
@@ -3474,107 +3486,113 @@
       "actionId": "first_step"
     },
     {
-      "label": "積分因子法について教えてください",
-      "actionId": "integrating_factor_hint"
+      "label": "定数変化法について教えてください。",
+      "actionId": "variation_of_parameters"
+    },
+    {
+      "label": "積分因子法について教えてください。",
+      "actionId": "integrating_factor"
     }
   ],
   "D31DD01A-20D0-49DA-9EAD-E9571974B0DB": [
     {
       "label": "この漸化式のタイプは何ですか？",
-      "actionId": "sequence_type"
+      "actionId": "identify_type"
+    },
+    {
+      "label": "解き方のヒントをください",
+      "actionId": "hint"
     },
     {
       "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "階差数列の考え方について教えてください",
-      "actionId": "difference_sequence_concept"
-    },
-    {
-      "label": "a_2, a_3 を計算してみましょう",
-      "actionId": "calculate_terms"
+      "label": "階差数列とは何ですか？",
+      "actionId": "term_definition"
     }
   ],
   "D36E79F5-FF3C-442A-8A3A-DE453F25EA60": [
     {
-      "label": "この積分の解き方の方針を教えてください",
-      "sendText": "この積分の解き方の方針を教えてください。",
+      "label": "この積分の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "sendText": "最初の一歩は何をすればいいですか？",
+      "label": "分母の√x^2+9をどう処理すればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "分母のルートの形はどう処理しますか？",
-      "sendText": "分母のルートの形はどう処理すればいいですか？"
+      "label": "三角関数置換について教えてください。",
+      "actionId": "trig_sub_explanation"
     },
     {
-      "label": "三角関数を使った置換積分について教えてください",
-      "sendText": "三角関数を使った置換積分について教えてください。"
+      "label": "定積分の計算で注意すべき点はありますか？",
+      "actionId": "definite_integral_tips"
     }
   ],
   "D38E0151-81F6-4A38-A100-93A0C0E7A048": [
     {
-      "label": "この式は何を表していますか？",
-      "actionId": "meaning"
+      "label": "この問題の方針を教えてください。",
+      "sendText": "この問題の方針を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "区分求積法について教えてください",
-      "actionId": "riemann_sum_explanation"
+      "label": "区分求積法の考え方を使いますか？",
+      "sendText": "区分求積法の考え方を使いますか？",
+      "actionId": "confirm_method"
     },
     {
-      "label": "積分に変換するにはどうすればいいですか？",
-      "actionId": "convert_to_integral"
+      "label": "Σの中の式は何を表していますか？",
+      "sendText": "Σの中の式は何を表していますか？",
+      "actionId": "interpret_expression"
     },
     {
-      "label": "ルートの中の式は何かの図形を表していますか？",
-      "actionId": "geometric_meaning"
+      "label": "定積分の形にどう変換すればいいですか？",
+      "sendText": "定積分の形にどう変換すればいいですか？",
+      "actionId": "first_step"
     }
   ],
   "D7300A7C-4D0A-4F2D-B723-48757CD78ED0": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "まずは何をすればいいですか？",
+      "label": "3^xと3^{-x}の関係について教えてください",
+      "actionId": "term_explanation"
+    },
+    {
+      "label": "指数方程式を解くときのポイントは？",
+      "actionId": "hint"
+    },
+    {
+      "label": "最初の計算は何をすればいいですか？",
       "actionId": "first_step"
-    },
-    {
-      "label": "3のx乗をどう扱えばいいですか？",
-      "actionId": "handle_exponential"
-    },
-    {
-      "label": "指数がマイナスの項はどうすればいいですか？",
-      "actionId": "negative_exponent"
     }
   ],
   "D7F8E9A0-B1C2-4D3E-8F5A-6B7C8D9E0F1A": [
     {
-      "label": "この問題の方針を教えてください。",
+      "label": "この級数の発散をどう判定すればいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "和の記号の扱い方が分かりません。",
-      "actionId": "summation_help"
+      "label": "積分判定法について教えてください",
+      "actionId": "explain_integral_test"
     },
     {
-      "label": "積分を使って評価するとはどういうことですか？",
-      "actionId": "integral_evaluation_meaning"
-    },
-    {
-      "label": "最初の一歩は何をすれば良いですか？",
+      "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
+    },
+    {
+      "label": "比較する関数は何を選べばいいですか？",
+      "actionId": "hint_function_choice"
     }
   ],
   "D812B02C-7F6E-4FA4-BD61-A05CBAB6D525": [
     {
-      "label": "この積分の解き方のヒントをください",
-      "sendText": "この積分の解き方のヒントをください。",
-      "actionId": "hint"
+      "label": "この積分の基本的な方針を教えてください",
+      "sendText": "この積分の基本的な方針を教えてください。",
+      "actionId": "approach_only"
     },
     {
       "label": "sin^2 x の積分はどうすればいいですか？",
@@ -3582,112 +3600,108 @@
       "actionId": "first_step"
     },
     {
-      "label": "三角関数の公式を使いますか？",
-      "sendText": "この問題を解くには、何か三角関数の公式を使う必要がありますか？",
-      "actionId": "approach_only"
+      "label": "三角関数の定積分でよく使う公式はありますか？",
+      "sendText": "三角関数の定積分でよく使う公式はありますか？",
+      "actionId": "hint_formula"
     },
     {
-      "label": "定積分の計算手順を確認したい",
-      "sendText": "定積分の計算手順を最初から確認したいです。",
-      "actionId": "approach_only"
+      "label": "半角の公式について教えてください",
+      "sendText": "半角の公式について教えてください。",
+      "actionId": "hint_half_angle"
     }
   ],
   "D87D022C-7BED-4C0D-BC95-8A74C64BCD86": [
     {
-      "label": "この微分方程式の解き方を教えてください。",
-      "sendText": "この微分方程式の解き方の基本的な方針を教えてください。",
+      "label": "この微分方程式の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
-      "sendText": "この微分方程式を解くために、まず何から手をつければいいですか？",
-      "actionId": "first_step"
+      "label": "f'(t)で置き換えるのはなぜですか？",
+      "actionId": "why_substitution"
     },
     {
-      "label": "f'(t)を別の変数に置き換えるのは有効ですか？",
-      "sendText": "f'(t)を別の変数に置き換えるのは、この問題で有効なアプローチですか？",
-      "actionId": "hint"
+      "label": "積分因子法について教えてください。",
+      "actionId": "integrating_factor_method"
     },
     {
-      "label": "この問題はどんな物理現象を表していますか？",
-      "sendText": "この微分方程式は、どのような物理現象をモデル化しているのでしょうか？",
-      "actionId": "context"
+      "label": "初期条件はどのように使いますか？",
+      "actionId": "how_to_use_initial_conditions"
     }
   ],
   "D8CA1CE8-6921-47E2-8A45-728DED579EB0": [
     {
-      "label": "この問題のテーマは何ですか？",
-      "actionId": "problem_theme"
+      "label": "この問題は何を求めればいいですか？",
+      "actionId": "understand_goal"
     },
     {
-      "label": "S_nとa_nの関係について教えてください。",
-      "actionId": "sn_an_relation"
+      "label": "数列の和から一般項を求めるには？",
+      "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "S_n と a_n の関係を教えて",
+      "actionId": "concept_sn_an"
+    },
+    {
+      "label": "最初の一歩はどうすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "n=1の場合をどう扱えばいいですか？",
-      "actionId": "n_equals_1_case"
+      "label": "S_{n-1} をどう計算すればいいですか？",
+      "actionId": "calc_sn_minus_1"
     }
   ],
   "D9E29F85-E082-42D3-A2E6-34D162864716": [
     {
-      "label": "この積分の解き方の方針を教えてください",
+      "label": "この積分の解き方の基本方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "部分積分を使うのでしょうか？",
-      "actionId": "hint_integration_by_parts"
-    },
-    {
-      "label": "最初の一歩は何から始めれば良いですか？",
+      "label": "部分積分をどのように適用すればよいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "部分積分を2回行うとどうなりますか？",
-      "actionId": "hint_double_integration_by_parts"
+      "label": "部分積分を2回行うのはなぜですか？",
+      "actionId": "why_two_parts"
+    },
+    {
+      "label": "積分区間の扱い方について教えてください。",
+      "actionId": "definite_integral_bounds"
     }
   ],
   "DB124FEE-EBB5-4940-B445-2D08B1B87E9A": [
     {
-      "label": "この式は何の形ですか？",
-      "actionId": "identify_form"
+      "label": "因数分解の公式は何を使いますか？",
+      "actionId": "approach_only"
     },
     {
-      "label": "因数分解の公式を教えてください",
-      "actionId": "formula_hint"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "最初の一歩は何ですか？",
       "actionId": "first_step"
     },
     {
-      "label": "27x^3と8y^3をどう変形しますか？",
-      "actionId": "transform_terms"
+      "label": "立方差の公式について教えてください",
+      "actionId": "formula_explanation"
+    },
+    {
+      "label": "27x^3と8y^3をそれぞれどう変形しますか？",
+      "actionId": "transformation_hint"
     }
   ],
   "DB513B4F-55DC-4AB9-87B7-1BCF5F47DC6A": [
     {
-      "label": "この方程式は何という種類ですか？",
-      "actionId": "problem_type"
+      "label": "不定方程式って何？",
+      "actionId": "define_indeterminate_equation"
     },
     {
-      "label": "解き方のヒントをください",
+      "label": "解き方のヒントが欲しい",
       "actionId": "hint"
     },
     {
-      "label": "まず何から手をつければいいですか？",
+      "label": "まず何から考えればいい？",
       "actionId": "first_step"
     },
     {
-      "label": "特殊解を見つけるにはどうすればいいですか？",
+      "label": "特殊解はどうやって見つけるの？",
       "actionId": "find_particular_solution"
-    },
-    {
-      "label": "一般解の求め方を教えてください",
-      "actionId": "general_solution_approach"
     }
   ],
   "E03C5F81-3445-4D78-8BC7-9BDD3EF528CD": [
@@ -3696,78 +3710,78 @@
       "actionId": "limit_form"
     },
     {
-      "label": "どういう方針で解き進めればいいですか？",
-      "actionId": "approach_only"
+      "label": "f(x)^g(x) の形の極限を解く方針は？",
+      "actionId": "approach_f_g"
     },
     {
-      "label": "対数を使うとどうなりますか？",
-      "actionId": "use_logarithm"
+      "label": "対数を使うのはなぜですか？",
+      "actionId": "why_logarithm"
     },
     {
-      "label": "最初の一歩を教えてください",
+      "label": "最初の一歩として何から始めればいいですか？",
       "actionId": "first_step"
     }
   ],
   "E0D650DF-7B76-4A37-A0FE-B18A8A041E0B": [
     {
       "label": "因数分解のやり方を教えて",
-      "sendText": "この式の因数分解のやり方を教えてください。",
       "actionId": "approach_only"
     },
     {
       "label": "最初は何から考えればいい？",
-      "sendText": "この問題を解くために、最初は何から考えればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "たすきがけって何？",
-      "sendText": "たすきがけとは何ですか？",
-      "actionId": "term_definition"
+      "label": "ヒントをください",
+      "actionId": "hint"
     },
     {
-      "label": "積が-22、和が-9になる2数は？",
-      "sendText": "積が-22、和が-9になる2数を教えてください。",
-      "actionId": "hint"
+      "label": "たすきがけって何？",
+      "actionId": "term_definition"
     }
   ],
   "E2B55755-0658-4FBE-911F-C18148799924": [
     {
-      "label": "この方程式は何という種類ですか？",
-      "actionId": "equation_type"
+      "label": "不定方程式って何？",
+      "sendText": "不定方程式とは何ですか？",
+      "actionId": "what_is_diophantine"
     },
     {
-      "label": "解き方のヒントをください。",
-      "actionId": "hint"
+      "label": "解き方の基本方針を教えて",
+      "sendText": "この不定方程式の解き方の基本方針を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "まず何から手をつければいいですか？",
+      "label": "まず何から手をつければいい？",
+      "sendText": "この問題はまず何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "特殊解の見つけ方を教えてください。",
+      "label": "特殊解の見つけ方は？",
+      "sendText": "特殊解（一つの整数解）はどのように見つけるのですか？",
       "actionId": "find_particular_solution"
-    },
-    {
-      "label": "一般解の求め方の方針を教えてください。",
-      "actionId": "approach_general_solution"
     }
   ],
   "E3253228-3C96-488F-BD6E-A89DC18E84CA": [
     {
-      "label": "Σの計算方法のヒントが欲しい",
-      "actionId": "hint_sum"
-    },
-    {
-      "label": "部分分数分解について教えて",
-      "actionId": "partial_fraction_hint"
-    },
-    {
-      "label": "最初の一歩は何をすればいい？",
+      "label": "まずは何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "極限の計算で注意することは？",
-      "actionId": "limit_caution"
+      "label": "シグマの中の分数をどう変形しますか？",
+      "actionId": "hint_partial_fraction"
+    },
+    {
+      "label": "部分分数分解について教えてください",
+      "actionId": "explain_partial_fraction"
+    },
+    {
+      "label": "シグマ計算のヒントをください",
+      "actionId": "hint_sum_calculation"
+    },
+    {
+      "label": "極限の計算方法について教えてください",
+      "actionId": "explain_limit_calculation"
     }
   ],
   "E32CEEE3-F0E5-44C6-838C-7BEF0531E460": [
@@ -3776,16 +3790,16 @@
       "actionId": "steady_state_meaning"
     },
     {
-      "label": "この微分方程式の解き方の基本方針を教えてください。",
+      "label": "この微分方程式の解き方の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "未定係数法で特解を求めるところから教えてください。",
-      "actionId": "undetermined_coefficients_start"
+      "label": "最初の一歩は何をすれば良いですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "共振条件が成立していると、何が変わりますか？",
-      "actionId": "resonance_impact"
+      "label": "特解の求め方について教えてください。",
+      "actionId": "particular_solution_hint"
     }
   ],
   "E356DB2A-1686-4B3F-8F5C-77FBE782E17F": [
@@ -3794,455 +3808,471 @@
       "actionId": "approach_only"
     },
     {
-      "label": "sin^3 x の積分はどう考えたらいいですか？",
-      "actionId": "hint_sin_cubed"
+      "label": "sin^3 x の積分はどうすればいいですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "三角関数の積分のポイントは何ですか？",
-      "actionId": "hint_trig_integral"
+      "label": "三角関数の3乗の積分は、何か公式がありますか？",
+      "actionId": "hint"
     },
     {
-      "label": "最初の一歩を教えてください。",
+      "label": "置換積分を使うとしたら、何をuと置けばいいですか？",
       "actionId": "first_step"
     }
   ],
   "E406BD56-74DE-4603-9695-AE08B0757BE7": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "この式の因数分解の基本的な方針は何ですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解のヒントをください",
+      "label": "何かヒントをください。",
       "actionId": "hint"
     },
     {
-      "label": "この式を因数分解する最初のステップは何ですか？",
+      "label": "最初の一歩として何を考えればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "「x^4 + 4y^4」のような式の因数分解のコツはありますか？",
-      "actionId": "strategy"
+      "label": "この形を見たときに、よく使う公式はありますか？",
+      "actionId": "common_formula"
     }
   ],
   "E460F72E-E848-4B8F-B481-9D3E820FEBAE": [
     {
-      "label": "この漸化式はどんな種類ですか？",
+      "label": "この漸化式のタイプは何ですか？",
       "actionId": "identify_type"
     },
     {
       "label": "特性方程式とは何ですか？",
-      "actionId": "characteristic_equation_meaning"
+      "actionId": "what_is_characteristic_equation"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "最初は何から手をつければ良いですか？",
       "actionId": "first_step"
     },
     {
-      "label": "解き方の基本的な方針を教えてください。",
-      "actionId": "approach_only"
+      "label": "一般項の形はどうなりますか？",
+      "actionId": "general_form"
+    },
+    {
+      "label": "初期条件の使い方は？",
+      "actionId": "how_to_use_initial_conditions"
     }
   ],
   "E5CDA38B-2CD3-4F62-AB20-2F4ECDB14681": [
     {
-      "label": "この極限を解くための方針を教えてください",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "tan x を別の形で表すことはできますか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "よく使う極限の公式はありますか？",
-      "actionId": "hint"
-    },
-    {
-      "label": "0/0 の不定形とは何ですか？",
-      "actionId": "concept_check"
-    }
-  ],
-  "E5E4228F-7819-4063-A4DB-9F1DB3D27225": [
-    {
-      "label": "この方程式は何という種類ですか？",
-      "actionId": "identify_equation_type"
-    },
-    {
-      "label": "解き方の基本的な方針を教えてください",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "最初の一歩は何をすれば良いですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "この微分方程式の一般解の形は？",
-      "actionId": "general_solution_form"
-    }
-  ],
-  "E8EA2D7A-4614-47AB-8934-8C7BCF3568C1": [
-    {
-      "label": "この問題の方針を教えてください。",
+      "label": "この問題の方針を教えてください",
       "sendText": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "不等式を使って範囲を絞り込むとはどういうことですか？",
-      "sendText": "不等式を使って範囲を絞り込むとはどういうことですか？",
-      "actionId": "clarify_inequality"
-    },
-    {
-      "label": "最初は何から手をつければ良いですか？",
-      "sendText": "最初は何から手をつければ良いですか？",
+      "label": "tan x をどう変形すればいいですか？",
+      "sendText": "tan x をどう変形すればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "x, y, zは整数ですか？",
-      "sendText": "x, y, zは整数ですか？",
-      "actionId": "clarify_variables"
+      "label": "極限の公式は使えますか？",
+      "sendText": "この問題で使える極限の公式はありますか？",
+      "actionId": "hint"
+    },
+    {
+      "label": "最初の一歩は何ですか？",
+      "sendText": "この問題を解くための最初の一歩は何ですか？",
+      "actionId": "first_step"
+    }
+  ],
+  "E5E4228F-7819-4063-A4DB-9F1DB3D27225": [
+    {
+      "label": "この微分方程式の一般的な解き方は？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "「一階非斉次」とはどういう意味ですか？",
+      "actionId": "term_meaning"
+    },
+    {
+      "label": "最初は何から手をつければいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "この方程式はどんな現象を表しますか？",
+      "actionId": "application_context"
+    }
+  ],
+  "E8EA2D7A-4614-47AB-8934-8C7BCF3568C1": [
+    {
+      "label": "どういう方針で解き進めますか？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "x, y, z の関係式から何が言えますか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "不等式 0 < x <= y <= z をどう使いますか？",
+      "actionId": "hint"
+    },
+    {
+      "label": "x, y の候補を絞り込むには？",
+      "actionId": "hint"
     }
   ],
   "E8F3C9A2-7D6A-4E4E-9B6E-XLNXLOGX001": [
     {
-      "label": "この極限のタイプは何ですか？",
-      "actionId": "limit_type"
+      "label": "この極限の形は何ですか？",
+      "actionId": "limit_form"
     },
     {
-      "label": "0 × ∞ の不定形をどう扱えばいいですか？",
-      "actionId": "indeterminate_form_hint"
+      "label": "x→+0 のときの xlogx の極限を求めるには？",
+      "actionId": "approach_only"
     },
     {
-      "label": "x log x のグラフをイメージできますか？",
+      "label": "xlogx のグラフをイメージできますか？",
       "actionId": "graph_hint"
     },
     {
-      "label": "置換積分は有効ですか？",
-      "actionId": "substitution_approach"
-    },
-    {
-      "label": "ロピタルの定理は使えますか？",
-      "actionId": "lhopital_approach"
+      "label": "x=1/t と置換するのはなぜですか？",
+      "actionId": "substitution_reason"
     }
   ],
   "E9F0A1B2-C3D4-5E6F-7A8B-9C0D1E2F3A4B": [
     {
-      "label": "この問題の方針を教えてください。",
+      "label": "この問題の方針を教えてください",
       "actionId": "approach_only"
     },
     {
-      "label": "tan x の値域について確認したいです。",
-      "actionId": "tan_range"
+      "label": "はさみうちの原理を使うにはどうすればいいですか？",
+      "actionId": "how_to_squeeze"
     },
     {
-      "label": "はさみうちの原理を使うのはなぜですか？",
-      "actionId": "squeeze_theorem_reason"
+      "label": "被積分関数 tan^(2n)x の特徴は？",
+      "actionId": "function_properties"
     },
     {
       "label": "積分区間 [0, π/4] で tan x はどうなりますか？",
-      "actionId": "tan_behavior_interval"
+      "actionId": "tan_x_range"
     }
   ],
   "EBA0562C-23C6-4DE1-95C1-94FB618E1073": [
     {
-      "label": "この問題の方針を教えてください。",
+      "label": "不定方程式って何？",
+      "actionId": "what_is_diophantine"
+    },
+    {
+      "label": "どういう方針で解けばいい？",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解を利用するとはどういうことですか？",
-      "actionId": "hint_factorization"
-    },
-    {
-      "label": "最初の一歩は何をすればいいですか？",
+      "label": "最初の一歩は何をすればいい？",
       "actionId": "first_step"
     },
     {
-      "label": "xyの項がある方程式の解き方について教えてください。",
-      "actionId": "hint_equation_type"
+      "label": "因数分解のアイデアが欲しい",
+      "actionId": "hint_factorization"
     }
   ],
   "EBEA916F-13BA-4F47-8827-8D2546F80AA0": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "どういう方針で解き進めればいいですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "まずは何をすればいいですか？",
+      "label": "2^{2x+1} や 2^{x+2} をどう変形しますか？",
       "actionId": "first_step"
     },
     {
-      "label": "指数法則をどう使いますか？",
-      "actionId": "hint_exponent_rules"
+      "label": "指数方程式を解くときのポイントは？",
+      "actionId": "hint"
     },
     {
-      "label": "2^x をどう扱えばいいですか？",
-      "actionId": "hint_substitution"
+      "label": "何か文字で置き換えることはできますか？",
+      "actionId": "substitution_hint"
     }
   ],
   "ECB70663-7BFE-4801-8F92-21A71BF20AD3": [
     {
-      "label": "どんな公式を使えばいいですか？",
-      "actionId": "formula_hint"
-    },
-    {
-      "label": "積分の計算手順を教えてください",
+      "label": "この問題の方針を教えてください",
+      "sendText": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何ですか？",
+      "label": "指数関数の積分の公式を教えてください",
+      "sendText": "指数関数の積分の公式を教えてください。",
+      "actionId": "formula_exponential_integral"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
+      "sendText": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "定積分の計算で注意することは？",
-      "actionId": "definite_integral_tips"
+      "label": "定積分の計算方法を確認したい",
+      "sendText": "定積分の計算方法を確認したいです。",
+      "actionId": "definite_integral_method"
     }
   ],
   "EE0E5F29-6071-4A82-BBA0-6D3DAAD6BB0C": [
     {
-      "label": "この積分の解き方のヒントが欲しいです",
-      "actionId": "hint"
+      "label": "この積分の解き方の方針を教えてください。",
+      "sendText": "この積分の解き方の方針を教えてください。",
+      "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何から始めれば良いですか？",
+      "label": "部分積分を使う問題ですか？",
+      "sendText": "部分積分を使う問題ですか？",
+      "actionId": "hint_technique"
+    },
+    {
+      "label": "最初に何をすればいいですか？",
+      "sendText": "最初に何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "部分積分を使うのでしょうか？",
-      "actionId": "approach_check"
+      "label": "置換積分は使いますか？",
+      "sendText": "置換積分は使いますか？",
+      "actionId": "hint_technique"
     },
     {
-      "label": "置換積分は使えますか？",
-      "actionId": "approach_check_substitution"
+      "label": "定積分の計算で注意することはありますか？",
+      "sendText": "定積分の計算で注意することはありますか？",
+      "actionId": "hint_caution"
     }
   ],
   "F14C7A82-9E10-4B3D-9C2A-1D8E7F6A5B4C": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "因数分解の基本的な方針を教えて",
+      "sendText": "因数分解の基本的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "因数分解の基本的な考え方を教えてください",
-      "actionId": "basic_factorization"
-    },
-    {
-      "label": "まずは何から手をつければいいですか？",
+      "label": "この式をどう整理すればいい？",
+      "sendText": "この式を因数分解するために、まずどう整理すればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "項が4つあるときの因数分解のコツは？",
-      "actionId": "four_term_strategy"
+      "label": "共通因数を見つけるコツは？",
+      "sendText": "共通因数を見つけるためのコツや考え方を教えてください。",
+      "actionId": "hint_common_factor"
+    },
+    {
+      "label": "どの文字でまとめると良い？",
+      "sendText": "この式を因数分解するとき、どの文字でまとめると良いですか？",
+      "actionId": "hint_grouping_variable"
     }
   ],
   "F1A2B3C4-D5E6-F7A8-B9C0-D1E2F3A4B5C6": [
     {
-      "label": "この式をどう変形すればいいですか？",
+      "label": "因数分解の基本方針は何ですか？",
       "actionId": "approach_only"
     },
     {
-      "label": "何か公式を使いますか？",
-      "actionId": "hint_formula"
-    },
-    {
-      "label": "y-z, z-x, x-y をそれぞれA, B, Cと置くとどうなりますか？",
+      "label": "式を簡単に扱うための工夫はありますか？",
       "actionId": "first_step"
     },
     {
-      "label": "A+B+Cを計算するとどうなりますか？",
-      "actionId": "hint_sum_abc"
+      "label": "a+b+c=0 のときに使える公式はありますか？",
+      "actionId": "hint_formula"
+    },
+    {
+      "label": "この問題のヒントをください",
+      "actionId": "hint"
     }
   ],
   "F1G2H3I4-J5K6-L7M8-N9O0-P1Q2R3S4T5U6": [
     {
-      "label": "積分の基本的な方針を教えてください",
+      "label": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "1/cos^2 x の積分はどうすればいいですか？",
+      "label": "積分の計算で何から手をつければ良いですか？",
       "actionId": "first_step"
     },
     {
-      "label": "この定積分の計算手順を確認したいです",
-      "actionId": "calculation_steps"
+      "label": "1/cos^2 x の積分はどうすればいいですか？",
+      "actionId": "hint_specific_term"
     },
     {
-      "label": "三角関数の微分公式で使えるものはありませんか？",
-      "actionId": "hint_formula"
+      "label": "定積分の計算手順を確認したいです。",
+      "actionId": "review_definite_integral"
     }
   ],
   "F2C5AEF4-1FD1-4BD6-A7FE-D0E65756456A": [
     {
-      "label": "この微分方程式のタイプは何ですか？",
+      "label": "この微分方程式の種類は何ですか？",
       "actionId": "equation_type"
+    },
+    {
+      "label": "解き方の基本的な方針を教えてください。",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "定数Gがある場合の解き方が知りたいです。",
+      "actionId": "how_to_handle_G"
     },
     {
       "label": "まず何から手をつければいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "定数Gがある場合の解き方のヒントは？",
-      "actionId": "hint_G_term"
-    },
-    {
-      "label": "定数解を求めるってどういうことですか？",
-      "actionId": "constant_solution_meaning"
-    },
-    {
-      "label": "同次方程式の解き方を教えてください。",
-      "actionId": "homogeneous_solution_approach"
+      "label": "同次方程式の解の公式は使えますか？",
+      "actionId": "homogeneous_formula"
     }
   ],
   "F41A1522-30A9-4428-AB89-02F6A0650991": [
     {
-      "label": "tan x の積分はどうすればいいですか？",
-      "actionId": "integrate_tan_x"
+      "label": "tan x の積分方法が知りたい",
+      "actionId": "how_to_integrate_tanx"
     },
     {
-      "label": "定積分の計算手順を教えてください。",
+      "label": "定積分の計算手順を確認したい",
       "actionId": "definite_integral_steps"
     },
     {
-      "label": "最初の一歩は何ですか？",
-      "actionId": "first_step"
+      "label": "置換積分を使うのかな？",
+      "actionId": "substitution_hint"
     },
     {
-      "label": "ヒントをください。",
-      "actionId": "hint"
+      "label": "三角関数の定積分で注意することは？",
+      "actionId": "trig_integral_tips"
     }
   ],
   "F744D6AB-A8EB-42F0-9740-0FD4DC4EA29D": [
     {
-      "label": "この方程式は何を表していますか？",
+      "label": "この微分方程式の種類は何ですか？",
       "actionId": "equation_type"
     },
     {
-      "label": "解き始めるための最初の一歩は何ですか？",
+      "label": "解き方のヒントをください。",
+      "actionId": "hint"
+    },
+    {
+      "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "どのような解法を使えばいいですか？",
-      "actionId": "approach_only"
+      "label": "この方程式はどんな現象を表しますか？",
+      "actionId": "context_application"
     },
     {
-      "label": "f(0)=f_0 は何を意味しますか？",
-      "actionId": "initial_condition_meaning"
+      "label": "f(t)の形を予想できますか？",
+      "actionId": "guess_form"
     }
   ],
   "F7C0451B-E946-4AB6-90C4-A3B539CE4A1D": [
     {
-      "label": "この極限の形は何ですか？",
-      "actionId": "limit_form"
+      "label": "この問題の方針を教えてください",
+      "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩として何をすればいいですか？",
+      "label": "最初の一歩は何をすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "「共役な数」とは何ですか？",
-      "actionId": "conjugate_meaning"
+      "label": "「有理化」とは何ですか？",
+      "actionId": "term_definition"
     },
     {
-      "label": "ルートがある式の極限でよく使う方法は？",
-      "actionId": "common_technique"
+      "label": "不定形とは何ですか？",
+      "actionId": "term_definition"
+    },
+    {
+      "label": "ルートがあるときの極限の考え方は？",
+      "actionId": "hint"
     }
   ],
   "F8A3B2C1-9D4E-5F6A-7B8C-9D0E1F2A3B4C": [
+    {
+      "label": "どういう方針で解けばいいですか？",
+      "actionId": "approach_only"
+    },
+    {
+      "label": "sin x + cos x を t と置くのはどうですか？",
+      "sendText": "sin x + cos x を t と置くと、式はどうなりますか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "sin x cos x の部分をどう処理すればいいですか？",
+      "actionId": "hint"
+    },
+    {
+      "label": "三角関数の合成は使いますか？",
+      "actionId": "hint"
+    }
+  ],
+  "F92FA824-A0AC-486A-95B7-C731A52DEEC9-variant": [
     {
       "label": "どういう方針で解き進めますか？",
       "actionId": "approach_only"
     },
     {
-      "label": "sin x + cos x を t と置くのはどうですか？",
+      "label": "半角置換について教えてください",
+      "actionId": "half_angle_substitution_explanation"
+    },
+    {
+      "label": "最初の計算ステップを教えてください",
       "actionId": "first_step"
     },
     {
-      "label": "sin x cos x を別の形で表せますか？",
-      "actionId": "hint_expression"
-    },
-    {
-      "label": "三角関数の合成は使えますか？",
-      "actionId": "hint_synthesis"
-    }
-  ],
-  "F92FA824-A0AC-486A-95B7-C731A52DEEC9-variant": [
-    {
-      "label": "この積分の解き方を教えてください。",
-      "sendText": "この積分の解き方を教えてください。どのような方針で進めれば良いでしょうか？",
-      "actionId": "approach_only"
-    },
-    {
-      "label": "三角関数の積分でよく使う置換はありますか？",
-      "actionId": "hint_substitution"
-    },
-    {
-      "label": "最初の一歩は何をすれば良いですか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "sin x の部分をどう処理すれば良いですか？",
-      "actionId": "hint_specific_term"
+      "label": "三角関数の積分でよく使う公式は？",
+      "actionId": "common_formulas"
     }
   ],
   "FAA00A56-4049-4921-A9C8-93B3F420DA1C": [
     {
-      "label": "まずは式を展開してみよう",
-      "sendText": "まずは式を展開してみようか？",
-      "actionId": "first_step"
-    },
-    {
-      "label": "対称式って何だっけ？",
-      "sendText": "この問題文にある「対称式」ってどういう意味だったかな？",
-      "actionId": "term_definition"
-    },
-    {
-      "label": "どういう方針で解けばいい？",
-      "sendText": "この式の因数分解は、どういう方針で進めればいいかな？",
+      "label": "この式の因数分解の一般的な方針は？",
       "actionId": "approach_only"
     },
     {
-      "label": "文字について整理するってどういうこと？",
-      "sendText": "「文字について整理する」って、具体的にどうすればいいの？",
+      "label": "何から手をつければいいですか？",
+      "actionId": "first_step"
+    },
+    {
+      "label": "展開して整理するとどうなりますか？",
+      "actionId": "expand_and_organize"
+    },
+    {
+      "label": "対称式の特徴を活かせますか？",
+      "actionId": "symmetric_expression_hint"
+    },
+    {
+      "label": "ヒントをください",
       "actionId": "hint"
     }
   ],
   "FAF62CC1-1FE8-41FC-B1B6-5151D088742A": [
     {
-      "label": "無限級数の収束とは？",
-      "sendText": "無限級数が収束するとは、どういうことですか？",
-      "actionId": "definition_convergence"
+      "label": "無限級数って何？",
+      "sendText": "無限級数とはどういう意味ですか？",
+      "actionId": "term_definition"
     },
     {
-      "label": "この問題の方針を教えてください",
-      "sendText": "この無限級数の収束・発散を調べるには、どのような方針で考えれば良いですか？",
+      "label": "この問題の方針を教えて",
+      "sendText": "この無限級数の極限を求めるための基本的な方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "最初の一歩は何ですか？",
-      "sendText": "この問題で、まず何から手をつけたら良いですか？",
+      "label": "最初は何から考えればいい？",
+      "sendText": "この問題に取り組む上で、最初に何から考えれば良いですか？",
       "actionId": "first_step"
-    },
-    {
-      "label": "部分和について教えてください",
-      "sendText": "無限級数の部分和とは何ですか？",
-      "actionId": "partial_sum_concept"
     }
   ],
   "FBFAA113-A701-4D94-9421-3AEF3FA2A96E": [
     {
-      "label": "この方程式は何を表していますか？",
-      "actionId": "what_is_this_equation"
-    },
-    {
-      "label": "問題の方針を教えてください。",
+      "label": "不定方程式の解き方の方針を知りたい",
       "actionId": "approach_only"
     },
     {
-      "label": "どこから手をつければいいですか？",
+      "label": "3変数の方程式はどう解き始める？",
       "actionId": "first_step"
     },
     {
-      "label": "整数解を求める問題ですか？",
-      "actionId": "confirm_integer_solutions"
+      "label": "ユークリッドの互除法はどこで使う？",
+      "actionId": "euclidean_algorithm_usage"
     },
     {
-      "label": "ユークリッドの互除法を使いますか？",
-      "actionId": "ask_euclidean_algorithm"
+      "label": "係数が3つある場合の注意点は？",
+      "actionId": "considerations_three_variables"
     }
   ],
   "FEE633FE-DE9A-4BF9-8E42-52FD6CA67E3A": [
@@ -4251,70 +4281,74 @@
       "actionId": "approach_only"
     },
     {
-      "label": "sin^2 x cos^2 x の部分はどう変形しますか？",
+      "label": "sin^2 x cos^2 x の部分をどう変形しますか？",
       "actionId": "first_step"
     },
     {
-      "label": "三角関数の積分のポイントは？",
-      "actionId": "hint"
+      "label": "積分の計算で使う公式を教えてください",
+      "actionId": "formula_hint"
     },
     {
       "label": "半角の公式を教えてください",
-      "actionId": "formula_half_angle"
+      "actionId": "half_angle_formula"
     }
   ],
   "TRIG-EXP-LOG-001": [
     {
-      "label": "三角関数のグラフで考えるには？",
+      "label": "三角関数のグラフをどう使う？",
       "actionId": "graph_approach"
     },
     {
-      "label": "単位円を使って考えるには？",
+      "label": "単位円を使った解き方を教えて",
       "actionId": "unit_circle_approach"
     },
     {
-      "label": "sin x = 1/2 となるxの値をどう探せばいい？",
-      "actionId": "first_step"
+      "label": "sin x = 1/2 となるxの値をどう見つける？",
+      "actionId": "find_base_angle"
     },
     {
-      "label": "0 \"le\" x < 2\"pi\" の範囲の意味は？",
-      "actionId": "range_meaning"
+      "label": "0 ≤ x < 2π の範囲に注意する点は？",
+      "actionId": "range_consideration"
     }
   ],
   "TRIG-EXP-LOG-002": [
     {
-      "label": "どういう方針で解けばいいですか？",
+      "label": "この問題の方針を教えてください",
+      "sendText": "この問題の方針を教えてください。",
       "actionId": "approach_only"
     },
     {
-      "label": "指数法則を使って式を変形するには？",
+      "label": "指数法則について確認したい",
+      "sendText": "指数法則について確認したいです。",
+      "actionId": "review_exponent_rules"
+    },
+    {
+      "label": "2のx乗でくくるにはどうすればいいですか？",
+      "sendText": "2のx乗でくくるにはどうすればいいですか？",
       "actionId": "first_step"
     },
     {
-      "label": "2^x をひとかたまりと見ていいですか？",
-      "actionId": "clarify_term"
-    },
-    {
-      "label": "ヒントをください",
-      "actionId": "hint"
+      "label": "最初の変形が思いつきません",
+      "sendText": "最初の変形が思いつきません。ヒントをください。",
+      "actionId": "first_step_hint"
     }
   ],
   "TRIG-EXP-LOG-003": [
     {
-      "label": "この問題の方針を教えてください。",
-      "actionId": "approach_only"
+      "label": "まずは何から手をつければいいですか？",
+      "actionId": "first_step"
     },
     {
-      "label": "対数の性質を使って式をまとめるには？",
-      "actionId": "hint_log_property"
+      "label": "対数の性質について教えてください",
+      "actionId": "log_properties"
     },
     {
       "label": "真数条件とは何ですか？",
-      "actionId": "what_is_domain_condition"
+      "actionId": "true_number_condition"
     },
     {
-      "label": "最初の一歩は何をすればいいですか？",
-      "actionId": "first_step"
+      "label": "対数方程式の解き方の基本方針が知りたい",
+      "actionId": "approach_only"
     }
   ]
 }
