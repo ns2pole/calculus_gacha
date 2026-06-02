@@ -1,3 +1,8 @@
+## Codegen (AI starter quick replies)
+tool/starter_replies_progress.json
+tool/.gemini_api_key
+tool/generate_starter_replies.log
+
 ## Flutter/Dart
 .dart_tool/
 .packages

@@ -1,4 +1,5 @@
 class AiChatContext {
+  final String? problemId;
   final String title;
   final String questionText;
   final String? category;
@@ -10,6 +11,7 @@ class AiChatContext {
   final bool attachmentsEnabled;
 
   const AiChatContext({
+    this.problemId,
     required this.title,
     required this.questionText,
     this.category,

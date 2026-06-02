@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
+import '../../data/ai_chat/starter_quick_replies_by_problem_id.dart';
 import '../../models/ai_chat_quick_reply.dart';
 import '../../services/ai/ai_chat_client.dart';
 import '../../services/ai/ai_chat_client_factory.dart';
@@ -23,9 +24,7 @@ Future<void> showAiChatBottomSheet({
   MathTextBuilder? mathTextBuilder,
   MathTextBuilder? assistantTextBuilder,
   List<AiChatMessage> initialMessages = const [],
-  List<AiChatQuickReply>? cachedStarterQuickReplies,
   ValueChanged<List<AiChatMessage>>? onMessagesChanged,
-  ValueChanged<List<AiChatQuickReply>>? onStarterQuickRepliesCached,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -37,9 +36,7 @@ Future<void> showAiChatBottomSheet({
       mathTextBuilder: mathTextBuilder,
       assistantTextBuilder: assistantTextBuilder,
       initialMessages: initialMessages,
-      cachedStarterQuickReplies: cachedStarterQuickReplies,
       onMessagesChanged: onMessagesChanged,
-      onStarterQuickRepliesCached: onStarterQuickRepliesCached,
     ),
   );
 }
@@ -232,9 +229,7 @@ class AiChatBottomSheet extends StatefulWidget {
   final MathTextBuilder? mathTextBuilder;
   final MathTextBuilder? assistantTextBuilder;
   final List<AiChatMessage> initialMessages;
-  final List<AiChatQuickReply>? cachedStarterQuickReplies;
   final ValueChanged<List<AiChatMessage>>? onMessagesChanged;
-  final ValueChanged<List<AiChatQuickReply>>? onStarterQuickRepliesCached;
 
   const AiChatBottomSheet({
     super.key,
@@ -243,9 +238,7 @@ class AiChatBottomSheet extends StatefulWidget {
     this.mathTextBuilder,
     this.assistantTextBuilder,
     this.initialMessages = const [],
-    this.cachedStarterQuickReplies,
     this.onMessagesChanged,
-    this.onStarterQuickRepliesCached,
   });
 
   @override
@@ -257,7 +250,6 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   final _scrollController = ScrollController();
   late final List<AiChatMessage> _messages;
   List<AiChatQuickReply>? _starterQuickReplies;
-  bool _isLoadingStarterQuickReplies = false;
   bool _isSending = false;
   bool _showUpgradeOffer = false;
   bool _isRestoringPurchase = false;
@@ -268,12 +260,11 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   void initState() {
     super.initState();
     _messages = List<AiChatMessage>.of(widget.initialMessages);
-    _starterQuickReplies = widget.cachedStarterQuickReplies;
+    if (_messages.isEmpty) {
+      _starterQuickReplies = _resolveStarterQuickReplies();
+    }
     if (_messages.isNotEmpty) _scrollToBottom();
     _loadAiTutorPrice();
-    if (_messages.isEmpty && _starterQuickReplies == null) {
-      _loadStarterQuickReplies();
-    }
   }
 
   @override
@@ -287,65 +278,13 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     widget.onMessagesChanged?.call(List<AiChatMessage>.unmodifiable(_messages));
   }
 
-  void _cacheStarterQuickReplies(List<AiChatQuickReply> replies) {
-    widget.onStarterQuickRepliesCached?.call(
-      List<AiChatQuickReply>.unmodifiable(replies),
-    );
-  }
-
-  Future<void> _loadStarterQuickReplies() async {
-    if (_isLoadingStarterQuickReplies || _starterQuickReplies != null) return;
-
-    setState(() {
-      _isLoadingStarterQuickReplies = true;
-    });
-
-    try {
-      final replies = await widget.client.fetchStarterQuickReplies(
-        context: widget.chatContext,
-      );
-      if (!mounted) return;
-      setState(() {
-        _starterQuickReplies = replies;
-        _isLoadingStarterQuickReplies = false;
-      });
-      _cacheStarterQuickReplies(replies);
-    } on AiChatRateLimitException catch (e) {
-      if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
-      final fallback = _fallbackStarterQuickReplies(l10n);
-      setState(() {
-        _starterQuickReplies = fallback;
-        _isLoadingStarterQuickReplies = false;
-        _errorText = _rateLimitMessage(l10n, e);
-        _showUpgradeOffer = e.tier != 'paid';
-      });
-      _cacheStarterQuickReplies(fallback);
-    } on AiChatClientException catch (e) {
-      debugPrint('[AiChatBottomSheet] Starter quick replies failed: ${e.message}');
-      if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
-      final fallback = _fallbackStarterQuickReplies(l10n);
-      setState(() {
-        _starterQuickReplies = fallback;
-        _isLoadingStarterQuickReplies = false;
-      });
-      _cacheStarterQuickReplies(fallback);
-    } catch (error, stackTrace) {
-      debugPrint('[AiChatBottomSheet] Starter quick replies error: $error');
-      debugPrintStack(
-        stackTrace: stackTrace,
-        label: '[AiChatBottomSheet] starter stack',
-      );
-      if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
-      final fallback = _fallbackStarterQuickReplies(l10n);
-      setState(() {
-        _starterQuickReplies = fallback;
-        _isLoadingStarterQuickReplies = false;
-      });
-      _cacheStarterQuickReplies(fallback);
+  List<AiChatQuickReply>? _resolveStarterQuickReplies() {
+    final problemId = widget.chatContext.problemId;
+    if (problemId != null) {
+      final hardcoded = lookupStarterQuickReplies(problemId);
+      if (hardcoded != null) return hardcoded;
     }
+    return null;
   }
 
   Future<void> _sendText(String text, {String? choiceId}) async {
@@ -721,25 +660,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   }
 
   Widget _buildStarterQuickReplySection(AppLocalizations l10n) {
-    if (_isLoadingStarterQuickReplies) {
-      return const Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      );
-    }
-
-    final replies = _starterQuickReplies;
-    if (replies == null || replies.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
+    final replies = _starterQuickReplies ?? _fallbackStarterQuickReplies(l10n);
     return _buildQuickReplyChips(replies);
   }
 

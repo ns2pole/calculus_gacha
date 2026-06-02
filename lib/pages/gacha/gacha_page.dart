@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
-import '../../models/ai_chat_quick_reply.dart';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
 import '../../utils/l10n_utils.dart';
@@ -238,7 +237,6 @@ class _GachaPageState extends State<GachaPage> {
   // 計算用紙で学習記録を登録した問題を追跡
   final Set<String> _scratchPaperRecordedProblems = {};
   final Map<String, List<AiChatMessage>> _aiChatHistories = {};
-  final Map<String, List<AiChatQuickReply>> _aiChatStarterQuickReplies = {};
 
   // 学習記録ボタンが押された時に計算用紙ボタンを明るくするための状態
   final List<bool> _shouldHighlightScratchPaperButton = [false, false, false];
@@ -1113,6 +1111,7 @@ class _GachaPageState extends State<GachaPage> {
     showAiChatBottomSheet(
       context: context,
       chatContext: AiChatContext(
+        problemId: problem.id,
         title: '${l10n.askAi} - ${l10n.problemIndex(idx + 1)}',
         questionText: questionText,
         category: problem.getLocalizedCategory(context),
@@ -1125,16 +1124,9 @@ class _GachaPageState extends State<GachaPage> {
       mathTextBuilder: _buildAiChatText,
       assistantTextBuilder: _buildAiChatAssistantText,
       initialMessages: _aiChatHistories[problemKey] ?? const [],
-      cachedStarterQuickReplies: _aiChatStarterQuickReplies[problemKey],
       onMessagesChanged: (messages) {
         setState(() {
           _aiChatHistories[problemKey] = List<AiChatMessage>.of(messages);
-        });
-      },
-      onStarterQuickRepliesCached: (replies) {
-        setState(() {
-          _aiChatStarterQuickReplies[problemKey] =
-              List<AiChatQuickReply>.of(replies);
         });
       },
     );

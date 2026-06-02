@@ -50,7 +50,7 @@
    > 途中式や迷っている点があれば教えてください！  
    > 下から選ぶか、そのまま入力しても大丈夫です。
 
-2. **選択チップ（3〜5 件）** — 問題ごとに API `aiChatStarterReplies` で **1 回だけ**生成し、`_aiChatStarterQuickReplies[problemId]` にキャッシュ。2 回目以降のシート再開では再リクエストしない。タップで即ユーザー発言として送信。
+2. **選択チップ（3〜5 件）** — 問題 ID ごとに [`starter_quick_replies_by_problem_id.dart`](../lib/data/ai_chat/starter_quick_replies_by_problem_id.dart) に **ハードコード**（オフライン即表示）。合同式 mod ガチャは対象外。再生成は `tool/generate-starter-quick-replies.mjs`。タップで即ユーザー発言として送信。
 
 3. **テキスト入力欄** — 常に表示
 
