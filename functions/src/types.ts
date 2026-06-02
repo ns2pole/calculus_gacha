@@ -20,11 +20,19 @@ export interface AiChatMessage {
 
 export type AiChatLocale = "ja" | "en";
 
-export interface AiChatRequest {
+export interface UsageIdentifiable {
+  clientInstallationId: string;
+}
+
+export interface AiChatRequest extends UsageIdentifiable {
   context: AiChatContext;
   history: AiChatMessage[];
   userMessage: AiChatMessage;
-  clientInstallationId: string;
+  locale: AiChatLocale;
+}
+
+export interface AiChatStarterRequest extends UsageIdentifiable {
+  context: AiChatContext;
   locale: AiChatLocale;
 }
 

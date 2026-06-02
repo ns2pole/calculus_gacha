@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
+import '../../models/ai_chat_quick_reply.dart';
 import 'ai_chat_api_config.dart';
 import 'ai_chat_client.dart';
 import 'ai_chat_request_codec.dart';
@@ -42,6 +43,95 @@ class CloudAiChatClient implements AiChatClient {
        installationIdProvider =
            installationIdProvider ?? _defaultInstallationIdProvider,
        _httpClient = httpClient ?? http.Client();
+
+  @override
+  Future<List<AiChatQuickReply>> fetchStarterQuickReplies({
+    required AiChatContext context,
+    String? locale,
+  }) async {
+    final endpoint = config.starterRepliesEndpoint;
+    if (endpoint == null) {
+      throw const AiChatClientException('AIチャットの接続先が設定されていません。');
+    }
+
+    try {
+      final token = await authTokenProvider();
+      final appCheckToken = await appCheckTokenProvider();
+      final installationId = await installationIdProvider();
+
+      final payload = requestCodec.encodeStarter(
+        context: context,
+        clientInstallationId: installationId,
+        locale: locale ?? _resolveLocale(),
+      );
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
+      };
+
+      final response = await _httpClient
+          .post(endpoint, headers: headers, body: jsonEncode(payload))
+          .timeout(config.timeout);
+
+      final decoded = _decodeResponseBody(response);
+      if (response.statusCode == 200) {
+        final replies = _readQuickReplies(decoded);
+        if (replies.isEmpty) {
+          throw const AiChatClientException(
+            '初回の選択肢を生成できませんでした。',
+            code: 'empty_starter_quick_replies',
+          );
+        }
+        return replies;
+      }
+
+      final errorCode = _readErrorCode(decoded);
+      final errorMessage =
+          _readErrorMessage(decoded) ?? '初回の選択肢の取得に失敗しました。';
+      _logHttpError(response.statusCode, errorCode, errorMessage);
+      if (response.statusCode == 429 || errorCode == 'rate_limited') {
+        final rateLimit = _readRateLimitDetails(decoded);
+        throw AiChatRateLimitException(
+          errorMessage,
+          code: errorCode,
+          statusCode: response.statusCode,
+          tier: rateLimit?.tier,
+          monthlyLimit: rateLimit?.limit,
+        );
+      }
+
+      throw AiChatClientException(
+        _toUserMessage(response.statusCode, errorCode),
+        code: errorCode,
+        statusCode: response.statusCode,
+      );
+    } on AiChatClientException {
+      rethrow;
+    } on TimeoutException {
+      throw const AiChatClientException(
+        '初回の選択肢の取得に時間がかかっています。もう一度お試しください。',
+        code: 'timeout',
+      );
+    } on SocketException {
+      throw const AiChatClientException(
+        '通信状態を確認して、もう一度お試しください。',
+        code: 'network',
+      );
+    } on http.ClientException {
+      throw const AiChatClientException(
+        '通信状態を確認して、もう一度お試しください。',
+        code: 'network',
+      );
+    } catch (e, stackTrace) {
+      _logFailure('starter_unexpected', e, stackTrace);
+      throw const AiChatClientException(
+        '初回の選択肢の取得に失敗しました。もう一度お試しください。',
+        code: 'unexpected',
+      );
+    }
+  }
 
   @override
   Future<AiChatMessage> sendMessage({
@@ -91,6 +181,7 @@ class CloudAiChatClient implements AiChatClient {
           id: DateTime.now().microsecondsSinceEpoch.toString(),
           role: AiChatMessageRole.assistant,
           text: text,
+          quickReplies: _readQuickReplies(decoded),
           createdAt: DateTime.now(),
         );
       }
@@ -172,6 +263,23 @@ class CloudAiChatClient implements AiChatClient {
     }
     final text = decoded['text'];
     return text is String ? text : '';
+  }
+
+  List<AiChatQuickReply> _readQuickReplies(Map<String, dynamic> decoded) {
+    final raw = decoded['quickReplies'];
+    if (raw is! List) return const [];
+
+    final replies = <AiChatQuickReply>[];
+    for (final item in raw) {
+      if (item is! Map<String, dynamic>) continue;
+      try {
+        replies.add(AiChatQuickReply.fromJson(item));
+      } catch (_) {
+        continue;
+      }
+      if (replies.length >= 5) break;
+    }
+    return List<AiChatQuickReply>.unmodifiable(replies);
   }
 
   String? _readErrorMessage(Map<String, dynamic> decoded) {

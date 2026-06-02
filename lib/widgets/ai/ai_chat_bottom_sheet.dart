@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
+import '../../models/ai_chat_quick_reply.dart';
 import '../../services/ai/ai_chat_client.dart';
 import '../../services/ai/ai_chat_client_factory.dart';
 import '../../services/auth/cloud_sync_preference_service.dart';
@@ -22,7 +23,9 @@ Future<void> showAiChatBottomSheet({
   MathTextBuilder? mathTextBuilder,
   MathTextBuilder? assistantTextBuilder,
   List<AiChatMessage> initialMessages = const [],
+  List<AiChatQuickReply>? cachedStarterQuickReplies,
   ValueChanged<List<AiChatMessage>>? onMessagesChanged,
+  ValueChanged<List<AiChatQuickReply>>? onStarterQuickRepliesCached,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -34,7 +37,9 @@ Future<void> showAiChatBottomSheet({
       mathTextBuilder: mathTextBuilder,
       assistantTextBuilder: assistantTextBuilder,
       initialMessages: initialMessages,
+      cachedStarterQuickReplies: cachedStarterQuickReplies,
       onMessagesChanged: onMessagesChanged,
+      onStarterQuickRepliesCached: onStarterQuickRepliesCached,
     ),
   );
 }
@@ -227,7 +232,9 @@ class AiChatBottomSheet extends StatefulWidget {
   final MathTextBuilder? mathTextBuilder;
   final MathTextBuilder? assistantTextBuilder;
   final List<AiChatMessage> initialMessages;
+  final List<AiChatQuickReply>? cachedStarterQuickReplies;
   final ValueChanged<List<AiChatMessage>>? onMessagesChanged;
+  final ValueChanged<List<AiChatQuickReply>>? onStarterQuickRepliesCached;
 
   const AiChatBottomSheet({
     super.key,
@@ -236,7 +243,9 @@ class AiChatBottomSheet extends StatefulWidget {
     this.mathTextBuilder,
     this.assistantTextBuilder,
     this.initialMessages = const [],
+    this.cachedStarterQuickReplies,
     this.onMessagesChanged,
+    this.onStarterQuickRepliesCached,
   });
 
   @override
@@ -247,6 +256,8 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   late final List<AiChatMessage> _messages;
+  List<AiChatQuickReply>? _starterQuickReplies;
+  bool _isLoadingStarterQuickReplies = false;
   bool _isSending = false;
   bool _showUpgradeOffer = false;
   bool _isRestoringPurchase = false;
@@ -257,8 +268,12 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   void initState() {
     super.initState();
     _messages = List<AiChatMessage>.of(widget.initialMessages);
+    _starterQuickReplies = widget.cachedStarterQuickReplies;
     if (_messages.isNotEmpty) _scrollToBottom();
     _loadAiTutorPrice();
+    if (_messages.isEmpty && _starterQuickReplies == null) {
+      _loadStarterQuickReplies();
+    }
   }
 
   @override
@@ -270,6 +285,67 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
 
   void _notifyMessagesChanged() {
     widget.onMessagesChanged?.call(List<AiChatMessage>.unmodifiable(_messages));
+  }
+
+  void _cacheStarterQuickReplies(List<AiChatQuickReply> replies) {
+    widget.onStarterQuickRepliesCached?.call(
+      List<AiChatQuickReply>.unmodifiable(replies),
+    );
+  }
+
+  Future<void> _loadStarterQuickReplies() async {
+    if (_isLoadingStarterQuickReplies || _starterQuickReplies != null) return;
+
+    setState(() {
+      _isLoadingStarterQuickReplies = true;
+    });
+
+    try {
+      final replies = await widget.client.fetchStarterQuickReplies(
+        context: widget.chatContext,
+      );
+      if (!mounted) return;
+      setState(() {
+        _starterQuickReplies = replies;
+        _isLoadingStarterQuickReplies = false;
+      });
+      _cacheStarterQuickReplies(replies);
+    } on AiChatRateLimitException catch (e) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      final fallback = _fallbackStarterQuickReplies(l10n);
+      setState(() {
+        _starterQuickReplies = fallback;
+        _isLoadingStarterQuickReplies = false;
+        _errorText = _rateLimitMessage(l10n, e);
+        _showUpgradeOffer = e.tier != 'paid';
+      });
+      _cacheStarterQuickReplies(fallback);
+    } on AiChatClientException catch (e) {
+      debugPrint('[AiChatBottomSheet] Starter quick replies failed: ${e.message}');
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      final fallback = _fallbackStarterQuickReplies(l10n);
+      setState(() {
+        _starterQuickReplies = fallback;
+        _isLoadingStarterQuickReplies = false;
+      });
+      _cacheStarterQuickReplies(fallback);
+    } catch (error, stackTrace) {
+      debugPrint('[AiChatBottomSheet] Starter quick replies error: $error');
+      debugPrintStack(
+        stackTrace: stackTrace,
+        label: '[AiChatBottomSheet] starter stack',
+      );
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      final fallback = _fallbackStarterQuickReplies(l10n);
+      setState(() {
+        _starterQuickReplies = fallback;
+        _isLoadingStarterQuickReplies = false;
+      });
+      _cacheStarterQuickReplies(fallback);
+    }
   }
 
   Future<void> _sendText(String text, {String? choiceId}) async {
@@ -514,16 +590,9 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
                     ),
                     if (_messages.isEmpty) ...[
                       const SizedBox(height: 12),
-                      _buildChoiceChips(l10n),
+                      _buildStarterQuickReplySection(l10n),
                     ],
-                    for (final message in _messages) ...[
-                      const SizedBox(height: 12),
-                      _MessageBubble(
-                        message: message,
-                        mathTextBuilder: widget.mathTextBuilder,
-                        assistantTextBuilder: widget.assistantTextBuilder,
-                      ),
-                    ],
+                    ..._buildMessageList(l10n),
                     if (_isSending) ...[
                       const SizedBox(height: 12),
                       const _TypingIndicator(),
@@ -541,16 +610,6 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
                         isRestoring: _isRestoringPurchase,
                       ),
                     ],
-                    if (_canShowMoreDetailButton) ...[
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: OutlinedButton(
-                          onPressed: () => _sendText(l10n.askAiMoreDetail),
-                          child: Text(l10n.askAiMoreDetail),
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -563,9 +622,43 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     );
   }
 
-  bool get _canShowMoreDetailButton {
-    if (_isSending || _messages.isEmpty) return false;
-    return _messages.last.role == AiChatMessageRole.assistant;
+  List<Widget> _buildMessageList(AppLocalizations l10n) {
+    final widgets = <Widget>[];
+    for (var i = 0; i < _messages.length; i++) {
+      final message = _messages[i];
+      widgets.add(const SizedBox(height: 12));
+      widgets.add(
+        _MessageBubble(
+          message: message,
+          mathTextBuilder: widget.mathTextBuilder,
+          assistantTextBuilder: widget.assistantTextBuilder,
+        ),
+      );
+      if (_shouldShowQuickRepliesForMessage(message, i)) {
+        widgets.add(const SizedBox(height: 8));
+        widgets.add(
+          _buildQuickReplyChips(_activeQuickRepliesForMessage(message, l10n)),
+        );
+      }
+    }
+    return widgets;
+  }
+
+  bool _shouldShowQuickRepliesForMessage(AiChatMessage message, int index) {
+    if (message.role != AiChatMessageRole.assistant) return false;
+    if (_isSending) return false;
+    if (index != _messages.length - 1) return false;
+    return true;
+  }
+
+  List<AiChatQuickReply> _activeQuickRepliesForMessage(
+    AiChatMessage message,
+    AppLocalizations l10n,
+  ) {
+    if (message.quickReplies.isNotEmpty) {
+      return message.quickReplies;
+    }
+    return [AiChatQuickReply(label: l10n.askAiMoreDetail)];
   }
 
   String _rateLimitMessage(AppLocalizations l10n, AiChatRateLimitException e) {
@@ -607,26 +700,70 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     );
   }
 
-  Widget _buildChoiceChips(AppLocalizations l10n) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        ActionChip(
-          label: Text(l10n.askAiChoiceHint),
-          onPressed: () => _sendText(l10n.askAiChoiceHint, choiceId: 'hint'),
+  List<AiChatQuickReply> _fallbackStarterQuickReplies(AppLocalizations l10n) {
+    return [
+      AiChatQuickReply(
+        label: l10n.askAiChoiceHint,
+        sendText: l10n.askAiChoiceHint,
+        actionId: 'hint',
+      ),
+      AiChatQuickReply(
+        label: l10n.askAiChoiceApproach,
+        sendText: l10n.askAiChoiceApproach,
+        actionId: 'approach_only',
+      ),
+      AiChatQuickReply(
+        label: l10n.askAiChoiceFirstStep,
+        sendText: l10n.askAiChoiceFirstStep,
+        actionId: 'first_step',
+      ),
+    ];
+  }
+
+  Widget _buildStarterQuickReplySection(AppLocalizations l10n) {
+    if (_isLoadingStarterQuickReplies) {
+      return const Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
         ),
-        ActionChip(
-          label: Text(l10n.askAiChoiceApproach),
-          onPressed: () =>
-              _sendText(l10n.askAiChoiceApproach, choiceId: 'approach_only'),
-        ),
-        ActionChip(
-          label: Text(l10n.askAiChoiceFirstStep),
-          onPressed: () =>
-              _sendText(l10n.askAiChoiceFirstStep, choiceId: 'first_step'),
-        ),
-      ],
+      );
+    }
+
+    final replies = _starterQuickReplies;
+    if (replies == null || replies.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return _buildQuickReplyChips(replies);
+  }
+
+  Widget _buildQuickReplyChips(List<AiChatQuickReply> replies) {
+    if (replies.isEmpty) return const SizedBox.shrink();
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final reply in replies)
+            ActionChip(
+              label: Text(reply.label),
+              onPressed: _isSending
+                  ? null
+                  : () => _sendText(
+                        reply.effectiveSendText,
+                        choiceId: reply.actionId,
+                      ),
+            ),
+        ],
+      ),
     );
   }
 

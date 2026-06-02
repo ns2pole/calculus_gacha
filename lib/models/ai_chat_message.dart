@@ -1,3 +1,5 @@
+import 'ai_chat_quick_reply.dart';
+
 enum AiChatMessageRole { user, assistant }
 
 enum AiChatAttachmentType { image }
@@ -27,6 +29,7 @@ class AiChatMessage {
   final List<AiChatAttachment> attachments;
   final DateTime createdAt;
   final String? choiceId;
+  final List<AiChatQuickReply> quickReplies;
 
   const AiChatMessage({
     required this.id,
@@ -35,5 +38,6 @@ class AiChatMessage {
     this.attachments = const [],
     required this.createdAt,
     this.choiceId,
+    this.quickReplies = const [],
   });
 }

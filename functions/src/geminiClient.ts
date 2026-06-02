@@ -1,3 +1,4 @@
+import {aiChatResponseSchema} from "./aiChatResponseSchema";
 import {
   buildGeminiContents,
   buildSystemInstruction,
@@ -6,6 +7,10 @@ import {
   retryBrokenLatexMessage,
   retryTooLongMessage,
 } from "./prompt";
+import {
+  AiChatStructuredReply,
+  parseAiChatStructuredResponse,
+} from "./quickReplies";
 import {AiChatRequest} from "./types";
 import {HttpError} from "./http";
 
@@ -19,21 +24,28 @@ const thinkingBudget = 256;
 export async function generateAiChatReply(
   apiKey: string,
   request: AiChatRequest,
-): Promise<string> {
+): Promise<AiChatStructuredReply> {
   const systemInstruction = buildSystemInstruction(request);
   const contents = buildGeminiContents(request);
   const maxOutputTokens = resolveMaxOutputTokens(request);
-  let result = await requestGeminiText(apiKey, systemInstruction, contents, maxOutputTokens);
+  let result = await requestGeminiStructured(
+    apiKey,
+    systemInstruction,
+    contents,
+    maxOutputTokens,
+    request,
+  );
+
   if (result.finishReason === "MAX_TOKENS") {
     console.warn("[AiChat] Gemini response hit MAX_TOKENS; retrying shorter.");
-    result = await requestGeminiText(
+    result = await requestGeminiStructured(
       apiKey,
       systemInstruction,
       [
         ...contents,
         {
           role: "model",
-          parts: [{text: result.text}],
+          parts: [{text: result.rawText}],
         },
         {
           role: "user",
@@ -41,24 +53,23 @@ export async function generateAiChatReply(
         },
       ],
       briefGuidanceMaxOutputTokens,
+      request,
     );
   }
 
-  const text = result.text;
-
-  if (!hasSuspiciousLatex(text)) {
-    return text;
+  if (!hasSuspiciousLatex(result.reply.text)) {
+    return result.reply;
   }
 
   console.warn("[AiChat] Suspicious LaTeX detected; retrying render-safe response.");
-  return (await requestGeminiText(
+  return (await requestGeminiStructured(
     apiKey,
     systemInstruction,
     [
       ...contents,
       {
         role: "model",
-        parts: [{text}],
+        parts: [{text: result.rawText}],
       },
       {
         role: "user",
@@ -66,15 +77,17 @@ export async function generateAiChatReply(
       },
     ],
     maxOutputTokens,
-  )).text;
+    request,
+  )).reply;
 }
 
-async function requestGeminiText(
+async function requestGeminiStructured(
   apiKey: string,
   systemInstruction: string,
   contents: GeminiContent[],
   maxOutputTokens: number,
-): Promise<GeminiTextResult> {
+  request: AiChatRequest,
+): Promise<GeminiStructuredResult> {
   const response = await fetch(`${endpoint}?key=${encodeURIComponent(apiKey)}`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
@@ -86,6 +99,8 @@ async function requestGeminiText(
       generationConfig: {
         temperature: 0.25,
         maxOutputTokens,
+        responseMimeType: "application/json",
+        responseSchema: aiChatResponseSchema,
         thinkingConfig: {
           thinkingBudget,
         },
@@ -109,16 +124,24 @@ async function requestGeminiText(
     console.warn("[AiChat] Gemini finishReason:", finishReason);
   }
 
-  const text = candidate?.content?.parts
+  const rawText = candidate?.content?.parts
     ?.map((part) => part.text ?? "")
     .join("")
     .trim();
-  if (text == null || text.length === 0) {
+  if (rawText == null || rawText.length === 0) {
     console.warn("[AiChat] Gemini returned empty text.", {finishReason});
     throw new HttpError(502, "empty_gemini_response", "AIから空の応答が返されました。");
   }
+
+  const reply = parseAiChatStructuredResponse(rawText, request);
+  if (reply.text.length === 0) {
+    console.warn("[AiChat] Parsed reply text is empty.", {finishReason});
+    throw new HttpError(502, "empty_gemini_response", "AIから空の応答が返されました。");
+  }
+
   return {
-    text,
+    rawText,
+    reply,
     finishReason,
   };
 }
@@ -188,7 +211,8 @@ interface GeminiResponse {
   };
 }
 
-interface GeminiTextResult {
-  text: string;
+interface GeminiStructuredResult {
+  rawText: string;
+  reply: AiChatStructuredReply;
   finishReason?: string;
 }

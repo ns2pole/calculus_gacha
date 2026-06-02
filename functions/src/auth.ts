@@ -2,11 +2,11 @@ import * as admin from "firebase-admin";
 import {Request} from "firebase-functions/v2/https";
 import {createHash} from "crypto";
 import {readBearerToken} from "./http";
-import {AiChatRequest, UsageIdentity} from "./types";
+import {UsageIdentifiable, UsageIdentity} from "./types";
 
 export async function resolveUsageIdentity(
   request: Request,
-  chatRequest: AiChatRequest,
+  identifiable: UsageIdentifiable,
 ): Promise<UsageIdentity> {
   const token = readBearerToken(request);
   if (token != null) {
@@ -18,8 +18,8 @@ export async function resolveUsageIdentity(
     }
   }
 
-  if (chatRequest.clientInstallationId.length > 0) {
-    return {id: chatRequest.clientInstallationId, source: "installation"};
+  if (identifiable.clientInstallationId.length > 0) {
+    return {id: identifiable.clientInstallationId, source: "installation"};
   }
 
   const ip = request.ip ?? request.header("x-forwarded-for") ?? "unknown";

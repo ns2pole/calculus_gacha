@@ -50,13 +50,7 @@
    > 途中式や迷っている点があれば教えてください！  
    > 下から選ぶか、そのまま入力しても大丈夫です。
 
-2. **選択チップ（3 つ）** — タップで即ユーザー発言として送信
-
-   | ID | 表示文言（ja 案） | 送信後の AI モード |
-   |----|-------------------|-------------------|
-   | `approach_hint` | 問題の解法の方針・ヒントを知りたい | `HintMode.level1` |
-   | `easier_analog` | 類題でもう少し簡単に説明してほしい | `AnalogMode` |
-   | （なし） | 自由入力のみ | 入力欄 |
+2. **選択チップ（3〜5 件）** — 問題ごとに API `aiChatStarterReplies` で **1 回だけ**生成し、`_aiChatStarterQuickReplies[problemId]` にキャッシュ。2 回目以降のシート再開では再リクエストしない。タップで即ユーザー発言として送信。
 
 3. **テキスト入力欄** — 常に表示
 
@@ -66,9 +60,18 @@
 
 | 要素 | タイミング |
 |------|------------|
-| 「もう少し詳しく」 | AI がヒント系を返した後。`hintLevel` を +1（最大 3） |
-| ローディング | API 待ち中は AI 側にインジケータ |
+| クイック返信チップ | 各 AI 返答の直下。API の `quickReplies`（0〜5件）を ActionChip 表示。タップでその文言を送信 |
+| フォールバック | `quickReplies` が空のとき、1件だけ「もう少し詳しく」（l10n） |
+| ローディング | API 待ち中は AI 側にインジケータ（チップ非表示） |
 | エラー | 再試行ボタン + 短い説明 |
+
+**quickReplies の典型例（AI が文脈に応じて選ぶ。毎回必須ではない）**
+
+- 「もう少し詳しく」
+- 回答内の数学用語を1つ選び「〇〇の意味を教えて」
+- 次の1ステップ・別の見方・確認質問 など
+
+`answerShown == false` のとき、最終答え・全手順を求めるチップは API 側で除外する。
 
 ---
 
@@ -223,7 +226,21 @@ class GachaAiSession {
 
 - エンドポイント: TBD（Cloud Functions / 直接 OpenAI 等）
 - リクエスト: `session` + `newUserMessage` + `context`（上表）
-- レスポンス: `assistantText`（Markdown/LaTeX 混在可）
+- レスポンス例:
+
+```json
+{
+  "message": { "role": "assistant", "text": "..." },
+  "quickReplies": [
+    { "label": "もう少し詳しく" },
+    { "label": "部分積分の意味を教えて", "sendText": "部分積分という用語の意味を教えてください" }
+  ],
+  "usage": { "count": 1, "limit": 10, "tier": "free" }
+}
+```
+
+- `message.text`: 吹き出し本文（Markdown/LaTeX 混在可）
+- `quickReplies`: 0〜5件。`label` はチップ表示、`sendText` は省略可（省略時は `label` を送信）
 - ストリーミング: 任意（Phase 1 は一括でも可）
 
 ### システムプロンプト要点
@@ -258,7 +275,7 @@ class GachaAiSession {
 | Phase | 内容 |
 |-------|------|
 | **1a** | ボトムシート UI、固定挨拶、3 チップ、自由入力、送信スタブ or API 接続 |
-| **1b** | コンテキスト連動、`hintLevel`、「もう少し詳しく」、答え表示連動 |
+| **1b** | コンテキスト連動、`quickReplies`（0〜5）、答え表示連動、`hintLevel`（未実装） |
 | **1c** | セッションのローカル保存・再開 |
 | **2a** | 類題の AI 生成（品質ルール付き） |
 | **2b** | 画像添付・マルチモーダル API・添削プロンプト |
@@ -306,7 +323,9 @@ lib/
 - [ ] 3 スロットで別 `sessionId` / `problemId`
 - [ ] `answerShown == false` で API モックが最終答えを返さない（プロンプト + 事後チェック任意）
 - [ ] ヒント未表示時に `hintText` がリクエストに含まれない
-- [ ] 「もう少し詳しく」で `hintLevel` が増え、3 回目以降の挙動
+- [ ] AI 返答後に `quickReplies` チップが表示され、タップで送信される
+- [ ] `quickReplies` 空時に「もう少し詳しく」フォールバックが1件出る
+- [ ] `answerShown == false` で答え直球の quickReply がサーバーで落ちる
 - [ ] 画像ボタン disabled（Phase 1）
 - [ ] Phase 2: 画像付きメッセージが履歴に保存・再表示される
 

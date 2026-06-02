@@ -1,11 +1,17 @@
 import '../../models/ai_chat_context.dart';
 import '../../models/ai_chat_message.dart';
+import '../../models/ai_chat_quick_reply.dart';
 
 abstract class AiChatClient {
   Future<AiChatMessage> sendMessage({
     required AiChatContext context,
     required List<AiChatMessage> history,
     required AiChatMessage userMessage,
+    String? locale,
+  });
+
+  Future<List<AiChatQuickReply>> fetchStarterQuickReplies({
+    required AiChatContext context,
     String? locale,
   });
 }
@@ -50,8 +56,34 @@ class StubAiChatClient implements AiChatClient {
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       role: AiChatMessageRole.assistant,
       text: _buildResponse(userMessage.choiceId),
+      quickReplies: const [
+        AiChatQuickReply(label: 'もう少し詳しく'),
+        AiChatQuickReply(label: '次の1ステップを教えて'),
+      ],
       createdAt: DateTime.now(),
     );
+  }
+
+  @override
+  Future<List<AiChatQuickReply>> fetchStarterQuickReplies({
+    required AiChatContext context,
+    String? locale,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    return const [
+      AiChatQuickReply(
+        label: 'ヒントを教えて',
+        actionId: 'hint',
+      ),
+      AiChatQuickReply(
+        label: '方針だけ教えて',
+        actionId: 'approach_only',
+      ),
+      AiChatQuickReply(
+        label: '最初の一手だけ教えて',
+        actionId: 'first_step',
+      ),
+    ];
   }
 
   String _buildResponse(String? choiceId) {

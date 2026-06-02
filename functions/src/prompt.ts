@@ -13,12 +13,18 @@ export function buildSystemInstruction(request: AiChatRequest): string {
     ? buildEnglishContext(context)
     : buildJapaneseContext(context);
 
+  const quickReplyBlock = locale === "en"
+    ? buildEnglishQuickReplyInstructions(context.answerShown === true)
+    : buildJapaneseQuickReplyInstructions(context.answerShown === true);
+
   return [
     ...instructions.beforeContext,
     "",
     ...contextBlock,
     "",
     ...instructions.afterContext,
+    "",
+    ...quickReplyBlock,
   ].join("\n");
 }
 
@@ -80,6 +86,42 @@ function buildJapaneseInstructionSections(
   };
 }
 
+function buildJapaneseQuickReplyInstructions(answerShown: boolean): string[] {
+  return [
+    "【出力形式（必須）】",
+    "応答は必ず JSON のみで返してください。Markdown や説明文は JSON の外に書かないでください。",
+    "形式: {\"text\": \"生徒に見せる本文\", \"quickReplies\": [{\"label\": \"...\", \"sendText\": \"...\"}]}",
+    "text には今まで通りの説明・ヒント本文（LaTeX 可）を入れてください。",
+    "",
+    "【クイック返信 quickReplies】",
+    "0〜5件。文脈に合うものだけ選び、毎回同じパターンを埋める必要はありません。",
+    "label はチップ表示用に短く（目安40字以内）、LaTeX は使わないでください。",
+    "sendText は省略可。省略時は label がそのまま送信されます。必要なら少し丁寧な質問文を入れてください。",
+    "典型例（使えるときだけ）: 「もう少し詳しく」／回答で使った数学用語1つを選び「〇〇の意味を教えて」／次の1ステップ・別の見方・確認したい点。",
+    ...(answerShown ? [] : [
+      "答え表示前（答え表示済み: いいえ）のとき、最終答え・全手順・答えだけを求める quickReplies は入れないでください。",
+    ]),
+  ];
+}
+
+function buildEnglishQuickReplyInstructions(answerShown: boolean): string[] {
+  return [
+    "【Output format (required)】",
+    "Return JSON only. Do not write Markdown or prose outside the JSON object.",
+    "Shape: {\"text\": \"reply body for the student\", \"quickReplies\": [{\"label\": \"...\", \"sendText\": \"...\"}]}",
+    "Put the usual explanation/hint body (LaTeX allowed) in text.",
+    "",
+    "【Quick replies (quickReplies)】",
+    "0 to 5 items. Include only what fits the context; you do not need the same set every time.",
+    "label must be short for chips (about 40 characters), with no LaTeX.",
+    "sendText is optional; if omitted, label is sent as-is. Use sendText for a slightly fuller question when helpful.",
+    "Examples when relevant: \"More detail\" / pick one math term from your reply, e.g. \"What does ___ mean?\" / next step, alternate view, or a clarifying question.",
+    ...(answerShown ? [] : [
+      "While the answer has not been shown in the app, do not include quickReplies that ask for the final answer, full solution, or answer only.",
+    ]),
+  ];
+}
+
 function buildEnglishInstructionSections(
   wantsBriefGuidance: boolean,
 ): InstructionSections {
@@ -133,7 +175,7 @@ function buildEnglishInstructionSections(
   };
 }
 
-function buildJapaneseContext(context: AiChatRequest["context"]): string[] {
+export function buildJapaneseContext(context: AiChatRequest["context"]): string[] {
   return [
     "【問題情報】",
     `タイトル: ${context.title}`,
@@ -147,7 +189,7 @@ function buildJapaneseContext(context: AiChatRequest["context"]): string[] {
   ];
 }
 
-function buildEnglishContext(context: AiChatRequest["context"]): string[] {
+export function buildEnglishContext(context: AiChatRequest["context"]): string[] {
   return [
     "【Problem Information】",
     `Title: ${context.title}`,
@@ -207,30 +249,37 @@ export interface GeminiContent {
   parts: Array<{text: string}>;
 }
 
+const jsonOutputReminderEn =
+  "Return the same JSON shape: {\"text\": \"...\", \"quickReplies\": [...]} with 0-5 quickReplies.";
+
+const jsonOutputReminderJa =
+  "同じ JSON 形式 {\"text\": \"...\", \"quickReplies\": [...]}（quickReplies は0〜5件）で返してください。";
+
 export function retryTooLongMessage(locale: AiChatLocale): string {
   if (locale === "en") {
     return "Rewrite the same answer in a much shorter, complete form. " +
-      "If it is a hint or approach, keep it to 2-3 sentences. " +
+      "If it is a hint or approach, keep text to 2-3 sentences. " +
       "Do not mention rewriting, truncation, cut-off text, or apologize. " +
-      "Return only the final answer shown to the student, with complete sentences and math expressions.";
+      jsonOutputReminderEn;
   }
   return "同じ内容を、かなり短く、完結した回答として書き直してください。" +
-    "ヒントや方針なら2〜3文だけにしてください。" +
+    "ヒントや方針なら text は2〜3文だけにしてください。" +
     "書き直し・途中で切れた・修正した・申し訳ない、といった説明や謝罪は書かず、" +
-    "生徒に表示する最終回答だけを、文と数式を完結させて返してください。";
+    "文と数式を完結させてください。" +
+    jsonOutputReminderJa;
 }
 
 export function retryBrokenLatexMessage(locale: AiChatLocale): string {
   if (locale === "en") {
-    return "Rewrite the same answer in a renderable form with valid LaTeX. " +
+    return "Rewrite the same answer in a renderable form with valid LaTeX in the text field. " +
       "Verify matching $...$, $$...$$, {}, and \\left/\\right pairs, " +
       "and break complex expressions into shorter pieces. " +
       "Do not mention LaTeX fixes, rewriting, previous output, or apologize. " +
-      "Return only the final answer shown to the student.";
+      jsonOutputReminderEn;
   }
-  return "同じ内容を、レンダリングしやすい正しいLaTeXで書き直してください。" +
+  return "同じ内容を、text 内の LaTeX をレンダリングしやすい形で書き直してください。" +
     "$...$、$$...$$、{}、\\left/\\right の対応を確認し、" +
     "複雑な式は短く分けてください。" +
     "LaTeXを修正した・書き直した・前の出力・申し訳ない、といった説明や謝罪は書かず、" +
-    "生徒に表示する最終回答だけを返してください。";
+    jsonOutputReminderJa;
 }

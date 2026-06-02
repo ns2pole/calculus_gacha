@@ -1,4 +1,4 @@
-import {AiChatLocale, AiChatMessage, AiChatRequest} from "./types";
+import {AiChatContext, AiChatLocale, AiChatMessage, AiChatRequest, AiChatStarterRequest} from "./types";
 import {HttpError} from "./http";
 
 const supportedLocales: ReadonlySet<string> = new Set(["ja", "en"]);
@@ -23,17 +23,7 @@ export function parseAiChatRequest(body: unknown): AiChatRequest {
   }
 
   return {
-    context: {
-      title: readString(context.title) ?? "",
-      questionText: context.questionText,
-      category: readString(context.category),
-      level: readString(context.level),
-      referenceAnswer: readString(context.referenceAnswer),
-      referenceSolution: readString(context.referenceSolution),
-      hintShown: Boolean(context.hintShown),
-      answerShown: Boolean(context.answerShown),
-      attachmentsEnabled: Boolean(context.attachmentsEnabled),
-    },
+    context: parseContext(context),
     history: history.filter(isRecord).map((message): AiChatMessage => ({
       role: message.role === "assistant" ? "assistant" : "user",
       text: readString(message.text) ?? "",
@@ -48,6 +38,39 @@ export function parseAiChatRequest(body: unknown): AiChatRequest {
       readString(body.clientInstallationId) ?? "",
     ),
     locale: parseLocale(readString(body.locale)),
+  };
+}
+
+export function parseAiChatStarterRequest(body: unknown): AiChatStarterRequest {
+  if (!isRecord(body)) {
+    throw new HttpError(400, "invalid_request", "リクエスト形式が不正です。");
+  }
+
+  const context = body.context;
+  if (!isRecord(context) || !isNonEmptyString(context.questionText)) {
+    throw new HttpError(400, "invalid_context", "問題情報が不足しています。");
+  }
+
+  return {
+    context: parseContext(context),
+    clientInstallationId: sanitizeIdentifier(
+      readString(body.clientInstallationId) ?? "",
+    ),
+    locale: parseLocale(readString(body.locale)),
+  };
+}
+
+function parseContext(context: Record<string, unknown>): AiChatContext {
+  return {
+    title: readString(context.title) ?? "",
+    questionText: context.questionText as string,
+    category: readString(context.category),
+    level: readString(context.level),
+    referenceAnswer: readString(context.referenceAnswer),
+    referenceSolution: readString(context.referenceSolution),
+    hintShown: Boolean(context.hintShown),
+    answerShown: Boolean(context.answerShown),
+    attachmentsEnabled: Boolean(context.attachmentsEnabled),
   };
 }
 

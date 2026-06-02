@@ -13,12 +13,14 @@ class AiChatApiConfig {
   );
 
   final Uri? endpoint;
+  final Uri? starterRepliesEndpoint;
   final Uri? entitlementSyncEndpoint;
   final Uri? accountDeletionEndpoint;
   final Duration timeout;
 
   const AiChatApiConfig({
     this.endpoint,
+    this.starterRepliesEndpoint,
     this.entitlementSyncEndpoint,
     this.accountDeletionEndpoint,
     this.timeout = const Duration(seconds: 60),
@@ -31,6 +33,10 @@ class AiChatApiConfig {
     final accountDeletionValue = defaultAccountDeletionEndpoint.trim();
     return AiChatApiConfig(
       endpoint: endpoint,
+      starterRepliesEndpoint: _deriveSiblingEndpoint(
+        endpoint,
+        'aiChatStarterReplies',
+      ),
       entitlementSyncEndpoint: syncValue.isEmpty
           ? _deriveEntitlementSyncEndpoint(endpoint)
           : Uri.parse(syncValue),
