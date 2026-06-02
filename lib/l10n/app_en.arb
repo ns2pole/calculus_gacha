@@ -270,6 +270,10 @@
   "askAiPlaceholder": "Enter a message",
   "askAiImageComingSoon": "Image sending is coming soon",
   "askAiError": "Could not connect. Please try again.",
+  "aiChatVoiceListening": "Listening…",
+  "aiChatVoiceSendModeAuto": "Auto-send after voice",
+  "aiChatVoiceSendModeManual": "Tap send after voice",
+  "aiChatVoicePermissionDenied": "Microphone permission is required for voice input",
   "aiChatFreeMonthlyLimitReached": "You've reached this month's free AI chat limit ({limit} uses).",
   "@aiChatFreeMonthlyLimitReached": {
     "placeholders": {

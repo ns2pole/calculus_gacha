@@ -537,6 +537,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get askAiError => '通信に失敗しました。もう一度お試しください。';
 
   @override
+  String get aiChatVoiceListening => '聞き取り中…';
+
+  @override
+  String get aiChatVoiceSendModeAuto => '音声で話したら自動送信';
+
+  @override
+  String get aiChatVoiceSendModeManual => '音声入力後に送信ボタン';
+
+  @override
+  String get aiChatVoicePermissionDenied => '音声入力にはマイクの許可が必要です';
+
+  @override
   String aiChatFreeMonthlyLimitReached(int limit) {
     return '今月の無料AIチャット利用上限（$limit回）に達しました。';
   }

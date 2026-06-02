@@ -32,4 +32,17 @@ python3 tool/local/ai_starter_codegen/insert_starter_quick_reply_comments.py
 
 アプリは `AiChatContext.problemId` で `lookupStarterQuickReplies` を参照し、**初回 API は呼びません**。
 
+## 英語表示
+
+- 日本語データ: `starter_quick_replies_by_problem_id.dart`（変更なし）
+- 翻訳マップ: `starter_quick_reply_ja_en.json` → `lib/data/ai_chat/starter_quick_reply_en_translations.dart`
+- 新しい `label` / `sendText` を追加したら:
+
+```bash
+python3 tool/local/ai_starter_codegen/generate_ja_en_map.py   # 未訳があれば generate_ja_en_map.py に追記
+python3 tool/local/ai_starter_codegen/build_starter_quick_reply_en_dart.py
+```
+
+端末のロケールが英語のとき、`JoymathAiChatPorts` がチップ表示・送信文を英語に差し替えます。
+
 HTTP の `aiChatStarterReplies` は削除済みです。Gemini ロジックは `functions/src/starterQuickReplies.ts` に残しています。

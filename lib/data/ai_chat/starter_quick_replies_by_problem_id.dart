@@ -1,4 +1,4 @@
-import '../../models/ai_chat_quick_reply.dart';
+import 'package:ai_chat_kit/ai_chat_kit.dart';
 
 /// Auto-generated starter quick replies per [MathProblem.id].
 /// Regenerate: tool/generate-starter-quick-replies.mjs
@@ -165,7 +165,6 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
     AiChatQuickReply(label: "3の-x乗はどう扱えばいいですか？", actionId: "term_meaning"),
     AiChatQuickReply(label: "指数方程式の一般的な解き方を知りたい", actionId: "approach_only"),
-    AiChatQuickReply(label: "3のx乗をtと置くのはどうですか？", actionId: "specific_approach"),
   ],
 //x^5 - x^4 - 1 : 因数分解ガチャ
   "227D1ED5-9BAE-49E1-BD62-02531FB8ADF1": [
@@ -196,7 +195,6 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "絶対値記号の外し方がわかりません。", actionId: "absolute_value_hint"),
     AiChatQuickReply(label: "左右極限を考えるのはなぜですか？", actionId: "why_left_right_limit"),
-    AiChatQuickReply(label: "右側極限から計算を始めたいです。", actionId: "first_step_right_limit"),
   ],
 //x^3 + 125 : 因数分解ガチャ
   "2BC52EFA-C75B-4E77-B1E5-E7ECCA113394": [
@@ -230,7 +228,6 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
     AiChatQuickReply(label: "この極限の形は何を表していますか？", actionId: "meaning_of_form"),
     AiChatQuickReply(label: "この問題の方針を教えてください", actionId: "approach_only"),
-    AiChatQuickReply(label: "なぜこの極限がeになるのですか？", actionId: "why_e"),
   ],
 //x^4 + 3x^2 - 4 : 因数分解ガチャ
   "34A820FC-E504-47F2-BBF4-741670A417AE": [
@@ -1526,7 +1523,6 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
     AiChatQuickReply(label: "この極限の形は何ですか？", actionId: "limit_form"),
     AiChatQuickReply(label: "x→+0 のときの xlogx の極限を求めるには？", actionId: "approach_only"),
     AiChatQuickReply(label: "xlogx のグラフをイメージできますか？", actionId: "graph_hint"),
-    AiChatQuickReply(label: "x=1/t と置換するのはなぜですか？", actionId: "substitution_reason"),
   ],
 //\lim_{n\to\infty}\int_{0}^{(\pi)/(4)}\tan^{2n}x dx : 極限ガチャ
   "E9F0A1B2-C3D4-5E6F-7A8B-9C0D1E2F3A4B": [

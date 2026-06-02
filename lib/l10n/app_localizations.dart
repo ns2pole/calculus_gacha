@@ -1082,6 +1082,30 @@ abstract class AppLocalizations {
   /// **'通信に失敗しました。もう一度お試しください。'**
   String get askAiError;
 
+  /// No description provided for @aiChatVoiceListening.
+  ///
+  /// In ja, this message translates to:
+  /// **'聞き取り中…'**
+  String get aiChatVoiceListening;
+
+  /// No description provided for @aiChatVoiceSendModeAuto.
+  ///
+  /// In ja, this message translates to:
+  /// **'音声で話したら自動送信'**
+  String get aiChatVoiceSendModeAuto;
+
+  /// No description provided for @aiChatVoiceSendModeManual.
+  ///
+  /// In ja, this message translates to:
+  /// **'音声入力後に送信ボタン'**
+  String get aiChatVoiceSendModeManual;
+
+  /// No description provided for @aiChatVoicePermissionDenied.
+  ///
+  /// In ja, this message translates to:
+  /// **'音声入力にはマイクの許可が必要です'**
+  String get aiChatVoicePermissionDenied;
+
   /// No description provided for @aiChatFreeMonthlyLimitReached.
   ///
   /// In ja, this message translates to:

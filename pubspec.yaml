@@ -28,6 +28,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  ai_chat_kit:
+    path: packages/ai_chat_kit
   flutter:
     sdk: flutter
   flutter_localizations:

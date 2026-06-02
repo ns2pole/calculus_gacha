@@ -6,8 +6,10 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import '../../models/ai_chat_context.dart';
-import '../../models/ai_chat_message.dart';
+import 'package:ai_chat_kit/ai_chat_kit.dart';
+
+import '../../integrations/ai_chat/joymath_ai_chat_launcher.dart';
+import '../../integrations/ai_chat/joymath_session_mapper.dart';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
 import '../../utils/l10n_utils.dart';
@@ -34,7 +36,6 @@ import 'gacha_settings_page.dart'
 import '../../utils/navigation_utils.dart' show navigateToProblemList;
 import '../../problems/all_problems.dart';
 import '../../widgets/gacha/filter_chips.dart' show GachaExclusionFilterWidget;
-import '../../widgets/ai/ai_chat_bottom_sheet.dart';
 import '../../utils/progress_display_utils.dart' show getTotalProblemCount;
 import '../../l10n/app_localizations.dart';
 import '../../utils/problem_level_utils.dart';
@@ -1102,27 +1103,25 @@ class _GachaPageState extends State<GachaPage> {
   }
 
   void _openAiChat(int idx, MathProblem problem) {
-    final l10n = AppLocalizations.of(context)!;
     final questionText = _buildAiChatQuestionText(problem);
     final referenceAnswer = _buildAiChatReferenceAnswer(problem);
     final referenceSolution = _buildAiChatReferenceSolution(problem);
     final problemKey = _problemKey(problem);
 
-    showAiChatBottomSheet(
+    JoymathAiChatLauncher.open(
       context: context,
-      chatContext: AiChatContext(
-        problemId: problem.id,
-        title: '${l10n.askAi} - ${l10n.problemIndex(idx + 1)}',
-        questionText: questionText,
-        category: problem.getLocalizedCategory(context),
-        level: problem.getLocalizedLevel(context),
-        referenceAnswer: referenceAnswer,
-        referenceSolution: referenceSolution,
+      session: JoymathSessionMapper.fromMathProblem(
+        context: context,
+        problem: problem,
+        problemIndex: idx + 1,
         hintShown: _showHint[idx],
         answerShown: _showAnswer[idx],
+        questionText: questionText,
+        referenceAnswer: referenceAnswer,
+        referenceSolution: referenceSolution,
       ),
-      mathTextBuilder: _buildAiChatText,
-      assistantTextBuilder: _buildAiChatAssistantText,
+      textRenderer: _buildAiChatText,
+      assistantTextRenderer: _buildAiChatAssistantText,
       initialMessages: _aiChatHistories[problemKey] ?? const [],
       onMessagesChanged: (messages) {
         setState(() {

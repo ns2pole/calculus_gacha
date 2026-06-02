@@ -47,6 +47,10 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>AIチャットで音声入力するためにマイクを使用します。</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>AIチャットで音声入力するために音声認識を使用します。</string>
 	<key>GIDClientID</key>
 	<string>845759015866-fm0vtgb6o4fnmd4ajvme7hv4pcv8jcjs.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>

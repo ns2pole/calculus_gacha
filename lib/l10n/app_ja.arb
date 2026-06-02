@@ -262,6 +262,10 @@
   "askAiPlaceholder": "メッセージを入力",
   "askAiImageComingSoon": "画像の送信は準備中です",
   "askAiError": "通信に失敗しました。もう一度お試しください。",
+  "aiChatVoiceListening": "聞き取り中…",
+  "aiChatVoiceSendModeAuto": "音声で話したら自動送信",
+  "aiChatVoiceSendModeManual": "音声入力後に送信ボタン",
+  "aiChatVoicePermissionDenied": "音声入力にはマイクの許可が必要です",
   "aiChatFreeMonthlyLimitReached": "今月の無料AIチャット利用上限（{limit}回）に達しました。",
   "@aiChatFreeMonthlyLimitReached": {
     "placeholders": {

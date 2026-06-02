@@ -1,0 +1,4 @@
+enum VoiceSendMode {
+  auto,
+  manual,
+}

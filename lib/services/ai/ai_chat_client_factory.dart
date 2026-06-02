@@ -1,16 +1,13 @@
-import 'ai_chat_api_config.dart';
-import 'ai_chat_client.dart';
-import 'cloud_ai_chat_client.dart';
+export '../../integrations/ai_chat/joymath_ai_chat_client_factory.dart'
+    show JoymathAiChatClientFactory;
+
+import 'package:ai_chat_kit/ai_chat_kit.dart';
+
+import '../../integrations/ai_chat/joymath_ai_chat_client_factory.dart';
 
 class AiChatClientFactory {
   const AiChatClientFactory._();
 
-  static AiChatClient createDefault() {
-    final config = AiChatApiConfig.fromEnvironment();
-    if (!config.isConfigured) {
-      return const StubAiChatClient();
-    }
-
-    return CloudAiChatClient(config: config);
-  }
+  static AiChatClient createDefault() =>
+      JoymathAiChatClientFactory.createDefault();
 }

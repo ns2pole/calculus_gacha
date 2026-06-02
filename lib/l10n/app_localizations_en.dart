@@ -555,6 +555,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get askAiError => 'Could not connect. Please try again.';
 
   @override
+  String get aiChatVoiceListening => 'Listening…';
+
+  @override
+  String get aiChatVoiceSendModeAuto => 'Auto-send after voice';
+
+  @override
+  String get aiChatVoiceSendModeManual => 'Tap send after voice';
+
+  @override
+  String get aiChatVoicePermissionDenied =>
+      'Microphone permission is required for voice input';
+
+  @override
   String aiChatFreeMonthlyLimitReached(int limit) {
     return 'You\'ve reached this month\'s free AI chat limit ($limit uses).';
   }
