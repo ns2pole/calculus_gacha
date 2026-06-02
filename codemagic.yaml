@@ -1,4 +1,4 @@
-# Codemagic: iOS をクラウド Mac（Xcode 26）で IPA ビルド
+# Codemagic: iOS をクラウド Mac（Xcode 26）で IPA ビルド / App Store 審査提出
 #
 # Developer Portal 連携（UI）が FORBIDDEN でも動くよう、API Key は環境変数で渡す。
 #
@@ -15,94 +15,146 @@
 #    - Upload: com.joymath の App Store プロビジョニング (.mobileprovision)
 #    ※ Fetch は Portal 連携が要るため、手元 Mac からエクスポートして Upload
 #
-# 4. このファイルを push → アプリで YAML ワークフロー ios-ipa-build を実行
+# 4. ワークフロー:
+#    - ios-ipa-build … IPA のみ（TestFlight / 手動提出用）
+#    - ios-app-store-release … IPA アップロード + App Store 審査提出まで
 #
 # 5. Firebase（Android / iOS ビルド用）— 環境変数グループ firebase_credentials を作成し Secret を追加:
 #    GOOGLE_SERVICES_JSON = Firebase Console からダウンロードした google-services.json の全文
 #    （改行込みの JSON をそのまま貼り付け。base64 なら GOOGLE_SERVICES_JSON_BASE64 でも可）
 #    GOOGLE_SERVICE_INFO_PLIST = Firebase の GoogleService-Info.plist の全文
 #    （base64 なら GOOGLE_SERVICE_INFO_PLIST_BASE64 でも可）
+#
+# === ios-app-store-release の審査提出に必要なもの ===
+#
+# - release_notes.json … リポジトリ同梱。ビルド時に scripts/codemagic_prepare_release_notes.sh で再生成。
+#   Codemagic UI で上書き可能: RELEASE_NOTES_JA / RELEASE_NOTES_EN / PROMOTIONAL_TEXT_* / SUPPORT_URL
+# - ITSAppUsesNonExemptEncryption=false … ios/Runner/Info.plist（輸出コンプライアンス）
+# - copyright / release_type … publishing.app_store_connect に設定済み
+#
 # 参考: https://docs.codemagic.io/yaml-publishing/app-store-connect/
+#       https://docs.codemagic.io/yaml-notification/publish-release-notes/
+
+x-ios-environment: &ios_environment
+  groups:
+    - appstore_credentials
+    - firebase_credentials
+    - revenuecat_credentials
+  vars:
+    APP_STORE_CONNECT_KEY_IDENTIFIER: ATBD5UGJTG
+    APP_STORE_CONNECT_ISSUER_ID: c64fb6be-f1d2-4e04-80b5-2841def3da52
+    APP_STORE_APPLE_ID: "6753078774"
+    # 審査提出時の What's New / プロモーション文（Codemagic UI で上書き可）
+    RELEASE_NOTES_JA: "バグ修正と改善を行いました。"
+    RELEASE_NOTES_EN: "Bug fixes and improvements."
+    PROMOTIONAL_TEXT_JA: "ランダム出題で微分積分と物理を効率的に学ぼう！"
+    PROMOTIONAL_TEXT_EN: "Learn calculus and physics efficiently with random questions!"
+    SUPPORT_URL: "https://www.notion.so/calculus-gacha-joy-math-27ae4f0afd3b80cb9754ce138cbc80ca?source=copy_link"
+  xcode: 26.4
+  flutter: stable
+  cocoapods: default
+  ios_signing:
+    distribution_type: app_store
+    bundle_identifier: com.joymath
+
+x-ios-build-scripts: &ios_build_scripts
+  - name: Prepare App Store version metadata
+    script: |
+      set -e
+      chmod +x scripts/codemagic_prepare_release_notes.sh
+      ./scripts/codemagic_prepare_release_notes.sh
+  - name: Flutter pub get
+    script: |
+      set -e
+      flutter pub get
+  - name: Inject Firebase Android config
+    script: |
+      set -e
+      dart run tool/inject_google_services_json.dart
+  - name: Inject Firebase iOS config
+    script: |
+      set -e
+      dart run tool/inject_google_service_info_plist.dart
+  - name: CocoaPods (ios)
+    script: |
+      set -e
+      cd ios && pod install && cd ..
+  - name: Flutter build IPA
+    script: |
+      set -e
+      VER_LINE=$(grep '^version:' pubspec.yaml | head -1 | awk '{print $2}' | tr -d "'\"")
+      VERSION_NAME="${VER_LINE%+*}"
+      if [ -n "${APP_STORE_APPLE_ID:-}" ]; then
+        LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+        VERSION_CODE=$((LATEST + 1))
+      else
+        VERSION_CODE="${VER_LINE#*+}"
+      fi
+      echo "Building $VERSION_NAME ($VERSION_CODE)"
+
+      # Flutter 3.44+ が SPM 統合で Xcode プロジェクトを書き換えるため、
+      # 先に config-only で更新してから use-profiles を当てる。
+      flutter build ios --release --config-only
+
+      xcode-project use-profiles
+
+      if [ ! -f /Users/builder/export_options.plist ]; then
+        echo "ERROR: /Users/builder/export_options.plist が生成されていません"
+        exit 1
+      fi
+
+      echo "=== com.joymath 用プロファイル ==="
+      for f in "$HOME/Library/MobileDevice/Provisioning Profiles/"*.mobileprovision; do
+        if security cms -D -i "$f" 2>/dev/null | grep -q '7K99YVR868.com.joymath'; then
+          echo "--- $f ---"
+          security cms -D -i "$f" | grep -E '<key>Name</key>|<key>UUID</key>|applesignin' || true
+        fi
+      done
+      echo "=== export_options.plist ==="
+      cat /Users/builder/export_options.plist
+
+      # use-profiles が生成した export_options を渡さないと IPA export で別プロファイルが使われる
+      flutter build ipa --release \
+        --dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat \
+        --dart-define=REVENUECAT_IOS_API_KEY="$REVENUECAT_IOS_API_KEY" \
+        --build-name="$VERSION_NAME" \
+        --build-number="$VERSION_CODE" \
+        --export-options-plist=/Users/builder/export_options.plist
+
+x-app-store-publishing: &app_store_publishing
+  app_store_connect:
+    api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+    key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+    issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+    # IPA を App Store Connect にアップロード後、post-processing で審査提出
+    submit_to_app_store: true
+    cancel_previous_submissions: true
+    # 審査承認後に自動公開（fastlane automatic_release: true と同等）
+    release_type: AFTER_APPROVAL
+    copyright: 2025 Shunsuke Nakamura
 
 workflows:
   ios-ipa-build:
     name: iOS IPA Build
     max_build_duration: 120
-    # 無料枠（M2 500分/月）を使う場合は mac_mini_m2 に変更（Xcode 26.4 が使えるか要確認）
     instance_type: mac_mini_m2
     environment:
-      groups:
-        - appstore_credentials
-        - firebase_credentials
-        - revenuecat_credentials
-      vars:
-        APP_STORE_CONNECT_KEY_IDENTIFIER: ATBD5UGJTG
-        APP_STORE_CONNECT_ISSUER_ID: c64fb6be-f1d2-4e04-80b5-2841def3da52
-        APP_STORE_APPLE_ID: "6753078774"
-      xcode: 26.4
-      flutter: stable
-      cocoapods: default
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.joymath
+      <<: *ios_environment
     scripts:
-      - name: Flutter pub get
-        script: |
-          set -e
-          flutter pub get
-      - name: Inject Firebase Android config
-        script: |
-          set -e
-          dart run tool/inject_google_services_json.dart
-      - name: Inject Firebase iOS config
-        script: |
-          set -e
-          dart run tool/inject_google_service_info_plist.dart
-      - name: CocoaPods (ios)
-        script: |
-          set -e
-          cd ios && pod install && cd ..
-      - name: Flutter build IPA
-        script: |
-          set -e
-          VER_LINE=$(grep '^version:' pubspec.yaml | head -1 | awk '{print $2}' | tr -d "'\"")
-          VERSION_NAME="${VER_LINE%+*}"
-          if [ -n "${APP_STORE_APPLE_ID:-}" ]; then
-            LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-            VERSION_CODE=$((LATEST + 1))
-          else
-            VERSION_CODE="${VER_LINE#*+}"
-          fi
-          echo "Building $VERSION_NAME ($VERSION_CODE)"
-
-          # Flutter 3.44+ が SPM 統合で Xcode プロジェクトを書き換えるため、
-          # 先に config-only で更新してから use-profiles を当てる。
-          flutter build ios --release --config-only
-
-          xcode-project use-profiles
-
-          if [ ! -f /Users/builder/export_options.plist ]; then
-            echo "ERROR: /Users/builder/export_options.plist が生成されていません"
-            exit 1
-          fi
-
-          echo "=== com.joymath 用プロファイル ==="
-          for f in "$HOME/Library/MobileDevice/Provisioning Profiles/"*.mobileprovision; do
-            if security cms -D -i "$f" 2>/dev/null | grep -q '7K99YVR868.com.joymath'; then
-              echo "--- $f ---"
-              security cms -D -i "$f" | grep -E '<key>Name</key>|<key>UUID</key>|applesignin' || true
-            fi
-          done
-          echo "=== export_options.plist ==="
-          cat /Users/builder/export_options.plist
-
-          # use-profiles が生成した export_options を渡さないと IPA export で別プロファイルが使われる
-          flutter build ipa --release \
-            --dart-define=AI_CHAT_ENDPOINT=https://asia-northeast1-joymath-a36a3.cloudfunctions.net/aiChat \
-            --dart-define=REVENUECAT_IOS_API_KEY="$REVENUECAT_IOS_API_KEY" \
-            --build-name="$VERSION_NAME" \
-            --build-number="$VERSION_CODE" \
-            --export-options-plist=/Users/builder/export_options.plist
+      *ios_build_scripts
     artifacts:
       - build/ios/ipa/*.ipa
 
+  ios-app-store-release:
+    name: iOS App Store Release
+    max_build_duration: 150
+    instance_type: mac_mini_m2
+    environment:
+      <<: *ios_environment
+    scripts:
+      *ios_build_scripts
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - release_notes.json
+    publishing:
+      <<: *app_store_publishing

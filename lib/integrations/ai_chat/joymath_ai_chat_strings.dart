@@ -19,6 +19,8 @@ AiChatStrings joymathAiChatStrings(BuildContext context) {
     voiceListeningHint: l10n.aiChatVoiceListening,
     voiceSendModeAuto: l10n.aiChatVoiceSendModeAuto,
     voiceSendModeManual: l10n.aiChatVoiceSendModeManual,
+    voiceSendModeAutoLabel: l10n.aiChatVoiceSendModeAutoLabel,
+    voiceSendModeManualLabel: l10n.aiChatVoiceSendModeManualLabel,
     voicePermissionDenied: l10n.aiChatVoicePermissionDenied,
   );
 }

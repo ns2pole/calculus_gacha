@@ -10,6 +10,7 @@ import 'package:ai_chat_kit/ai_chat_kit.dart';
 
 import '../../integrations/ai_chat/joymath_ai_chat_launcher.dart';
 import '../../integrations/ai_chat/joymath_session_mapper.dart';
+import '../../services/ai/ai_chat_session_store.dart';
 import '../../models/math_problem.dart';
 import '../../models/learning_status.dart';
 import '../../utils/l10n_utils.dart';
@@ -237,7 +238,6 @@ class _GachaPageState extends State<GachaPage> {
 
   // 計算用紙で学習記録を登録した問題を追跡
   final Set<String> _scratchPaperRecordedProblems = {};
-  final Map<String, List<AiChatMessage>> _aiChatHistories = {};
 
   // 学習記録ボタンが押された時に計算用紙ボタンを明るくするための状態
   final List<bool> _shouldHighlightScratchPaperButton = [false, false, false];
@@ -1102,13 +1102,16 @@ class _GachaPageState extends State<GachaPage> {
     });
   }
 
-  void _openAiChat(int idx, MathProblem problem) {
+  Future<void> _openAiChat(int idx, MathProblem problem) async {
     final questionText = _buildAiChatQuestionText(problem);
     final referenceAnswer = _buildAiChatReferenceAnswer(problem);
     final referenceSolution = _buildAiChatReferenceSolution(problem);
     final problemKey = _problemKey(problem);
 
-    JoymathAiChatLauncher.open(
+    final initialMessages = await AiChatSessionStore.load(problemKey);
+    if (!mounted) return;
+
+    await JoymathAiChatLauncher.open(
       context: context,
       session: JoymathSessionMapper.fromMathProblem(
         context: context,
@@ -1122,13 +1125,12 @@ class _GachaPageState extends State<GachaPage> {
       ),
       textRenderer: _buildAiChatText,
       assistantTextRenderer: _buildAiChatAssistantText,
-      initialMessages: _aiChatHistories[problemKey] ?? const [],
+      initialMessages: initialMessages,
       onMessagesChanged: (messages) {
-        setState(() {
-          _aiChatHistories[problemKey] = List<AiChatMessage>.of(messages);
-        });
+        unawaited(AiChatSessionStore.save(problemKey, messages));
       },
     );
+    await AiChatSessionStore.flushPendingPushes();
   }
 
   Widget _buildAiChatText(String text) {

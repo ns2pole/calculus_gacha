@@ -33,7 +33,8 @@ JoymathAiChatLauncher.open(
 4. `HttpAiChatClient` + 自アプリの `AI_CHAT_ENDPOINT`
 5. `AiChatKit.showSession(...)` を問題画面から呼ぶ
 6. iOS: `NSMicrophoneUsageDescription`, `NSSpeechRecognitionUsageDescription`
-7. Android: `RECORD_AUDIO`
+7. iOS/macOS Podfile: `PERMISSION_MICROPHONE=1`, `PERMISSION_SPEECH_RECOGNIZER=1`（`permission_handler` 用。未設定だと常に拒否扱い）
+8. Android: `RECORD_AUDIO`
 
 ## 音声入力
 

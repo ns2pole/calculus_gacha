@@ -265,6 +265,8 @@
   "aiChatVoiceListening": "聞き取り中…",
   "aiChatVoiceSendModeAuto": "音声で話したら自動送信",
   "aiChatVoiceSendModeManual": "音声入力後に送信ボタン",
+  "aiChatVoiceSendModeAutoLabel": "自動送信",
+  "aiChatVoiceSendModeManualLabel": "手動",
   "aiChatVoicePermissionDenied": "音声入力にはマイクの許可が必要です",
   "aiChatFreeMonthlyLimitReached": "今月の無料AIチャット利用上限（{limit}回）に達しました。",
   "@aiChatFreeMonthlyLimitReached": {

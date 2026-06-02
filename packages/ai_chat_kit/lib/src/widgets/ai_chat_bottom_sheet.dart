@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models/ai_chat_message.dart';
@@ -55,7 +57,14 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
 
   VoiceSendMode _voiceSendMode = VoiceSendMode.manual;
   bool _isListening = false;
+  bool _suppressVoiceResults = false;
+  bool _autoVoiceSessionActive = false;
   String? _voiceStatusMessage;
+  Timer? _autoVoiceSilenceTimer;
+  String _autoVoiceLastTranscript = '';
+
+  static const Duration _autoVoiceSilenceDuration = Duration(milliseconds: 2500);
+  static const Duration _autoListenPauseFor = Duration(seconds: 15);
 
   AiChatStrings get _strings => widget.host.strings;
 
@@ -82,6 +91,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
 
   @override
   void dispose() {
+    _cancelAutoVoiceTimers();
     _voiceController.dispose();
     _controller.dispose();
     _scrollController.dispose();
@@ -92,9 +102,99 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     widget.onMessagesChanged?.call(List<AiChatMessage>.unmodifiable(_messages));
   }
 
-  Future<void> _sendText(String text, {String? choiceId}) async {
+  void _cancelAutoVoiceSilenceTimer() {
+    _autoVoiceSilenceTimer?.cancel();
+    _autoVoiceSilenceTimer = null;
+  }
+
+  void _cancelAutoVoiceTimers() {
+    _cancelAutoVoiceSilenceTimer();
+  }
+
+  void _resetAutoVoiceSilenceTimer() {
+    _cancelAutoVoiceSilenceTimer();
+    if (_voiceSendMode != VoiceSendMode.auto ||
+        !_autoVoiceSessionActive ||
+        !_isListening) {
+      return;
+    }
+
+    final currentText = _controller.text.trim();
+    if (currentText.isEmpty) return;
+
+    _autoVoiceSilenceTimer = Timer(_autoVoiceSilenceDuration, () {
+      _autoVoiceSilenceTimer = null;
+      if (!mounted || !_autoVoiceSessionActive) return;
+      if (_voiceSendMode != VoiceSendMode.auto || !_isListening) return;
+      final toSend = _controller.text.trim();
+      if (toSend.isEmpty) return;
+      unawaited(_commitAutoVoiceSend(toSend));
+    });
+  }
+
+  Future<void> _commitAutoVoiceSend(String text) async {
+    _cancelAutoVoiceSilenceTimer();
+    _autoVoiceLastTranscript = '';
+    await _endVoiceListening();
+    if (!mounted) return;
+    await _sendText(text, fromAutoVoice: true);
+  }
+
+  void _scheduleAutoVoiceResume() {
+    if (!_autoVoiceSessionActive ||
+        _voiceSendMode != VoiceSendMode.auto ||
+        !widget.voice.enabled) {
+      return;
+    }
+    if (_isSending || _isListening) return;
+    unawaited(_startListening());
+  }
+
+  void _handleAutoVoiceResult(String text, bool isFinal) {
+    final normalized = text.trim();
+    final transcriptChanged = normalized != _autoVoiceLastTranscript;
+    final speechStillActive = !isFinal;
+
+    _controller.text = text;
+    _controller.selection = TextSelection.collapsed(offset: text.length);
+
+    if (normalized.isEmpty) {
+      _autoVoiceLastTranscript = '';
+      _cancelAutoVoiceSilenceTimer();
+      return;
+    }
+
+    if (speechStillActive || transcriptChanged) {
+      _autoVoiceLastTranscript = normalized;
+      _resetAutoVoiceSilenceTimer();
+    } else if (isFinal) {
+      _resetAutoVoiceSilenceTimer();
+    }
+  }
+
+  void _handleManualVoiceResult(String text, bool isFinal) {
+    _controller.text = text;
+    _controller.selection = TextSelection.collapsed(offset: text.length);
+    if (!isFinal) return;
+
+    unawaited(_endVoiceListening());
+  }
+
+  Future<void> _sendText(
+    String text, {
+    String? choiceId,
+    bool fromAutoVoice = false,
+  }) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty || _isSending) return;
+
+    if (!fromAutoVoice) {
+      _autoVoiceSessionActive = false;
+      _cancelAutoVoiceTimers();
+    }
+
+    _suppressVoiceResults = true;
+    await _voiceController.resetSession();
 
     final userMessage = AiChatMessage(
       id: _newMessageId(),
@@ -109,6 +209,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       _isSending = true;
       _errorText = null;
       _controller.clear();
+      _isListening = false;
       _voiceStatusMessage = null;
     });
     _notifyMessagesChanged();
@@ -129,6 +230,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       });
       _notifyMessagesChanged();
       _scrollToBottom();
+      _scheduleAutoVoiceResume();
     } on AiChatRateLimitException catch (e) {
       if (!mounted) return;
       final info = AiChatRateLimitInfo(
@@ -142,6 +244,8 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         _rateLimitInfo = info;
         _showUpgradeOffer = !info.isPaidTier;
       });
+      _autoVoiceSessionActive = false;
+      _cancelAutoVoiceTimers();
       _scrollToBottom();
     } on AiChatClientException catch (e) {
       if (!mounted) return;
@@ -149,12 +253,16 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         _isSending = false;
         _errorText = e.message;
       });
+      _autoVoiceSessionActive = false;
+      _cancelAutoVoiceTimers();
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _isSending = false;
         _errorText = _strings.genericError;
       });
+      _autoVoiceSessionActive = false;
+      _cancelAutoVoiceTimers();
     }
   }
 
@@ -183,55 +291,109 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         : VoiceSendMode.auto;
     await _preferences.saveVoiceSendMode(next);
     if (!mounted) return;
+    if (next == VoiceSendMode.manual) {
+      _autoVoiceSessionActive = false;
+      _cancelAutoVoiceTimers();
+      if (_isListening) {
+        await _stopListening(userInitiated: true);
+      }
+    }
     setState(() => _voiceSendMode = next);
   }
 
   Future<void> _toggleListening() async {
     if (_isListening) {
-      await _voiceController.stopListening();
-      if (!mounted) return;
-      setState(() {
-        _isListening = false;
-        _voiceStatusMessage = null;
-      });
+      await _stopListening(userInitiated: true);
       return;
     }
+
+    _autoVoiceSessionActive = _voiceSendMode == VoiceSendMode.auto;
+    await _startListening();
+  }
+
+  Future<void> _stopListening({required bool userInitiated}) async {
+    if (userInitiated) {
+      _autoVoiceSessionActive = false;
+      _cancelAutoVoiceTimers();
+    }
+    _suppressVoiceResults = true;
+    await _voiceController.resetSession();
+    if (!mounted) return;
+    setState(() {
+      _isListening = false;
+      _voiceStatusMessage = null;
+    });
+  }
+
+  Future<void> _startListening() async {
+    if (_isListening || _isSending) return;
 
     final permitted = await _voiceController.ensureMicrophonePermission();
     if (!permitted) {
       if (!mounted) return;
+      _autoVoiceSessionActive = false;
       setState(() => _voiceStatusMessage = _strings.voicePermissionDenied);
       return;
     }
 
+    _suppressVoiceResults = false;
+    _autoVoiceLastTranscript = '';
+
+    if (!mounted) return;
     setState(() {
       _isListening = true;
       _voiceStatusMessage = _strings.voiceListeningHint;
     });
 
+    final isAuto = _voiceSendMode == VoiceSendMode.auto;
     await _voiceController.startListening(
+      onStatus: isAuto ? _onAutoVoiceStatus : _onVoiceStatus,
+      pauseFor: isAuto ? _autoListenPauseFor : null,
       onResult: (text, isFinal) {
-        if (!mounted) return;
-        _controller.text = text;
-        _controller.selection = TextSelection.collapsed(offset: text.length);
-        if (!isFinal) return;
+        if (!mounted || _suppressVoiceResults) return;
 
         if (_voiceSendMode == VoiceSendMode.auto) {
-          _voiceController.stopListening();
-          setState(() {
-            _isListening = false;
-            _voiceStatusMessage = null;
-          });
-          _sendText(text);
-          return;
+          _handleAutoVoiceResult(text, isFinal);
+        } else {
+          _handleManualVoiceResult(text, isFinal);
         }
-
-        setState(() {
-          _isListening = false;
-          _voiceStatusMessage = null;
-        });
       },
     );
+  }
+
+  void _onAutoVoiceStatus(String status) {
+    if (!mounted || _suppressVoiceResults) return;
+    if (status != 'notListening' && status != 'done') return;
+    if (!_isListening) return;
+    // OS ended the session; keep UI in listening state only while silence timer runs.
+    if (_autoVoiceSilenceTimer != null) return;
+    setState(() {
+      _isListening = false;
+      _voiceStatusMessage = null;
+    });
+  }
+
+  void _onVoiceStatus(String status) {
+    if (!mounted || _suppressVoiceResults) return;
+    if (status != 'notListening' && status != 'done') return;
+    if (!_isListening) return;
+    setState(() {
+      _isListening = false;
+      _voiceStatusMessage = null;
+    });
+  }
+
+  Future<void> _endVoiceListening() async {
+    if (!_isListening && _suppressVoiceResults) return;
+    _cancelAutoVoiceSilenceTimer();
+    _autoVoiceLastTranscript = '';
+    _suppressVoiceResults = true;
+    await _voiceController.resetSession();
+    if (!mounted) return;
+    setState(() {
+      _isListening = false;
+      _voiceStatusMessage = null;
+    });
   }
 
   Future<void> _onPurchase() async {
@@ -520,16 +682,13 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
             Row(
               children: [
                 if (widget.voice.enabled) ...[
-                  IconButton(
-                    tooltip: _voiceSendMode == VoiceSendMode.auto
-                        ? _strings.voiceSendModeAuto
-                        : _strings.voiceSendModeManual,
+                  _VoiceSendModeToggle(
+                    isAuto: _voiceSendMode == VoiceSendMode.auto,
+                    autoLabel: _strings.voiceSendModeAutoLabel,
+                    manualLabel: _strings.voiceSendModeManualLabel,
+                    autoTooltip: _strings.voiceSendModeAuto,
+                    manualTooltip: _strings.voiceSendModeManual,
                     onPressed: _isSending ? null : _toggleVoiceSendMode,
-                    icon: Icon(
-                      _voiceSendMode == VoiceSendMode.auto
-                          ? Icons.send_and_archive_outlined
-                          : Icons.edit_note_outlined,
-                    ),
                   ),
                   IconButton(
                     tooltip: _isListening ? 'Stop' : 'Voice input',
@@ -645,6 +804,65 @@ class _TypingIndicator extends StatelessWidget {
           width: 18,
           height: 18,
           child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ),
+    );
+  }
+}
+
+class _VoiceSendModeToggle extends StatelessWidget {
+  final bool isAuto;
+  final String autoLabel;
+  final String manualLabel;
+  final String autoTooltip;
+  final String manualTooltip;
+  final VoidCallback? onPressed;
+
+  const _VoiceSendModeToggle({
+    required this.isAuto,
+    required this.autoLabel,
+    required this.manualLabel,
+    required this.autoTooltip,
+    required this.manualTooltip,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final label = isAuto ? autoLabel : manualLabel;
+    final tooltip = isAuto ? autoTooltip : manualTooltip;
+
+    return Tooltip(
+      message: tooltip,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          minimumSize: const Size(0, 36),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          foregroundColor:
+              isAuto ? colorScheme.primary : colorScheme.onSurfaceVariant,
+          backgroundColor: isAuto
+              ? colorScheme.primaryContainer.withValues(alpha: 0.45)
+              : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isAuto ? Icons.bolt_outlined : Icons.edit_outlined,
+              size: 16,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: isAuto ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

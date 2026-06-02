@@ -35,6 +35,14 @@ service cloud.firestore {
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
+
+    // 未ログイン時の AI チャット installation ID（usage と同じ端末 ID）
+    function isInstallationOwner(userId) {
+      return !isAuthenticated()
+        && userId.size() >= 20
+        && userId.size() <= 24
+        && userId.matches('^[A-Za-z0-9_-]+$');
+    }
     
     // ============================================================
     // ユーザー設定へのアクセス
@@ -82,6 +90,15 @@ service cloud.firestore {
       // パス: users/{userId}/learning_records/{problemId}
       match /learning_records/{problemId} {
         allow read, write: if isOwner(userId);
+      }
+
+      // ============================================================
+      // AI チューター会話（問題ごと）
+      // ============================================================
+      // パス: users/{userId}/ai_chat_sessions/{problemId}
+      // userId は Firebase UID（ログイン時）または installation ID（未ログイン時）
+      match /ai_chat_sessions/{problemId} {
+        allow read, write: if isOwner(userId) || isInstallationOwner(userId);
       }
     }
   }

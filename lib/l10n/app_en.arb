@@ -273,6 +273,8 @@
   "aiChatVoiceListening": "Listening…",
   "aiChatVoiceSendModeAuto": "Auto-send after voice",
   "aiChatVoiceSendModeManual": "Tap send after voice",
+  "aiChatVoiceSendModeAutoLabel": "Auto Send",
+  "aiChatVoiceSendModeManualLabel": "Manual",
   "aiChatVoicePermissionDenied": "Microphone permission is required for voice input",
   "aiChatFreeMonthlyLimitReached": "You've reached this month's free AI chat limit ({limit} uses).",
   "@aiChatFreeMonthlyLimitReached": {

@@ -1100,6 +1100,18 @@ abstract class AppLocalizations {
   /// **'音声入力後に送信ボタン'**
   String get aiChatVoiceSendModeManual;
 
+  /// No description provided for @aiChatVoiceSendModeAutoLabel.
+  ///
+  /// In ja, this message translates to:
+  /// **'自動送信'**
+  String get aiChatVoiceSendModeAutoLabel;
+
+  /// No description provided for @aiChatVoiceSendModeManualLabel.
+  ///
+  /// In ja, this message translates to:
+  /// **'手動'**
+  String get aiChatVoiceSendModeManualLabel;
+
   /// No description provided for @aiChatVoicePermissionDenied.
   ///
   /// In ja, this message translates to:

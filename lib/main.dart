@@ -7,6 +7,7 @@ import 'firebase_web_options.dart';
 import 'pages/other/home_page.dart';
 import './utils/update_checker.dart';
 import 'services/auth/cloud_sync_migration.dart';
+import 'services/ai/ai_chat_auth_sync.dart';
 import 'services/problems/simple_data_manager.dart';
 import 'services/payment/revenuecat_service.dart';
 import 'services/payment/iap_secondary_products_config.dart';
@@ -58,8 +59,7 @@ void main() async {
     await CloudSyncMigration.runIfNeeded();
     // シンプルデータマネージャーを初期化
     await SimpleDataManager.initialize();
-    
-    // RevenueCat は iOS / Android / macOS のみ（Web ではプラグイン未対応）
+    AiChatAuthSync.initialize();
     if (!kIsWeb) {
       AppLogger.subsection('RevenueCat初期化', showNumber: true);
       final revenueCatInitialized = await RevenueCatService.initialize();

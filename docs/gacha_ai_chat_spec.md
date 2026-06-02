@@ -97,7 +97,7 @@
   アプリで「答えを見る」後 → AnswerRevealed モード（解説補足・別解可）
 
 [終了]
-  シートを閉じる。履歴は problemId + slotIndex で保持（Phase 1 はローカルのみ可）
+  シートを閉じる。履歴は problemId 単位で保持（Firestore が正本。端末はキャッシュ。未ログイン時は installation ID、ログイン時は UID。差分があれば Firestore を pull。クラウド同期トグル非依存）
 ```
 
 ### モード別 AI の振る舞い
@@ -259,7 +259,7 @@ class GachaAiSession {
 | 制限 | 1 メッセージ 1〜2 枚、長辺 2048px、JPEG 品質 85、最大 5MB/枚 |
 | 送信 | 画像を Storage に upload → URL を API に渡す（base64 直送は避ける） |
 | 用途プロンプト | 「途中式・計算用紙の添削。正誤より**誤りの位置と次の 1 手**を指摘」 |
-| プライバシー | 利用規約に「画像は AI 解析のため送信」と明記。保持期間 TBD |
+| プライバシー | [`docs/privacy_policy.md`](privacy_policy.md) に会話履歴の Firestore 保存・送信内容を記載。画像は Phase 2 で追記 |
 | 計算用紙連携 | `ScratchPaperPage` から「AIに聞く」で画像を渡す **共有 Intent**（Phase 2） |
 
 **Phase 1 でやっておくこと**
@@ -276,7 +276,7 @@ class GachaAiSession {
 |-------|------|
 | **1a** | ボトムシート UI、固定挨拶、3 チップ、自由入力、送信スタブ or API 接続 |
 | **1b** | コンテキスト連動、`quickReplies`（0〜5）、答え表示連動、`hintLevel`（未実装） |
-| **1c** | セッションのローカル保存・再開 |
+| **1c** | セッションのローカル保存・再開（ログイン時 Firestore、pull は欠損・古いローカルのみ） |
 | **2a** | 類題の AI 生成（品質ルール付き） |
 | **2b** | 画像添付・マルチモーダル API・添削プロンプト |
 | **2c** | 計算用紙からの画像渡し |

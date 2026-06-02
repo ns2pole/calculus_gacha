@@ -16,6 +16,8 @@ class AiChatStrings {
   final String voiceListeningHint;
   final String voiceSendModeAuto;
   final String voiceSendModeManual;
+  final String voiceSendModeAutoLabel;
+  final String voiceSendModeManualLabel;
   final String voicePermissionDenied;
 
   const AiChatStrings({
@@ -32,6 +34,8 @@ class AiChatStrings {
     this.voiceListeningHint = 'Listening…',
     this.voiceSendModeAuto = 'Auto-send voice',
     this.voiceSendModeManual = 'Edit before send',
+    this.voiceSendModeAutoLabel = 'Auto Send',
+    this.voiceSendModeManualLabel = 'Manual',
     this.voicePermissionDenied =
         'Microphone permission is required for voice input.',
   });

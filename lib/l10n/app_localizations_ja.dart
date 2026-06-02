@@ -546,6 +546,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aiChatVoiceSendModeManual => '音声入力後に送信ボタン';
 
   @override
+  String get aiChatVoiceSendModeAutoLabel => '自動送信';
+
+  @override
+  String get aiChatVoiceSendModeManualLabel => '手動';
+
+  @override
   String get aiChatVoicePermissionDenied => '音声入力にはマイクの許可が必要です';
 
   @override
