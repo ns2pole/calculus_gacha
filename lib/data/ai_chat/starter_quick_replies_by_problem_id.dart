@@ -1172,7 +1172,6 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "この漸化式のタイプは何ですか？", actionId: "identify_type"),
-    AiChatQuickReply(label: "a_2, a_3 を計算してみましょう", actionId: "calculate_terms"),
     AiChatQuickReply(label: "この分数式の形をどう扱えばいいですか？", actionId: "handle_fraction"),
   ],
 //\lim_{n\to\infty}\sum_{k=1}^{n}\frac{(-1)^{k-1}}{2k-1} : 極限ガチャ
@@ -1258,7 +1257,6 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
     AiChatQuickReply(label: "この問題の方針を教えてください。", actionId: "approach_only"),
     AiChatQuickReply(label: "この式の形は何を表していますか？", actionId: "meaning_of_form"),
-    AiChatQuickReply(label: "積分の平均値の定理について教えてください", actionId: "mean_value_theorem_integral"),
   ],
 //\cos 2x + \cos 3x = 0, 0 \leq x < 2\pi : 三角指数対数ガチャ
   "C3D4E5F6-A7B8-C9D0-E1F2-A3B4C5D6E7F8": [
