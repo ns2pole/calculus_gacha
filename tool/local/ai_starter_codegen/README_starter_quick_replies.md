@@ -26,6 +26,7 @@ node tool/local/ai_starter_codegen/generate-starter-quick-replies.mjs \
   --ids-file tool/local/ai_starter_codegen/regenerate_first_50_ids.txt \
   --force --merge-dart
 python3 tool/local/ai_starter_codegen/filter_spoiler_starter_replies.py --apply
+python3 tool/local/ai_starter_codegen/ensure_required_starter_replies.py
 python3 tool/local/ai_starter_codegen/insert_starter_quick_reply_comments.py
 ```
 
