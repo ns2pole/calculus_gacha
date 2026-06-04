@@ -1,4 +1,7 @@
-import {normalizeDoubleEscapedLatex} from "./latexSafeJsonString";
+import {
+  normalizeDoubleEscapedLatex,
+  repairTabCorruptedLatex,
+} from "./latexSafeJsonString";
 import {parseAiChatGeminiJson} from "./parseAiChatGeminiJson";
 import {AiChatRequest} from "./types";
 
@@ -29,17 +32,22 @@ export function parseAiChatStructuredResponse(
   raw: string,
   request: AiChatRequest,
 ): AiChatStructuredReply {
-  const trimmed = raw.trim();
+  const trimmed = repairTabCorruptedLatex(raw.trim());
   if (trimmed.length === 0) {
     return {text: "", quickReplies: []};
   }
 
   const extracted = parseAiChatGeminiJson(trimmed);
-  if (extracted != null && extracted.text.length > 0) {
-    const textRaw = extracted.text;
-    const text = normalizeDoubleEscapedLatex(textRaw);
+  if (extracted != null) {
     const quickReplies = sanitizeQuickReplies(extracted.quickReplies, request);
-    return {text, textRaw, quickReplies};
+    if (extracted.text.length > 0) {
+      const textRaw = extracted.text;
+      const text = normalizeDoubleEscapedLatex(textRaw);
+      return {text, textRaw, quickReplies};
+    }
+    if (quickReplies.length > 0) {
+      return {text: "", quickReplies};
+    }
   }
 
   return {text: trimmed, textRaw: trimmed, quickReplies: []};

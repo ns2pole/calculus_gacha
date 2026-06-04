@@ -130,7 +130,7 @@ class MixedTextMath extends StatelessWidget {
   /// 入力: TeX文字列（例: "\\int_0^1 x dx"）
   /// 出力: Math.texウィジェット、またはエラー時はSelectableText
   Widget _mathCoreSafe(String tex, TextStyle style, {MathStyle? mathStyle}) {
-    final normalizedTex = _wrapBareCjkTextInTex(tex);
+    final normalizedTex = _wrapBareCjkTextInTex(trimDanglingTrailingTexSpacing(tex));
     try {
       if (plainTextOnMathError) {
         return Math.tex(
@@ -390,7 +390,7 @@ class MixedTextMath extends StatelessWidget {
 
   /// TeX環境ブロックを検出: "\\begin{align}...\\end{align}" など
   static final RegExp _envBlock = RegExp(
-    r'^\s*\\begin\{(aligned|align\*?|alignedat|gather\*?|equation\*?|multline\*?)\}(.+?)\\end\{\1\}\s*$',
+    r'^\s*\\begin\{(aligned|align\*?|alignedat|gather\*?|equation\*?|multline\*?|cases)\}(.+?)\\end\{\1\}\s*$',
     dotAll: true,
   );
 
@@ -575,7 +575,7 @@ class MixedTextMath extends StatelessWidget {
               final paraTrim = para.trim();
               if (paraTrim.isEmpty) return const SizedBox.shrink();
 
-              final envMatch = _envBlock.firstMatch(para);
+              final envMatch = _envBlock.firstMatch(paraTrim);
               if (envMatch != null) {
                 final envBody = envMatch.group(0) ?? '';
                 return Padding(
@@ -589,7 +589,7 @@ class MixedTextMath extends StatelessWidget {
                 );
               }
 
-              final blockMatch = _blockMath.firstMatch(para);
+              final blockMatch = _blockMath.firstMatch(paraTrim);
               if (blockMatch != null) {
                 final mathBody = blockMatch.group(1) ?? '';
                 return Padding(
@@ -648,7 +648,7 @@ class MixedTextMath extends StatelessWidget {
                 );
               }
 
-              if (para.contains(r'\text{')) {
+              if (shouldSplitParagraphByTextMacro(para)) {
                 final parts = _splitByTextMacro(para);
                 final spans = <InlineSpan>[];
 

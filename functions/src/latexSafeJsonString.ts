@@ -20,6 +20,23 @@ const latexNewlineMacroSuffixes = [
   "gtr",
 ] as const;
 
+/** TeX commands that start with `\t` (JSON `\t` must not become TAB + suffix). */
+const latexTabMacroSuffixes = [
+  "extbf",
+  "extit",
+  "extnormal",
+  "extrm",
+  "riangle",
+  "frac",
+  "ext",
+  "imes",
+  "heta",
+  "ilde",
+  "au",
+  "an",
+  "o",
+] as const;
+
 /** Collapses JSON-style double backslashes before TeX commands (\\frac → \frac). */
 const doubleEscapedMacro = /\\\\([A-Za-z]+)/g;
 
@@ -30,6 +47,31 @@ export function normalizeDoubleEscapedLatex(text: string): string {
     out = out.replace(doubleEscapedMacro, "\\$1");
   }
   return out;
+}
+
+/**
+ * Reverses JSON `\t` corruption inside LaTeX (TAB + `ext{` → `\text{`, etc.).
+ * Apply to Gemini `part.text` before [parseAiChatGeminiJson].
+ */
+export function repairTabCorruptedLatex(text: string): string {
+  if (!text.includes("\t")) return text;
+
+  const out: string[] = [];
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === "\t") {
+      const rest = text.slice(i + 1);
+      const suffix = latexTabMacroSuffixes.find((s) => rest.startsWith(s));
+      if (suffix != null) {
+        out.push("\\t", suffix);
+        i += 1 + suffix.length;
+        continue;
+      }
+    }
+    out.push(text[i]);
+    i++;
+  }
+  return out.join("");
 }
 
 export function decodeJsonStringLiteral(

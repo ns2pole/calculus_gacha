@@ -3,6 +3,8 @@ import {
   buildEnglishContext,
   buildJapaneseContext,
 } from "./prompt";
+import {repairTabCorruptedLatex} from "./latexSafeJsonString";
+import {parseAiChatGeminiJson} from "./parseAiChatGeminiJson";
 import {
   AiChatQuickReply,
   sanitizeQuickReplies,
@@ -46,16 +48,13 @@ function parseStarterResponse(
   raw: string,
   request: AiChatStarterRequest,
 ): AiChatQuickReply[] {
-  try {
-    const parsed = JSON.parse(raw.trim()) as unknown;
-    if (parsed != null && typeof parsed === "object") {
-      const record = parsed as Record<string, unknown>;
-      return sanitizeQuickReplies(record.quickReplies, asChatRequest(request));
-    }
-  } catch {
-    // Fall through.
-  }
-  return [];
+  const trimmed = repairTabCorruptedLatex(raw.trim());
+  if (trimmed.length === 0) return [];
+
+  const extracted = parseAiChatGeminiJson(trimmed);
+  if (extracted == null) return [];
+
+  return sanitizeQuickReplies(extracted.quickReplies, asChatRequest(request));
 }
 
 function asChatRequest(request: AiChatStarterRequest): AiChatRequest {

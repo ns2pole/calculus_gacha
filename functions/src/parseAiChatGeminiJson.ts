@@ -66,7 +66,7 @@ export function parseAiChatGeminiJson(raw: string): ExtractedGeminiJson | null {
     index = skipped;
   }
 
-  if (text.length === 0) return null;
+  if (text.length === 0 && quickReplies.length === 0) return null;
   return {text, quickReplies};
 }
 

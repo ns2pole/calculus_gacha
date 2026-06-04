@@ -250,6 +250,88 @@ void main() {
     });
   });
 
+  group('repairTabCorruptedLatex', () {
+    const tab = '\t';
+
+    final repairCases = <({String suffix, String corrupted, String expected})>[
+      (
+        suffix: 'ext',
+        corrupted: 'x + ${tab}ext{日本語}',
+        expected: r'x + \text{日本語}',
+      ),
+      (
+        suffix: 'imes',
+        corrupted: 'a ${tab}imes b',
+        expected: r'a \times b',
+      ),
+      (suffix: 'heta', corrupted: '${tab}heta', expected: r'\theta'),
+      (suffix: 'an', corrupted: '${tab}an x', expected: r'\tan x'),
+      (
+        suffix: 'o',
+        corrupted: '${tab}o ${r'\infty'}',
+        expected: r'\to \infty',
+      ),
+      (
+        suffix: 'frac',
+        corrupted: '${tab}frac{1}{2}',
+        expected: r'\tfrac{1}{2}',
+      ),
+      (suffix: 'riangle', corrupted: '${tab}riangle', expected: r'\triangle'),
+    ];
+
+    for (final c in repairCases) {
+      test('restores TAB+${c.suffix}', () {
+        expect(repairTabCorruptedLatex(c.corrupted), c.expected);
+        expect(repairTabCorruptedLatex(c.expected), c.expected);
+      });
+    }
+
+    test('leaves TAB not followed by TeX suffix', () {
+      const input = '列1${tab}列2';
+      expect(repairTabCorruptedLatex(input), input);
+    });
+
+    test('restores TAB-corrupted \\text via preprocess', () {
+      final corrupted = r'$y = ext{sin } \theta$'.replaceFirst('ext', '${tab}ext');
+      final processed = preprocessAiChatMathText(corrupted);
+      expect(processed, contains(r'\text{sin }'));
+      expect(processed.contains(tab), isFalse);
+      expect(processed.contains('$tab' 'ext'), isFalse);
+    });
+
+    test('preprocess keeps literal backslash-t+ext as \\text (not whitespace)', () {
+      const input = r'段落 \text{注} です';
+      expect(preprocessAiChatMathText(input), input);
+      expect(preprocessAiChatMathText(input).contains('\t'), isFalse);
+    });
+  });
+
+  group('shouldSplitParagraphByTextMacro', () {
+    const msg19Para =
+        r'はい、ではイメージしてみましょう。 まず、$y = \theta$ のグラフは、原点 $(0,0)$ を通る傾き $1$ の直線ですね。'
+        r' 次に、$y = \text{sin } \theta$ のグラフは、波のような形をしています。'
+        r' この「ぴったり重なる」という様子が、$\frac{\text{sin } \theta}{\theta}$ の値が $1$ に近づく、ということを視覚的に示しています。';
+
+    const rlcPara =
+        r'\alpha f^{\prime\prime}(t)+2\beta\,f^{\prime}(t)+\gamma f(t)=F\sin(\omega t) \ \ \text{の定常状態の }f^{\prime}(t)';
+
+    test('msg19 paragraph with \$ and \\text uses dollar path', () {
+      expect(shouldSplitParagraphByTextMacro(msg19Para), isFalse);
+    });
+
+    test('RLC equation with \\text but no \$ uses text-macro split', () {
+      expect(shouldSplitParagraphByTextMacro(rlcPara), isTrue);
+    });
+
+    test('plain \\text{日本語} without \$ uses text-macro split', () {
+      expect(shouldSplitParagraphByTextMacro(r'式 \text{日本語} です'), isTrue);
+    });
+
+    test('no \\text{ → false', () {
+      expect(shouldSplitParagraphByTextMacro(r'$\frac{1}{2}$ です'), isFalse);
+    });
+  });
+
   group('2026-06-03 lim sin/x assistant reply', () {
     const body =
         r'まず $\displaystyle \lim_{x\to 0}\frac{\sin x}{x} = 1$ については、図形的に「はさみうちの原理」を使って証明することができます。単位円と扇形の面積の関係を使うと、この値が1に近づくことを示すことができますよ。';
@@ -300,6 +382,58 @@ void main() {
     test('literal \\n\\n alone does not count as TeX macro outside dollars', () {
       expect(containsRecognizedTexMacros(r'よ。\n\nそして'), isFalse);
       expect(texMacrosAreOnlyInsideDollarSpans(assistantLiteralNewlines), isTrue);
+    });
+  });
+
+  group('trimDanglingTrailingTexSpacing', () {
+    test('removes trailing \\ spaced commands after \\text split', () {
+      const input =
+          r'\alpha f^{\prime\prime}(t)+2\beta\,f^{\prime}(t)+\gamma f(t)=F\sin(\omega t) \ \ ';
+      expect(
+        trimDanglingTrailingTexSpacing(input),
+        r'\alpha f^{\prime\prime}(t)+2\beta\,f^{\prime}(t)+\gamma f(t)=F\sin(\omega t)',
+      );
+    });
+
+    test('leaves well-formed trailing \\quad in intact math', () {
+      const input = r'f^{\prime}(t),\quad f(0)=0';
+      expect(trimDanglingTrailingTexSpacing(input), input);
+    });
+  });
+
+  group('buildPhysicsMathCasesTex', () {
+    test('wraps equation and conditions like case display', () {
+      const equation =
+          r"\alpha f''(t)+2\beta\,f'(t)+\gamma f(t)=F\sin(\omega t) \ \ \text{の定常状態の }f'(t)";
+      const conditions = r"f(0)=0,\ f'(0)=0";
+      final tex = buildPhysicsMathCasesTex(
+        equation: equation,
+        conditions: conditions,
+      );
+      expect(tex, contains(r'\begin{cases}'));
+      expect(tex, contains(equation));
+      expect(tex, contains(conditions));
+      expect(tex, contains(r'\end{cases}'));
+    });
+
+    test('is recognized as a cases environment block by MixedTextMath', () {
+      const equation =
+          r"\alpha f^{\prime\prime}(t)+2\beta\,f^{\prime}(t)+\gamma f(t)=F\sin(\omega t) \ \ \text{の定常状態の }f^{\prime}(t)";
+      const conditions = r'f(0)=0,\ f^{\prime}(0)=0';
+      final tex = buildPhysicsMathCasesTex(
+        equation: equation,
+        conditions: conditions,
+      );
+      final envBlock = RegExp(
+        r'^\s*\\begin\{(aligned|align\*?|alignedat|gather\*?|equation\*?|multline\*?|cases)\}(.+?)\\end\{\1\}\s*$',
+        dotAll: true,
+      );
+      expect(envBlock.hasMatch(tex), isTrue);
+      expect(
+        envBlock.hasMatch(preprocessAiChatMathText(tex)),
+        isTrue,
+        reason: 'preprocess must not break cases for AI chat preview',
+      );
     });
   });
 

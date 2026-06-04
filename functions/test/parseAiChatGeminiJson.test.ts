@@ -1,6 +1,7 @@
 import * as assert from "node:assert/strict";
 import {describe, it} from "node:test";
 
+import {repairTabCorruptedLatex} from "../src/latexSafeJsonString";
 import {parseAiChatGeminiJson} from "../src/parseAiChatGeminiJson";
 import {parseAiChatStructuredResponse} from "../src/quickReplies";
 import {AiChatRequest} from "../src/types";
@@ -60,8 +61,39 @@ describe("parseAiChatGeminiJson", () => {
     assert.equal(extracted.quickReplies[0].actionId, "hint");
   });
 
-  it("returns null for missing text", () => {
+  it("returns null when text and quickReplies are both empty", () => {
     assert.equal(parseAiChatGeminiJson(String.raw`{"quickReplies": []}`), null);
+  });
+
+  it("parses quickReplies-only starter JSON", () => {
+    const raw = String.raw`
+      {
+        "quickReplies": [
+          {"label": "ヒントをもらう", "actionId": "hint"}
+        ]
+      }
+    `.trim();
+    const extracted = parseAiChatGeminiJson(raw);
+    assert.ok(extracted != null);
+    assert.equal(extracted.text, "");
+    assert.equal(extracted.quickReplies.length, 1);
+    assert.equal(extracted.quickReplies[0].actionId, "hint");
+  });
+
+  it("parses starter quickReply label with \\text after TAB repair", () => {
+    const tab = "\t";
+    const raw =
+      `{"quickReplies": [{"label": "$f = ${tab}ext{sin}$", "actionId": "hint"}]}`;
+    const corrupted = parseAiChatGeminiJson(raw);
+    assert.ok(corrupted != null);
+    assert.equal(corrupted.quickReplies[0].label.includes("ext{sin}"), true);
+    assert.equal(corrupted.quickReplies[0].label.includes("\t"), true);
+
+    const repaired = repairTabCorruptedLatex(raw);
+    const extracted = parseAiChatGeminiJson(repaired);
+    assert.ok(extracted != null);
+    assert.equal(extracted.quickReplies[0].label.includes("\\text{sin}"), true);
+    assert.equal(extracted.quickReplies[0].label.includes("\t"), false);
   });
 });
 

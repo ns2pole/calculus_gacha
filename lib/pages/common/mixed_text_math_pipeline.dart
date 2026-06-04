@@ -6,6 +6,7 @@ library;
 const int _backslash = 0x5c;
 const int _openBrace = 0x7b;
 const int _closeBrace = 0x7d;
+const int _tab = 0x09;
 
 enum MixedTextSegmentKind { plain, inlineMath, blockMath }
 
@@ -25,9 +26,64 @@ class MixedTextSegment {
 String preprocessAiChatMathText(String text) {
   return normalizeAiChatMathDelimiters(
     normalizeDoubleEscapedLatex(
-      normalizeLiteralEscapedNewlines(text),
+      normalizeLiteralEscapedNewlines(
+        repairTabCorruptedLatex(text),
+      ),
     ),
   );
+}
+
+/// Longest suffix first (matches [functions/src/latexSafeJsonString.ts]).
+const List<String> _latexTabMacroSuffixesLongestFirst = [
+  'extbf',
+  'extit',
+  'extnormal',
+  'extrm',
+  'riangle',
+  'frac',
+  'ext',
+  'imes',
+  'heta',
+  'ilde',
+  'au',
+  'an',
+  'o',
+];
+
+/// Whether [MixedTextMath] should use [_splitByTextMacro] for [paragraph].
+///
+/// Paragraphs with `$` keep `\text{...}` inside math delimiters for Math.tex.
+bool shouldSplitParagraphByTextMacro(String paragraph) {
+  return paragraph.contains(r'\text{') && !paragraph.contains(r'$');
+}
+
+/// Reverses JSON `\t` corruption (TAB + `ext{` → `\text{`, etc.).
+String repairTabCorruptedLatex(String text) {
+  if (!text.contains('\t')) return text;
+
+  final out = StringBuffer();
+  var i = 0;
+  while (i < text.length) {
+    if (text.codeUnitAt(i) == _tab) {
+      final rest = text.substring(i + 1);
+      String? matched;
+      for (final suffix in _latexTabMacroSuffixesLongestFirst) {
+        if (rest.startsWith(suffix)) {
+          matched = suffix;
+          break;
+        }
+      }
+      if (matched != null) {
+        out.write(r'\t');
+        out.write(matched);
+        i += 1 + matched.length;
+        continue;
+      }
+    }
+    out.writeCharCode(text.codeUnitAt(i));
+    i++;
+  }
+  return out.toString();
 }
 
 /// Same suffix guard as [functions/src/latexSafeJsonString.ts] for `\n` in JSON decode.
@@ -411,4 +467,74 @@ bool _isCjkTextCodeUnit(int codeUnit) {
       (codeUnit >= 0xf900 && codeUnit <= 0xfaff) ||
       codeUnit == 0x3005 ||
       codeUnit == 0x3007;
+}
+
+/// Strips trailing TeX spacing commands that become invalid when [MixedTextMath]
+/// splits on `\text{...}` and renders the prefix without the following macro body.
+///
+/// Example: `...\sin(\omega t) \ \ ` → `...\sin(\omega t)` (valid for [Math.tex]).
+String trimDanglingTrailingTexSpacing(String tex) {
+  var t = tex.trimRight();
+  while (true) {
+    final before = t;
+    if (t.endsWith(r'\quad')) {
+      t = t.substring(0, t.length - 5).trimRight();
+      continue;
+    }
+    if (t.endsWith(r'\qquad')) {
+      t = t.substring(0, t.length - 6).trimRight();
+      continue;
+    }
+    if (t.endsWith(r'\,')) {
+      t = t.substring(0, t.length - 2).trimRight();
+      continue;
+    }
+    if (RegExp(r'\\\s$').hasMatch(t)) {
+      t = t.substring(0, t.length - 2).trimRight();
+      continue;
+    }
+    if (t.endsWith(r'\')) {
+      t = t.substring(0, t.length - 1).trimRight();
+      continue;
+    }
+    if (t == before) break;
+  }
+  return t;
+}
+
+/// Builds a `cases` block for physics-math equation + conditions (same layout as
+/// [PhysicsMathCaseDisplay]).
+String buildPhysicsMathCasesTex({
+  required String equation,
+  required String conditions,
+  String? constants,
+}) {
+  final conditionLines = conditions.split(RegExp(r'\\\\\s*(?!\[)'));
+  final trimmedLines = conditionLines
+      .map((line) => line.trim())
+      .where((line) => line.isNotEmpty)
+      .toList();
+  final normalizedConditions = trimmedLines.join(r' \\[4pt] ');
+
+  if (constants != null && constants.trim().isNotEmpty) {
+    return r"""
+\begin{cases}
+$equation \\[4pt]
+$conditions \\[4pt]
+$constants
+\end{cases}
+"""
+        .replaceAll('\$equation', equation.trim())
+        .replaceAll('\$conditions', normalizedConditions)
+        .replaceAll('\$constants', constants.trim());
+  }
+
+  return r"""
+\begin{cases}
+$equation \\[4pt]
+$conditions
+\end{cases}
+"""
+      .replaceAll('\$equation', equation.trim())
+      .replaceAll('\$conditions', normalizedConditions);
 }
