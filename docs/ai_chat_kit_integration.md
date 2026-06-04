@@ -40,6 +40,7 @@ JoymathAiChatLauncher.open(
 
 - マイクボタン: タップで開始／停止
 - モード切替: 自動送信 / 送信ボタンで送る（`SharedPreferences` に保存）
+- UI 言語の連携: `MaterialApp` の `Locale`（`Localizations.localeOf`）を基準に、音声認識の `localeId` と API の `locale`（`ja` / `en`）を同じ規則で選択
 
 ## HTTP API
 

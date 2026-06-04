@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../locale/ai_chat_api_locale.dart';
 import '../models/ai_chat_message.dart';
 import 'user_chat_message_body.dart';
 import '../models/ai_chat_quick_reply.dart';
@@ -68,6 +69,10 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   static const Duration _autoListenPauseFor = Duration(seconds: 15);
 
   AiChatStrings get _strings => widget.host.strings;
+
+  Locale get _appLocale => Localizations.localeOf(context);
+
+  String get _apiLocale => AiChatApiLocale.forApp(_appLocale);
 
   @override
   void initState() {
@@ -221,6 +226,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         session: widget.session,
         history: List<AiChatMessage>.unmodifiable(_messages),
         userMessage: userMessage,
+        locale: _apiLocale,
       );
       if (!mounted) return;
       setState(() {
@@ -348,6 +354,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
 
     final isAuto = _voiceSendMode == VoiceSendMode.auto;
     await _voiceController.startListening(
+      appLocale: _appLocale,
       onStatus: isAuto ? _onAutoVoiceStatus : _onVoiceStatus,
       pauseFor: isAuto ? _autoListenPauseFor : null,
       onResult: (text, isFinal) {

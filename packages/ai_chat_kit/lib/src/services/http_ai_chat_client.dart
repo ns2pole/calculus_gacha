@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../locale/ai_chat_api_locale.dart';
 import '../models/ai_chat_message.dart';
 import '../models/ai_chat_quick_reply.dart';
 import '../models/ai_chat_session_payload.dart';
@@ -223,8 +224,6 @@ class HttpAiChatClient implements AiChatClient {
   }
 
   static String _defaultLocaleResolver() {
-    final locale = PlatformDispatcher.instance.locale;
-    if (locale.languageCode == 'en') return 'en';
-    return 'ja';
+    return AiChatApiLocale.forApp(PlatformDispatcher.instance.locale);
   }
 }

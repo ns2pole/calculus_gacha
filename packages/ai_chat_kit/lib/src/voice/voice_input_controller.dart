@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
+import 'voice_speech_locale_resolver.dart';
 
 class VoiceInputController {
   VoiceInputController({SpeechToText? speechToText})
@@ -11,6 +14,7 @@ class VoiceInputController {
   bool _initialized = false;
   bool _isListening = false;
   void Function(String status)? _onStatus;
+  List<LocaleName>? _deviceLocales;
 
   bool get isListening => _isListening;
   bool get isAvailable => _speech.isAvailable;
@@ -58,9 +62,22 @@ class VoiceInputController {
   static const Duration defaultPauseFor = Duration(milliseconds: 2500);
   static const Duration defaultListenFor = Duration(seconds: 60);
 
+  /// Maps [appLocale] (MaterialApp UI locale) to a speech_to_text [localeId].
+  Future<String?> resolveLocaleIdForApp(Locale appLocale) async {
+    final ready = await initialize();
+    if (!ready) return null;
+
+    _deviceLocales ??= await _speech.locales();
+    return VoiceSpeechLocaleResolver.resolve(
+      appLocale: appLocale,
+      availableLocaleIds: _deviceLocales!.map((l) => l.localeId),
+    );
+  }
+
   Future<void> startListening({
     required void Function(String text, bool isFinal) onResult,
     void Function(String status)? onStatus,
+    Locale? appLocale,
     String? localeId,
     Duration? pauseFor,
     Duration? listenFor,
@@ -73,6 +90,9 @@ class VoiceInputController {
 
     await resetSession();
 
+    final effectiveLocaleId = localeId ??
+        (appLocale != null ? await resolveLocaleIdForApp(appLocale) : null);
+
     _onStatus = onStatus;
     _isListening = true;
     await _speech.listen(
@@ -80,7 +100,7 @@ class VoiceInputController {
         onResult(result.recognizedWords, result.finalResult);
       },
       listenOptions: SpeechListenOptions(
-        localeId: localeId,
+        localeId: effectiveLocaleId,
         listenMode: ListenMode.confirmation,
         cancelOnError: true,
         partialResults: true,
