@@ -25,7 +25,13 @@ class AiChatAttachment {
 class AiChatMessage {
   final String id;
   final AiChatMessageRole role;
+
+  /// Text shown in the chat bubble (LaTeX-repaired for assistant replies).
   final String text;
+
+  /// Assistant only: parsed JSON `text` before server-side LaTeX repair.
+  final String? textRaw;
+
   final List<AiChatAttachment> attachments;
   final DateTime createdAt;
   final String? choiceId;
@@ -35,6 +41,7 @@ class AiChatMessage {
     required this.id,
     required this.role,
     required this.text,
+    this.textRaw,
     this.attachments = const [],
     required this.createdAt,
     this.choiceId,

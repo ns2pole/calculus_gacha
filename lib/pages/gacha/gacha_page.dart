@@ -25,6 +25,8 @@ import '../../widgets/timer/timer_display.dart';
 import '../../widgets/timer/timer_toggle.dart';
 import '../common/common.dart'
     show categorizeKeywords4Groups, filterProblemsByKeywords, MixedTextMath;
+import '../common/mixed_text_math_pipeline.dart'
+    show preprocessAiChatMathText, shouldRenderWithMixedTextMath;
 import '../other/scratch_paper_page.dart';
 import '../../utils/l10n_utils.dart';
 import 'gacha_settings_page.dart'
@@ -1134,16 +1136,17 @@ class _GachaPageState extends State<GachaPage> {
   }
 
   Widget _buildAiChatText(String text) {
-    if (!_containsTex(text)) {
+    final processed = preprocessAiChatMathText(text);
+    if (!_containsTex(processed)) {
       return Text(
-        text,
+        processed,
         softWrap: true,
         style: const TextStyle(fontSize: 16, height: 1.45),
       );
     }
 
     return MixedTextMath(
-      text,
+      processed,
       forceTex: false,
       labelStyle: const TextStyle(fontSize: 16, height: 1.45),
       mathStyle: const TextStyle(fontSize: 18),
@@ -1155,11 +1158,12 @@ class _GachaPageState extends State<GachaPage> {
   static final RegExp _boldMarkdown = RegExp(r'\*\*(.+?)\*\*');
 
   Widget _buildAiChatAssistantText(String text) {
-    if (!_containsDelimitedTex(text)) {
-      return _buildBoldAwareText(text);
+    final processed = preprocessAiChatMathText(text);
+    if (!shouldRenderWithMixedTextMath(processed)) {
+      return _buildBoldAwareText(processed);
     }
 
-    final cleaned = text.replaceAllMapped(_boldMarkdown, (m) => m.group(1)!);
+    final cleaned = processed.replaceAllMapped(_boldMarkdown, (m) => m.group(1)!);
     return _buildAiChatText(cleaned);
   }
 

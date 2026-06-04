@@ -24,6 +24,20 @@ void main() {
       expect(decoded.createdAt, message.createdAt);
     });
 
+    test('round-trips assistant textRaw', () {
+      final message = AiChatMessage(
+        id: 'a1',
+        role: AiChatMessageRole.assistant,
+        text: r'$S_1, S_2, S_3, \ldots$',
+        textRaw: r'$S_1, S_2, S_3, \\ldots$',
+        createdAt: DateTime.utc(2026, 6, 3),
+      );
+
+      final decoded = codec.decodeMessage(codec.encodeMessage(message));
+      expect(decoded.textRaw, message.textRaw);
+      expect(decoded.text, message.text);
+    });
+
     test('round-trips a session', () {
       final snapshot = AiChatSessionSnapshot(
         problemId: 'calc/integral_1',

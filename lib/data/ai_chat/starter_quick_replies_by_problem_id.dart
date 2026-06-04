@@ -1323,8 +1323,9 @@ const starterQuickRepliesByProblemId = <String, List<AiChatQuickReply>>{
   "CECF170F-83C3-485D-B0F7-A73B2089A50B": [
     AiChatQuickReply(label: "最初の一歩は何をすればいいですか？", actionId: "first_step"),
     AiChatQuickReply(label: "ヒントをください", actionId: "hint"),
-    AiChatQuickReply(label: "無限級数の考え方について教えて", actionId: "approach_only"),
-    AiChatQuickReply(label: "この式はどんな数列を表しているの？", actionId: "clarify_problem"),
+    AiChatQuickReply(label: "無限級数とはそもそも何ですか？", actionId: "term_definition"),
+    AiChatQuickReply(label: "2 - 2 + 2 - 2 + ...との違いは？", actionId: "clarify_problem"),
+    AiChatQuickReply(label: "この式はどんな数列を表しているの？", actionId: "meaning_of_form"),
   ],
 //\int_0^{(\pi)/(2)} \cos^2 x dx : 積分ガチャ
   "D04D1417-91C9-4E4F-8558-80C8FF96A50F": [

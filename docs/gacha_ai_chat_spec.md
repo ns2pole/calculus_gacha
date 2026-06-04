@@ -239,7 +239,8 @@ class GachaAiSession {
 }
 ```
 
-- `message.text`: 吹き出し本文（Markdown/LaTeX 混在可）
+- `message.text`: 吹き出し本文（Markdown/LaTeX 混在可。LaTeX JSON 修復済み）
+- `message.textRaw`（任意）: 修復前の assistant 本文（Firestore に保存し品質改善に利用）
 - `quickReplies`: 0〜5件。`label` はチップ表示、`sendText` は省略可（省略時は `label` を送信）
 - ストリーミング: 任意（Phase 1 は一括でも可）
 

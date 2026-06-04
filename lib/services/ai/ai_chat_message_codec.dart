@@ -53,6 +53,7 @@ class AiChatMessageCodec {
       'id': message.id,
       'role': message.role.name,
       'text': message.text,
+      if (message.textRaw != null) 'textRaw': message.textRaw,
       if (message.choiceId != null) 'choiceId': message.choiceId,
       'createdAt': message.createdAt.toIso8601String(),
     };
@@ -79,10 +80,12 @@ class AiChatMessageCodec {
         : DateTime.now();
 
     final choiceId = json['choiceId'];
+    final textRaw = json['textRaw'];
     return AiChatMessage(
       id: id,
       role: role,
       text: text,
+      textRaw: textRaw is String && textRaw.isNotEmpty ? textRaw : null,
       createdAt: createdAt,
       choiceId: choiceId is String ? choiceId : null,
     );

@@ -1,3 +1,5 @@
+import {normalizeDoubleEscapedLatex} from "./latexSafeJsonString";
+import {parseAiChatGeminiJson} from "./parseAiChatGeminiJson";
 import {AiChatRequest} from "./types";
 
 export interface AiChatQuickReply {
@@ -7,7 +9,10 @@ export interface AiChatQuickReply {
 }
 
 export interface AiChatStructuredReply {
+  /** Display / storage text after double-backslash normalization. */
   text: string;
+  /** LaTeX-safe decoded `text` before [normalizeDoubleEscapedLatex] (assistant only). */
+  textRaw?: string;
   quickReplies: AiChatQuickReply[];
 }
 
@@ -29,21 +34,15 @@ export function parseAiChatStructuredResponse(
     return {text: "", quickReplies: []};
   }
 
-  try {
-    const parsed = JSON.parse(trimmed) as unknown;
-    if (parsed != null && typeof parsed === "object") {
-      const record = parsed as Record<string, unknown>;
-      const text = typeof record.text === "string" ? record.text.trim() : "";
-      const quickReplies = sanitizeQuickReplies(record.quickReplies, request);
-      if (text.length > 0) {
-        return {text, quickReplies};
-      }
-    }
-  } catch {
-    // Fall through to plain-text fallback.
+  const extracted = parseAiChatGeminiJson(trimmed);
+  if (extracted != null && extracted.text.length > 0) {
+    const textRaw = extracted.text;
+    const text = normalizeDoubleEscapedLatex(textRaw);
+    const quickReplies = sanitizeQuickReplies(extracted.quickReplies, request);
+    return {text, textRaw, quickReplies};
   }
 
-  return {text: trimmed, quickReplies: []};
+  return {text: trimmed, textRaw: trimmed, quickReplies: []};
 }
 
 export function sanitizeQuickReplies(

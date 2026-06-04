@@ -2,7 +2,7 @@ import 'package:ai_chat_kit/ai_chat_kit.dart';
 
 /// Persisted AI chat state for one problem.
 class AiChatSessionSnapshot {
-  static const int schemaVersion = 1;
+  static const int schemaVersion = 2;
   static const int maxMessages = 50;
 
   final String problemId;

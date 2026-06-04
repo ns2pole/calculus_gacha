@@ -36,7 +36,11 @@ export const aiChat = onRequest({
     const reply = await generateAiChatReply(geminiApiKey.value(), chatRequest);
 
     sendJson(response, 200, {
-      message: {role: "assistant", text: reply.text},
+      message: {
+        role: "assistant",
+        text: reply.text,
+        ...(reply.textRaw != null ? {textRaw: reply.textRaw} : {}),
+      },
       quickReplies: reply.quickReplies,
       usage: {
         count: usageCount,

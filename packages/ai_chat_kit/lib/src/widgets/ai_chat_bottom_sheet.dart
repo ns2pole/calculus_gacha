@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../models/ai_chat_message.dart';
+import 'user_chat_message_body.dart';
 import '../models/ai_chat_quick_reply.dart';
 import '../models/ai_chat_session_payload.dart';
 import '../ports/ai_chat_host_ports.dart';
@@ -638,6 +639,14 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
     return _buildQuickReplyChips(replies);
   }
 
+  Widget _buildQuickReplyLabel(String label) {
+    final renderer = widget.assistantTextRenderer ?? widget.textRenderer;
+    if (renderer != null) {
+      return renderer(label);
+    }
+    return Text(label);
+  }
+
   Widget _buildQuickReplyChips(List<AiChatQuickReply> replies) {
     if (replies.isEmpty) return const SizedBox.shrink();
 
@@ -649,7 +658,7 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
         children: [
           for (final reply in replies)
             ActionChip(
-              label: Text(reply.label),
+              label: _buildQuickReplyLabel(reply.label),
               onPressed: _isSending
                   ? null
                   : () => _sendText(
@@ -761,7 +770,10 @@ class _MessageBubble extends StatelessWidget {
           color: colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Text(message.text),
+        child: buildUserChatMessageBody(
+          text: message.text,
+          textRenderer: textRenderer,
+        ),
       ),
     );
   }

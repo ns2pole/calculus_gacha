@@ -83,6 +83,7 @@ class HttpAiChatClient implements AiChatClient {
           id: DateTime.now().microsecondsSinceEpoch.toString(),
           role: AiChatMessageRole.assistant,
           text: text,
+          textRaw: _readTextRaw(decoded),
           quickReplies: _readQuickReplies(decoded),
           createdAt: DateTime.now(),
         );
@@ -156,6 +157,15 @@ class HttpAiChatClient implements AiChatClient {
     }
     final text = decoded['text'];
     return text is String ? text : '';
+  }
+
+  String? _readTextRaw(Map<String, dynamic> decoded) {
+    final message = decoded['message'];
+    if (message is! Map<String, dynamic>) return null;
+    final textRaw = message['textRaw'];
+    if (textRaw is! String) return null;
+    final trimmed = textRaw.trim();
+    return trimmed.isEmpty ? null : textRaw;
   }
 
   List<AiChatQuickReply> _readQuickReplies(Map<String, dynamic> decoded) {

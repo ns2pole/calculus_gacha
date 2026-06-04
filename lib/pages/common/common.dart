@@ -1,6 +1,7 @@
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter/material.dart';
 import '../../models/math_problem.dart';
+import 'mixed_text_math_pipeline.dart';
 
 /// テキストと数式（TeX）を混在表示するウィジェット
 ///
@@ -598,6 +599,39 @@ class MixedTextMath extends StatelessWidget {
                       mathBody,
                       mathStyle ?? const TextStyle(fontSize: 26),
                     ),
+                  ),
+                );
+              }
+
+              if (shouldSplitMixedCjkAndLatex(para)) {
+                final spans = <InlineSpan>[];
+                for (final segment in segmentMixedCjkAndLatex(para)) {
+                  if (segment.isPlain) {
+                    _appendTextSpan(
+                      spans,
+                      segment.text,
+                      labelStyle ?? defaultLabel,
+                    );
+                  } else {
+                    spans.add(
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: _inlineMathWidgetConstrained(
+                          segment.text,
+                          maxW,
+                          mathStyle ?? const TextStyle(fontSize: 22),
+                        ),
+                      ),
+                    );
+                  }
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text.rich(
+                    TextSpan(children: spans),
+                    softWrap: true,
+                    textAlign: TextAlign.left,
                   ),
                 );
               }
