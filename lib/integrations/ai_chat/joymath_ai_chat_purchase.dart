@@ -43,10 +43,7 @@ Future<AiChatUpgradeResult> joymathPurchaseAiTutor(BuildContext context) async {
   );
 
   if (purchased == true) {
-    return AiChatUpgradeResult(
-      success: true,
-      userMessage: l10n.aiTutorPurchaseSuccess,
-    );
+    return const AiChatUpgradeResult(success: true);
   }
   return const AiChatUpgradeResult.cancelled();
 }

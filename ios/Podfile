@@ -49,9 +49,6 @@ post_install do |installer|
         'PERMISSION_MICROPHONE=1',
         'PERMISSION_SPEECH_RECOGNIZER=1',
       ]
-      # Xcode 16: avoid DerivedData rename failures and speed up Pod compiles.
-      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
-      config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'NO'
     end
   end
 end

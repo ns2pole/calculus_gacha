@@ -4,13 +4,5 @@
 <dict>
 	<key>PreviewsEnabled</key>
 	<false/>
-	<key>BuildLocationStyle</key>
-	<string>CustomLocation</string>
-	<key>CustomBuildLocationType</key>
-	<string>RelativeToDerivedData</string>
-	<key>DerivedDataLocationStyle</key>
-	<string>WorkspaceRelativePath</string>
-	<key>DerivedDataCustomLocation</key>
-	<string>DerivedData</string>
 </dict>
 </plist>
