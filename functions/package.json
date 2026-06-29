@@ -10,7 +10,7 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "deploy": "npm run build && firebase deploy --only functions",
     "lint": "tsc --noEmit",
-    "test": "tsc -p tsconfig.test.json && node --test lib/test/*.test.js"
+    "test": "npm run build && tsc -p tsconfig.test.json && node --test lib/test/*.test.js test/rateLimiter.production.test.mjs"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0",

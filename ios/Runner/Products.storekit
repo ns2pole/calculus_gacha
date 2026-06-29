@@ -63,6 +63,26 @@
       "productID" : "Learning_history_option_500yen",
       "referenceName" : "Pro Version - Learning History",
       "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "500",
+      "familyShareable" : false,
+      "identifier" : "ai_tutor_one_year_500yen_consumable",
+      "localizations" : [
+        {
+          "description" : "AIチャットを500回まで利用可能（購入日から1年間）",
+          "displayName" : "AIチューター Pass",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "500 AI chat uses for one year from purchase date.",
+          "displayName" : "AI Tutor Pass",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "ai_tutor_one_year_500yen_consumable",
+      "referenceName" : "AI Tutor Pass",
+      "type" : "Consumable"
     }
   ],
   "settings" : {

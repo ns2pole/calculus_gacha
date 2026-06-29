@@ -80,10 +80,17 @@ class AiTutorUsageSnapshot {
         (json['totalRemaining'] as num?)?.toInt() ??
         0;
 
+    final passRemainingTotal = passes.fold<int>(
+      0,
+      (sum, pass) => sum + pass.remaining,
+    );
+
     final resolvedFreeLimit = freeLimit ??
         (passes.isEmpty ? ((json['limit'] as num?)?.toInt() ?? 15) : 15);
     final resolvedFreeRemaining = freeRemaining ??
-        (passes.isEmpty ? remaining : resolvedFreeLimit);
+        (passes.isEmpty
+            ? remaining
+            : (remaining - passRemainingTotal).clamp(0, resolvedFreeLimit));
 
     return AiTutorUsageSnapshot(
       tier: json['tier'] as String? ?? 'free',
@@ -91,7 +98,7 @@ class AiTutorUsageSnapshot {
       count: (json['count'] as num?)?.toInt() ?? 0,
       limit: (json['limit'] as num?)?.toInt() ?? 0,
       remaining: remaining,
-      freeRemaining: resolvedFreeRemaining,
+      freeRemaining: resolvedFreeRemaining.toInt(),
       freeLimit: resolvedFreeLimit,
       passes: passes,
     );

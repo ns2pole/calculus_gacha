@@ -37,6 +37,29 @@ void main() {
       expect(snapshot.passLimit, 500);
     });
 
+    test('does not assume full free quota when pass exists without free field', () {
+      final snapshot = AiTutorUsageSnapshot.fromJson({
+        'tier': 'paid',
+        'period': 'pass',
+        'count': 1,
+        'limit': 515,
+        'remaining': 509,
+        'passes': [
+          {
+            'passId': 'pass-a',
+            'purchasedAt': '2026-06-01T00:00:00.000Z',
+            'expiresAt': '2027-06-01T00:00:00.000Z',
+            'used': 1,
+            'limit': 500,
+            'remaining': 499,
+          },
+        ],
+      });
+
+      expect(snapshot.freeRemaining, 10);
+      expect(snapshot.passRemaining, 499);
+    });
+
     test('totalRemaining falls back to remaining field', () {
       final snapshot = AiTutorUsageSnapshot.fromJson({
         'tier': 'free',
