@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 import 'iap_secondary_products_config.dart';
+import 'purchase_result_from_exception.dart';
 
 /// RevenueCatサービス
 class RevenueCatService {
@@ -401,6 +402,10 @@ class RevenueCatService {
           );
         }
       } catch (e) {
+        final earlyResult = purchaseResultFromException(e);
+        if (earlyResult != null) {
+          return earlyResult;
+        }
         // offerings 取得に失敗した場合は次の手段へ（ログは残す）
         debugPrint('RevenueCat: getOfferings failed or no matching package: $e');
       }
@@ -432,22 +437,12 @@ class RevenueCatService {
           return PurchaseResult(success: false, error: 'Purchase completed but entitlement not active');
         }
       } catch (e) {
-        // PlatformException の場合はエラーコード別に扱う
-        if (e is PlatformException) {
-          final errorCode = PurchasesErrorHelper.getErrorCode(e);
-          if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
+        final mappedResult = purchaseResultFromException(e);
+        if (mappedResult != null) {
+          if (mappedResult.cancelled) {
             debugPrint('RevenueCat: Purchase cancelled by user');
-            return PurchaseResult(success: false, error: 'Purchase cancelled', cancelled: true);
-          } else if (errorCode == PurchasesErrorCode.networkError) {
-            debugPrint('RevenueCat: Purchase network error');
-            return PurchaseResult(success: false, error: 'Network error. Please check your connection.');
-          } else if (errorCode == PurchasesErrorCode.purchaseNotAllowedError) {
-            debugPrint('RevenueCat: Purchase not allowed');
-            return PurchaseResult(success: false, error: 'Purchase not allowed');
-          } else if (errorCode == PurchasesErrorCode.purchaseInvalidError) {
-            debugPrint('RevenueCat: Purchase invalid');
-            return PurchaseResult(success: false, error: 'Invalid purchase');
           }
+          return mappedResult;
         }
         debugPrint('RevenueCat: Purchase failed: $e');
         return PurchaseResult(success: false, error: e.toString());

@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/auth/cloud_sync_preference_service.dart';
 import '../../services/auth/firebase_auth_service.dart';
 import '../../services/payment/ai_tutor_entitlement_sync_service.dart';
+import '../../services/payment/purchase_result_from_exception.dart';
 import '../../services/payment/revenuecat_service.dart';
 import '../../widgets/legal/iap_product_info_section.dart';
 import '../../widgets/legal/legal_notice_footer.dart';
@@ -135,7 +136,7 @@ class _JoymathAiTutorPurchaseDialogState
         ));
         return;
       }
-      if (result.cancelled) return;
+      if (!shouldShowPurchaseFailureMessage(result)) return;
       _showError(
         AppLocalizations.of(context)!
             .purchaseFailed(result.error ?? AppLocalizations.of(context)!.unknownError),
