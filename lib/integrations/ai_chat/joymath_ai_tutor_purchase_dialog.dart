@@ -4,12 +4,9 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/auth/cloud_sync_preference_service.dart';
 import '../../services/auth/firebase_auth_service.dart';
-import '../../services/payment/ai_tutor_entitlement_sync_service.dart';
-import '../../services/payment/purchase_result_from_exception.dart';
 import '../../services/payment/revenuecat_service.dart';
 import '../../widgets/legal/iap_product_info_section.dart';
 import '../../widgets/legal/legal_notice_footer.dart';
-import 'joymath_ai_chat_purchase.dart';
 
 class JoymathAiTutorPurchaseDialog extends StatefulWidget {
   final String price;
@@ -23,8 +20,7 @@ class JoymathAiTutorPurchaseDialog extends StatefulWidget {
 
 class _JoymathAiTutorPurchaseDialogState
     extends State<JoymathAiTutorPurchaseDialog> {
-  bool _isProcessing = false;
-  bool _isSigningInBeforePurchase = false;
+  bool _isSigningIn = false;
 
   bool get _usesAppleSignIn =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
@@ -69,7 +65,7 @@ class _JoymathAiTutorPurchaseDialogState
           _BenefitRow(text: _platformBillingBenefitText(l10n)),
           const SizedBox(height: 14),
           const LegalNoticeFooter(),
-          if (_isProcessing) ...[
+          if (_isSigningIn) ...[
             const SizedBox(height: 16),
             Row(
               children: [
@@ -79,13 +75,7 @@ class _JoymathAiTutorPurchaseDialogState
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    _isSigningInBeforePurchase
-                        ? l10n.aiTutorSignInInProgress
-                        : l10n.aiTutorPurchaseInProgress,
-                  ),
-                ),
+                Expanded(child: Text(l10n.aiTutorSignInInProgress)),
               ],
             ),
           ],
@@ -94,13 +84,13 @@ class _JoymathAiTutorPurchaseDialogState
       actionsAlignment: MainAxisAlignment.center,
       actions: [
         FilledButton(
-          onPressed: _isProcessing
+          onPressed: _isSigningIn
               ? null
-              : (isAuthenticated ? _purchase : _signInAndPurchase),
+              : (isAuthenticated ? _confirmPurchase : _signInAndConfirm),
           child: Text(isAuthenticated ? l10n.purchase : signInButtonText),
         ),
         TextButton(
-          onPressed: _isProcessing
+          onPressed: _isSigningIn
               ? null
               : () => Navigator.of(context).pop(false),
           child: Text(l10n.cancel),
@@ -109,56 +99,13 @@ class _JoymathAiTutorPurchaseDialogState
     );
   }
 
-  Future<void> _purchase() async {
-    setState(() {
-      _isProcessing = true;
-      _isSigningInBeforePurchase = false;
-    });
-    try {
-      await RevenueCatService.syncCurrentFirebaseUser();
-      final result = await RevenueCatService.purchaseAiTutorPass();
-      if (!mounted) return;
-      setState(() {
-        _isProcessing = false;
-        _isSigningInBeforePurchase = false;
-      });
-      if (result.success) {
-        final syncResult = await AiTutorEntitlementSyncService
-            .syncAfterPurchaseOrRestoreDetailed();
-        if (!mounted) return;
-        if (syncResult.active) {
-          Navigator.of(context).pop(true);
-          return;
-        }
-        _showError(joymathRestoreSyncFailureMessage(
-          AppLocalizations.of(context)!,
-          syncResult,
-        ));
-        return;
-      }
-      if (!shouldShowPurchaseFailureMessage(result)) return;
-      _showError(
-        AppLocalizations.of(context)!
-            .purchaseFailed(result.error ?? AppLocalizations.of(context)!.unknownError),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isProcessing = false;
-        _isSigningInBeforePurchase = false;
-      });
-      _showError(
-        AppLocalizations.of(context)!.purchaseFailed(e.toString()),
-      );
-    }
+  void _confirmPurchase() {
+    Navigator.of(context).pop(true);
   }
 
-  Future<void> _signInAndPurchase() async {
+  Future<void> _signInAndConfirm() async {
     final l10n = AppLocalizations.of(context)!;
-    setState(() {
-      _isProcessing = true;
-      _isSigningInBeforePurchase = true;
-    });
+    setState(() => _isSigningIn = true);
 
     try {
       final credential = _usesAppleSignIn
@@ -166,10 +113,7 @@ class _JoymathAiTutorPurchaseDialogState
           : await FirebaseAuthService.signInWithGoogle();
       if (!mounted) return;
       if (credential == null) {
-        setState(() {
-          _isProcessing = false;
-          _isSigningInBeforePurchase = false;
-        });
+        setState(() => _isSigningIn = false);
         return;
       }
 
@@ -180,27 +124,18 @@ class _JoymathAiTutorPurchaseDialogState
 
       await RevenueCatService.syncCurrentFirebaseUser();
       if (!mounted) return;
-      setState(() {
-        _isProcessing = false;
-        _isSigningInBeforePurchase = false;
-      });
-      await _purchase();
+      Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _isProcessing = false;
-        _isSigningInBeforePurchase = false;
-      });
-      _showError(
-        '${_usesAppleSignIn ? l10n.auth_appleSignInFailed : l10n.auth_googleSignInFailed}: $e',
+      setState(() => _isSigningIn = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${_usesAppleSignIn ? l10n.auth_appleSignInFailed : l10n.auth_googleSignInFailed}: $e',
+          ),
+        ),
       );
     }
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 }
 

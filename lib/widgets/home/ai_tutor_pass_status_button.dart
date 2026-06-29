@@ -102,6 +102,12 @@ class _AiTutorPassStatusButtonState extends State<AiTutorPassStatusButton>
           if (!mounted) return;
           if (result.success) {
             await _refreshUsage();
+            return;
+          }
+          if (result.userMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(result.userMessage!)),
+            );
           }
         },
       ),
