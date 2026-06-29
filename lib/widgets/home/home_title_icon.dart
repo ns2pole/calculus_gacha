@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/payment/revenuecat_service.dart';
 
-/// ホーム画面タイトル左のアプリアイコン。AI Tutor Plus 契約中は上にバッジを表示。
+/// ホーム画面タイトル左のアプリアイコン。AI Tutor Pass 有効時は上にバッジを表示。
 class HomeTitleIcon extends StatefulWidget {
   final double size;
 
@@ -20,7 +20,7 @@ class _HomeTitleIconState extends State<HomeTitleIcon> {
   @override
   void initState() {
     super.initState();
-    _loadSubscriptionStatus();
+    _loadPassStatus();
   }
 
   @override
@@ -28,14 +28,14 @@ class _HomeTitleIconState extends State<HomeTitleIcon> {
     super.didChangeDependencies();
     final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
     if (isCurrent && !_routeWasCurrent) {
-      _loadSubscriptionStatus();
+      _loadPassStatus();
     }
     _routeWasCurrent = isCurrent;
   }
 
-  Future<void> _loadSubscriptionStatus() async {
+  Future<void> _loadPassStatus() async {
     final subscribed =
-        await RevenueCatService.isAiTutorSubscriptionPurchased();
+        await RevenueCatService.isAiTutorPassPurchased();
     if (!mounted) return;
     setState(() => _showBadge = subscribed);
   }

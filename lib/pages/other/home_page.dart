@@ -16,6 +16,8 @@ import '../../screens/physics_math_gacha_screen.dart';
 import '../../widgets/home/background_image_widget.dart';
 import '../../widgets/home/home_card_widgets.dart';
 import '../../widgets/home/home_title_icon.dart';
+import '../../widgets/home/tutoring_promo_link.dart';
+import '../../widgets/home/ai_tutor_pass_status_button.dart';
 import '../../widgets/legal/legal_notice_footer.dart';
 import '../../widgets/account/account_cloud_sync_toggle.dart';
 import '../../widgets/account/account_deletion_flow.dart';
@@ -104,28 +106,34 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                     padding: EdgeInsets.only(
                       top:
                           MediaQuery.of(context).padding.top +
-                          60.0, // タイトル上のスペースを詰める
+                          4.0,
                       bottom: 20.0,
                     ),
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 8,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        HomeTitleIcon(size: responsive.isCompact ? 36 : 43),
-                        // タイトルを一つのRowとしてセンタリング
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                        const TutoringPromoLink(),
+                        const SizedBox(height: 6),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
-                            Text(
-                              l10n.appTitle,
-                              style: TextStyle(
-                                fontSize: responsive.titleFontSize,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF8B7355), // クリーム色っぽい色
-                              ),
+                            HomeTitleIcon(size: responsive.isCompact ? 36 : 43),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  l10n.appTitle,
+                                  style: TextStyle(
+                                    fontSize: responsive.titleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8B7355),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -329,22 +337,19 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
               ),
             ),
           ),
-          // 左上：クラウド同期ボタン
+          // 左上：Pass 残量
           Positioned(
             top: MediaQuery.of(context).padding.top + 8.0,
             left: 16.0,
             child: StreamBuilder(
               stream: FirebaseAuthService.authStateChanges,
               builder: (context, snapshot) {
-                if (!FirebaseAuthService.isAuthenticated) {
+                final isAuthenticated = FirebaseAuthService.isAuthenticated;
+                if (!isAuthenticated) {
                   return const SizedBox.shrink();
                 }
-                CloudSyncPreferenceService.refreshForUser(
-                  FirebaseAuthService.userId,
-                );
-                return AccountCloudSyncSyncButtonSlot(
-                  child: _SyncButton(onSynced: updateProgress),
-                );
+
+                return const AiTutorPassStatusButton();
               },
             ),
           ),
@@ -384,7 +389,12 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                           size: 42.0,
                         ),
                         onSelected: (value) async {
-                          if (value == 'deleteAccount') {
+                          if (value == 'syncCloud') {
+                            await performAccountCloudSync(
+                              context,
+                              onSynced: updateProgress,
+                            );
+                          } else if (value == 'deleteAccount') {
                             final deleted = await AccountDeletionFlow.show(
                               context,
                             );
@@ -421,6 +431,9 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
                               ),
                             ),
                           buildAccountCloudSyncMenuItem(),
+                          if (buildAccountCloudSyncSyncMenuItem(context)
+                              case final syncMenuItem?)
+                            syncMenuItem,
                           const PopupMenuDivider(),
                           PopupMenuItem(
                             value: 'deleteAccount',
@@ -1159,109 +1172,5 @@ class _HomePageState extends State<HomePage> with ProgressUpdateMixin {
   /// 最新3回分の集計のデザイン（濃い金色、強い輝き、美しい）をすべての星に適用
   Widget _buildStarBadge() {
     return Text('⭐️', style: TextStyle(fontSize: 24));
-  }
-}
-
-/// Firebaseクラウドデータとの同期ボタン
-class _SyncButton extends StatefulWidget {
-  final VoidCallback? onSynced;
-
-  const _SyncButton({this.onSynced});
-
-  @override
-  State<_SyncButton> createState() => _SyncButtonState();
-}
-
-class _SyncButtonState extends State<_SyncButton> {
-  bool _isSyncing = false;
-
-  Future<void> _performSync() async {
-    if (_isSyncing) return;
-    final l10n = AppLocalizations.of(context)!;
-
-    if (!await CloudSyncPreferenceService.isEnabledForUser(
-      FirebaseAuthService.userId,
-    )) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.cloudSyncDisabledSnack),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-      return;
-    }
-
-    setState(() {
-      _isSyncing = true;
-    });
-
-    try {
-      final success = await SimpleDataManager.performCloudSync(force: true);
-      if (!success) {
-        throw Exception('Cloud sync did not complete');
-      }
-
-      if (mounted) {
-        widget.onSynced?.call();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.syncCompleted),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error syncing: $e');
-      if (mounted) {
-        final errorStr = e.toString().toLowerCase();
-        final message = errorStr.contains('permission')
-            ? l10n.noFirestorePermission
-            : l10n.syncError;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Colors.orange,
-            duration: const Duration(seconds: 4),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSyncing = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Material(
-      color: Colors.transparent,
-      child: IconButton(
-        iconSize: 42.0,
-        icon: _isSyncing
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B7355)),
-                ),
-              )
-            : const Icon(
-                Icons.cloud_sync,
-                color: Color(0xFF8B7355),
-                size: 42.0,
-              ),
-        onPressed: _isSyncing ? null : _performSync,
-        tooltip: l10n.syncWithCloud,
-      ),
-    );
   }
 }

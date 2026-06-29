@@ -43,7 +43,43 @@ export interface UsageIdentity {
 
 export interface UsageLimit {
   tier: "free" | "paid";
-  period: "daily" | "monthly";
+  period: "daily" | "monthly" | "pass";
   limit: number;
   periodKey: string;
+}
+
+export interface AiTutorPassRecord {
+  passId: string;
+  purchasedAtMs: number;
+  expiresAtMs: number;
+  limit: number;
+  productId: string;
+  revenueCatEventId: string | null;
+}
+
+export interface PassUsageDetail {
+  passId: string;
+  purchasedAtMs: number;
+  expiresAtMs: number;
+  used: number;
+  limit: number;
+  remaining: number;
+}
+
+export interface FreeUsageDetail {
+  count: number;
+  limit: number;
+  remaining: number;
+  periodKey: string;
+}
+
+export interface UsageSummary {
+  tier: "free" | "paid";
+  period: "monthly" | "pass";
+  count: number;
+  limit: number;
+  remaining: number;
+  periodKey: string;
+  passes?: PassUsageDetail[];
+  free?: FreeUsageDetail;
 }

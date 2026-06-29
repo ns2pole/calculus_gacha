@@ -52,7 +52,7 @@ class JoymathAiTutorUpgradeCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        l10n.aiTutorLimitReachedBody(price),
+                        l10n.aiTutorPurchaseBenefitPassLimit,
                         style: TextStyle(color: colorScheme.onPrimaryContainer),
                       ),
                     ],

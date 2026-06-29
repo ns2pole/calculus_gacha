@@ -33,12 +33,8 @@ String joymathRestoreSyncFailureMessage(
 Future<AiChatUpgradeResult> joymathPurchaseAiTutor(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;
 
-  if (FirebaseAuthService.isAuthenticated) {
-    return _purchaseDirect(context, l10n);
-  }
-
   final price =
-      await RevenueCatService.getAiTutorSubscriptionPrice() ?? l10n.defaultPrice;
+      await RevenueCatService.getAiTutorPassPrice() ?? l10n.defaultPrice;
   if (!context.mounted) return const AiChatUpgradeResult.cancelled();
 
   final purchased = await showDialog<bool>(
@@ -54,35 +50,6 @@ Future<AiChatUpgradeResult> joymathPurchaseAiTutor(BuildContext context) async {
   }
   return const AiChatUpgradeResult.cancelled();
 }
-
-Future<AiChatUpgradeResult> _purchaseDirect(
-  BuildContext context,
-  AppLocalizations l10n,
-) async {
-  await RevenueCatService.syncCurrentFirebaseUser();
-  final result = await RevenueCatService.purchaseAiTutorSubscription();
-  if (result.cancelled) return const AiChatUpgradeResult.cancelled();
-  if (!result.success) {
-    return AiChatUpgradeResult(
-      success: false,
-      userMessage: l10n.purchaseFailed(result.error ?? l10n.unknownError),
-    );
-  }
-
-  final syncResult =
-      await AiTutorEntitlementSyncService.syncAfterPurchaseOrRestoreDetailed();
-  if (syncResult.active) {
-    return AiChatUpgradeResult(
-      success: true,
-      userMessage: l10n.aiTutorPurchaseSuccess,
-    );
-  }
-  return AiChatUpgradeResult(
-    success: false,
-    userMessage: joymathRestoreSyncFailureMessage(l10n, syncResult),
-  );
-}
-
 Future<AiChatUpgradeResult> joymathRestoreAiTutor(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;
   final usesAppleSignIn =
@@ -102,7 +69,7 @@ Future<AiChatUpgradeResult> joymathRestoreAiTutor(BuildContext context) async {
   }
 
   await RevenueCatService.syncCurrentFirebaseUser();
-  final restored = await RevenueCatService.restoreAiTutorSubscription();
+  final restored = await RevenueCatService.restoreAiTutorPass();
   if (!restored) {
     return AiChatUpgradeResult(
       success: false,

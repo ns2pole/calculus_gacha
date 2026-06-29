@@ -749,13 +749,13 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorPurchaseProductName.
   ///
   /// In ja, this message translates to:
-  /// **'AIチューター Plus(500)'**
+  /// **'AIチューター Pass(500・1年)'**
   String get aiTutorPurchaseProductName;
 
   /// No description provided for @aiTutorPurchaseDurationValue.
   ///
   /// In ja, this message translates to:
-  /// **'1か月（非自動更新）'**
+  /// **'1年間（消耗型・非自動更新）'**
   String get aiTutorPurchaseDurationValue;
 
   /// No description provided for @purchaseTitle.
@@ -1124,16 +1124,16 @@ abstract class AppLocalizations {
   /// **'今月の無料AIチャット利用上限（{limit}回）に達しました。'**
   String aiChatFreeMonthlyLimitReached(int limit);
 
-  /// No description provided for @aiChatPaidMonthlyLimitReached.
+  /// No description provided for @aiChatPaidPassLimitReached.
   ///
   /// In ja, this message translates to:
-  /// **'今月のAIチャット利用上限（{limit}回）に達しました。'**
-  String aiChatPaidMonthlyLimitReached(int limit);
+  /// **'AIチューター Pass の利用上限（{limit}回）に達しました。'**
+  String aiChatPaidPassLimitReached(int limit);
 
   /// No description provided for @aiTutorPlusBadge.
   ///
   /// In ja, this message translates to:
-  /// **'Tutor Plus +'**
+  /// **'Tutor Pass +'**
   String get aiTutorPlusBadge;
 
   /// No description provided for @aiTutorLimitReachedTitle.
@@ -1145,13 +1145,13 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorLimitReachedBody.
   ///
   /// In ja, this message translates to:
-  /// **'{price}/月のAIチューター Plus に登録すると、AIチャットを月500回まで使えます。'**
-  String aiTutorLimitReachedBody(String price);
+  /// **'AIチャットを500回まで利用可能(有効期限:購入日から1年間)'**
+  String get aiTutorLimitReachedBody;
 
   /// No description provided for @aiTutorUpgradeButton.
   ///
   /// In ja, this message translates to:
-  /// **'月500回プランを見る'**
+  /// **'500回パスを見る'**
   String get aiTutorUpgradeButton;
 
   /// No description provided for @aiTutorRestorePurchasedButton.
@@ -1169,20 +1169,20 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorPurchaseTitle.
   ///
   /// In ja, this message translates to:
-  /// **'AIチューター Plus'**
+  /// **'AIチューター Pass'**
   String get aiTutorPurchaseTitle;
 
   /// No description provided for @aiTutorPurchaseDescription.
   ///
   /// In ja, this message translates to:
-  /// **'{price}/月でAIチャットを月500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。'**
+  /// **'{price}で1年間、AIチャットを500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。'**
   String aiTutorPurchaseDescription(String price);
 
-  /// No description provided for @aiTutorPurchaseBenefitMonthlyLimit.
+  /// No description provided for @aiTutorPurchaseBenefitPassLimit.
   ///
   /// In ja, this message translates to:
-  /// **'AIチャットを月500回まで利用可能'**
-  String get aiTutorPurchaseBenefitMonthlyLimit;
+  /// **'AIチャットを500回まで利用可能(有効期限:購入日から1年間)'**
+  String get aiTutorPurchaseBenefitPassLimit;
 
   /// No description provided for @aiTutorPurchaseBenefitPlatformBilling.
   ///
@@ -1199,7 +1199,7 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorPurchaseSuccess.
   ///
   /// In ja, this message translates to:
-  /// **'AIチューター Plus が有効になりました'**
+  /// **'AIチューター Pass が有効になりました'**
   String get aiTutorPurchaseSuccess;
 
   /// No description provided for @aiTutorPurchaseRestore.
@@ -1262,6 +1262,78 @@ abstract class AppLocalizations {
   /// **'購入処理中...'**
   String get aiTutorPurchaseInProgress;
 
+  /// No description provided for @aiTutorPassStatusTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'AIチューター Pass'**
+  String get aiTutorPassStatusTitle;
+
+  /// No description provided for @aiTutorPassTotalRemaining.
+  ///
+  /// In ja, this message translates to:
+  /// **'Pass 残り {remaining} 回 / {limit} 回'**
+  String aiTutorPassTotalRemaining(int remaining, int limit);
+
+  /// No description provided for @aiTutorPassCombinedRemaining.
+  ///
+  /// In ja, this message translates to:
+  /// **'合計 残り {remaining} 回'**
+  String aiTutorPassCombinedRemaining(int remaining);
+
+  /// No description provided for @aiTutorPassFreeRemaining.
+  ///
+  /// In ja, this message translates to:
+  /// **'今月の無料枠 残り {remaining} 回'**
+  String aiTutorPassFreeRemaining(int remaining);
+
+  /// No description provided for @aiTutorPassPurchasedAt.
+  ///
+  /// In ja, this message translates to:
+  /// **'購入日: {date}'**
+  String aiTutorPassPurchasedAt(String date);
+
+  /// No description provided for @aiTutorPassExpiresAt.
+  ///
+  /// In ja, this message translates to:
+  /// **'期限: {date}'**
+  String aiTutorPassExpiresAt(String date);
+
+  /// No description provided for @aiTutorPassLotRemaining.
+  ///
+  /// In ja, this message translates to:
+  /// **'残り {remaining} 回'**
+  String aiTutorPassLotRemaining(int remaining);
+
+  /// No description provided for @aiTutorPassSignInPrompt.
+  ///
+  /// In ja, this message translates to:
+  /// **'ログインすると購入・残量確認ができます'**
+  String get aiTutorPassSignInPrompt;
+
+  /// No description provided for @aiTutorPassBuyMore.
+  ///
+  /// In ja, this message translates to:
+  /// **'Pass を購入'**
+  String get aiTutorPassBuyMore;
+
+  /// No description provided for @aiTutorPassNoPasses.
+  ///
+  /// In ja, this message translates to:
+  /// **'有効な Pass がありません'**
+  String get aiTutorPassNoPasses;
+
+  /// No description provided for @aiTutorPassLoading.
+  ///
+  /// In ja, this message translates to:
+  /// **'残量を確認中...'**
+  String get aiTutorPassLoading;
+
+  /// No description provided for @aiTutorPassRefresh.
+  ///
+  /// In ja, this message translates to:
+  /// **'更新'**
+  String get aiTutorPassRefresh;
+
   /// No description provided for @recordSaved.
   ///
   /// In ja, this message translates to:
@@ -1313,7 +1385,7 @@ abstract class AppLocalizations {
   /// No description provided for @aiTutorRestoreSuccessVerified.
   ///
   /// In ja, this message translates to:
-  /// **'購入を復元しました。AIチューター Plus が有効です。'**
+  /// **'購入を復元しました。AIチューター Pass が有効です。'**
   String get aiTutorRestoreSuccessVerified;
 
   /// No description provided for @aiTutorRestoreFailureNoPurchase.
@@ -1453,6 +1525,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'スマホセンサーも活用！'**
   String get joyPhysicsCaption;
+
+  /// No description provided for @tutoringPromoLine1.
+  ///
+  /// In ja, this message translates to:
+  /// **' 数学物理 個別指導'**
+  String get tutoringPromoLine1;
+
+  /// No description provided for @tutoringPromoLine2.
+  ///
+  /// In ja, this message translates to:
+  /// **'  生徒募集中！'**
+  String get tutoringPromoLine2;
 
   /// No description provided for @factorizationGachaSubtitle.
   ///

@@ -171,8 +171,8 @@
   "iapInfoLabelName": "名称",
   "iapInfoLabelPrice": "価格",
   "iapInfoLabelDuration": "有効期間",
-  "aiTutorPurchaseProductName": "AIチューター Plus(500)",
-  "aiTutorPurchaseDurationValue": "1か月（非自動更新）",
+  "aiTutorPurchaseProductName": "AIチューター Pass(500・1年)",
+  "aiTutorPurchaseDurationValue": "1年間（消耗型・非自動更新）",
   "purchaseTitle": "Pro版 - 学習履歴機能",
   "priceLabel": "価格: {price}",
   "@priceLabel": {
@@ -276,29 +276,22 @@
       }
     }
   },
-  "aiChatPaidMonthlyLimitReached": "今月のAIチャット利用上限（{limit}回）に達しました。",
-  "@aiChatPaidMonthlyLimitReached": {
+  "aiChatPaidPassLimitReached": "AIチューター Pass の利用上限（{limit}回）に達しました。",
+  "@aiChatPaidPassLimitReached": {
     "placeholders": {
       "limit": {
         "type": "int"
       }
     }
   },
-  "aiTutorPlusBadge": "Tutor Plus +",
+  "aiTutorPlusBadge": "Tutor Pass +",
   "aiTutorLimitReachedTitle": "無料利用の上限に達しました",
-  "aiTutorLimitReachedBody": "{price}/月のAIチューター Plus に登録すると、AIチャットを月500回まで使えます。",
-  "@aiTutorLimitReachedBody": {
-    "placeholders": {
-      "price": {
-        "type": "String"
-      }
-    }
-  },
-  "aiTutorUpgradeButton": "月500回プランを見る",
+  "aiTutorLimitReachedBody": "AIチャットを500回まで利用可能(有効期限:購入日から1年間)",
+  "aiTutorUpgradeButton": "500回パスを見る",
   "aiTutorRestorePurchasedButton": "すでに購入されている方はこちら",
   "aiTutorRestoreInProgress": "購入状態を確認中...",
-  "aiTutorPurchaseTitle": "AIチューター Plus",
-  "aiTutorPurchaseDescription": "{price}/月でAIチャットを月500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。",
+  "aiTutorPurchaseTitle": "AIチューター Pass",
+  "aiTutorPurchaseDescription": "{price}で1年間、AIチャットを500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。",
   "@aiTutorPurchaseDescription": {
     "placeholders": {
       "price": {
@@ -306,7 +299,7 @@
       }
     }
   },
-  "aiTutorPurchaseBenefitMonthlyLimit": "AIチャットを月500回まで利用可能",
+  "aiTutorPurchaseBenefitPassLimit": "AIチャットを500回まで利用可能(有効期限:購入日から1年間)",
   "aiTutorPurchaseBenefitPlatformBilling": "{store}の決済画面で購入",
   "@aiTutorPurchaseBenefitPlatformBilling": {
     "placeholders": {
@@ -316,7 +309,7 @@
     }
   },
   "aiTutorPurchaseBenefitPlatformBillingAny": "App Store / Google Play の決済画面で購入",
-  "aiTutorPurchaseSuccess": "AIチューター Plus が有効になりました",
+  "aiTutorPurchaseSuccess": "AIチューター Pass が有効になりました",
   "aiTutorPurchaseRestore": "購入を復元",
   "aiTutorSignInRequiredTitle": "ログインが必要です",
   "aiTutorSignInRequiredBody": "購入状態をAI利用上限に反映するため、先にGoogleでログインしてください。",
@@ -327,6 +320,49 @@
   "aiTutorSignInWithAppleToPurchase": "Appleでログインして購入へ",
   "aiTutorSignInInProgress": "ログイン中...",
   "aiTutorPurchaseInProgress": "購入処理中...",
+  "aiTutorPassStatusTitle": "AIチューター Pass",
+  "aiTutorPassTotalRemaining": "Pass 残り {remaining} 回 / {limit} 回",
+  "@aiTutorPassTotalRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"},
+      "limit": {"type": "int"}
+    }
+  },
+  "aiTutorPassCombinedRemaining": "合計 残り {remaining} 回",
+  "@aiTutorPassCombinedRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "aiTutorPassFreeRemaining": "今月の無料枠 残り {remaining} 回",
+  "@aiTutorPassFreeRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "aiTutorPassPurchasedAt": "購入日: {date}",
+  "@aiTutorPassPurchasedAt": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "aiTutorPassExpiresAt": "期限: {date}",
+  "@aiTutorPassExpiresAt": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "aiTutorPassLotRemaining": "残り {remaining} 回",
+  "@aiTutorPassLotRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "aiTutorPassSignInPrompt": "ログインすると購入・残量確認ができます",
+  "aiTutorPassBuyMore": "Pass を購入",
+  "aiTutorPassNoPasses": "有効な Pass がありません",
+  "aiTutorPassLoading": "残量を確認中...",
+  "aiTutorPassRefresh": "更新",
   "recordSaved": "学習記録を保存しました: {status}",
   "@recordSaved": {
     "placeholders": {
@@ -356,7 +392,7 @@
   "excludeSuffix": "の問題を除く",
   "restoredPurchases": "購入を復元しました",
   "noRestorablePurchases": "復元できる購入が見つかりませんでした",
-  "aiTutorRestoreSuccessVerified": "購入を復元しました。AIチューター Plus が有効です。",
+  "aiTutorRestoreSuccessVerified": "購入を復元しました。AIチューター Pass が有効です。",
   "aiTutorRestoreFailureNoPurchase": "復元に失敗しました: 復元できる有効な購入が見つかりませんでした。",
   "aiTutorRestoreFailureNotSignedIn": "復元に失敗しました: ログイン状態を確認できませんでした。再ログインしてもう一度お試しください。",
   "aiTutorRestoreFailureSyncNotConfigured": "復元に失敗しました: サーバー確認の設定が未完了です。",
@@ -401,6 +437,8 @@
   "unitGachaCaption": "高校物理の単位をサクサク学べるよ",
   "joyPhysicsHeaderTitle": "アニメと実験で学ぶ高校物理",
   "joyPhysicsCaption": "スマホセンサーも活用！",
+  "tutoringPromoLine1": " 数学物理 個別指導",
+  "tutoringPromoLine2": "  生徒募集中！",
   "factorizationGachaSubtitle": "整数係数の範囲で\n因数分解してください 0️⃣",
   "indetEqGachaTitleOnly": "不定方程式ガチャ",
   "indetEqGachaSubtitle": "整数解を探してみよう 🔢",

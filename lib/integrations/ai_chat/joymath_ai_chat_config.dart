@@ -26,6 +26,17 @@ class JoymathAiChatConfig {
     return _deriveSiblingEndpoint(endpoint, 'syncAiTutorEntitlement');
   }
 
+  static Uri? aiTutorUsageEndpointFromEnvironment() {
+    const usageValue = String.fromEnvironment(
+      'AI_TUTOR_USAGE_ENDPOINT',
+      defaultValue: '',
+    );
+    if (usageValue.trim().isNotEmpty) return Uri.parse(usageValue.trim());
+
+    final endpoint = apiConfigFromEnvironment().endpoint;
+    return _deriveSiblingEndpoint(endpoint, 'aiTutorUsage');
+  }
+
   static Uri? accountDeletionEndpointFromEnvironment() {
     const deletionValue = String.fromEnvironment(
       'ACCOUNT_DELETION_ENDPOINT',

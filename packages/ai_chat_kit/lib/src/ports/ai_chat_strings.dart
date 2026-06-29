@@ -11,7 +11,7 @@ class AiChatStrings {
   final String starterChoiceFirstStep;
 
   final String Function(int limit) freeMonthlyLimitReached;
-  final String Function(int limit) paidMonthlyLimitReached;
+  final String Function(int limit) paidPassLimitReached;
 
   final String voiceListeningHint;
   final String voiceSendModeAuto;
@@ -30,7 +30,7 @@ class AiChatStrings {
     required this.starterChoiceApproach,
     required this.starterChoiceFirstStep,
     required this.freeMonthlyLimitReached,
-    required this.paidMonthlyLimitReached,
+    required this.paidPassLimitReached,
     this.voiceListeningHint = 'Listening…',
     this.voiceSendModeAuto = 'Auto-send voice',
     this.voiceSendModeManual = 'Edit before send',

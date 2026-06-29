@@ -235,7 +235,7 @@ class GachaAiSession {
     { "label": "もう少し詳しく" },
     { "label": "部分積分の意味を教えて", "sendText": "部分積分という用語の意味を教えてください" }
   ],
-  "usage": { "count": 1, "limit": 10, "tier": "free" }
+  "usage": { "count": 1, "limit": 15, "tier": "free" }
 }
 ```
 

@@ -54,7 +54,7 @@ class JoymathAiChatPorts implements AiChatHostPorts {
   }
 
   Future<void> preloadPrice() async {
-    final price = await RevenueCatService.getAiTutorSubscriptionPrice();
+    final price = await RevenueCatService.getAiTutorPassPrice();
     if (price != null && price.isNotEmpty) {
       _cachedPrice = price;
     }

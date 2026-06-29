@@ -63,7 +63,7 @@ class _JoymathAiTutorPurchaseDialogState
             duration: l10n.aiTutorPurchaseDurationValue,
           ),
           const SizedBox(height: 14),
-          _BenefitRow(text: l10n.aiTutorPurchaseBenefitMonthlyLimit),
+          _BenefitRow(text: l10n.aiTutorPurchaseBenefitPassLimit),
           const SizedBox(height: 8),
           _BenefitRow(text: _platformBillingBenefitText(l10n)),
           const SizedBox(height: 14),
@@ -115,7 +115,7 @@ class _JoymathAiTutorPurchaseDialogState
     });
     try {
       await RevenueCatService.syncCurrentFirebaseUser();
-      final result = await RevenueCatService.purchaseAiTutorSubscription();
+      final result = await RevenueCatService.purchaseAiTutorPass();
       if (!mounted) return;
       setState(() {
         _isProcessing = false;

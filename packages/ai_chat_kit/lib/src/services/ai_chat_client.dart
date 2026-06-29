@@ -24,14 +24,14 @@ class AiChatClientException implements Exception {
 
 class AiChatRateLimitException extends AiChatClientException {
   final String? tier;
-  final int? monthlyLimit;
+  final int? usageLimit;
 
   const AiChatRateLimitException(
     super.message, {
     super.code,
     super.statusCode,
     this.tier,
-    this.monthlyLimit,
+    this.usageLimit,
   });
 }
 

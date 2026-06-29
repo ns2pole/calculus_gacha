@@ -243,13 +243,13 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
       final info = AiChatRateLimitInfo(
         message: _rateLimitMessage(e),
         tier: e.tier,
-        monthlyLimit: e.monthlyLimit,
+        usageLimit: e.usageLimit,
       );
       setState(() {
         _isSending = false;
         _errorText = info.message;
         _rateLimitInfo = info;
-        _showUpgradeOffer = !info.isPaidTier;
+        _showUpgradeOffer = true;
       });
       _autoVoiceSessionActive = false;
       _cancelAutoVoiceTimers();
@@ -274,9 +274,9 @@ class _AiChatBottomSheetState extends State<AiChatBottomSheet> {
   }
 
   String _rateLimitMessage(AiChatRateLimitException e) {
-    final limit = e.monthlyLimit ?? (e.tier == 'paid' ? 500 : 10);
+    final limit = e.usageLimit ?? (e.tier == 'paid' ? 500 : 15);
     if (e.tier == 'paid') {
-      return _strings.paidMonthlyLimitReached(limit);
+      return _strings.paidPassLimitReached(limit);
     }
     return _strings.freeMonthlyLimitReached(limit);
   }

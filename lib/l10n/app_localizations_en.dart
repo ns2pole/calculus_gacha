@@ -364,10 +364,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get iapInfoLabelDuration => 'Validity period';
 
   @override
-  String get aiTutorPurchaseProductName => 'AI Tutor Plus (500)';
+  String get aiTutorPurchaseProductName => 'AI Tutor Pass (500 / 1 year)';
 
   @override
-  String get aiTutorPurchaseDurationValue => '1 month (non-renewing)';
+  String get aiTutorPurchaseDurationValue =>
+      '1 year (consumable, non-renewing)';
 
   @override
   String get purchaseTitle => 'Pro Version - Learning History';
@@ -579,23 +580,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String aiChatPaidMonthlyLimitReached(int limit) {
-    return 'You\'ve reached this month\'s AI chat limit ($limit uses).';
+  String aiChatPaidPassLimitReached(int limit) {
+    return 'You\'ve reached your AI Tutor Pass limit ($limit uses).';
   }
 
   @override
-  String get aiTutorPlusBadge => 'Tutor Plus +';
+  String get aiTutorPlusBadge => 'Tutor Pass +';
 
   @override
   String get aiTutorLimitReachedTitle => 'Free usage limit reached';
 
   @override
-  String aiTutorLimitReachedBody(String price) {
-    return 'Subscribe to AI Tutor Plus for $price/month to use AI chat up to 500 times per month.';
-  }
+  String get aiTutorLimitReachedBody =>
+      'Use AI chat up to 500 times (valid for one year from purchase date)';
 
   @override
-  String get aiTutorUpgradeButton => 'View 500/month plan';
+  String get aiTutorUpgradeButton => 'View 500-use pass';
 
   @override
   String get aiTutorRestorePurchasedButton => 'Already purchased? Restore here';
@@ -604,16 +604,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiTutorRestoreInProgress => 'Checking purchase status...';
 
   @override
-  String get aiTutorPurchaseTitle => 'AI Tutor Plus';
+  String get aiTutorPurchaseTitle => 'AI Tutor Pass';
 
   @override
   String aiTutorPurchaseDescription(String price) {
-    return 'Use AI chat up to 500 times per month for $price/month. If you purchase, you will continue to the iOS/Android payment screen.';
+    return 'Use AI chat up to 500 times for one year for $price. If you purchase, you will continue to the iOS/Android payment screen.';
   }
 
   @override
-  String get aiTutorPurchaseBenefitMonthlyLimit =>
-      'Use AI chat up to 500 times per month';
+  String get aiTutorPurchaseBenefitPassLimit =>
+      'Use AI chat up to 500 times (valid for one year from purchase date)';
 
   @override
   String aiTutorPurchaseBenefitPlatformBilling(String store) {
@@ -625,7 +625,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Purchase through the App Store / Google Play payment screen';
 
   @override
-  String get aiTutorPurchaseSuccess => 'AI Tutor Plus is now active';
+  String get aiTutorPurchaseSuccess => 'AI Tutor Pass is now active';
 
   @override
   String get aiTutorPurchaseRestore => 'Restore purchase';
@@ -663,6 +663,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiTutorPurchaseInProgress => 'Processing purchase...';
 
   @override
+  String get aiTutorPassStatusTitle => 'AI Tutor Pass';
+
+  @override
+  String aiTutorPassTotalRemaining(int remaining, int limit) {
+    return 'Pass: $remaining / $limit uses remaining';
+  }
+
+  @override
+  String aiTutorPassCombinedRemaining(int remaining) {
+    return 'Total: $remaining uses remaining';
+  }
+
+  @override
+  String aiTutorPassFreeRemaining(int remaining) {
+    return 'Free this month: $remaining uses left';
+  }
+
+  @override
+  String aiTutorPassPurchasedAt(String date) {
+    return 'Purchased: $date';
+  }
+
+  @override
+  String aiTutorPassExpiresAt(String date) {
+    return 'Expires: $date';
+  }
+
+  @override
+  String aiTutorPassLotRemaining(int remaining) {
+    return '$remaining uses left';
+  }
+
+  @override
+  String get aiTutorPassSignInPrompt => 'Sign in to view balance or purchase';
+
+  @override
+  String get aiTutorPassBuyMore => 'Buy Pass';
+
+  @override
+  String get aiTutorPassNoPasses => 'No active passes';
+
+  @override
+  String get aiTutorPassLoading => 'Loading balance...';
+
+  @override
+  String get aiTutorPassRefresh => 'Refresh';
+
+  @override
   String recordSaved(String status) {
     return 'Learning record saved: $status';
   }
@@ -694,7 +742,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiTutorRestoreSuccessVerified =>
-      'Purchase restored. AI Tutor Plus is active.';
+      'Purchase restored. AI Tutor Pass is active.';
 
   @override
   String get aiTutorRestoreFailureNoPurchase =>
@@ -777,6 +825,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get joyPhysicsCaption => 'Use smartphone sensors too!';
+
+  @override
+  String get tutoringPromoLine1 => 'Math & Physics Tutoring';
+
+  @override
+  String get tutoringPromoLine2 => 'Now accepting students!';
 
   @override
   String get factorizationGachaSubtitle =>

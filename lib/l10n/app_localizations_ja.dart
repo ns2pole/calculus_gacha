@@ -352,10 +352,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get iapInfoLabelDuration => '有効期間';
 
   @override
-  String get aiTutorPurchaseProductName => 'AIチューター Plus(500)';
+  String get aiTutorPurchaseProductName => 'AIチューター Pass(500・1年)';
 
   @override
-  String get aiTutorPurchaseDurationValue => '1か月（非自動更新）';
+  String get aiTutorPurchaseDurationValue => '1年間（消耗型・非自動更新）';
 
   @override
   String get purchaseTitle => 'Pro版 - 学習履歴機能';
@@ -560,23 +560,21 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String aiChatPaidMonthlyLimitReached(int limit) {
-    return '今月のAIチャット利用上限（$limit回）に達しました。';
+  String aiChatPaidPassLimitReached(int limit) {
+    return 'AIチューター Pass の利用上限（$limit回）に達しました。';
   }
 
   @override
-  String get aiTutorPlusBadge => 'Tutor Plus +';
+  String get aiTutorPlusBadge => 'Tutor Pass +';
 
   @override
   String get aiTutorLimitReachedTitle => '無料利用の上限に達しました';
 
   @override
-  String aiTutorLimitReachedBody(String price) {
-    return '$price/月のAIチューター Plus に登録すると、AIチャットを月500回まで使えます。';
-  }
+  String get aiTutorLimitReachedBody => 'AIチャットを500回まで利用可能(有効期限:購入日から1年間)';
 
   @override
-  String get aiTutorUpgradeButton => '月500回プランを見る';
+  String get aiTutorUpgradeButton => '500回パスを見る';
 
   @override
   String get aiTutorRestorePurchasedButton => 'すでに購入されている方はこちら';
@@ -585,15 +583,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aiTutorRestoreInProgress => '購入状態を確認中...';
 
   @override
-  String get aiTutorPurchaseTitle => 'AIチューター Plus';
+  String get aiTutorPurchaseTitle => 'AIチューター Pass';
 
   @override
   String aiTutorPurchaseDescription(String price) {
-    return '$price/月でAIチャットを月500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。';
+    return '$priceで1年間、AIチャットを500回まで利用できます。購入する場合は、このあとiOS/Androidの決済画面に進みます。';
   }
 
   @override
-  String get aiTutorPurchaseBenefitMonthlyLimit => 'AIチャットを月500回まで利用可能';
+  String get aiTutorPurchaseBenefitPassLimit =>
+      'AIチャットを500回まで利用可能(有効期限:購入日から1年間)';
 
   @override
   String aiTutorPurchaseBenefitPlatformBilling(String store) {
@@ -605,7 +604,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'App Store / Google Play の決済画面で購入';
 
   @override
-  String get aiTutorPurchaseSuccess => 'AIチューター Plus が有効になりました';
+  String get aiTutorPurchaseSuccess => 'AIチューター Pass が有効になりました';
 
   @override
   String get aiTutorPurchaseRestore => '購入を復元';
@@ -641,6 +640,54 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aiTutorPurchaseInProgress => '購入処理中...';
 
   @override
+  String get aiTutorPassStatusTitle => 'AIチューター Pass';
+
+  @override
+  String aiTutorPassTotalRemaining(int remaining, int limit) {
+    return 'Pass 残り $remaining 回 / $limit 回';
+  }
+
+  @override
+  String aiTutorPassCombinedRemaining(int remaining) {
+    return '合計 残り $remaining 回';
+  }
+
+  @override
+  String aiTutorPassFreeRemaining(int remaining) {
+    return '今月の無料枠 残り $remaining 回';
+  }
+
+  @override
+  String aiTutorPassPurchasedAt(String date) {
+    return '購入日: $date';
+  }
+
+  @override
+  String aiTutorPassExpiresAt(String date) {
+    return '期限: $date';
+  }
+
+  @override
+  String aiTutorPassLotRemaining(int remaining) {
+    return '残り $remaining 回';
+  }
+
+  @override
+  String get aiTutorPassSignInPrompt => 'ログインすると購入・残量確認ができます';
+
+  @override
+  String get aiTutorPassBuyMore => 'Pass を購入';
+
+  @override
+  String get aiTutorPassNoPasses => '有効な Pass がありません';
+
+  @override
+  String get aiTutorPassLoading => '残量を確認中...';
+
+  @override
+  String get aiTutorPassRefresh => '更新';
+
+  @override
   String recordSaved(String status) {
     return '学習記録を保存しました: $status';
   }
@@ -671,7 +718,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get noRestorablePurchases => '復元できる購入が見つかりませんでした';
 
   @override
-  String get aiTutorRestoreSuccessVerified => '購入を復元しました。AIチューター Plus が有効です。';
+  String get aiTutorRestoreSuccessVerified => '購入を復元しました。AIチューター Pass が有効です。';
 
   @override
   String get aiTutorRestoreFailureNoPurchase =>
@@ -753,6 +800,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get joyPhysicsCaption => 'スマホセンサーも活用！';
+
+  @override
+  String get tutoringPromoLine1 => ' 数学物理 個別指導';
+
+  @override
+  String get tutoringPromoLine2 => '  生徒募集中！';
 
   @override
   String get factorizationGachaSubtitle => '整数係数の範囲で\n因数分解してください 0️⃣';

@@ -179,8 +179,8 @@
   "iapInfoLabelName": "Name",
   "iapInfoLabelPrice": "Price",
   "iapInfoLabelDuration": "Validity period",
-  "aiTutorPurchaseProductName": "AI Tutor Plus (500)",
-  "aiTutorPurchaseDurationValue": "1 month (non-renewing)",
+  "aiTutorPurchaseProductName": "AI Tutor Pass (500 / 1 year)",
+  "aiTutorPurchaseDurationValue": "1 year (consumable, non-renewing)",
   "purchaseTitle": "Pro Version - Learning History",
   "priceLabel": "Price: {price}",
   "@priceLabel": {
@@ -284,29 +284,22 @@
       }
     }
   },
-  "aiChatPaidMonthlyLimitReached": "You've reached this month's AI chat limit ({limit} uses).",
-  "@aiChatPaidMonthlyLimitReached": {
+  "aiChatPaidPassLimitReached": "You've reached your AI Tutor Pass limit ({limit} uses).",
+  "@aiChatPaidPassLimitReached": {
     "placeholders": {
       "limit": {
         "type": "int"
       }
     }
   },
-  "aiTutorPlusBadge": "Tutor Plus +",
+  "aiTutorPlusBadge": "Tutor Pass +",
   "aiTutorLimitReachedTitle": "Free usage limit reached",
-  "aiTutorLimitReachedBody": "Subscribe to AI Tutor Plus for {price}/month to use AI chat up to 500 times per month.",
-  "@aiTutorLimitReachedBody": {
-    "placeholders": {
-      "price": {
-        "type": "String"
-      }
-    }
-  },
-  "aiTutorUpgradeButton": "View 500/month plan",
+  "aiTutorLimitReachedBody": "Use AI chat up to 500 times (valid for one year from purchase date)",
+  "aiTutorUpgradeButton": "View 500-use pass",
   "aiTutorRestorePurchasedButton": "Already purchased? Restore here",
   "aiTutorRestoreInProgress": "Checking purchase status...",
-  "aiTutorPurchaseTitle": "AI Tutor Plus",
-  "aiTutorPurchaseDescription": "Use AI chat up to 500 times per month for {price}/month. If you purchase, you will continue to the iOS/Android payment screen.",
+  "aiTutorPurchaseTitle": "AI Tutor Pass",
+  "aiTutorPurchaseDescription": "Use AI chat up to 500 times for one year for {price}. If you purchase, you will continue to the iOS/Android payment screen.",
   "@aiTutorPurchaseDescription": {
     "placeholders": {
       "price": {
@@ -314,7 +307,7 @@
       }
     }
   },
-  "aiTutorPurchaseBenefitMonthlyLimit": "Use AI chat up to 500 times per month",
+  "aiTutorPurchaseBenefitPassLimit": "Use AI chat up to 500 times (valid for one year from purchase date)",
   "aiTutorPurchaseBenefitPlatformBilling": "Purchase through the {store} payment screen",
   "@aiTutorPurchaseBenefitPlatformBilling": {
     "placeholders": {
@@ -324,7 +317,7 @@
     }
   },
   "aiTutorPurchaseBenefitPlatformBillingAny": "Purchase through the App Store / Google Play payment screen",
-  "aiTutorPurchaseSuccess": "AI Tutor Plus is now active",
+  "aiTutorPurchaseSuccess": "AI Tutor Pass is now active",
   "aiTutorPurchaseRestore": "Restore purchase",
   "aiTutorSignInRequiredTitle": "Sign-in required",
   "aiTutorSignInRequiredBody": "Please sign in with Google first so your purchase can be applied to your AI usage limit.",
@@ -335,6 +328,49 @@
   "aiTutorSignInWithAppleToPurchase": "Sign in with Apple to purchase",
   "aiTutorSignInInProgress": "Signing in...",
   "aiTutorPurchaseInProgress": "Processing purchase...",
+  "aiTutorPassStatusTitle": "AI Tutor Pass",
+  "aiTutorPassTotalRemaining": "Pass: {remaining} / {limit} uses remaining",
+  "@aiTutorPassTotalRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"},
+      "limit": {"type": "int"}
+    }
+  },
+  "aiTutorPassCombinedRemaining": "Total: {remaining} uses remaining",
+  "@aiTutorPassCombinedRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "aiTutorPassFreeRemaining": "Free this month: {remaining} uses left",
+  "@aiTutorPassFreeRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "aiTutorPassPurchasedAt": "Purchased: {date}",
+  "@aiTutorPassPurchasedAt": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "aiTutorPassExpiresAt": "Expires: {date}",
+  "@aiTutorPassExpiresAt": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "aiTutorPassLotRemaining": "{remaining} uses left",
+  "@aiTutorPassLotRemaining": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "aiTutorPassSignInPrompt": "Sign in to view balance or purchase",
+  "aiTutorPassBuyMore": "Buy Pass",
+  "aiTutorPassNoPasses": "No active passes",
+  "aiTutorPassLoading": "Loading balance...",
+  "aiTutorPassRefresh": "Refresh",
   "recordSaved": "Learning record saved: {status}",
   "@recordSaved": {
     "placeholders": {
@@ -364,7 +400,7 @@
   "excludeSuffix": "excluding",
   "restoredPurchases": "Purchases restored",
   "noRestorablePurchases": "No restorable purchases found",
-  "aiTutorRestoreSuccessVerified": "Purchase restored. AI Tutor Plus is active.",
+  "aiTutorRestoreSuccessVerified": "Purchase restored. AI Tutor Pass is active.",
   "aiTutorRestoreFailureNoPurchase": "Restore failed: no active restorable purchase was found.",
   "aiTutorRestoreFailureNotSignedIn": "Restore failed: sign-in status could not be verified. Please sign in again and retry.",
   "aiTutorRestoreFailureSyncNotConfigured": "Restore failed: server verification is not configured.",
@@ -409,6 +445,8 @@
   "unitGachaCaption": "Master high school physics units in a snap",
   "joyPhysicsHeaderTitle": "High School Physics with Animation & Experiments",
   "joyPhysicsCaption": "Use smartphone sensors too!",
+  "tutoringPromoLine1": "Math & Physics Tutoring",
+  "tutoringPromoLine2": "Now accepting students!",
   "factorizationGachaSubtitle": "Factorize within integer coefficients 0️⃣",
   "indetEqGachaTitleOnly": "Indeterminate Eq. Gacha",
   "indetEqGachaSubtitle": "Find integer solutions 🔢",

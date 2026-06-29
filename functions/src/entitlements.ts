@@ -1,35 +1,28 @@
-import * as admin from "firebase-admin";
 import {Request} from "firebase-functions/v2/https";
 import {HttpError, readBearerToken} from "./http";
+import {
+  AI_TUTOR_LEGACY_ENTITLEMENT_ID,
+  AI_TUTOR_LEGACY_PRODUCT_ID,
+  AI_TUTOR_PRODUCT_ID,
+  dedupePassPurchaseEvents,
+  isAiTutorEntitlementId,
+  isAiTutorProductId,
+  listPassRecords,
+  PassPurchaseEvent,
+  upsertPassFromPurchaseEvent,
+} from "./aiTutorPasses";
+import {migrateLegacyEntitlementToPassIfNeeded} from "./legacyPassMigration";
 import {UsageIdentity} from "./types";
 
-const aiTutorEntitlementId = "ai_tutor_subsc";
-const aiTutorProductId = "ai_tutor_subsc_500yen";
 const revenueCatSubscriberBaseUrl = "https://api.revenuecat.com/v1/subscribers";
-const inactiveEventTypes = new Set([
-  "EXPIRATION",
-  "BILLING_ISSUE",
-  "PRODUCT_CHANGE",
-]);
 
-export async function hasAiTutorEntitlement(
+export async function hasActiveAiTutorPasses(
   db: FirebaseFirestore.Firestore,
   identity: UsageIdentity,
 ): Promise<boolean> {
   if (identity.source !== "firebase") return false;
-
-  const ref = entitlementRef(db, identity.id);
-  const snapshot = await ref.get();
-  if (!snapshot.exists) return false;
-
-  const active = snapshot.get("active") === true;
-  const expiresAt = snapshot.get("expiresAt");
-  if (!active) return false;
-  if (expiresAt == null) return true;
-  if (expiresAt instanceof admin.firestore.Timestamp) {
-    return expiresAt.toMillis() > Date.now();
-  }
-  return false;
+  const passes = await listPassRecords(db, identity.id);
+  return passes.length > 0;
 }
 
 export async function applyRevenueCatWebhook(
@@ -42,24 +35,11 @@ export async function applyRevenueCatWebhook(
   const event = parseRevenueCatEvent(request.body);
   if (!isAiTutorEvent(event)) return;
 
-  const active = isEntitlementActive(event);
-  const expiresAt = event.expirationAtMs == null ?
-    null :
-    admin.firestore.Timestamp.fromMillis(event.expirationAtMs);
   const userIds = collectRevenueCatUserIds(event);
-
-  await Promise.all(userIds.map((userId) => entitlementRef(db, userId).set({
-    active,
-    entitlementId: aiTutorEntitlementId,
-    productId: event.productId,
-    eventType: event.type,
-    revenueCatEventId: event.id,
-    expiresAt,
-    purchasedAt: event.purchasedAtMs == null ?
-      null :
-      admin.firestore.Timestamp.fromMillis(event.purchasedAtMs),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-  }, {merge: true})));
+  const purchaseEvent = toPassPurchaseEvent(event);
+  await Promise.all(userIds.map(async (userId) => {
+    await upsertPassFromPurchaseEvent(db, userId, purchaseEvent);
+  }));
 }
 
 export async function syncAiTutorEntitlementFromRevenueCat(
@@ -71,32 +51,15 @@ export async function syncAiTutorEntitlementFromRevenueCat(
     throw new HttpError(500, "revenuecat_api_key_missing", "RevenueCat API key is not configured.");
   }
 
-  const event = await fetchRevenueCatAiTutorEntitlement(userId, revenueCatApiKey);
-  const active = event != null && isEntitlementActive(event);
-  await entitlementRef(db, userId).set({
-    active,
-    entitlementId: aiTutorEntitlementId,
-    productId: event?.productId ?? aiTutorProductId,
-    eventType: "CLIENT_SYNC",
-    revenueCatEventId: null,
-    expiresAt: event?.expirationAtMs == null ?
-      null :
-      admin.firestore.Timestamp.fromMillis(event.expirationAtMs),
-    purchasedAt: event?.purchasedAtMs == null ?
-      null :
-      admin.firestore.Timestamp.fromMillis(event.purchasedAtMs),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-  }, {merge: true});
+  const purchaseEvents = await fetchRevenueCatPassPurchases(userId, revenueCatApiKey);
+  await Promise.all(purchaseEvents.map((event) =>
+    upsertPassFromPurchaseEvent(db, userId, event),
+  ));
 
-  return active;
-}
+  await migrateLegacyEntitlementToPassIfNeeded(db, userId);
 
-function entitlementRef(db: FirebaseFirestore.Firestore, userId: string) {
-  return db
-    .collection("users")
-    .doc(userId)
-    .collection("entitlements")
-    .doc(aiTutorEntitlementId);
+  const passes = await listPassRecords(db, userId);
+  return passes.length > 0;
 }
 
 function assertWebhookAuthorized(request: Request, authSecret: string): void {
@@ -125,18 +88,25 @@ function parseRevenueCatEvent(body: unknown): RevenueCatEvent {
     entitlementIds: readStringArray(event.entitlement_ids),
     expirationAtMs: readNumber(event.expiration_at_ms),
     purchasedAtMs: readNumber(event.purchased_at_ms),
+    transactionId: readString(event.transaction_id) ??
+      readString(event.original_transaction_id),
+  };
+}
+
+function toPassPurchaseEvent(event: RevenueCatEvent): PassPurchaseEvent {
+  return {
+    id: event.id,
+    type: event.type,
+    productId: event.productId,
+    expirationAtMs: event.expirationAtMs,
+    purchasedAtMs: event.purchasedAtMs,
+    transactionId: event.transactionId,
   };
 }
 
 function isAiTutorEvent(event: RevenueCatEvent): boolean {
-  return event.productId === aiTutorProductId ||
-    event.entitlementIds.includes(aiTutorEntitlementId);
-}
-
-function isEntitlementActive(event: RevenueCatEvent): boolean {
-  if (inactiveEventTypes.has(event.type)) return false;
-  if (event.expirationAtMs == null) return true;
-  return event.expirationAtMs > Date.now();
+  return isAiTutorProductId(event.productId) ||
+    event.entitlementIds.some(isAiTutorEntitlementId);
 }
 
 function collectRevenueCatUserIds(event: RevenueCatEvent): string[] {
@@ -150,7 +120,7 @@ function sanitizeFirebaseDocId(value: string): string {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  return typeof value === "object" && value != null;
 }
 
 function readString(value: unknown): string | null {
@@ -167,10 +137,41 @@ function readStringArray(value: unknown): string[] {
     [];
 }
 
-async function fetchRevenueCatAiTutorEntitlement(
+async function fetchRevenueCatPassPurchases(
   userId: string,
   revenueCatApiKey: string,
-): Promise<RevenueCatEvent | null> {
+): Promise<PassPurchaseEvent[]> {
+  const subscriber = await fetchRevenueCatSubscriber(userId, revenueCatApiKey);
+  if (subscriber == null) return [];
+
+  return collectPassPurchaseEventsFromSubscriber(subscriber);
+}
+
+export function collectPassPurchaseEventsFromSubscriber(
+  subscriber: Record<string, unknown>,
+): PassPurchaseEvent[] {
+  const events: PassPurchaseEvent[] = [
+    ...readNonSubscriptionPurchases(subscriber, AI_TUTOR_PRODUCT_ID),
+    ...readNonSubscriptionPurchases(subscriber, AI_TUTOR_LEGACY_PRODUCT_ID),
+  ];
+
+  const legacyEntitlement = readEntitlement(subscriber, AI_TUTOR_LEGACY_ENTITLEMENT_ID);
+  if (legacyEntitlement != null) {
+    events.push(toPassPurchaseEvent(legacyEntitlement));
+  }
+
+  const legacySubscription = readSubscription(subscriber, AI_TUTOR_LEGACY_PRODUCT_ID);
+  if (legacySubscription != null) {
+    events.push(toPassPurchaseEvent(legacySubscription));
+  }
+
+  return dedupePassPurchaseEvents(events);
+}
+
+async function fetchRevenueCatSubscriber(
+  userId: string,
+  revenueCatApiKey: string,
+): Promise<Record<string, unknown> | null> {
   const encodedUserId = encodeURIComponent(userId);
   const response = await fetch(`${revenueCatSubscriberBaseUrl}/${encodedUserId}`, {
     headers: {
@@ -186,12 +187,31 @@ async function fetchRevenueCatAiTutorEntitlement(
 
   const body = await response.json() as unknown;
   if (!isRecord(body) || !isRecord(body.subscriber)) return null;
+  return body.subscriber;
+}
 
-  const subscriber = body.subscriber;
-  const entitlement = readEntitlement(subscriber, aiTutorEntitlementId);
-  if (entitlement != null) return entitlement;
+function readNonSubscriptionPurchases(
+  subscriber: Record<string, unknown>,
+  productId: string,
+): PassPurchaseEvent[] {
+  const nonSubscriptions = subscriber.non_subscriptions;
+  if (!isRecord(nonSubscriptions)) return [];
 
-  return readSubscription(subscriber, aiTutorProductId);
+  const purchases = nonSubscriptions[productId];
+  if (!Array.isArray(purchases)) return [];
+
+  return purchases
+    .filter(isRecord)
+    .map((purchase): PassPurchaseEvent => ({
+      id: readString(purchase.id) ?? "",
+      type: "CLIENT_SYNC",
+      productId,
+      expirationAtMs: null,
+      purchasedAtMs: readDateMs(purchase.purchase_date),
+      transactionId: readString(purchase.store_transaction_id) ??
+        readString(purchase.id),
+    }))
+    .filter((event) => event.purchasedAtMs != null);
 }
 
 function readEntitlement(
@@ -213,6 +233,8 @@ function readEntitlement(
     entitlementIds: [entitlementId],
     expirationAtMs: readDateMs(entitlement.expires_date),
     purchasedAtMs: readDateMs(entitlement.purchase_date),
+    transactionId: readString(entitlement.store_transaction_id) ??
+      readString(entitlement.original_transaction_id),
   };
 }
 
@@ -232,9 +254,11 @@ function readSubscription(
     appUserId: "",
     aliases: [],
     productId,
-    entitlementIds: [aiTutorEntitlementId],
+    entitlementIds: [AI_TUTOR_LEGACY_ENTITLEMENT_ID],
     expirationAtMs: readDateMs(subscription.expires_date),
     purchasedAtMs: readDateMs(subscription.purchase_date),
+    transactionId: readString(subscription.store_transaction_id) ??
+      readString(subscription.original_transaction_id),
   };
 }
 
@@ -254,4 +278,5 @@ interface RevenueCatEvent {
   entitlementIds: string[];
   expirationAtMs: number | null;
   purchasedAtMs: number | null;
+  transactionId: string | null;
 }

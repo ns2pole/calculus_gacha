@@ -5,13 +5,13 @@ import 'ai_chat_strings.dart';
 
 class AiChatRateLimitInfo {
   final String? tier;
-  final int? monthlyLimit;
+  final int? usageLimit;
   final String message;
 
   const AiChatRateLimitInfo({
     required this.message,
     this.tier,
-    this.monthlyLimit,
+    this.usageLimit,
   });
 
   bool get isPaidTier => tier == 'paid';

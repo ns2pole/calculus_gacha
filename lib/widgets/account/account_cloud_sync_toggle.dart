@@ -14,6 +14,80 @@ PopupMenuItem<String> buildAccountCloudSyncMenuItem() {
   );
 }
 
+/// Builds a popup menu row to trigger manual cloud sync (when sync is enabled).
+PopupMenuItem<String>? buildAccountCloudSyncSyncMenuItem(BuildContext context) {
+  if (!CloudSyncPreferenceService.enabledListenable.value) {
+    return null;
+  }
+  final l10n = AppLocalizations.of(context)!;
+  return PopupMenuItem<String>(
+    value: 'syncCloud',
+    child: Row(
+      children: [
+        const Icon(Icons.cloud_sync, size: 20),
+        const SizedBox(width: 8),
+        Text(l10n.syncWithCloud),
+      ],
+    ),
+  );
+}
+
+/// Runs a manual cloud sync and shows success/error feedback.
+Future<void> performAccountCloudSync(
+  BuildContext context, {
+  VoidCallback? onSynced,
+}) async {
+  final l10n = AppLocalizations.of(context)!;
+
+  if (!await CloudSyncPreferenceService.isEnabledForUser(
+    FirebaseAuthService.userId,
+  )) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.cloudSyncDisabledSnack),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+    return;
+  }
+
+  try {
+    final success = await SimpleDataManager.performCloudSync(force: true);
+    if (!success) {
+      throw Exception('Cloud sync did not complete');
+    }
+
+    if (context.mounted) {
+      onSynced?.call();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.syncCompleted),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  } catch (e) {
+    debugPrint('Error syncing: $e');
+    if (context.mounted) {
+      final errorStr = e.toString().toLowerCase();
+      final message = errorStr.contains('permission')
+          ? l10n.noFirestorePermission
+          : l10n.syncError;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.orange,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
+  }
+}
+
 /// Cloud sync on/off switch shown in the account popup menu.
 class AccountCloudSyncToggle extends StatefulWidget {
   const AccountCloudSyncToggle({super.key});
@@ -102,36 +176,6 @@ class _AccountCloudSyncToggleState extends State<AccountCloudSyncToggle> {
       ),
       value: enabled,
       onChanged: _isUpdating ? null : _onToggle,
-    );
-  }
-}
-
-/// Top-bar sync control: visible only when signed in and cloud sync is on.
-class AccountCloudSyncSyncButtonSlot extends StatelessWidget {
-  const AccountCloudSyncSyncButtonSlot({
-    super.key,
-    required this.child,
-  });
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: Listenable.merge([
-        CloudSyncPreferenceService.enabledListenable,
-        CloudSyncPreferenceService.activeUserIdListenable,
-      ]),
-      builder: (context, _) {
-        final uid = CloudSyncPreferenceService.activeUserIdListenable.value;
-        final enabled = CloudSyncPreferenceService.enabledListenable.value;
-        if (uid == null ||
-            !enabled ||
-            !FirebaseAuthService.isAuthenticated) {
-          return const SizedBox.shrink();
-        }
-        return child;
-      },
     );
   }
 }

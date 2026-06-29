@@ -15,7 +15,7 @@ AiChatStrings joymathAiChatStrings(BuildContext context) {
     starterChoiceApproach: l10n.askAiChoiceApproach,
     starterChoiceFirstStep: l10n.askAiChoiceFirstStep,
     freeMonthlyLimitReached: l10n.aiChatFreeMonthlyLimitReached,
-    paidMonthlyLimitReached: l10n.aiChatPaidMonthlyLimitReached,
+    paidPassLimitReached: l10n.aiChatPaidPassLimitReached,
     voiceListeningHint: l10n.aiChatVoiceListening,
     voiceSendModeAuto: l10n.aiChatVoiceSendModeAuto,
     voiceSendModeManual: l10n.aiChatVoiceSendModeManual,

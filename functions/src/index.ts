@@ -5,13 +5,17 @@ import {deleteFirebaseUserAccount} from "./accountDeletion";
 import {resolveUsageIdentity} from "./auth";
 import {
   applyRevenueCatWebhook,
-  hasAiTutorEntitlement,
   syncAiTutorEntitlementFromRevenueCat,
 } from "./entitlements";
 import {generateAiChatReply} from "./geminiClient";
 import {assertPost, HttpError, readBearerToken, sendJson} from "./http";
-import {consumeUsage, RateLimitExceededError, resolveUsageLimit} from "./rateLimiter";
+import {
+  consumeUsage,
+  getUsageSummary,
+  RateLimitExceededError,
+} from "./rateLimiter";
 import {parseAiChatRequest} from "./requestValidator";
+import {PassUsageDetail, UsageSummary} from "./types";
 
 admin.initializeApp();
 
@@ -30,9 +34,7 @@ export const aiChat = onRequest({
 
     const chatRequest = parseAiChatRequest(request.body);
     const identity = await resolveUsageIdentity(request, chatRequest);
-    const isPremiumUser = await hasAiTutorEntitlement(admin.firestore(), identity);
-    const limit = resolveUsageLimit(isPremiumUser);
-    const usageCount = await consumeUsage(admin.firestore(), identity, limit);
+    const usage = await consumeUsage(admin.firestore(), identity);
     const reply = await generateAiChatReply(geminiApiKey.value(), chatRequest);
 
     sendJson(response, 200, {
@@ -42,13 +44,7 @@ export const aiChat = onRequest({
         ...(reply.textRaw != null ? {textRaw: reply.textRaw} : {}),
       },
       quickReplies: reply.quickReplies,
-      usage: {
-        count: usageCount,
-        limit: limit.limit,
-        tier: limit.tier,
-        period: limit.period,
-        periodKey: limit.periodKey,
-      },
+      usage: serializeUsageSummary(usage),
     });
   } catch (error) {
     if (error instanceof RateLimitExceededError) {
@@ -78,6 +74,40 @@ export const aiChat = onRequest({
       error: {
         code: "internal",
         message: "AIチャットの処理中にエラーが発生しました。",
+      },
+    });
+  }
+});
+
+export const aiTutorUsage = onRequest({
+  cors: true,
+  region: "asia-northeast1",
+}, async (request, response) => {
+  try {
+    assertPost(request);
+    await assertAppCheckAuthorized(request);
+
+    const uid = await requireFirebaseUid(request);
+    const identity = {id: uid, source: "firebase" as const};
+    const usage = await getUsageSummary(admin.firestore(), identity);
+
+    sendJson(response, 200, serializeUsageSummary(usage));
+  } catch (error) {
+    if (error instanceof HttpError) {
+      sendJson(response, error.status, {
+        error: {
+          code: error.code,
+          message: error.message,
+        },
+      });
+      return;
+    }
+
+    console.error(error);
+    sendJson(response, 500, {
+      error: {
+        code: "internal",
+        message: "Usage lookup failed.",
       },
     });
   }
@@ -200,6 +230,34 @@ export const deleteMyAccount = onRequest({
     });
   }
 });
+
+function serializeUsageSummary(usage: UsageSummary) {
+  return {
+    count: usage.count,
+    limit: usage.limit,
+    remaining: usage.remaining,
+    totalRemaining: usage.remaining,
+    tier: usage.tier,
+    period: usage.period,
+    periodKey: usage.periodKey,
+    ...(usage.free != null ? {free: usage.free} : {}),
+    ...(usage.passes != null ? {
+      totalCapacity: usage.passes.reduce((sum, pass) => sum + pass.limit, 0),
+      passes: usage.passes.map(serializePassUsage),
+    } : {}),
+  };
+}
+
+function serializePassUsage(pass: PassUsageDetail) {
+  return {
+    passId: pass.passId,
+    purchasedAt: new Date(pass.purchasedAtMs).toISOString(),
+    expiresAt: new Date(pass.expiresAtMs).toISOString(),
+    used: pass.used,
+    limit: pass.limit,
+    remaining: pass.remaining,
+  };
+}
 
 async function requireFirebaseUid(request: Request): Promise<string> {
   const token = readBearerToken(request);

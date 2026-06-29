@@ -101,7 +101,7 @@ class HttpAiChatClient implements AiChatClient {
           code: errorCode,
           statusCode: response.statusCode,
           tier: rateLimit?.tier,
-          monthlyLimit: rateLimit?.limit,
+          usageLimit: rateLimit?.limit,
         );
       }
 

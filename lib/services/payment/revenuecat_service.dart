@@ -13,11 +13,19 @@ class RevenueCatService {
   // product IDs（実際の App Store Connect に合わせてください）
   /// 因数分解オプション（常時有効なメイン IAP）。デバッグ用 StoreKit 診断などから参照。
   static const String factorizationOptionProductId = 'factorization_double_option_80yen';
-  static const String aiTutorSubscriptionProductId = 'ai_tutor_subsc_500yen';
+
+  /// 1-year AI Tutor Pass: 500 uses / ¥500 (consumable).
+  /// App Store / Google Play ともに消耗型（Consumable）として登録する。
+  static const String aiTutorPassProductId =
+      'ai_tutor_one_year_500yen_consumable';
+
+  /// Deprecated non-renewing subscription. Kept for restore during migration.
+  static const String aiTutorLegacyProductId = 'ai_tutor_subsc_500yen';
 
   // entitlement IDs（RevenueCat ダッシュボードの entitlement 名）
   static const String _factorizationEntitlementId = 'factorization_option';
-  static const String _aiTutorEntitlementId = 'ai_tutor_subsc';
+  static const String _aiTutorEntitlementId = 'ai_tutor_one_year_consumable';
+  static const String _aiTutorLegacyEntitlementId = 'ai_tutor_subsc';
 
   // RevenueCat の「public」APIキー（SDK key）。--dart-define で渡す（リポジトリに実値を置かない）。
   // 例: flutter run --dart-define=REVENUECAT_IOS_API_KEY=appl_xxx
@@ -224,7 +232,24 @@ class RevenueCatService {
     final hasEntitlement = customerInfo.entitlements.active.containsKey(entitlementId);
     final hasAllPurchased = customerInfo.allPurchasedProductIdentifiers.contains(productId);
     final hasActiveSub = customerInfo.activeSubscriptions.contains(productId);
-    return hasEntitlement || hasAllPurchased || hasActiveSub;
+    final hasConsumable = customerInfo.nonSubscriptionTransactions
+        .any((tx) => tx.productIdentifier == productId);
+    return hasEntitlement || hasAllPurchased || hasActiveSub || hasConsumable;
+  }
+
+  static bool _isAiTutorPurchaseRecorded(CustomerInfo customerInfo) {
+    // Legacy SKU (ai_tutor_subsc_500yen) is kept for RevenueCat restore/badge
+    // compatibility; server-side entitlement is unified as Pass after sync.
+    return _hasPurchasedProduct(
+      customerInfo,
+      aiTutorPassProductId,
+      _aiTutorEntitlementId,
+    ) ||
+        _hasPurchasedProduct(
+          customerInfo,
+          aiTutorLegacyProductId,
+          _aiTutorLegacyEntitlementId,
+        );
   }
 
   /// 因数分解オプションの購入状態
@@ -243,8 +268,8 @@ class RevenueCatService {
     }
   }
 
-  /// AIチューター月額サブスクリプションの購入状態
-  static Future<bool> isAiTutorSubscriptionPurchased() async {
+  /// AIチューター Pass（1年・500回）の購入状態
+  static Future<bool> isAiTutorPassPurchased() async {
     if (!_isInitialized) {
       final ok = await initialize();
       if (!ok) return false;
@@ -252,9 +277,9 @@ class RevenueCatService {
 
     try {
       final info = await Purchases.getCustomerInfo();
-      return _hasPurchasedProduct(info, aiTutorSubscriptionProductId, _aiTutorEntitlementId);
+      return _isAiTutorPurchaseRecorded(info);
     } catch (e) {
-      debugPrint('RevenueCat: Error checking AI tutor subscription: $e');
+      debugPrint('RevenueCat: Error checking AI tutor pass: $e');
       return false;
     }
   }
@@ -304,10 +329,14 @@ class RevenueCatService {
     return _purchaseByProductId(factorizationOptionProductId, _factorizationEntitlementId);
   }
 
-  /// AIチューター月額サブスクリプション購入
-  static Future<PurchaseResult> purchaseAiTutorSubscription() async {
-    debugPrint('RevenueCat: Starting AI tutor subscription purchase');
-    return _purchaseByProductId(aiTutorSubscriptionProductId, _aiTutorEntitlementId);
+  /// AIチューター Pass（1年・500回・消耗型）購入
+  static Future<PurchaseResult> purchaseAiTutorPass() async {
+    debugPrint('RevenueCat: Starting AI tutor consumable pass purchase');
+    return _purchaseByProductId(
+      aiTutorPassProductId,
+      _aiTutorEntitlementId,
+      isPurchaseRecorded: _isAiTutorPurchaseRecorded,
+    );
   }
 
   /// 学習履歴オプション購入
@@ -326,7 +355,17 @@ class RevenueCatService {
 
 
   /// 共通購入フロー（offerings -> package -> getProducts -> purchase）
-  static Future<PurchaseResult> _purchaseByProductId(String productId, String entitlementId) async {
+  static Future<PurchaseResult> _purchaseByProductId(
+    String productId,
+    String entitlementId, {
+    bool Function(CustomerInfo customerInfo)? isPurchaseRecorded,
+  }) async {
+    bool purchaseSucceeded(CustomerInfo customerInfo) {
+      if (isPurchaseRecorded != null) {
+        return isPurchaseRecorded(customerInfo);
+      }
+      return _hasPurchasedProduct(customerInfo, productId, entitlementId);
+    }
     if (!_isInitialized) {
       debugPrint('RevenueCat: Not initialized before purchase. Initializing...');
       final ok = await initialize();
@@ -347,7 +386,7 @@ class RevenueCatService {
             debugPrint('RevenueCat: Purchasing package for product: $productId');
             // package purchase
             final customerInfo = await Purchases.purchasePackage(pkg);
-            if (_hasPurchasedProduct(customerInfo, productId, entitlementId)) {
+            if (purchaseSucceeded(customerInfo)) {
               debugPrint('RevenueCat: Package purchase succeeded: $productId');
               return PurchaseResult(success: true);
             } else {
@@ -374,7 +413,8 @@ class RevenueCatService {
           // プロダクトが見つからない場合、現時点の所有情報を再確認して成功判定する
           try {
             final info = await Purchases.getCustomerInfo();
-            if (_hasPurchasedProduct(info, productId, entitlementId)) {
+            if (_hasPurchasedProduct(info, productId, entitlementId) ||
+                (isPurchaseRecorded?.call(info) ?? false)) {
               return PurchaseResult(success: true);
             }
           } catch (_) {}
@@ -384,7 +424,7 @@ class RevenueCatService {
         final storeProduct = products.first;
         debugPrint('RevenueCat: Purchasing store product: ${storeProduct.identifier}');
         final customerInfo = await Purchases.purchaseStoreProduct(storeProduct);
-        if (_hasPurchasedProduct(customerInfo, productId, entitlementId)) {
+        if (purchaseSucceeded(customerInfo)) {
           debugPrint('RevenueCat: Store product purchase succeeded: $productId');
           return PurchaseResult(success: true);
         } else {
@@ -435,8 +475,8 @@ class RevenueCatService {
     }
   }
 
-  /// AIチューター月額サブスクリプションの購入復元
-  static Future<bool> restoreAiTutorSubscription() async {
+  /// AIチューター Pass の購入復元
+  static Future<bool> restoreAiTutorPass() async {
     if (!_isInitialized) {
       final ok = await initialize();
       if (!ok) return false;
@@ -444,9 +484,9 @@ class RevenueCatService {
 
     try {
       final info = await Purchases.restorePurchases();
-      return _hasPurchasedProduct(info, aiTutorSubscriptionProductId, _aiTutorEntitlementId);
+      return _isAiTutorPurchaseRecorded(info);
     } catch (e) {
-      debugPrint('RevenueCat: AI tutor restore error: $e');
+      debugPrint('RevenueCat: AI tutor pass restore error: $e');
       return false;
     }
   }
@@ -456,9 +496,9 @@ class RevenueCatService {
     return _getProductPrice(factorizationOptionProductId, fallbackToFirstPackage: true);
   }
 
-  /// AIチューター月額サブスクリプションの商品価格を取得
-  static Future<String?> getAiTutorSubscriptionPrice() async {
-    return _getProductPrice(aiTutorSubscriptionProductId);
+  /// AIチューター Pass の商品価格を取得
+  static Future<String?> getAiTutorPassPrice() async {
+    return _getProductPrice(aiTutorPassProductId);
   }
 
   static Future<String?> _getProductPrice(String productId, {bool fallbackToFirstPackage = false}) async {
